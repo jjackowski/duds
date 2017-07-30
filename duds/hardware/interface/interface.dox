@@ -1,0 +1,12 @@
+namespace duds { namespace hardware {
+
+/**
+Library code for interfacing with hardware external to the processor. This
+includes support for items like serial buses and other forms of communication.
+It does @b not include support for hardware found at the other end; just
+support for communicating with whatever is on the other end.
+*/
+namespace interface { }
+
+} }
+

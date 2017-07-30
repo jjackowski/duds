@@ -1,0 +1,24 @@
+Import('*')
+
+envser = env.Clone()
+envser.AppendUnique(
+	LIBS = 'libboost_serialization${BOOSTTOOLSET}${BOOSTTAG}${BOOSTABI}${BOOSTVER}'
+)
+
+envthread = env.Clone()
+envthread.AppendUnique(
+	LIBS = 'pthread'
+)
+
+# could loop through directories, but be lazy for now
+targets = [
+	#env.Program('ds1620', Glob('DS1620/*.cpp') + libs),  # broken
+	env.Program('time', ['time.cpp'] + libs),
+	envser.Program('units', ['units.cpp'] + libs),
+	envthread.Program('ina219', ['ina219test.cpp'] + libs),
+	envthread.Program('isl29125', ['isl29125test.cpp'] + libs),
+	envthread.Program('tsl2591', ['tsl2591test.cpp'] + libs),
+	envthread.Program('textdisplay', ['textdisplay.cpp'] + libs),
+]
+
+Return('targets')

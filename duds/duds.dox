@@ -1,0 +1,209 @@
+/*
+ * This file is part of the DUDS project. It is subject to the BSD-style
+ * license terms in the LICENSE file found in the top-level directory of this
+ * distribution and at http://www.somewhere.org/somepath/license.html.
+ * No part of DUDS, including this file, may be copied, modified, propagated,
+ * or distributed except according to the terms contained in the LICENSE file.
+ *
+ * Copyright (C) 2017  Jeff Jackowski
+ */
+/**
+
+@mainpage DUDS Description
+
+@section DUDS  Distributed Update of Data from Something
+
+A silly name, because I'm not good at making up names, that attempts to describe the ultimate goal for this family of libraries. At present, DUDS only has a single library with functionality for time and interfacing with hardware through the Linux kernel. It aspires to be a set of libraries that include functionality for representing measurements taken from hardware, sending that data over a network, and doing so in a multi-platform environment.
+
+While only a single library results from the build at present, it will be broken up into several libraries as it grows to allow use of only part of DUDS functionality.
+
+Notable missing features:
+- Asynchronous serial support
+- Interrupt or event like response to changes in an input pin's state
+- An alternative to the gcc specific @a __restrict__ keyword (has underscores, but that makes Doxygen produce bold text)
+- Some unit tests
+
+@author  Jeff Jackowski
+
+
+@section DUDSlic  License
+
+The license is the two-clause simplified BSD license. See the @ref DUDSLic "License" page for the text.
+
+A few files in duds/general have code I did not write. They are marked with the correct author and license. It is my intent that any other licenses work well with the BSD license. So far, the only code not under a BSD license is in the public domain.
+
+
+@section DUDSgoal  Goals
+
+- Be a well designed C++ happy library that is multi-platform where applicable.
+- Take advantage of C++11.
+- Support multi-threaded programs.
+- Support dynamic resource usage.
+- Favor correctness over performance.
+- Favor flexibility and capability over ease of use.
+- Consist of namespaces with well defined purposes that are as independent as sensible.
+- Offer robust error reporting and handling.
+- Have unambiguous time stamps.
+- Track accuracy, precision, resolution, and origin of sample data.
+- Have good reference documentation.
+- Allow for internationalization support.
+
+
+@section DUDSaud Audience
+
+The audience, users of the library, include:
+- Intermediate and experienced C++ developers
+- Developers who want to mix high-level application code with use of low-level gizmos
+
+The audience is not intended to include:
+- Beginning developers
+- Developers unfamiliar with C++
+- Developers making high performance applications
+- Developers who avoid error handling
+
+While it is not intentional to exclude people from using this library, the library isn't intended to be a perfect fit for everyone or every use. For instance, it isn't made with the goal of being super easy to use as a top priority, and the documentation assumes a familiarity with C++.
+
+
+@section DUDSdocs Documentation
+
+The documentation is generated with the help of [Doxygen](http://www.doxygen.org/) and [Graphviz](http://www.graphviz.org/). Documentation comments are used throughout all header files and I consider writing them to be part of the development process. Currently, the documentation is limited to a reference with some sample source code thrown in.
+
+
+@section DUDSplat Supported Platforms
+
+@subsection DUDSplatOS Operating Systems
+
+At present, DUDS only supports Linux, including kernel versions 3.6 through 4.4, and likely newer. The kernel's user-space interfaces for hardware may change and break support, but that doesn't happen on a regular basis. The hardware interface libraries are written to allow multiple implementations, but I have no other operating systems to test with, nor the inclination to make an implementation for another system.
+
+I plan on supporting data representations and network communications on Windows as well as Linux, and hopefully this will work on other systems, too. The intention is to allow front-ends on a variety of platforms. However, since my only Windows running computer is an old thing with XP and Visual Studio 2005, I'm not yet sure how I'm going to build DUDS on Windows. Also, I'm not giving up C++11 to build on Windows and I'm not sure if VS2015 supports all the C++11 features used in the source, but it should at least have almost all of the support needed. Earlier versions of Visual Studio all lack required C++11 features.
+
+All development will be on Linux with gcc for a while longer, and I'm in no rush to change that.
+
+@subsection DUDSplatTHW Target Hardware
+
+The target hardware is the system that runs the operating system, DUDS, and the programs. Currently DUDS uses the user-space interfaces of the Linux kernel for hardware support. As a result, it requires the kernel to be built with support for the hardware. Unlike a number of other libraries, this prevents the code from working only on a particular processor or system board.
+
+The library is structured to allow support to be written for specific hardware, although the build system doesn't yet have the ability to build a subset of the code. For instance, a class derived from duds::hardware::interface::DigitalPin could support GPIO access for a specific target board, like a Raspberry PI, or a GPIO extender that isn't being used by the Linux kernel.
+
+@subsection DUDSplatDHW Device Hardware
+
+The devices include all hardware separate from the target hardware (although potentially on the same board) that the software will communicate with. Some devices are supported by drivers in the Linux kernel. Others will have support in an optional DUDS library.
+
+
+@section DUDSbuild Build Setup
+
+@subsection DUDSbuildList The long list
+
+- [SCons](http://scons.org/) 2.3 or so (it isn't very picky about the version)
+  - Python 2.7 to less than 3 (older versions possible with SCons 2.3.4 and older)
+- Build configuration options: run "scons -h"
+  - The configuration can be changed for one build by specifying an option as an argument to scons.
+  - To keep a configuration saved, set variables with the same name of the configuration options in Python syntax in localbuildconfig.py in the same directory as SConstruct.
+- gcc 5.4.x
+  - gcc 4.8.2 may still work
+  - gcc 6.x.y and newer are untested
+- [Boost](http://www.boost.org/) version 1.62 or so
+  - Some older versions may work down to 1.56
+  - Boost libraries used:
+    - Date time
+    - Exception (header only)
+    - Filesystem (optional)
+    - Multiprecision (header only)
+    - Serialization
+    - Signals2 (header only)
+    - System
+    - Unit test framework (optional; used for test programs, not DUDS library)
+    - Variant (header only)
+  - Build configuration options include Boost directories and variations on the names of the Boost library binaries.
+  - Default configuration is for a regular Boost build that is installed to default paths. This works on Gentoo Linux when Boost is installed by Portage.
+  - Ubuntu needs build configuration setting BOOSTTAG= (equals empty string) given to SCons. This changes the expected name of the Boost libraries; Ubuntu does not use the default names from the Boost build.
+  - Windows will need several build options because there is no standard install that I know about. DUDS isn't useful on Windows at the moment, so don't worry about it.
+- Build host
+  - Linux
+    - At least 1GB RAM if no swap space; more for parallel builds
+      - I let loose a template monster; it has a big party during the build.
+    - Raspberry Pi Models A, A+, B, B+, and Raspberry Pi Zero
+      - More than half an hour.
+      - Needs at least tens of megabytes of swap, or maybe 300MB or so if only 256MB of RAM are available.
+    - Raspberry Pi 2
+      - Around ten minutes without a parallel build. No swap space is needed when very little is running (no GUI), total RAM is reported as at least 896MB, and free RAM is 821MB. A very little swap space is needed when total RAM is 746MB.
+      - About seven minutes with -j 2. Swap space is required, although not much is needed.
+      - Under 5.5 minutes with -j 4.
+    - x86 and AMD64/Intel 64/x86-64
+      - Works fine; build times vary greatly and can be under a minute.
+  - Windows
+    - Not yet
+    - VS2015 might be lacking some C++11 support needed by DUDS, and older versions will be lacking.
+
+@subsection DUDSbuildWord More Words!
+
+DUDS uses [SCons](http://scons.org/) 2.4 as its build system, which is written in Python and requires Python 2.7.x; Python 3.x will not work. Compiling and linking is done with gcc 4.8.2 or newer. Development has moved to gcc 5.4.0, so support of gcc 4.x.y is now luck.
+
+The so-called C++11 standard, officially ISO/IEC 14882:2011, is used by DUDS. Use of features in newer C++ specifications is being avoided for now.
+
+The [Boost C++ library](http://www.boost.org/) is required. Version 1.56 or newer must be used. Boost's multiprecision library is used for 128-bit integer support when gcc's __int128 is not available, and for serializing 128-bit integers even when __int128 is available. This results in some notable differences in 128-bit integer support on 32 and 64 bit platforms, but maintains a serialization format that is identical across platforms when things like endianness and padding do not affect the results.
+
+The Boost unit test framework is used by a test program. This program does not require any special hardware to run. Some of the tests require leap second information from a zoneinfo (is that the proper name?) file. If the file isn't specified as the first argument to the program, those tests will be skipped.
+
+@subsection DUDSbuildTrg Build targets
+
+The default build target is the DUDS library. Sample programs are built with the "samples" target, and the tests program (one program right now) with the "tests" target. All those targets make debug builds. There is support for optimized builds, but they are untested. Build from the root directory of DUDS by running scons. The binaries will be placed in a directory under bin named for the target and build. For example:
+- duds
+  - bin
+    - linux-armv6l-dbg
+    - linux-armv6l-opt
+    - linux-x86_64-dbg
+
+There is currently no target for installation. Despite using Linux since 2001, I'm not really sure how software is typically installed.
+
+@subsection DUDSbuildMTrgS Multiple target support
+
+There is some support in the build for handling building for multiple targets with the same source files. I intended this to make it easier to go back and forth between my deskunder computer (AMD64) and a Raspberry Pi using the same directory with help from sshfs. It is my first attempt at such support with SCons, and has a few limitations and issues.
+
+- Currently, the target platform must be the host platform. This prevents building for slower systems, like the Raspberry Pi, on a different faster host, like AMD64. Fixing this also requires some non-trivial setup, like having the Boost libraries for the target available on the host. I won't be spending time on solving this; I'd rather improve and use DUDS.
+- The use of distcc is not supported. I do use it to build the software Gentoo installs on my Raspberry Pis, and configured it so that my AMD64 system can assist. Supporting this may be easier than supporting a target that is different from the host while getting some of the benefit.
+- Cleaning the build only cleans the it for the host platform. I think this is good, but may be unexpected to some users.
+- When building from the same filesystem on two different hosts of the same architecture that needs a different build configuration, the build must be cleaned after building on one host and before building on the other. Failure to clean the build will leave the build partly configured for the host that last built it after cleaning.
+- The file duds/BuildConfig.h is used by all targets, but may have different contents for each target. It will change between 32 and 64-bit targets, so I'd like a better solution. The dependency checking of SCons is smart enough to limit rebuilding in this case because it uses an MD5 hash of the file contents rather than a modification time, so I don't consider this a high priority yet.
+- Simultaneously building for multiple targets using a shared filesystem and multiple hosts is not supported and will not work correctly. If each host has its own copy of the source and build files, then they can all build together.
+- Any programs that use the DUDS library that are not built by the same build script and use the header and library files in the DUDS development tree will need to be built after DUDS has been built for the same target and before it is built for another target. This is to ensure that duds/BuildConfig.h is correct for the target.
+
+
+@section DUDSi18n Internationalization
+
+Support for internationalization is mostly an attempt at keeping string literals out of the library or Human language neutral. For instance, the exception classes do not define error strings returned by std::exception::what().
+
+All std::string objects are presumed to contain UTF-8 strings.
+
+*/
+
+/**
+@page DUDSLic License
+
+The license for all but duds/general/SignExtend.hpp is the two-clause simplified BSD license.
+
+-------------------------------------------------------------------------------
+
+Copyright (c) 2017, Jeffrey Walter Jackowski<br/>
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+-# Redistributions of source code must retain the above copyright notice,
+   this list of conditions and the following disclaimer.
+-# Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+*/

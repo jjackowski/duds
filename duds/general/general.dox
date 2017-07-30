@@ -1,0 +1,11 @@
+namespace duds {
+
+/**
+General use library code that isn't actually specific to the DUDS family of
+libraries, but were developed along with DUDS. The code in this namespace must
+@b not be specific to DUDS.
+*/
+namespace general { }
+
+}
+

@@ -1,0 +1,17 @@
+namespace duds { namespace hardware { namespace interface {
+
+/**
+A Linux specific library for communicating with external hardware. Any code
+that is specific to both Linux and some particular processor or other hardware
+not abstracted by the kernel should be placed in a namespace named for that
+hardware under this namespace. Code directly in this name space must @b not be
+specific to any particular hardware by using user-space kernel interfaces.
+
+Many of Linux's user-space interfaces are file based, like the sysfs filesystem.
+Should an I/O error occur while using a file, and the error requires an
+exception to be thrown, boost::exception should be used (all duds exceptions
+do), and boost::errinfo_file_name should be added with the name of the file.
+*/
+namespace linux { }
+
+} } }

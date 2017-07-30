@@ -1,0 +1,23 @@
+# This file is part of the DUDS project. It is subject to the BSD-style
+# license terms in the LICENSE file found in the top-level directory of this
+# distribution and at http://www.somewhere.org/somepath/license.html.
+# No part of DUDS, including this file, may be copied, modified, propagated,
+# or distributed except according to the terms contained in the LICENSE file.
+#
+# Copyright (C) 2017  Jeff Jackowski
+
+Import('*')
+
+targets = [
+	# include all source files in the DUDS library using a very simple method
+	#env.SharedLibrary('duds', Glob('*.cpp') + Glob('*/*.cpp') +
+	# changed to static temporarily to ease the use of eclipse programs and
+	# delay learning more about software istalls
+	env.StaticLibrary('duds', Glob('*.cpp') + Glob('*/*.cpp') +
+		Glob('*/*/*.cpp') + Glob('*/*/linux/*cpp') + Glob('*/devices/*/*cpp') )
+		# + Glob('*/*/*/*.cpp') +  Glob('*/*/*/*/*.cpp'))
+		# above changed to just have linux only to help build new code & fix
+		# up old code; do change it back
+]
+
+Return('targets')

@@ -1,0 +1,19 @@
+/* Makes the text a little smaller. */
+body, table, div, p, dl {
+	font: 400 12px/14px Roboto,sans-serif;
+}
+span.legend {
+	font-size: 90%;
+	text-align: center;
+}
+.memTemplParams {
+	font-size: 90%;
+}
+.memtemplate {
+	font-size: 90%;
+}
+
+/* Make exception classes aligned to the top instead of center. */
+.paramname {
+	vertical-align: top;
+}

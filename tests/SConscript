@@ -1,0 +1,16 @@
+Import('*')
+
+testenv = env.Clone()
+testenv.AppendUnique(
+	LIBS = [
+		'libboost_unit_test_framework${BOOSTTOOLSET}${BOOSTTAG}${BOOSTABI}${BOOSTVER}',
+		'libboost_serialization${BOOSTTOOLSET}${BOOSTTAG}${BOOSTABI}${BOOSTVER}'
+	]
+)
+
+targets = [
+	testenv.Program('tests', Glob('*.cpp') + libs)
+]
+
+Return('targets')
+

@@ -1,0 +1,90 @@
+/*
+ * This file is part of the DUDS project. It is subject to the BSD-style
+ * license terms in the LICENSE file found in the top-level directory of this
+ * distribution and at http://www.somewhere.org/somepath/license.html.
+ * No part of DUDS, including this file, may be copied, modified, propagated,
+ * or distributed except according to the terms contained in the LICENSE file.
+ *
+ * Copyright (C) 2017  Jeff Jackowski
+ */
+namespace duds { namespace time {
+
+/**
+A first take at implementing an early definition of Interstellar Time.
+
+@bug  Fix named types!
+
+The time storage classes, TimeFemtos, TimeNanos, TimeMillis, and TimeSeconds, all use different uints and have different ranges. All but TimeFemtos use 64-bit integers, and all but TimeNanos are signed. Assignment, basic arithmetic, and comparison operators are defined for all of these classes, and between the classes. When used between two classes, a conversion is first done so the operation is performed on the same units. The conversions are done using integer math and no range checking is performed, so be careful when using these operations. I'm not entirely happy with them.
+*/
+namespace interstellar {
+
+} } }
+
+
+/**
+
+@page IST Interstellar Time
+
+@section ISTintro Introduction
+
+I needed a way to record when events occur that is unambiguous, got annoyed with other time definitions making this difficult, things spiraled out of control, and I came up with Interstellar Time. It is designed, in part, to be fitting of the name.
+
+Interstellar Time is based solely on seconds; it has no calendar since those are defined in connection with a planet. This means Interstellar Time has no need of leap seconds or days. In this way of thought, any time system that has a calendar and leap seconds is a planetary time system since it is intended to remain synchronized to the solar day and year of a planet. UTC is a perfect example. It includes leap seconds to use the correct definition of a second while staying in step with Earth's varying length days.
+
+TAI, however, only started synchronized to the solar day of Earth, but has since advanced based on the definition of a second while still using a Terran calendar. This results in TAI becoming further desynchronized with Terran planetary time as UTC adds more leap seconds. Interstellar Time attempts to be more consistent by making no attempt to use the vestiges of planetary time while not using leap seconds. This should hypothetically make Interstellar Time an ideal intermediate form for converting between planetary time systems.
+
+A number of computer systems use POSIX time, also called UNIX time. This time system is fixed to Earth's solar day, but uses a fixed length day. This is done by setting the clock back a second to account for a +1 leap second. The result is that using POSIX time for time stamps allows for two seconds of ambiguous time around a leap second. It also means that computations of durations can be incorrect unless extra effort is made to account for leap seconds.
+
+@section ISTdef Definition
+
+@todo  Determine if using Barycentric Coordinate Time (TCB) might be a better option, and if so, how to implement it.
+
+The initial definition of Interstellar Time is intended to make it usable without being overly difficult. It is not intended to be a definition robust enough for use in interstellar travel, but hopefully a future revision of the definition will solve this issue. Interstellar Time is a count of seconds since time zero, which is arbitrarily defined as the very begining of the Terran year 1972 according to TAI, minus 31536000 seconds (two non-leap years without leap seconds). The subtraction avoids the issue of leap seconds before 1972; there was no international agreement before then and seemingly no records of such leap seconds are available online. The definition is close to a very common definition of time zero (1970 UTC is more commonly used), and it allows POSIX time to be seen as though it were TAI (no leap seconds) for a direct conversion to Interstellar Time. A proper conversion must add leap seconds to the POSIX time.
+
+In ordered to be at least somewhat worthy of the name Interstellar Time, I decided the primary computer storage form ought to be large enough to last past the [Stelliferous Era](http://en.wikipedia.org/wiki/Stelliferous_era#Stelliferous_Era). It must also be an integer to avoid loss of precision over time. I decided on using a 128-bit integer that stores @ref duds::time::interstellar::Femtoseconds "Interstellar Time in femtoseconds" for plenty of resolution. It should last into the begining of the Degenerate Era. Other storage forms are also available that use less memory, but have more limited ranges and less resolution.
+
+@section ISTpow Time Intervals in Seconds by Powers of Ten (mostly)
+
+I found this useful while contemplating Human readable formats for Interstellar Time.
+
+| Unit         | Abrev | Seconds | Similar-ish        | Earth Time Equivalent
+|--------------|:-----:|--------:|--------------------|------------------------
+| second       | s     | 1       | second             | 1 second
+| decasecond   | ds    | 10      | tens of seconds    | 10 seconds
+| hectosecond  | hs    | 100     | minute             | 1 minute, 40 seconds
+| kilosecond   | ks    | 1000    | quarter hour       | 16 minutes, 40 seconds
+| myriasecond  | mas   | 10000   | hours              | 2 hours, 46 minutes, 40 seconds
+| 1e5 seconds  |       | 100000  | day                | 1 day, 3 hours, 46 minutes, 40 seconds
+| megasecond   | Ms    | 1e6     | week               | 11 days, 13 hours, 46 minutes, 40 seconds
+| 1e7 seconds  |       | 1e7     | months             | 115 days, 17 hours, 46 minutes, 40 seconds
+| 1e8 seconds  |       | 1e8     | years              | 3 years, 61 days, 16 hours, 19 minutes, 4 seconds
+| gigasecond   | Gs    | 1e9     | decades            | 31 years, 251 days, 13 hours, 21 minutes, 28 seconds
+| 1e10 seconds |       | 1e10    | centuries          | 316 years, 324 days, 2 hours, 39 minutes, 28 seconds
+| 1e11 seconds |       | 1e11    | millennia          | 3168 years, 319 days, 4 hours, 1 minute, 4 seconds
+| terasecond   | Ts    | 1e12    | tens of millennia  | 31688 years, 269 days, 17 hours, 37 minutes, 4 seconds
+| petasecond   | Ps    | 1e15    | millions of years  | 31.688738 million years
+| exasecond    | Es    | 1e18    | billions of years  | 31.688738 billion years
+| zettasecond  | Zs    | 1e21    | trillions of years | 31.688738 trillion years
+
+Details worthy of notice:
+	- The prefix myria has been deprecated since 1960.
+	- The length of a year used in the table is 365.2425 days; it is based on
+	  the Gregorian calendar.
+	- The length of a day used in the table is always exactly 86400 seconds.
+
+@section ISThumanform Human Readable Formats
+
+@subsection ISThumanformMetric Metric Format
+This format follows the regular metric prefix convention of varying by a factor of 1000.
+@code
+000G 000M 000k 000s 000m
+@endcode
+The letters are the metric prefix abreviations without units, excepct for s, since the units are all seconds. Each section jumps by a rather large amount, so I doubt this will work well for most people. It is implemented by duds::time::interstellar::Metricform.
+
+@subsection ISThumanformHecto Hecto Format
+This format has fields increasing by a factor of 100 to avoid the large jumps of the metric format.
+@code
+00:00:00-00:00:00
+@endcode
+It is implemented by duds::time::interstellar::Hectoform.
+*/
