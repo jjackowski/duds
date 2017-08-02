@@ -83,11 +83,11 @@ All development will be on Linux with gcc for a while longer, and I'm in no rush
 
 The target hardware is the system that runs the operating system, DUDS, and the programs. Currently DUDS uses the user-space interfaces of the Linux kernel for hardware support. As a result, it requires the kernel to be built with support for the hardware. Unlike a number of other libraries, this prevents the code from working only on a particular processor or system board.
 
-The library is structured to allow support to be written for specific hardware, although the build system doesn't yet have the ability to build a subset of the code. For instance, a class derived from duds::hardware::interface::DigitalPin could support GPIO access for a specific target board, like a Raspberry PI, or a GPIO extender that isn't being used by the Linux kernel.
+The library is structured to allow support to be written for specific hardware, although the build system doesn't yet have the ability to build a subset of the code. For instance, a class derived from duds::hardware::interface::DigitalPort could support GPIO access for a specific target board, like a Raspberry PI, or a GPIO extender that isn't being used by the Linux kernel.
 
 @subsection DUDSplatDHW Device Hardware
 
-The devices include all hardware separate from the target hardware (although potentially on the same board) that the software will communicate with. Some devices are supported by drivers in the Linux kernel. Others will have support in an optional DUDS library.
+The devices include all hardware separate from the target hardware (although potentially on the same board) that the software will communicate with. Some devices are supported by drivers in the Linux kernel. Others will have support in duds::hardware::devices.
 
 
 @section DUDSbuild Build Setup

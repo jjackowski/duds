@@ -7,6 +7,9 @@
  *
  * Copyright (C) 2017  Jeff Jackowski
  */
+#ifndef ISL29125_HPP
+#define ISL29125_HPP
+
 #include <duds/hardware/interface/I2c.hpp>
 #include <duds/hardware/interface/ConversationExtractor.hpp>
 
@@ -73,3 +76,5 @@ public:
 };
 	
 } } } }
+
+#endif        //  #ifndef ISL29125_HPP

@@ -7,6 +7,9 @@
  *
  * Copyright (C) 2017  Jeff Jackowski
  */
+#ifndef TSL2591_HPP
+#define TSL2591_HPP
+
 #include <duds/hardware/interface/I2c.hpp>
 #include <duds/hardware/interface/ConversationExtractor.hpp>
 #include <duds/hardware/devices/DeviceErrors.hpp>
@@ -135,3 +138,5 @@ public:
 };
 
 } } } }
+
+#endif        //  #ifndef TSL2591_HPP

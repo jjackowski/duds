@@ -18,7 +18,7 @@ class DigitalPort;
 
 /**
  * A base class for classes that represent one or more pins on a single
- * DigitalPrt, but do not provide access. There will likely be no need or
+ * DigitalPort, but do not provide access. There will likely be no need or
  * reason to keep objects of this type.
  * @author  Jeff Jackowski
  */
