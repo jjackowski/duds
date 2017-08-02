@@ -19,6 +19,7 @@ targets = [
 	envthread.Program('isl29125', ['isl29125test.cpp'] + libs),
 	envthread.Program('tsl2591', ['tsl2591test.cpp'] + libs),
 	envthread.Program('textdisplay', ['textdisplay.cpp'] + libs),
+	envthread.Program('pwmbacklight', ['pwmbacklight.cpp'] + libs),
 ]
 
 Return('targets')
