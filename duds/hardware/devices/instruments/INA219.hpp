@@ -7,6 +7,9 @@
  *
  * Copyright (C) 2017  Jeff Jackowski
  */
+#ifndef INA219_HPP
+#define INA219_HPP
+
 #include <duds/hardware/interface/Smbus.hpp>
 #include <duds/data/Quantity.hpp>
 
@@ -14,13 +17,7 @@ namespace duds { namespace hardware { namespace devices { namespace instruments 
 
 /**
  * Preliminary support for TI's INA219 that appears broken.
- * Normally uses address 0x40. Does not use PEC. Has only produced bad data,
- * but without communication errors. The shunt voltage doesn't match
- * measurements I make, and the bus voltage has no bearing on reality. Also
- * tried Linux kernel driver, but never found the files in /sys from the
- * device that are documented in
- * https://www.kernel.org/doc/Documentation/hwmon/sysfs-interface, so never
- * saw the kernel driver produce any results.
+ * Normally uses address 0x40. Does not use PEC; not really a SMBus device.
  *
  * @author  Jeff Jackowski
  */
@@ -50,6 +47,9 @@ public:
 	duds::data::Quantity shuntVoltage() const;
 	duds::data::Quantity busVoltage() const;
 	duds::data::Quantity busCurrent() const;
+	duds::data::Quantity busPower() const {
+		return busVoltage() * busCurrent();
+	}
 	void sample();
 	
 	void vals(std::int16_t &sV, std::int16_t &bV) {
@@ -59,3 +59,5 @@ public:
 };
 
 } } } }
+
+#endif        //  #ifndef INA219_HPP

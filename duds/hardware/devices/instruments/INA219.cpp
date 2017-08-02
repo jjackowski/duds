@@ -18,16 +18,15 @@ INA219::INA219(
 	// reset device -- resulted in the device no longer sampling; the reset
 	// must not return the device to power-on settings as documented, or maybe
 	// the power-on reset doesn't work as documented
-	//com->transmitWord(0, 0x8000);  // fail!
-	//com->transmitWord(0, 0x1FFF);  // 128 samples, 16v bus
-	com->transmitWord(0, 0x399F);  // documented value for power-on reset
-	com->transmitWord(5, 4096);    // helpful?
+	com->transmitWordBe(0, 0x8000);  // fail!
+	com->transmitWordBe(0, 0x1FFF);  // 128 samples, 16v bus
+	//com->transmitWordBe(0, 0x399F);  // documented value for power-on reset
 }
 
 INA219::~INA219() {
 	if (com) {
 		// put device to sleep; set widest ranges in case that is good
-		com->transmitWord(0, 0x3998);
+		com->transmitWordBe(0, 0x3998);
 	}
 }
 
@@ -52,8 +51,8 @@ duds::data::Quantity INA219::busCurrent() const {
 }
 
 void INA219::sample() {
-	shuntV = com->receiveWord(1);
-	busV = (std::int16_t)(com->receiveWord(2)) >> 3;
+	shuntV = com->receiveWordBe(1);
+	busV = (std::int16_t)(com->receiveWordBe(2)) >> 3;
 }
 
 } } } }

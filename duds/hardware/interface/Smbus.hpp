@@ -38,12 +38,13 @@ namespace duds { namespace hardware { namespace interface {
  * the bad data and generating an error. It is not part of the I2C
  * specification, so it should be disabled for use with SMBus-like I2C devices.
  *
- * All word, two byte, std::int16_t data is in host endianness. The SMBus
+ * All word, two byte, std::uint16_t data is in host endianness. The SMBus
  * protocol specifies that words are sent in little endian order. This must
- * work on both little and big endian hosts. As a result, if a device
- * communicates with big endian words, this interface should return words in
- * the opposite endianness of the host unless the interface is specifically
- * configured for non-compliant big-endian communication.
+ * work on both little and big endian hosts. To assist in dealing with devices
+ * that are not SMBus compliant and use big-endian data, the receiveWordBe()
+ * and transmitWordBe() functions will do an endianness conversion on the data.
+ * They allow the code to use host endianness while communicating with
+ * big-endian data.
  *
  * There isn't a matching access object because SMBus is specified in such a
  * way that it shouldn't be required.
@@ -123,6 +124,30 @@ public:
 	 *                               other exceptions.
 	 */
 	virtual std::uint16_t receiveWord(std::uint8_t cmd) = 0;
+	/**
+	 * Sends a command byte, then reads a big-endian word from the device.
+	 * @param cmd  The command or register byte.
+	 * @return     The word from the device in host endianness.
+	 * @note  This function is only useful for devices that are not actually
+	 *        SMBus compliant. Some I2C devices that can be used as SMBus
+	 *        devices may use big-endian data.
+	 * @throw SmbusErrorPec          The PEC checksum was not valid for the data.
+	 * @throw SmbusErrorBusy         The bus was in use for an inordinate length
+	 *                               of time. This is not caused by scheduling
+	 *                               on the same host computer.
+	 * @throw SmbusErrorNoDevice     The device did not respond to its address.
+	 * @throw SmbusErrorUnsupported  This operation is unsupported by the master.
+	 * @throw SmbusErrorProtocol     Data from the device does not conform to
+	 *                               the SMBus protocol.
+	 * @throw SmbusErrorTimeout      The operation took too long resulting in a
+	 *                               bus timeout.
+	 * @throw SmbusError             A general error that doesn't fit one of the
+	 *                               other exceptions.
+	 */
+	std::uint16_t receiveWordBe(std::uint8_t cmd) {
+		std::uint16_t result = receiveWord(cmd);
+		return (result << 8) | (result >> 8);
+	}
 	/**
 	 * Sends a command byte, then reads a block of data from the device.
 	 * @param cmd     The command or register byte.
@@ -234,6 +259,29 @@ public:
 	 *                               other exceptions.
 	 */
 	virtual void transmitWord(std::uint8_t cmd, std::uint16_t word) = 0;
+	/**
+	 * Sends a command byte and a big-endian data word to the device.
+	 * @param cmd   The command or register byte.
+	 * @param word  The data word to send in host endianness.
+	 * @note  This function is only useful for devices that are not actually
+	 *        SMBus compliant. Some I2C devices that can be used as SMBus
+	 *        devices may use big-endian data.
+	 * @throw SmbusErrorPec          The PEC checksum was not valid for the data.
+	 * @throw SmbusErrorBusy         The bus was in use for an inordinate length
+	 *                               of time. This is not caused by scheduling
+	 *                               on the same host computer.
+	 * @throw SmbusErrorNoDevice     The device did not respond to its address.
+	 * @throw SmbusErrorUnsupported  This operation is unsupported by the master.
+	 * @throw SmbusErrorProtocol     Data from the device does not conform to
+	 *                               the SMBus protocol.
+	 * @throw SmbusErrorTimeout      The operation took too long resulting in a
+	 *                               bus timeout.
+	 * @throw SmbusError             A general error that doesn't fit one of the
+	 *                               other exceptions.
+	 */
+	void transmitWordBe(std::uint8_t cmd, std::uint16_t word) {
+		transmitWord(cmd, (word << 8) | (word >> 8));
+	}
 	/**
 	 * Sends a command byte and a block of data to the device.
 	 * @param cmd   The command or register byte.
