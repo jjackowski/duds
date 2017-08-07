@@ -31,46 +31,67 @@ try {
 	double expmavg = 0;
 	double emaBr = 0;
 	int cnt = 0;
+	int brtmr = 0;
 	do {
-		std::this_thread::sleep_for(std::chrono::milliseconds(128));
-		meter.sample();
+		// the TSL2591 takes at least 100ms for integration
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		try {
+			meter.sample();
+		} catch (...) {
+			try {
+				std::this_thread::sleep_for(std::chrono::milliseconds(10));
+				meter.init(1, 0);
+			} catch (...) {
+				continue;
+			}
+		}
 		duds::data::Quantity visB = meter.brightness();
 		duds::data::Quantity irB = meter.brightnessIr();
 		assert(visB.unit == chku);
 		assert(irB.unit == chku);
-		if ((++cnt % 16) == 0) {
-			std::cout << "Brightness: " << std::setw(5) << meter.brightnessCount()
-			<< "  Brightness avg: " << std::setprecision(5) << std::setw(12) <<
-			"  Duty: " << std::setprecision(5) << std::setw(8) << expmavg <<
-			std::endl;
-		}
-		
-		emaBr = (double)meter.brightnessCount() * 0.4 + emaBr * 0.6;
+		emaBr = (double)meter.brightnessCount() * 0.34 + emaBr * 0.66;
 		// really bright?
 		if (emaBr > 28672.0) {
-			pwm.disable();
-			expmavg = 0;
+			// after a time limint . . .
+			if (++brtmr > 24) {
+				// . . . go dark
+				pwm.disable();
+				expmavg = 0;
+			} else {
+				// be as bright as possible
+				pwm.dutyFull();
+				expmavg = 1.0;
+			}
 		} else {
+			brtmr = 0;
 			// not quite bright enough?
-			if (emaBr > 24576.0) {
+			if (emaBr > 1280.0) {
+				// be as bright as possible
 				pwm.dutyFull();
 				expmavg = 1.0;
 			} else {
 				// dimmer; backlight doesn't need to be so bright
-				double r = (double)(emaBr - 2048.0) * (1.0/22528.0);
+				double r = (double)(emaBr - 128.0) * (1.0/1024.0);
 				if (r > 1.0) {
 					r = 1.0;
 				}
 				// impose a minimum brightness
-				else if (r < 0.1) {
-					r = 0.1;
+				else if (r < 0.08) {
+					r = 0.08;
 				}
 				expmavg = 0.66 * expmavg + 0.34 * r;
 				pwm.dutyCycle(expmavg);
 			}
 			pwm.enable();
 		}
-		
+		/*
+		if ((++cnt % 16) == 0) {
+			std::cout << "Brightness: " << std::setw(5) << meter.brightnessCount()
+			<< "  Brightness avg: " << std::setprecision(5) << std::setw(12) <<
+			emaBr << "  Duty: " << std::setprecision(5) << std::setw(8) <<
+			expmavg << std::endl;
+		}	
+		*/
 	} while (!quit);
 } catch (...) {
 	std::cerr << "Program failed in runtest(): " <<
@@ -86,11 +107,11 @@ try {
 		)
 	);
 	duds::hardware::devices::instruments::TSL2591 meter(i2c);
-	int gain = 1;
+	int gain = 0;
 	if (argc > 1) {
 		gain = argv[1][0] - '0';
 	}
-	int integration = 1;
+	int integration = 0;
 	if (argc > 2) {
 		integration = argv[2][0] - '0';
 	}
@@ -100,10 +121,11 @@ try {
 	pwm.dutyZero();
 	pwm.disable();
 	std::this_thread::sleep_for(std::chrono::milliseconds(2));
-	std::thread doit(runtest, std::ref(meter), std::ref(pwm));
-	std::cin.get();
-	quit = true;
-	doit.join();
+	//std::thread doit(runtest, std::ref(meter), std::ref(pwm));
+	//std::cin.get();
+	//quit = true;
+	//doit.join();
+	runtest(meter, pwm);
 } catch (...) {
 	std::cerr << "Program failed in main(): " <<
 	boost::current_exception_diagnostic_information() << std::endl;
