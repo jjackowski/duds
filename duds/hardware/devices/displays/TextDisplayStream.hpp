@@ -155,6 +155,19 @@ public:
 			display()->clearTo(c, r);
 		}
 	}
+	/**
+	 * Moves the cursor to the start of a line clearing text along the way. If
+	 * the cursor is already at the start of a line, it will not move and no
+	 * text will be cleared.
+	 */
+	void startLine() {
+		TextDisplay *td = display().get();
+		if (td) {
+			if (td->columnPos() > 0) {
+				td->clearTo(td->columns() - 1, td->rowPos());
+			}
+		}
+	}
 };
 
 /**
@@ -174,6 +187,19 @@ template <class Char, class Traits>
 std::basic_ostream<Char, Traits> &clear(std::basic_ostream<Char, Traits> &os) {
 	if (os.pword(TextDisplayBasicStream<Char, Traits>::xallocIndex()) == &os) {
 		static_cast<TextDisplayBasicStream<Char, Traits>&>(os).clearDisplay();
+	}
+	return os;
+}
+
+/**
+ * Moves the cursor to the start of a line clearing text along the way. If
+ * the cursor is already at the start of a line, it will not move and no
+ * text will be cleared.
+ */
+template <class Char, class Traits>
+std::basic_ostream<Char, Traits> &startLine(std::basic_ostream<Char, Traits> &os) {
+	if (os.pword(TextDisplayBasicStream<Char, Traits>::xallocIndex()) == &os) {
+		static_cast<TextDisplayBasicStream<Char, Traits>&>(os).startLine();
 	}
 	return os;
 }
