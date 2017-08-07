@@ -192,7 +192,8 @@ public:
 	 */
 	virtual ~HD44780();
 	/**
-	 * Sets the pins to use for communicating with the display.
+	 * Sets the pins to use for communicating with the display. After calling
+	 * this, initialize() must be called before using the display.
 	 * @post  The objects in @a outPins and @a enablePins are moved to internal
 	 *        members. They will be the same as default-constructed objects
 	 *        after this function returns.

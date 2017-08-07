@@ -15,10 +15,8 @@ INA219::INA219(
 	std::unique_ptr<duds::hardware::interface::Smbus> &c,
 	double s
 ) : com(std::move(c)), shunt(s) {
-	// reset device -- resulted in the device no longer sampling; the reset
-	// must not return the device to power-on settings as documented, or maybe
-	// the power-on reset doesn't work as documented
-	com->transmitWordBe(0, 0x8000);  // fail!
+	// reset device
+	com->transmitWordBe(0, 0x8000);
 	com->transmitWordBe(0, 0x1FFF);  // 128 samples, 16v bus
 	//com->transmitWordBe(0, 0x399F);  // documented value for power-on reset
 }
