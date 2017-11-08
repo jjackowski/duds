@@ -18,9 +18,8 @@ INA219::INA219(
 	// reset device
 	c->transmitWordBe(0, 0x8000);
 	c->transmitWordBe(0, 0x1FFF);  // 128 samples, 16v bus
-	//com->transmitWordBe(0, 0x399F);  // documented value for power-on reset
 	// only take the communicator if no exception is thrown
-	com = std::move(c)
+	com = std::move(c);
 }
 
 INA219::~INA219() {
