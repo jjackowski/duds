@@ -7,6 +7,9 @@
  *
  * Copyright (C) 2017  Jeff Jackowski
  */
+#ifndef CONVERSATIONVECTOR_HPP
+#define CONVERSATIONVECTOR_HPP
+
 #include <type_traits>
 #include <vector>
 #include <duds/hardware/interface/ConversationPart.hpp>
@@ -518,3 +521,5 @@ inline ConversationVector &operator << (
 }
 
 } } }
+
+#endif        //  #ifndef CONVERSATIONVECTOR_HPP

@@ -207,6 +207,22 @@ struct QuantityArray {
 };
 
 /**
+ * A QuantityArray for the common usage of a three dimentional coordinate or
+ * a triple axis sample.
+ */
+struct QuantityXyz : public QuantityArray<3> {
+	Quantity x() const {
+		return get(0);
+	}
+	Quantity y() const {
+		return get(0);
+	}
+	Quantity z() const {
+		return get(0);
+	}
+};
+
+/**
  * An array of quantites of dynamic size and number of dimensions.
  * A duds::general::NddArray is used to hold all quantity values, doubles,
  * and the units are held separately. This reduces the memory usage over

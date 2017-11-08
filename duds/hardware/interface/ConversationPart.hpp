@@ -37,9 +37,13 @@ struct ConversationError : virtual std::exception, virtual boost::exception { };
  *                a ConversationExternal object.
  *  - MpfVarlen: Indicates a variable length input. Intended for use by
  *               communication code that takes Conversation objects.
- *  - MpfBigendian: Where not otherwise specified, data will be treated as
- *                  big-endian. Used by ConversationVector and
- *                  ConversationExtractor.
+ *  - MpfBigendian: Functions that do not specify endianess, and the insertion
+ *                  and extraction operators of ConversationVector, will treat
+ *                  the data as little-endian by default. Setting this flag
+ *                  will cause them to treat the data as big-endian. This only
+ *                  affects data sent to and from the device on the other end
+ *                  of the Conversation; data moving between the Conversation
+ *                  and the program using it is done in host endianess.
  *
  * @author  Jeff Jackowski
  */
@@ -53,6 +57,7 @@ public:
 		Flags;
 	/**
 	 * True/set for input; false for output.
+	 * @todo  Change to CpfInput.
 	 */
 	static constexpr Flags MpfInput = Flags::Bit(0);
 	/**
@@ -84,8 +89,9 @@ public:
 private:
 	/**
 	 * A set of flags that alter the behavior of the message part.
+	 * @todo  Change this to cpf.
 	 */
-	Flags mpf;
+	Flags mpf;  // message part flags, but message was changed to conversation
 protected:
 	/**
 	 * A small integer for derived classes to use. Placed here because it won't
@@ -112,6 +118,7 @@ public:
 	 *  - MpfExtract
 	 *  - MpfVarlen
 	 *  - MpfBigendian
+	 *  - MpfBreak
 	 */
 	Flags flags() const {
 		return mpf;
@@ -133,6 +140,12 @@ public:
 	 */
 	bool extract() const {
 		return mpf & MpfExtract;
+	}
+	/**
+	 * Changes the extraction flag for this part.
+	 */
+	void extract(bool ex) {
+		mpf.setTo(MpfExtract, ex);
 	}
 	/**
 	 * True if this part is flagged as having a variable length. It is only
@@ -166,6 +179,16 @@ public:
 	 */
 	void littleEndian(bool little) {
 		mpf.setTo(MpfBigendian, !little);
+	}
+	/**
+	 * Flags the conversation part to have a break before this part is sent.
+	 * Exactly what this means and if it is honored is implementation specific.
+	 * For I2C, it should cause a stop condition, followed by a start condition,
+	 * and then this part's data. For SPI, it should cause the device's chip
+	 * select to change to the unselected state briefly.
+	 */
+	void breakBefore() {
+		mpf |= MpfBreak;
 	}
 	/**
 	 * Returns a pointer to the begining of the conversation part's buffer.

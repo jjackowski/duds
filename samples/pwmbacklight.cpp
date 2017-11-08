@@ -51,7 +51,7 @@ try {
 		assert(irB.unit == chku);
 		emaBr = (double)meter.brightnessCount() * 0.34 + emaBr * 0.66;
 		// really bright?
-		if (emaBr > 28672.0) {
+		if (emaBr > 26624.0) {
 			// after a time limint . . .
 			if (++brtmr > 24) {
 				// . . . go dark

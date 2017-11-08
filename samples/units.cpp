@@ -23,6 +23,7 @@
 #include <boost/serialization/shared_ptr.hpp>
 #include <boost/serialization/map.hpp>
 #include <boost/serialization/vector.hpp>
+#include <boost/serialization/array.hpp>
 
 // following needed for Boost 1.55
 //#include <duds/general/ArraySerialize-depricate.hpp>

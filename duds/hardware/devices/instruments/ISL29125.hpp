@@ -11,7 +11,7 @@
 #define ISL29125_HPP
 
 #include <duds/hardware/interface/I2c.hpp>
-#include <duds/hardware/interface/ConversationExtractor.hpp>
+#include <duds/hardware/interface/Conversation.hpp>
 
 namespace duds { namespace hardware { namespace devices { namespace instruments {
 
@@ -21,11 +21,31 @@ namespace duds { namespace hardware { namespace devices { namespace instruments 
  * calls with SMBus. Seems to work well.
  * @author  Jeff Jackowski
  */
-class ISL29125 {
+class ISL29125 : boost::noncopyable {
+	/**
+	 * The I2C communication interface.
+	 */
 	std::unique_ptr<duds::hardware::interface::I2c> com;
+	/**
+	 * Output used to initialize the device.
+	 */
 	duds::hardware::interface::Conversation initialize;
+	/**
+	 * Used to read in the sampled data.
+	 */
 	duds::hardware::interface::Conversation input;
-	std::uint16_t r, g, b;
+	/**
+	 * Red brightness.
+	 */
+	std::uint16_t r;
+	/**
+	 * Green brightness.
+	 */
+	std::uint16_t g;
+	/**
+	 * Blue brightness.
+	 */
+	std::uint16_t b;
 public:
 	/**
 	 * Prepares to communicate with the device, but does not initalize the

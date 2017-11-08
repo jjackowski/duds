@@ -50,14 +50,8 @@ protected:
 				disp->move(0, disp->rowPos());
 				break;
 			// new line
-			case '\n': { /*
-				unsigned int r = disp->rowPos() + 1;
-				if (r >= disp->rows()) {
-					r = 0;
-				}
-				disp->move(0, r); */
+			case '\n':
 				disp->clearTo(disp->columns() - 1, disp->rowPos());
-				}
 				break;
 			// something else
 			default:

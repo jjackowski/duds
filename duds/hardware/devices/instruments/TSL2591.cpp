@@ -9,9 +9,19 @@
  */
 #include <duds/hardware/devices/instruments/TSL2591.hpp>
 #include <duds/hardware/interface/I2cErrors.hpp>
+#include <duds/hardware/interface/ConversationExtractor.hpp>
 
 namespace duds { namespace hardware { namespace devices { namespace instruments {
 
+/**
+ * Prevent Doxygen from mixing this up with other source-file specific items.
+ * @internal
+ */
+namespace TSL2591_internal {
+
+/**
+ * The device's registers. These really do not fill a byte.
+ */
 enum Regs {
 	RegEnable,
 	RegControl, // called config in the doc's list of regs, but control in detail
@@ -20,26 +30,42 @@ enum Regs {
 	RegCh0,
 	RegCh1      = 0x16
 };
-enum CmdBits {
+
+/**
+ * The flags refered to as commands in the documentation.
+ */
+enum CmdFlags {
 	Cmd        = 0x80,  // used for all command bytes
 	TransNorm  = 0x20,
 	TransSpec  = 0x60,
 	AddrMask   = 0x1F
 };
-enum EnableBits {
+
+/**
+ * Flags used to enable various features.
+ */
+enum EnableFlags {
 	OscOn      = 1,
 	Sample     = 2,
 	IntEnable  = 0x10,
 	SleepOnInt = 0x40,
 	NonPersistantInterrutEnable = 0x80  // really don't know what to call it
 };
-enum ControlBits {
+
+/**
+ * More configuration flags.
+ */
+enum ControlFlags {
 	IntgrTimeShift = 0,
 	IntgrTimeMask  = 0x7,
 	GainShift      = 4,
 	GainMask       = 0x30,
 	Reset          = 0x80
 };
+
+/**
+ * The set of selectable gain factors.
+ */
 static std::uint16_t gainSettings[4] = {
 	1,
 	25,
@@ -47,38 +73,48 @@ static std::uint16_t gainSettings[4] = {
 	9876
 };
 
+}
+
+using namespace TSL2591_internal;
+
 TSL2591::TSL2591(std::unique_ptr<duds::hardware::interface::I2c> &c) :
 com(std::move(c)), scale(0) {
-	duds::hardware::interface::Conversation firstcon;
-	// verify ID
-	firstcon.addOutputVector() << (std::int8_t)(Cmd|TransNorm|RegDeviceId);
-	firstcon.addInputVector(1);
-	com->converse(firstcon);
-	duds::hardware::interface::ConversationExtractor ex(firstcon);
-	std::int8_t id;
-	ex >> id;
-	if (id != 0x50) {
-		BOOST_THROW_EXCEPTION(DeviceMisidentified());
-	}
-	// attempt reset
-	firstcon.clear();
-	firstcon.addOutputVector() << (std::int8_t)(Cmd|TransNorm|RegControl) <<
-		(std::int8_t)(Reset);
 	try {
-		// the reset causes the device to not ack the message
+		duds::hardware::interface::Conversation firstcon;
+		// verify ID
+		firstcon.addOutputVector() << (std::int8_t)(Cmd|TransNorm|RegDeviceId);
+		firstcon.addInputVector(1);
 		com->converse(firstcon);
-	} catch (duds::hardware::interface::I2cErrorNoDevice &nodev) {
-		// bother; ignore it
+		duds::hardware::interface::ConversationExtractor ex(firstcon);
+		std::int8_t id;
+		ex >> id;
+		if (id != 0x50) {
+			BOOST_THROW_EXCEPTION(DeviceMisidentified());
+		}
+		// attempt reset
+		firstcon.clear();
+		firstcon.addOutputVector() << (std::int8_t)(Cmd|TransNorm|RegControl) <<
+			(std::int8_t)(Reset);
+		try {
+			// the reset causes the device to not ack the message
+			com->converse(firstcon);
+		} catch (duds::hardware::interface::I2cErrorNoDevice &) {
+			// bother; ignore it
+		} catch (...) {
+			// could be a real issue, but should be unlikely to occur on the second
+			// conversation with the device
+			throw;
+		}
+		// make conversation to read input so it can be reused
+		// address -- green
+		input.addOutputVector() << (std::int8_t)(Cmd|TransNorm|RegCh0);
+		// read in 4 bytes
+		input.addInputVector(4);
 	} catch (...) {
-		// could be a real issue, but should be unlikely to occur on the second
-		// conversation with the device
+		// move the I2C communicator back
+		c = std::move(com);
 		throw;
 	}
-	// make conversation to read input so it can be reused
-	// address -- green
-	input.addOutputVector() << (std::int8_t)(Cmd|TransNorm|RegCh0);
-	// read in 4 bytes
-	input.addInputVector(4);
 }
 
 TSL2591::~TSL2591() {

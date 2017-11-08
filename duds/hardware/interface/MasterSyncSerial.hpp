@@ -491,9 +491,7 @@ public:
 	 * @ref ConversationPart::MpfVarlen "MpfVarlen" flag is ignored. The
 	 * transmit() and receive() functions are called to move the data.
 	 * @pre   The object is in the ready state, but not the open state. There
-	 *        must not be an access object to use this object. In cases when an
-	 *        access object exists, use
-	 *        MasterSyncSerialAccess::transfer(Conversation &) instead.
+	 *        must not be an access object to use this object.
 	 * @post  The object is in the ready state and not the open state.
 	 * @param conv  The conversation to have with the device on the other end.
 	 * @throw SyncSerialInUse       The object is already in the open state.

@@ -9,6 +9,7 @@
  */
 #include <duds/hardware/devices/instruments/ISL29125.hpp>
 #include <duds/hardware/devices/DeviceErrors.hpp>
+#include <duds/hardware/interface/ConversationExtractor.hpp>
 
 namespace duds { namespace hardware { namespace devices { namespace instruments {
 

@@ -13,6 +13,9 @@
  * ConversationExternal.hpp. If the extractor is needed, then just include
  * ConversationExtractor.hpp.
  */
+#ifndef CONVERSATION_HPP
+#define CONVERSATION_HPP
+
 #include <memory>
 #include <duds/hardware/interface/ConversationVector.hpp>
 #include <duds/hardware/interface/ConversationExternal.hpp>
@@ -225,3 +228,5 @@ public:
 };
 
 } } }
+
+#endif        //  #ifndef CONVERSATION_HPP

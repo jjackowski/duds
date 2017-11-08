@@ -11,7 +11,7 @@
 #define TSL2591_HPP
 
 #include <duds/hardware/interface/I2c.hpp>
-#include <duds/hardware/interface/ConversationExtractor.hpp>
+#include <duds/hardware/interface/Conversation.hpp>
 #include <duds/hardware/devices/DeviceErrors.hpp>
 #include <duds/data/Quantity.hpp>
 
@@ -37,7 +37,7 @@ struct TSL2591BadIntegration : TSL2591Error { };
  *
  * @author  Jeff Jackowski
  */
-class TSL2591 {
+class TSL2591 : boost::noncopyable {
 	/**
 	 * The I2C communication interface.
 	 */

@@ -125,7 +125,7 @@ public:
 		inst->u = u;
 	}
 	// measured property?  relative humidity won't show up in units
-	void setPart(const boost::uuids::uuid &pid) const {
+	void setPartId(const boost::uuids::uuid &pid) const {
 		inst->pid = pid;
 	}
 };

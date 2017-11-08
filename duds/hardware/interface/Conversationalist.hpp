@@ -22,7 +22,6 @@ class Conversationalist {
 public:
 	/**
 	 * Allow proper destruction using a Conversationalist pointer.
-	 * The empty body is in Conversation.cpp.
 	 */
 	virtual ~Conversationalist() = 0;
 	/**

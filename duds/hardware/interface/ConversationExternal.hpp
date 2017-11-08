@@ -15,6 +15,7 @@ namespace duds { namespace hardware { namespace interface {
  * References a conversation part in an externally controlled buffer. The
  * contents of the buffer are not copied for output parts, nor are they ever
  * modified. Input parts will have new data writen directly into the buffer.
+ * @todo  Rename to ConversationBuffer.
  * @author  Jeff Jackowski
  */
 class ConversationExternal : public ConversationPart {

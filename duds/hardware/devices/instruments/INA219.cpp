@@ -14,11 +14,13 @@ namespace duds { namespace hardware { namespace devices { namespace instruments 
 INA219::INA219(
 	std::unique_ptr<duds::hardware::interface::Smbus> &c,
 	double s
-) : com(std::move(c)), shunt(s) {
+) : shunt(s) {
 	// reset device
-	com->transmitWordBe(0, 0x8000);
-	com->transmitWordBe(0, 0x1FFF);  // 128 samples, 16v bus
+	c->transmitWordBe(0, 0x8000);
+	c->transmitWordBe(0, 0x1FFF);  // 128 samples, 16v bus
 	//com->transmitWordBe(0, 0x399F);  // documented value for power-on reset
+	// only take the communicator if no exception is thrown
+	com = std::move(c)
 }
 
 INA219::~INA219() {
