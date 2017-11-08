@@ -10,6 +10,11 @@ envthread.AppendUnique(
 	LIBS = 'pthread'
 )
 
+enveigen = envthread.Clone()
+enveigen.AppendUnique(
+	CPPPATH = '/usr/include/eigen3/'
+)
+
 # could loop through directories, but be lazy for now
 targets = [
 	#env.Program('ds1620', Glob('DS1620/*.cpp') + libs),  # broken
@@ -20,6 +25,7 @@ targets = [
 	envthread.Program('tsl2591', ['tsl2591test.cpp'] + libs),
 	envthread.Program('textdisplay', ['textdisplay.cpp'] + libs),
 	envthread.Program('pwmbacklight', ['pwmbacklight.cpp'] + libs),
+	enveigen.Program('orientation', ['orientation.cpp'] + libs),
 ]
 
 Return('targets')
