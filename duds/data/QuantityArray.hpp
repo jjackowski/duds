@@ -12,6 +12,7 @@
 
 #include <duds/data/Quantity.hpp>
 #include <duds/general/NddArray.hpp>
+#include <duds/general/Errors.hpp>
 #include <array>
 
 namespace duds { namespace data {
@@ -174,7 +175,7 @@ struct QuantityArray {
 	 */
 	void set(std::size_t pos, const Quantity &q) {
 		if (unit != q.unit) {
-			BOOST_THROW_EXCEPTION(UnitMismatch());
+			DUDS_THROW_EXCEPTION(UnitMismatch());
 		}
 		array.at(pos) = q.value;
 	}
@@ -211,14 +212,59 @@ struct QuantityArray {
  * a triple axis sample.
  */
 struct QuantityXyz : public QuantityArray<3> {
-	Quantity x() const {
+	/**
+	 * Returns the scalar value for the X-axis.
+	 */
+	double &x() {
+		return array[0];
+	}
+	/**
+	 * Returns the scalar value for the X-axis.
+	 */
+	const double &x() const {
+		return array[0];
+	}
+	/**
+	 * Returns the scalar value for the Y-axis.
+	 */
+	double &y() {
+		return array[1];
+	}
+	/**
+	 * Returns the scalar value for the Y-axis.
+	 */
+	const double &y() const {
+		return array[1];
+	}
+	/**
+	 * Returns the scalar value for the Z-axis.
+	 */
+	double &z() {
+		return array[2];
+	}
+	/**
+	 * Returns the scalar value for the Z-axis.
+	 */
+	const double &z() const {
+		return array[2];
+	}
+	/**
+	 * Returns the Quantity for the X-axis.
+	 */
+	Quantity xQ() const {
 		return get(0);
 	}
-	Quantity y() const {
-		return get(0);
+	/**
+	 * Returns the Quantity for the Y-axis.
+	 */
+	Quantity yQ() const {
+		return get(1);
 	}
-	Quantity z() const {
-		return get(0);
+	/**
+	 * Returns the Quantity for the Z-axis.
+	 */
+	Quantity zQ() const {
+		return get(2);
 	}
 };
 
@@ -322,7 +368,7 @@ struct QuantityNddArray {
 	 * @tparam Dim   The type holding the position. It must have forward
 	 *               iterators.
 	 * @param  pos   The position in the array.
-	 * @throw  duds::data::general::OutOfRange   Thrown by Array::at() when
+	 * @throw  duds::data::general::OutOfRangeError   Thrown by Array::at() when
 	 *                                           the position is outside the
 	 *                                           array's boundries.
 	 */
@@ -333,7 +379,7 @@ struct QuantityNddArray {
 	/**
 	 * Returns a new Quantity object for the requested position.
 	 * @param pos  The position in the array.
-	 * @throw OutOfRange  Thrown by Array::at() when the position is
+	 * @throw OutOfRangeError  Thrown by Array::at() when the position is
 	 *                    outside the array's boundries.
 	 */
 	Quantity get(const Array::DimList &pos) const {
@@ -349,14 +395,14 @@ struct QuantityNddArray {
 	 * @param  q    The quantity to store.
 	 * @throw  UnitMismatch     The units of @a q are not the same as the
 	 *                          units of this array.
-	 * @throw  duds::data::general::OutOfRange   Thrown by Array::at() when
+	 * @throw  duds::data::general::OutOfRangeError   Thrown by Array::at() when
 	 *                                           the position is outside the
 	 *                                           array's boundries.
 	 */
 	template <class Dim>
 	Quantity set(const Dim &pos, const Quantity &q) {
 		if (unit != q.unit) {
-			BOOST_THROW_EXCEPTION(UnitMismatch());
+			DUDS_THROW_EXCEPTION(UnitMismatch());
 		}
 		array.at<Dim>(pos) = q.value;
 	}
@@ -368,13 +414,13 @@ struct QuantityNddArray {
 	 * @param  q    The quantity to store.
 	 * @throw  UnitMismatch     The units of @a q are not the same as the
 	 *                          units of this array.
-	 * @throw  duds::data::general::OutOfRange   Thrown by Array::at() when
+	 * @throw  duds::data::general::OutOfRangeError   Thrown by Array::at() when
 	 *                                           the position is outside the
 	 *                                           array's boundries.
 	 */
 	Quantity set(const Array::DimList &pos, const Quantity &q) {
 		if (unit != q.unit) {
-			BOOST_THROW_EXCEPTION(UnitMismatch());
+			DUDS_THROW_EXCEPTION(UnitMismatch());
 		}
 		array.at<Array::DimList>(pos) = q.value;
 	}
