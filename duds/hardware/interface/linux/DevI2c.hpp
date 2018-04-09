@@ -100,6 +100,7 @@ public:
 	 *                             other exceptions.
 	 */
 	virtual void converse(Conversation &conv);
+	virtual int address() const;
 };
 
 } } } }

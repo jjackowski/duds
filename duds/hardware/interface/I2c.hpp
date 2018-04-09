@@ -63,6 +63,11 @@ public:
 	 *                             other exceptions.
 	 */
 	virtual void converse(Conversation &conv) = 0;
+	/**
+	 * Returns the address of the device that this object will attempt to
+	 * communicate with.
+	 */
+	virtual int address() const = 0;
 };
 
 } } }
