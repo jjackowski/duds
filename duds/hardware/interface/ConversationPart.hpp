@@ -143,9 +143,12 @@ public:
 	}
 	/**
 	 * Changes the extraction flag for this part.
+	 * @return  The ConversationPart object being modified; makes further
+	 *          modification easier.
 	 */
-	void extract(bool ex) {
+	ConversationPart &extract(bool ex) {
 		mpf.setTo(MpfExtract, ex);
+		return *this;
 	}
 	/**
 	 * True if this part is flagged as having a variable length. It is only
@@ -163,9 +166,12 @@ public:
 	/**
 	 * Changes the flagged endianess of this part.
 	 * @param big  True to flag as big-endian, false for little-endian.
+	 * @return     The ConversationPart object being modified; makes further
+	 *             modification easier.
 	 */
-	void bigEndian(bool big) {
+	ConversationPart &bigEndian(bool big) {
 		mpf.setTo(MpfBigendian, big);
+		return *this;
 	}
 	/**
 	 * True if this part is flagged as having data in little-endian form.
@@ -176,9 +182,12 @@ public:
 	/**
 	 * Changes the flagged endianess of this part.
 	 * @param little  True to flag as little-endian, false for big-endian.
+	 * @return        The ConversationPart object being modified; makes further
+	 *                modification easier.
 	 */
-	void littleEndian(bool little) {
+	ConversationPart &littleEndian(bool little) {
 		mpf.setTo(MpfBigendian, !little);
+		return *this;
 	}
 	/**
 	 * Flags the conversation part to have a break before this part is sent.
@@ -186,9 +195,12 @@ public:
 	 * For I2C, it should cause a stop condition, followed by a start condition,
 	 * and then this part's data. For SPI, it should cause the device's chip
 	 * select to change to the unselected state briefly.
+	 * @return  The ConversationPart object being modified; makes further
+	 *          modification easier.
 	 */
-	void breakBefore() {
+	ConversationPart &breakBefore() {
 		mpf |= MpfBreak;
+		return *this;
 	}
 	/**
 	 * Returns a pointer to the begining of the conversation part's buffer.
