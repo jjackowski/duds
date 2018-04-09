@@ -29,7 +29,7 @@ void ChipPinSelectManager::setSelectPin(
 	SelectState selectState
 ) {
 	if (!dpa || !dpa->havePin()) {
-		BOOST_THROW_EXCEPTION(PinDoesNotExist());
+		DUDS_THROW_EXCEPTION(PinDoesNotExist());
 	}
 	// require exclusive access
 	std::unique_lock<std::mutex> lock(block);
@@ -37,7 +37,7 @@ void ChipPinSelectManager::setSelectPin(
 	if (inUse()) {
 		assert(selpin);
 		// fail; provide the pin and chip IDs for what is currently in use
-		BOOST_THROW_EXCEPTION(ChipSelectInUse() <<
+		DUDS_THROW_EXCEPTION(ChipSelectInUse() <<
 			PinErrorId(selpin->globalId()) << ChipSelectIdError(1)
 		);
 	}
@@ -45,7 +45,7 @@ void ChipPinSelectManager::setSelectPin(
 	DigitalPinCap cap = dpa->capabilities();
 	// check for no output ability
 	if (!cap.canOutput()) {
-		BOOST_THROW_EXCEPTION(DigitalPinCannotInputError() <<
+		DUDS_THROW_EXCEPTION(DigitalPinCannotInputError() <<
 			PinErrorId(dpa->globalId())
 		);
 	}

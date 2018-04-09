@@ -47,7 +47,7 @@ void ChipSelectManager::retire(ChipAccess *ca) {
 		selwait.notify_one();
 	} else {
 		// panic!
-		BOOST_THROW_EXCEPTION(ChipSelectInvalidAccess());
+		DUDS_THROW_EXCEPTION(ChipSelectInvalidAccess());
 	}
 }
 
@@ -55,13 +55,13 @@ void ChipSelectManager::changeChip(int chipId) {
 	std::lock_guard<std::mutex> lock(block);
 	if (!curacc) {
 		// bad request
-		BOOST_THROW_EXCEPTION(ChipSelectInvalidAccess());
+		DUDS_THROW_EXCEPTION(ChipSelectInvalidAccess());
 	}
 	// check for differnt ID
 	if (chipId != cid) {
 		// assure the new chip is valid
 		if (!validChip(chipId)) {
-			BOOST_THROW_EXCEPTION(ChipSelectInvalidChip() <<
+			DUDS_THROW_EXCEPTION(ChipSelectInvalidChip() <<
 				ChipSelectIdError(chipId));
 		}
 		// deselect the current chip
@@ -74,7 +74,7 @@ void ChipSelectManager::changeChip(int chipId) {
 void ChipSelectManager::baseAccess(std::unique_lock<std::mutex> &lock,
 int chipId) {
 	if (!validChip(chipId)) {
-		BOOST_THROW_EXCEPTION(ChipSelectInvalidChip() <<
+		DUDS_THROW_EXCEPTION(ChipSelectInvalidChip() <<
 			ChipSelectIdError(chipId));
 	}
 	waiting++;
@@ -89,7 +89,7 @@ int chipId) {
 			// notify the destructing thread
 			selwait.notify_all();
 		}
-		BOOST_THROW_EXCEPTION(duds::general::ObjectDestructed());
+		DUDS_THROW_EXCEPTION(duds::general::ObjectDestructedError());
 	}
 	// set the chip ID to access
 	cid = chipId;
@@ -107,7 +107,7 @@ std::unique_ptr<ChipAccess> ChipSelectManager::access(int chipId) {
 
 void ChipSelectManager::access(ChipAccess &acc, int chipId) {
 	if (acc.manager) {
-		BOOST_THROW_EXCEPTION(ChipSelectAccessInUse());
+		DUDS_THROW_EXCEPTION(ChipSelectAccessInUse());
 	}
 	std::unique_lock<std::mutex> lock(block);
 	// obtain resources

@@ -10,6 +10,7 @@
 #ifndef EXTENDEDUNIT_HPP
 #define EXTENDEDUNIT_HPP
 
+#include <duds/general/Errors.hpp>
 #include <duds/data/Unit.hpp>
 #include <boost/serialization/split_member.hpp>
 
@@ -118,7 +119,7 @@ public:
 	template <typename O>
 	ExtendedUnit(Unit u, O o, int s) : unit(u), scale(s) {
 		if ((s > 7) || (s < -8)) {
-			BOOST_THROW_EXCEPTION(UnitRangeError());
+			DUDS_THROW_EXCEPTION(UnitRangeError());
 		}
 		offset(o);
 	}

@@ -110,7 +110,7 @@ bool DigitalPort::areAvailable(const unsigned int *reqpins, std::size_t len) {
 			pinwait.notify_one();
 		}
 		// no pins!
-		BOOST_THROW_EXCEPTION(duds::general::ObjectDestructed());
+		DUDS_THROW_EXCEPTION(duds::general::ObjectDestructedError());
 	}
 	// check for availability of requested pins
 	for (; len; len--, reqpins++) {
@@ -119,7 +119,7 @@ bool DigitalPort::areAvailable(const unsigned int *reqpins, std::size_t len) {
 			unsigned int lid = localId(*reqpins);
 			// check for non-existent pin
 			if ((lid >= pins.size()) || !pins[lid]) {
-				BOOST_THROW_EXCEPTION(PinDoesNotExist() <<
+				DUDS_THROW_EXCEPTION(PinDoesNotExist() <<
 					DigitalPortAffected(this) << PinErrorId(*reqpins)
 				);
 			}
@@ -155,11 +155,11 @@ void DigitalPort::access(
 	std::unique_ptr<DigitalPinAccess> *acc
 ) {
 	if (!len) {
-		BOOST_THROW_EXCEPTION(PinEmptyAccessRequest() << DigitalPortAffected(this));
+		DUDS_THROW_EXCEPTION(PinEmptyAccessRequest() << DigitalPortAffected(this));
 	}
-	// avoid throwing ObjectDestructed when called on an empty port
+	// avoid throwing ObjectDestructedError when called on an empty port
 	if (pins.empty()) {
-		BOOST_THROW_EXCEPTION(PinDoesNotExist() << DigitalPortAffected(this));
+		DUDS_THROW_EXCEPTION(PinDoesNotExist() << DigitalPortAffected(this));
 	}
 	// need exclusive access
 	std::unique_lock<std::mutex> lock(block);
@@ -173,7 +173,7 @@ void DigitalPort::access(
 			// check once more for availability in case a pin is specified
 			// twice in pins
 			if (pins[lid].access) {
-				BOOST_THROW_EXCEPTION(PinInUse() << DigitalPortAffected(this) <<
+				DUDS_THROW_EXCEPTION(PinInUse() << DigitalPortAffected(this) <<
 					PinErrorId(*reqpins)
 				);
 			}
@@ -191,9 +191,9 @@ void DigitalPort::access(
 	const unsigned int len,
 	std::unique_ptr<DigitalPinAccess[]> &acc
 ) {
-	// avoid throwing ObjectDestructed when called on an empty port
+	// avoid throwing ObjectDestructedError when called on an empty port
 	if (pins.empty()) {
-		BOOST_THROW_EXCEPTION(PinDoesNotExist() << DigitalPortAffected(this));
+		DUDS_THROW_EXCEPTION(PinDoesNotExist() << DigitalPortAffected(this));
 	}
 	// need exclusive access
 	std::unique_lock<std::mutex> lock(block);
@@ -213,7 +213,7 @@ void DigitalPort::access(
 			// check once more for availability in case a pin is specified
 			// twice in pins
 			if (pins[lid].access) {
-				BOOST_THROW_EXCEPTION(PinInUse() << DigitalPortAffected(this) <<
+				DUDS_THROW_EXCEPTION(PinInUse() << DigitalPortAffected(this) <<
 					PinErrorId(*reqpins)
 				);
 			}
@@ -234,11 +234,11 @@ void DigitalPort::access(
 	DigitalPinAccess *acc
 ) {
 	if (!len) {
-		BOOST_THROW_EXCEPTION(PinEmptyAccessRequest() << DigitalPortAffected(this));
+		DUDS_THROW_EXCEPTION(PinEmptyAccessRequest() << DigitalPortAffected(this));
 	}
-	// avoid throwing ObjectDestructed when called on an empty port
+	// avoid throwing ObjectDestructedError when called on an empty port
 	if (pins.empty()) {
-		BOOST_THROW_EXCEPTION(PinDoesNotExist() << DigitalPortAffected(this));
+		DUDS_THROW_EXCEPTION(PinDoesNotExist() << DigitalPortAffected(this));
 	}
 	// need exclusive access
 	std::unique_lock<std::mutex> lock(block);
@@ -252,7 +252,7 @@ void DigitalPort::access(
 			// check once more for availability in case a pin is specified
 			// twice in pins
 			if (pins[lid].access) {
-				BOOST_THROW_EXCEPTION(PinInUse() << DigitalPortAffected(this) <<
+				DUDS_THROW_EXCEPTION(PinInUse() << DigitalPortAffected(this) <<
 					PinErrorId(*reqpins)
 				);
 			}
@@ -279,16 +279,16 @@ void DigitalPort::access(
 	DigitalPinSetAccess &acc
 ) {
 	if (!len) {
-		BOOST_THROW_EXCEPTION(PinEmptyAccessRequest() << DigitalPortAffected(this));
+		DUDS_THROW_EXCEPTION(PinEmptyAccessRequest() << DigitalPortAffected(this));
 	}
-	// avoid throwing ObjectDestructed when called on an empty port
+	// avoid throwing ObjectDestructedError when called on an empty port
 	if (pins.empty()) {
-		BOOST_THROW_EXCEPTION(PinDoesNotExist() << DigitalPortAffected(this));
+		DUDS_THROW_EXCEPTION(PinDoesNotExist() << DigitalPortAffected(this));
 	}
 	// supplied access object must either not be used by a port, or used by
 	// this port
 	if (acc.port() && acc.port() != this) {
-		BOOST_THROW_EXCEPTION(PinSetWrongPort() << DigitalPortAffected(this));
+		DUDS_THROW_EXCEPTION(PinSetWrongPort() << DigitalPortAffected(this));
 	}
 	// the port pointer might be null
 	acc.dp = this;
@@ -306,7 +306,7 @@ void DigitalPort::access(
 			// check once more for availability in case a pin is specified
 			// twice in pins
 			if (pins[lid].access) {
-				BOOST_THROW_EXCEPTION(PinInUse() << DigitalPortAffected(this) <<
+				DUDS_THROW_EXCEPTION(PinInUse() << DigitalPortAffected(this) <<
 					PinErrorId(*reqpins)
 				);
 			}
@@ -392,7 +392,7 @@ DigitalPinConfig DigitalPort::configuration(unsigned int gid) const {
 	std::lock_guard<std::mutex> lock(block);
 	// check for non-existant pin
 	if ((lid >= pins.size()) || !pins[lid]) {
-		BOOST_THROW_EXCEPTION(PinDoesNotExist() << PinErrorId(gid) <<
+		DUDS_THROW_EXCEPTION(PinDoesNotExist() << PinErrorId(gid) <<
 			DigitalPortAffected(this)
 		);
 	}
@@ -422,7 +422,7 @@ DigitalPinCap DigitalPort::capabilities(unsigned int gid) const {
 	std::lock_guard<std::mutex> lock(block);
 	if ((lid >= pins.size()) || !pins[lid]) {
 		// no pin
-		BOOST_THROW_EXCEPTION(PinDoesNotExist() <<
+		DUDS_THROW_EXCEPTION(PinDoesNotExist() <<
 			DigitalPortAffected(this) << PinErrorId(gid)
 		);
 	}
@@ -464,7 +464,7 @@ std::vector<DigitalPinCap> DigitalPort::capabilities(
 			// non-existence check
 			if (lid >= pins.size()) {
 				// no pin
-				BOOST_THROW_EXCEPTION(PinDoesNotExist() <<
+				DUDS_THROW_EXCEPTION(PinDoesNotExist() <<
 					DigitalPortAffected(this) << PinErrorId(
 						global ? *iter : globalId(*iter)
 					)
@@ -516,7 +516,7 @@ std::vector<DigitalPinConfig> DigitalPort::configuration(
 			// non-existence check
 			if (lid >= pins.size()) {
 				// no pin
-				BOOST_THROW_EXCEPTION(PinDoesNotExist() <<
+				DUDS_THROW_EXCEPTION(PinDoesNotExist() <<
 					DigitalPortAffected(this) << PinErrorId(
 						global ? *iter : globalId(*iter)
 					)
@@ -583,7 +583,7 @@ DigitalPinConfig DigitalPort::modifyConfig(
 	unsigned int lid = localId(gid);
 	if ((lid >= pins.size()) || !pins[lid]) {
 		// no pin
-		BOOST_THROW_EXCEPTION(PinDoesNotExist() <<
+		DUDS_THROW_EXCEPTION(PinDoesNotExist() <<
 			PinErrorId(gid) << DigitalPortAffected(this) <<
 			// reason included because it matches the result of proposeConfig()
 			DigitalPinRejectedConfiguration::ReasonInfo(
@@ -599,7 +599,7 @@ DigitalPinConfig DigitalPort::modifyConfig(
 	DigitalPinRejectedConfiguration::Reason err =
 		pins[lid].cap.compatible(actcfg);
 	if (err) {
-		BOOST_THROW_EXCEPTION(DigitalPinConfigError() <<
+		DUDS_THROW_EXCEPTION(DigitalPinConfigError() <<
 			PinErrorId(gid) << DigitalPortAffected(this) <<
 			DigitalPinRejectedConfiguration::ReasonInfo(err) <<
 			DigitalPinCapInfo(pins[lid].cap) <<
@@ -638,7 +638,7 @@ void DigitalPort::modifyFullConfig(
 		}
 	)) {
 		// badness!
-		BOOST_THROW_EXCEPTION(DigitalPinConfigError() <<
+		DUDS_THROW_EXCEPTION(DigitalPinConfigError() <<
 			DigitalPinRejectedConfiguration::ReasonVectorInfo(errs) <<
 			DigitalPortAffected(this)
 		);
@@ -668,7 +668,7 @@ void DigitalPort::modifyConfig(
 ) {
 	// inputs must match size and not be empty
 	if (cfgs.empty() || (cfgs.size() != pvec.size())) {
-		BOOST_THROW_EXCEPTION(DigitalPinConfigRangeError() <<
+		DUDS_THROW_EXCEPTION(DigitalPinConfigRangeError() <<
 			DigitalPortAffected(this)
 		);
 	}
@@ -697,13 +697,13 @@ bool DigitalPort::input(unsigned int gid) {
 	// out-of-range & non-existence check
 	/** @todo  Are these required? A -1 could get through an access object. */
 	if ((lid >= pins.size()) || !pins[lid]) {
-		BOOST_THROW_EXCEPTION(PinDoesNotExist() << DigitalPortAffected(this)
+		DUDS_THROW_EXCEPTION(PinDoesNotExist() << DigitalPortAffected(this)
 			<< PinErrorId(gid)
 		);
 	}
 	// check for a non-input configuration
 	if (!(pins[lid].conf & DigitalPinConfig::DirInput)) {
-		BOOST_THROW_EXCEPTION(PinWrongDirection() <<
+		DUDS_THROW_EXCEPTION(PinWrongDirection() <<
 			DigitalPortAffected(this) << PinErrorId(gid)
 		);
 	}
@@ -720,13 +720,13 @@ std::vector<bool> DigitalPort::input(const std::vector<unsigned int> &pvec) {
 		// out-of-range & non-existence check
 		/** @todo  Are these required? A -1 could get through an access object. */
 		if ((*piter >= pins.size()) || !pins[*piter]) {
-			BOOST_THROW_EXCEPTION(PinDoesNotExist() << DigitalPortAffected(this)
+			DUDS_THROW_EXCEPTION(PinDoesNotExist() << DigitalPortAffected(this)
 				<< PinErrorId(globalId(*piter))
 			);
 		}
 		// check for a non-input configuration
 		if (!(pins[*piter].conf & DigitalPinConfig::DirInput)) {
-			BOOST_THROW_EXCEPTION(PinWrongDirection() <<
+			DUDS_THROW_EXCEPTION(PinWrongDirection() <<
 				DigitalPortAffected(this) << PinErrorId(globalId(*piter)) <<
 				DigitalPinConfigInfo(pins[*piter].conf)
 			);
@@ -756,13 +756,13 @@ void DigitalPort::output(unsigned int gid, bool state) {
 	// out-of-range & non-existence check
 	/** @todo  Are these required? A -1 could get through an access object. */
 	if ((lid >= pins.size()) || !pins[lid]) {
-		BOOST_THROW_EXCEPTION(PinDoesNotExist() << DigitalPortAffected(this)
+		DUDS_THROW_EXCEPTION(PinDoesNotExist() << DigitalPortAffected(this)
 			<< PinErrorId(gid)
 		);
 	}
 	// no output capability check
 	if (!pins[lid].cap.canOutput()) {
-		BOOST_THROW_EXCEPTION(DigitalPinCannotOutputError() <<
+		DUDS_THROW_EXCEPTION(DigitalPinCannotOutputError() <<
 			DigitalPortAffected(this) << PinErrorId(gid) <<
 			DigitalPinCapInfo(pins[lid].cap)
 		);
@@ -777,7 +777,7 @@ void DigitalPort::output(
 ) {
 	// the inputs must be the same size
 	if (pvec.size() != state.size()) {
-		BOOST_THROW_EXCEPTION(DigitalPinConfigRangeError() <<
+		DUDS_THROW_EXCEPTION(DigitalPinConfigRangeError() <<
 			DigitalPortAffected(this)
 		);
 	}
@@ -789,13 +789,13 @@ void DigitalPort::output(
 		// out-of-range & non-existence check
 		/** @todo  Are these required? A -1 could get through an access object. */
 		if ((*piter >= pins.size()) || !pins[*piter]) {
-			BOOST_THROW_EXCEPTION(PinDoesNotExist() << DigitalPortAffected(this)
+			DUDS_THROW_EXCEPTION(PinDoesNotExist() << DigitalPortAffected(this)
 				<< PinErrorId(globalId(*piter))
 			);
 		}
 		// no output capability check
 		if (!pins[*piter].cap.canOutput()) {
-			BOOST_THROW_EXCEPTION(DigitalPinCannotOutputError() <<
+			DUDS_THROW_EXCEPTION(DigitalPinCannotOutputError() <<
 				DigitalPortAffected(this) << PinErrorId(globalId(*piter))
 			);
 		}

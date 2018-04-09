@@ -25,26 +25,26 @@ DevSmbus::DevSmbus(const std::string &devname, int devaddr, bool pec) :
 dev(devname), addr(devaddr) {
 	fd = open(dev.c_str(), O_RDWR);
 	if (fd < 0) {
-		BOOST_THROW_EXCEPTION(SmbusError() << boost::errinfo_errno(errno) <<
+		DUDS_THROW_EXCEPTION(SmbusError() << boost::errinfo_errno(errno) <<
 			boost::errinfo_file_name(dev) << SmbusDeviceAddr(addr)
 		);
 	}
 	if ((addr > 127) && (ioctl(fd, I2C_TENBIT, 1) < 0)) {
 		close(fd);
-		BOOST_THROW_EXCEPTION(SmbusErrorUnsupported() <<
+		DUDS_THROW_EXCEPTION(SmbusErrorUnsupported() <<
 			boost::errinfo_file_name(dev) << SmbusDeviceAddr(addr)
 		);
 	}
 	if (ioctl(fd, I2C_SLAVE, addr) < 0) {
 		int err = errno;
 		close(fd);
-		BOOST_THROW_EXCEPTION(SmbusError() << boost::errinfo_errno(err) <<
+		DUDS_THROW_EXCEPTION(SmbusError() << boost::errinfo_errno(err) <<
 			boost::errinfo_file_name(dev) << SmbusDeviceAddr(addr)
 		);
 	}
 	if (ioctl(fd, I2C_PEC, pec ? 1 : 0) < 0) {
 		close(fd);
-		BOOST_THROW_EXCEPTION(SmbusErrorUnsupported() <<
+		DUDS_THROW_EXCEPTION(SmbusErrorUnsupported() <<
 			boost::errinfo_file_name(dev) << SmbusDeviceAddr(addr)
 		);
 	}
@@ -65,12 +65,12 @@ void DevSmbus::io(i2c_smbus_ioctl_data &sdat) {
 					std::this_thread::yield();
 					break;
 				case EBADMSG:
-					BOOST_THROW_EXCEPTION(SmbusErrorPec() <<
+					DUDS_THROW_EXCEPTION(SmbusErrorPec() <<
 						boost::errinfo_file_name(dev) <<
 						SmbusDeviceAddr(addr)
 					);
 				case EBUSY:
-					BOOST_THROW_EXCEPTION(SmbusErrorBusy() <<
+					DUDS_THROW_EXCEPTION(SmbusErrorBusy() <<
 						boost::errinfo_file_name(dev) <<
 						SmbusDeviceAddr(addr)
 					);
@@ -78,28 +78,28 @@ void DevSmbus::io(i2c_smbus_ioctl_data &sdat) {
 				case ENODEV:
 				case EREMOTEIO: // seems to be used for the same thing as above,
 					            // but not documented as such in Linux I2C docs
-					BOOST_THROW_EXCEPTION(SmbusErrorNoDevice() <<
+					DUDS_THROW_EXCEPTION(SmbusErrorNoDevice() <<
 						boost::errinfo_file_name(dev) <<
 						boost::errinfo_errno(res) <<
 						SmbusDeviceAddr(addr)
 					);
 				case EOPNOTSUPP:
-					BOOST_THROW_EXCEPTION(SmbusErrorUnsupported() <<
+					DUDS_THROW_EXCEPTION(SmbusErrorUnsupported() <<
 						boost::errinfo_file_name(dev) <<
 						SmbusDeviceAddr(addr)
 					);
 				case EPROTO:
-					BOOST_THROW_EXCEPTION(SmbusErrorProtocol() <<
+					DUDS_THROW_EXCEPTION(SmbusErrorProtocol() <<
 						boost::errinfo_file_name(dev) <<
 						SmbusDeviceAddr(addr)
 					);
 				case ETIMEDOUT:
-					BOOST_THROW_EXCEPTION(SmbusErrorTimeout() <<
+					DUDS_THROW_EXCEPTION(SmbusErrorTimeout() <<
 						boost::errinfo_file_name(dev) <<
 						SmbusDeviceAddr(addr)
 					);
 				default:
-					BOOST_THROW_EXCEPTION(SmbusError() <<
+					DUDS_THROW_EXCEPTION(SmbusError() <<
 						boost::errinfo_file_name(dev) <<
 						boost::errinfo_errno(res) <<
 						SmbusDeviceAddr(addr)
@@ -202,7 +202,7 @@ int DevSmbus::receive(std::uint8_t cmd, std::uint8_t *in, const int maxlen) {
 	io(sdat);
 	std::memcpy(in, msg.block + 1, std::max(maxlen, (int)msg.block[0]));
 	if (maxlen < (int)msg.block[0]) {
-		BOOST_THROW_EXCEPTION(SmbusErrorMessageLength() <<
+		DUDS_THROW_EXCEPTION(SmbusErrorMessageLength() <<
 			boost::errinfo_file_name(dev) <<
 			SmbusDeviceAddr(addr)
 		);
@@ -229,7 +229,7 @@ void DevSmbus::transmit(
 	const int len
 ) {
 	if ((len <= 0) || (len > 32)) {
-		BOOST_THROW_EXCEPTION(SmbusErrorMessageLength() <<
+		DUDS_THROW_EXCEPTION(SmbusErrorMessageLength() <<
 			boost::errinfo_file_name(dev) << SmbusDeviceAddr(addr)
 		);
 	}
@@ -264,7 +264,7 @@ void DevSmbus::call(
 	std::vector<std::uint8_t> &in
 ) {
 	if (out.size() > 32) {
-		BOOST_THROW_EXCEPTION(SmbusErrorMessageLength() <<
+		DUDS_THROW_EXCEPTION(SmbusErrorMessageLength() <<
 			boost::errinfo_file_name(dev) << SmbusDeviceAddr(addr)
 		);
 	}
@@ -280,6 +280,10 @@ void DevSmbus::call(
 	io(sdat);
 	in.resize(msg.block[0]);
 	std::memcpy(&(in[0]), msg.block + 1, msg.block[0]);
+}
+
+int DevSmbus::address() const {
+	return addr;
 }
 
 } } } }

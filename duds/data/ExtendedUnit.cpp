@@ -15,7 +15,7 @@ void ExtendedUnit::offset(float o) {
 	const std::uint32_t &oi = *(std::uint32_t*)(&o);
 	int temp = ((oi >> 23) & 0xFF) - 127;
 	if ((temp > 62) || (temp < -63)) {
-		BOOST_THROW_EXCEPTION(UnitRangeError() << BadUnitExponent(temp));
+		DUDS_THROW_EXCEPTION(UnitRangeError() << BadUnitExponent(temp));
 	}
 	exp = temp;
 	sign = oi >= (1 << 31);
@@ -31,7 +31,7 @@ void ExtendedUnit::offset(double o) {
 	const std::uint64_t &oi = *(std::uint64_t*)(&o);
 	int temp = ((oi >> 52) & 0x7FF) - 1023;
 	if ((temp > 62) || (temp < -63)) {
-		BOOST_THROW_EXCEPTION(UnitRangeError() << BadUnitExponent(temp));
+		DUDS_THROW_EXCEPTION(UnitRangeError() << BadUnitExponent(temp));
 	}
 	exp = temp;
 	sign = oi >= ((std::uint64_t)1 << 63);

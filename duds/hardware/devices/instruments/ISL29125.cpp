@@ -49,7 +49,7 @@ void ISL29125::suspend() {
 
 void ISL29125::resume() {
 	if (initialize.empty()) {
-		BOOST_THROW_EXCEPTION(DeviceUninitalized());
+		DUDS_THROW_EXCEPTION(DeviceUninitalized());
 	}
 	com->converse(initialize);
 }

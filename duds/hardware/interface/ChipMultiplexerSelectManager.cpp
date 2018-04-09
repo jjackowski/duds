@@ -22,7 +22,7 @@ void ChipMultiplexerSelectManager::setAccess(
 	std::unique_ptr<DigitalPinSetAccess> &acc
 ) {
 	if (!acc || !acc->havePins()) {
-		BOOST_THROW_EXCEPTION(PinDoesNotExist());
+		DUDS_THROW_EXCEPTION(PinDoesNotExist());
 	}
 	// require exclusive access
 	std::unique_lock<std::mutex> lock(block);
@@ -30,7 +30,7 @@ void ChipMultiplexerSelectManager::setAccess(
 	if (inUse()) {
 		assert(outacc);
 		// fail; provide the pin and chip IDs for what is currently in use
-		BOOST_THROW_EXCEPTION(ChipSelectInUse() <<
+		DUDS_THROW_EXCEPTION(ChipSelectInUse() <<
 			ChipSelectIdError(cid)
 		);
 	}
@@ -45,7 +45,7 @@ void ChipMultiplexerSelectManager::setAccess(
 	for (; iter != caps.cend(); ++pos, ++iter) {
 		// check for no output ability
 		if (!iter->canOutput()) {
-			BOOST_THROW_EXCEPTION(DigitalPinCannotInputError() <<
+			DUDS_THROW_EXCEPTION(DigitalPinCannotInputError() <<
 				PinErrorId(acc->globalId(pos))
 			);
 		}
@@ -68,7 +68,7 @@ ChipMultiplexerSelectManager::releaseAccess() {
 	// is a chip in use?
 	if (inUse()) {
 		// fail; provide the chip ID for what is currently in use
-		BOOST_THROW_EXCEPTION(ChipSelectInUse() << ChipSelectIdError(cid));
+		DUDS_THROW_EXCEPTION(ChipSelectInUse() << ChipSelectIdError(cid));
 	}
 	return std::move(outacc);
 }

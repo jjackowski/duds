@@ -40,8 +40,8 @@ BOOST_AUTO_TEST_CASE(Size) {
 	BOOST_CHECK_EQUAL(array.empty(), true);
 	BOOST_CHECK_EQUAL(array.numdims(), 0);
 	BOOST_CHECK_EQUAL(array.numelems(), 0);
-	BOOST_CHECK_THROW(array.front(), dg::ZeroSize);
-	BOOST_CHECK_THROW(array.back(), dg::ZeroSize);
+	BOOST_CHECK_THROW(array.front(), dg::ZeroSizeError);
+	BOOST_CHECK_THROW(array.back(), dg::ZeroSizeError);
 	// test giving it a new size
 	array.remake({4,3,2,4});
 	BOOST_CHECK_EQUAL(array.empty(), false);
@@ -50,7 +50,7 @@ BOOST_AUTO_TEST_CASE(Size) {
 	tval = {4,3,2,4};
 	BOOST_CHECK(array.dim() == tval);
 	// test sizing to a bad dimension
-	BOOST_CHECK_THROW(array.remake({4,0,2,4}), dg::EmptyDimension);
+	BOOST_CHECK_THROW(array.remake({4,0,2,4}), dg::EmptyDimensionError);
 	// should now be clear
 	BOOST_CHECK_EQUAL(array.empty(), true);
 	BOOST_CHECK_EQUAL(array.numdims(), 0);
@@ -87,30 +87,30 @@ BOOST_AUTO_TEST_CASE(Contents) {
 	BOOST_CHECK(array != at.array);
 	BOOST_CHECK(!(array == at.array));
 	// out of range check
-	BOOST_CHECK_THROW(array({3,0,0}), dg::OutOfRange);
-	BOOST_CHECK_THROW(array({0,3,0}), dg::OutOfRange);
-	BOOST_CHECK_THROW(array({0,0,3}), dg::OutOfRange);
-	BOOST_CHECK_THROW(array({2,2,3}), dg::OutOfRange);
-	BOOST_CHECK_THROW(array({3,2,2}), dg::OutOfRange);
-	BOOST_CHECK_THROW(array({0,1}), dg::DimensionMismatch);
-	BOOST_CHECK_THROW(array({0,1,2,3}), dg::DimensionMismatch);
+	BOOST_CHECK_THROW(array({3,0,0}), dg::OutOfRangeError);
+	BOOST_CHECK_THROW(array({0,3,0}), dg::OutOfRangeError);
+	BOOST_CHECK_THROW(array({0,0,3}), dg::OutOfRangeError);
+	BOOST_CHECK_THROW(array({2,2,3}), dg::OutOfRangeError);
+	BOOST_CHECK_THROW(array({3,2,2}), dg::OutOfRangeError);
+	BOOST_CHECK_THROW(array({0,1}), dg::DimensionMismatchError);
+	BOOST_CHECK_THROW(array({0,1,2,3}), dg::DimensionMismatchError);
 	// out of range check (vector)
 	pos = {3,0,0};
-	BOOST_CHECK_THROW(array(pos), dg::OutOfRange);
+	BOOST_CHECK_THROW(array(pos), dg::OutOfRangeError);
 	pos = {0,3,0};
-	BOOST_CHECK_THROW(array(pos), dg::OutOfRange);
+	BOOST_CHECK_THROW(array(pos), dg::OutOfRangeError);
 	pos = {0,0,3};
-	BOOST_CHECK_THROW(array(pos), dg::OutOfRange);
+	BOOST_CHECK_THROW(array(pos), dg::OutOfRangeError);
 	pos = {2,2,3};
-	BOOST_CHECK_THROW(array(pos), dg::OutOfRange);
+	BOOST_CHECK_THROW(array(pos), dg::OutOfRangeError);
 	pos = {3,2,2};
-	BOOST_CHECK_THROW(array(pos), dg::OutOfRange);
+	BOOST_CHECK_THROW(array(pos), dg::OutOfRangeError);
 	pos = {0,1};
-	BOOST_CHECK_THROW(array(pos), dg::DimensionMismatch);
+	BOOST_CHECK_THROW(array(pos), dg::DimensionMismatchError);
 	pos = {0,1,2,3};
-	BOOST_CHECK_THROW(array(pos), dg::DimensionMismatch);
+	BOOST_CHECK_THROW(array(pos), dg::DimensionMismatchError);
 	array.clear();
-	BOOST_CHECK_THROW(array({0}), dg::ZeroSize);
+	BOOST_CHECK_THROW(array({0}), dg::ZeroSizeError);
 	BOOST_CHECK(array != at.array);
 	BOOST_CHECK(!(array == at.array));
 	array = at.array;
@@ -177,7 +177,7 @@ BOOST_AUTO_TEST_CASE(Serialization) {
 
 BOOST_AUTO_TEST_CASE(ArrayCopyReg) {
 	double a[16] = { 0 };
-	BOOST_CHECK_THROW(array.copyTo(a), dg::DimensionMismatch);
+	BOOST_CHECK_THROW(array.copyTo(a), dg::DimensionMismatchError);
 	BOOST_CHECK_NO_THROW(array.copyFrom(a));
 	BOOST_CHECK_EQUAL(array.numdims(), 1);
 	BOOST_CHECK_EQUAL(array.dim(0), 16);
@@ -185,7 +185,7 @@ BOOST_AUTO_TEST_CASE(ArrayCopyReg) {
 
 BOOST_AUTO_TEST_CASE(ArrayCopyStd) {
 	std::array<double, 16> a;
-	BOOST_CHECK_THROW(array.copyTo(a), dg::DimensionMismatch);
+	BOOST_CHECK_THROW(array.copyTo(a), dg::DimensionMismatchError);
 	BOOST_CHECK_NO_THROW(array.copyFrom(a));
 	BOOST_CHECK_EQUAL(array.numdims(), 1);
 	BOOST_CHECK_EQUAL(array.dim(0), 16);
@@ -193,7 +193,7 @@ BOOST_AUTO_TEST_CASE(ArrayCopyStd) {
 
 BOOST_AUTO_TEST_CASE(ArrayCopyVec) {
 	std::vector<double> a = { 42 };
-	BOOST_CHECK_THROW(array.copyTo(a), dg::DimensionMismatch);
+	BOOST_CHECK_THROW(array.copyTo(a), dg::DimensionMismatchError);
 	BOOST_CHECK_NO_THROW(array.copyFrom(a));
 	BOOST_CHECK_EQUAL(array.numdims(), 1);
 	BOOST_CHECK_EQUAL(array.dim(0), 1);

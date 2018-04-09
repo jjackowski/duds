@@ -100,7 +100,7 @@ private:
 		int res = adjtimex(&tx);
 		// check for an error
 		if (res < 0) {
-			BOOST_THROW_EXCEPTION(ClockError() <<
+			DUDS_THROW_EXCEPTION(ClockError() <<
 				boost::errinfo_api_function("adjtimex") <<
 				boost::errinfo_errno(errno)
 			);

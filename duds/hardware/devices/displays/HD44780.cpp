@@ -39,16 +39,16 @@ void HD44780::configure(
 ) {
 	// range check on display size
 	if ((c > 20) || (c < 1) || (r > 4) || (r < 1)) {
-		BOOST_THROW_EXCEPTION(TextDisplayRangeError() <<
+		DUDS_THROW_EXCEPTION(TextDisplayRangeError() <<
 			TextDisplaySizeInfo(Info_DisplayColRow(c, r))
 		);
 	}
 	if (!outPins.havePins() || !enablePin) {
-		BOOST_THROW_EXCEPTION(duds::hardware::interface::PinDoesNotExist());
+		DUDS_THROW_EXCEPTION(duds::hardware::interface::PinDoesNotExist());
 	}
 	// requires 5 pins: 4 data, 1 control, all output
 	if (outPins.size() != 5) {
-		BOOST_THROW_EXCEPTION(duds::hardware::interface::PinRangeError());
+		DUDS_THROW_EXCEPTION(duds::hardware::interface::PinRangeError());
 	}
 	// get the capabilities for inspection
 	std::vector<duds::hardware::interface::DigitalPinCap> caps =
@@ -60,7 +60,7 @@ void HD44780::configure(
 	for (; iter != caps.cend(); ++pos, ++iter) {
 		// check for no output ability
 		if (!iter->canOutput()) {
-			BOOST_THROW_EXCEPTION(
+			DUDS_THROW_EXCEPTION(
 				duds::hardware::interface::DigitalPinCannotOutputError() <<
 				duds::hardware::interface::PinErrorId(outPins.globalId(pos))
 			);
@@ -87,7 +87,7 @@ void HD44780::wait() const {
 
 void HD44780::preparePins(HD44780::Access &acc) {
 	if (!outputs.havePins()) {
-		BOOST_THROW_EXCEPTION(TextDisplayUninitialized());
+		DUDS_THROW_EXCEPTION(TextDisplayUninitialized());
 	}
 	// Wait until the display can take more data. Do this before getting
 	// hardware access so that the hadrware remains availble for other

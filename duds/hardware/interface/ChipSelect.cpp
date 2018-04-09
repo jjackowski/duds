@@ -9,6 +9,7 @@
  */
 #include <duds/hardware/interface/ChipSelect.hpp>
 #include <duds/hardware/interface/ChipSelectErrors.hpp>
+#include <duds/general/Errors.hpp>
 
 namespace duds { namespace hardware { namespace interface {
 
@@ -18,7 +19,7 @@ ChipSelect::ChipSelect(ChipSelectManager *csm, int chipId) {
 	if (csm && (chipId >= 0)) {
 		std::shared_ptr<ChipSelectManager> m = csm->shared_from_this();
 		if (!m->validChip(cid = chipId)) {
-			BOOST_THROW_EXCEPTION(ChipSelectInvalidChip() <<
+			DUDS_THROW_EXCEPTION(ChipSelectInvalidChip() <<
 				ChipSelectIdError(chipId));
 		}
 		mgr = std::move(m);
@@ -34,7 +35,7 @@ ChipSelect::ChipSelect(
 cid(chipId) {
 	if (csm && (chipId >= 0)) {
 		if (!csm->validChip(cid = chipId)) {
-			BOOST_THROW_EXCEPTION(ChipSelectInvalidChip() <<
+			DUDS_THROW_EXCEPTION(ChipSelectInvalidChip() <<
 				ChipSelectIdError(chipId));
 		}
 		mgr = csm;
@@ -46,7 +47,7 @@ cid(chipId) {
 
 std::unique_ptr<ChipAccess> ChipSelect::access() {
 	if (!mgr) {
-		BOOST_THROW_EXCEPTION(ChipSelectBadManager() <<
+		DUDS_THROW_EXCEPTION(ChipSelectBadManager() <<
 			ChipSelectIdError(cid));
 	}
 	return mgr->access(cid);
@@ -54,7 +55,7 @@ std::unique_ptr<ChipAccess> ChipSelect::access() {
 
 void ChipSelect::access(ChipAccess &acc) {
 	if (!mgr) {
-		BOOST_THROW_EXCEPTION(ChipSelectBadManager() <<
+		DUDS_THROW_EXCEPTION(ChipSelectBadManager() <<
 			ChipSelectIdError(cid));
 	}
 	mgr->access(acc, cid);
@@ -62,7 +63,7 @@ void ChipSelect::access(ChipAccess &acc) {
 
 std::unique_ptr<ChipAccess> ChipSelect::select() {
 	if (!mgr) {
-		BOOST_THROW_EXCEPTION(ChipSelectBadManager() <<
+		DUDS_THROW_EXCEPTION(ChipSelectBadManager() <<
 			ChipSelectIdError(cid));
 	}
 	return mgr->select(cid);
@@ -70,7 +71,7 @@ std::unique_ptr<ChipAccess> ChipSelect::select() {
 
 void ChipSelect::select(ChipAccess &acc) {
 	if (!mgr) {
-		BOOST_THROW_EXCEPTION(ChipSelectBadManager() <<
+		DUDS_THROW_EXCEPTION(ChipSelectBadManager() <<
 			ChipSelectIdError(cid));
 	}
 	mgr->select(acc, cid);

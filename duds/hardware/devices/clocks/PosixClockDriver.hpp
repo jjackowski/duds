@@ -34,7 +34,7 @@ struct PosixClockUnsupported : ClockError { };
 /**
  * Indicates the POSIX clockid_t in an error involving a POSIX clock.
  */
-typedef boost::error_info<struct tag_posixclockid, clockid_t>  PosixClockId;
+typedef boost::error_info<struct Info_posixclockid, clockid_t>  PosixClockId;
 
 /**
  * A clock driver to use clocks through the POSIX interface.
@@ -115,7 +115,7 @@ private:
 		timespec ts;
 		int res = clock_gettime(clk, &ts);
 		if (res) {
-			BOOST_THROW_EXCEPTION(ClockError() << PosixClockId(clk));
+			DUDS_THROW_EXCEPTION(ClockError() << PosixClockId(clk));
 		}
 		ts.tv_sec += offset;
 		return sum(ts);
@@ -159,7 +159,7 @@ public:
 		timespec ts;
 		int res = clock_getres(clk, &ts);
 		if (res) {
-			BOOST_THROW_EXCEPTION(PosixClockUnsupported() << PosixClockId(clk));
+			DUDS_THROW_EXCEPTION(PosixClockUnsupported() << PosixClockId(clk));
 		}
 		// put the resolution into a single value
 		duds::data::int128_t rez = sum(ts);

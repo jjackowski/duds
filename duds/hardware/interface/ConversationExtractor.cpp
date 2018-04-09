@@ -14,7 +14,7 @@ namespace duds { namespace hardware { namespace interface {
 
 void ConversationExtractor::set() {
 	if (!c) {
-		BOOST_THROW_EXCEPTION(ConversationNotSet());
+		DUDS_THROW_EXCEPTION(ConversationNotSet());
 	}
 	piter = c->cbegin();
 	// first part for extraction
@@ -35,7 +35,7 @@ void ConversationExtractor::set() {
 void ConversationExtractor::advance(std::size_t bytes) {
 	// too few bytes?
 	if (bytes > remain) {
-		BOOST_THROW_EXCEPTION(ConversationReadPastEnd());
+		DUDS_THROW_EXCEPTION(ConversationReadPastEnd());
 	}
 	remain -= bytes;
 	// no data left in part?
@@ -67,10 +67,10 @@ void ConversationExtractor::advance(std::size_t bytes) {
 
 void ConversationExtractor::nextPart() {
 	if (!c) {
-		BOOST_THROW_EXCEPTION(ConversationNotSet());
+		DUDS_THROW_EXCEPTION(ConversationNotSet());
 	}
 	if (!pos) {
-		BOOST_THROW_EXCEPTION(ConversationReadPastEnd());
+		DUDS_THROW_EXCEPTION(ConversationReadPastEnd());
 	}
 	// find next part for extraction
 	while ((piter != c->cend() && !(*piter)->extract())) {
@@ -88,7 +88,7 @@ void ConversationExtractor::nextPart() {
 
 void ConversationExtractor::read(char *dest, std::size_t len) {
 	if (remain < len) {
-		BOOST_THROW_EXCEPTION(ConversationReadPastEnd());
+		DUDS_THROW_EXCEPTION(ConversationReadPastEnd());
 	}
 	std::memcpy(dest, pos, len);
 	advance(len);

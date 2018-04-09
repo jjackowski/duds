@@ -8,6 +8,7 @@
  * Copyright (C) 2017  Jeff Jackowski
  */
 #include <duds/hardware/interface/linux/SysPwm.hpp>
+#include <duds/general/Errors.hpp>
 #include <boost/exception/errinfo_file_name.hpp>
 #include <sstream>
 
@@ -24,14 +25,14 @@ SysPwm::SysPwm(int chip, int channel) {
 	fname << prefix << chip << "/pwm" << channel << "/enable";
 	en.open(fname.str());
 	if (!en.is_open()) {
-		BOOST_THROW_EXCEPTION(PwmError() << SysPwmChip(chip) <<
+		DUDS_THROW_EXCEPTION(PwmError() << SysPwmChip(chip) <<
 			SysPwmChannel(channel) << boost::errinfo_file_name(fname.str())
 		);
 	}
 	unsigned int val;
 	en >> val;
 	if (en.fail() || (val > 1)) {
-		BOOST_THROW_EXCEPTION(PwmError() << SysPwmChip(chip) <<
+		DUDS_THROW_EXCEPTION(PwmError() << SysPwmChip(chip) <<
 			SysPwmChannel(channel) << boost::errinfo_file_name(fname.str())
 		);
 	}
@@ -41,13 +42,13 @@ SysPwm::SysPwm(int chip, int channel) {
 	fname << "period";
 	per.open(fname.str());
 	if (!per.is_open()) {
-		BOOST_THROW_EXCEPTION(PwmError() << SysPwmChip(chip) <<
+		DUDS_THROW_EXCEPTION(PwmError() << SysPwmChip(chip) <<
 			SysPwmChannel(channel) << boost::errinfo_file_name(fname.str())
 		);
 	}
 	per >> val;
 	if (per.fail()) {
-		BOOST_THROW_EXCEPTION(PwmError() << SysPwmChip(chip) <<
+		DUDS_THROW_EXCEPTION(PwmError() << SysPwmChip(chip) <<
 			SysPwmChannel(channel) << boost::errinfo_file_name(fname.str())
 		);
 	}
@@ -57,13 +58,13 @@ SysPwm::SysPwm(int chip, int channel) {
 	fname << "duty_cycle";
 	dc.open(fname.str());
 	if (!dc.is_open()) {
-		BOOST_THROW_EXCEPTION(PwmError() << SysPwmChip(chip) <<
+		DUDS_THROW_EXCEPTION(PwmError() << SysPwmChip(chip) <<
 			SysPwmChannel(channel) << boost::errinfo_file_name(fname.str())
 		);
 	}
 	dc >> val;
 	if (dc.fail()) {
-		BOOST_THROW_EXCEPTION(PwmError() << SysPwmChip(chip) <<
+		DUDS_THROW_EXCEPTION(PwmError() << SysPwmChip(chip) <<
 			SysPwmChannel(channel) << boost::errinfo_file_name(fname.str())
 		);
 	}
@@ -83,7 +84,7 @@ void SysPwm::enable(bool state) {
 		}
 		en << v << std::endl;
 		if (en.fail()) {
-			BOOST_THROW_EXCEPTION(PwmError());
+			DUDS_THROW_EXCEPTION(PwmError());
 		}
 		running = state;
 	}
@@ -94,7 +95,7 @@ void SysPwm::dutyPeriod(const std::chrono::nanoseconds &ns) {
 		dc.seekg(0);
 		dc << ns.count() << std::endl;
 		if (dc.fail()) {
-			BOOST_THROW_EXCEPTION(PwmError() << SysPwmDutyNs(ns.count()));
+			DUDS_THROW_EXCEPTION(PwmError() << SysPwmDutyNs(ns.count()));
 		}
 		dutyNs = ns;
 	}
@@ -109,7 +110,7 @@ void SysPwm::period(const std::chrono::nanoseconds &ns) {
 		per.seekg(0);
 		per << ns.count() << std::endl;
 		if (per.fail()) {
-			BOOST_THROW_EXCEPTION(PwmError() << SysPwmPeriodNs(ns.count()));
+			DUDS_THROW_EXCEPTION(PwmError() << SysPwmPeriodNs(ns.count()));
 		}
 		periodNs = ns;
 	}

@@ -7,7 +7,6 @@
  *
  * Copyright (C) 2017  Jeff Jackowski
  */
-#include <boost/exception/info.hpp>  // other includes may be needed to throw/inspect
 #include <duds/general/Errors.hpp>
 
 namespace duds { namespace time {
@@ -21,17 +20,17 @@ struct TimeError : virtual std::exception, virtual boost::exception { };
  * A base class for time related range errors. Thrown in cases where the
  * derived classes are not applicable.
  */
-struct TimeOutOfRange : TimeError { };
+struct TimeOutOfRangeError : TimeError { };
 /*
 / **
  * The specified year is outside the allowable range.
  * /
-struct YearOutOfRange : TimeOutOfRange { };
+struct YearOutOfRangeError : TimeOutOfRangeError { };
 
 / **
  * The specified month is outside the allowable range.
  * /
-struct MonthOutOfRange : TimeOutOfRange { };
+struct MonthOutOfRangeError : TimeOutOfRangeError { };
 */
 
 namespace planetary {
@@ -39,7 +38,7 @@ namespace planetary {
 /**
  * The specified number of leap seconds is outside the allowable range.
  */
-struct LeapOutOfRange : TimeOutOfRange { };
+struct LeapOutOfRangeError : TimeOutOfRangeError { };
 
 /**
  * More than one leap second was specified for the same time.
@@ -73,18 +72,18 @@ struct ZoneIoError : ZoneinfoError, virtual duds::general::FileIoError { };
  * The year value specified as part of something that caused a TimeError
  * to be thrown.
  * /
-typedef boost::error_info<struct tag_year, int>  YearInError;
+typedef boost::error_info<struct Info_year, int>  YearInError;
 
 / **
  * The month value specified as part of something that caused a TimeError
  * to be thrown.
  * /
-typedef boost::error_info<struct tag_year, int>  MonthInError;
+typedef boost::error_info<struct Info_year, int>  MonthInError;
 
 / **
  * The leap secons value specified as part of something that caused a
  * TimeError to be thrown.
  * /
-typedef boost::error_info<struct tag_year, int>  LeapInError;
+typedef boost::error_info<struct Info_year, int>  LeapInError;
 */
 } } }

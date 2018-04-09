@@ -8,6 +8,7 @@
  * Copyright (C) 2017  Jeff Jackowski
  */
 #include <duds/hardware/interface/ConversationVector.hpp>
+#include <duds/general/Errors.hpp>
 
 namespace duds { namespace hardware { namespace interface {
 
@@ -34,10 +35,10 @@ void ConversationVector::add(std::int8_t *a, std::size_t l) {
 
 void ConversationVector::setStartOffset(std::int16_t offset) {
 	if (!varyingLength()) {
-		BOOST_THROW_EXCEPTION(ConversationFixedLength());
+		DUDS_THROW_EXCEPTION(ConversationFixedLength());
 	}
 	if ((offset < 0) || (offset > data.size())) {
-		BOOST_THROW_EXCEPTION(ConversationBadOffset());
+		DUDS_THROW_EXCEPTION(ConversationBadOffset());
 	}
 	val16 = offset;
 }
@@ -46,7 +47,7 @@ void ConversationVector::setLength(std::size_t len) {
 	if (varyingLength()) {
 		data.resize(len);
 	} else {
-		BOOST_THROW_EXCEPTION(ConversationFixedLength());
+		DUDS_THROW_EXCEPTION(ConversationFixedLength());
 	}
 }
 

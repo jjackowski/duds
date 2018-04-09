@@ -8,13 +8,14 @@
  * Copyright (C) 2017  Jeff Jackowski
  */
 #include <duds/data/Unit.hpp>
+#include <duds/general/Errors.hpp>
 
 namespace duds { namespace data {
 
 void Unit::setAmpere(int e) {
 	int v = general::SignExtend<4>(e);
 	if (v != e) {
-		BOOST_THROW_EXCEPTION(UnitRangeError() << BadUnitExponent(e) <<
+		DUDS_THROW_EXCEPTION(UnitRangeError() << BadUnitExponent(e) <<
 			BadUnit("Ampere"));
 	}
 	u = (u & 0xFFFFFFF0) | v;
@@ -23,7 +24,7 @@ void Unit::setAmpere(int e) {
 void Unit::setCandela(int e) {
 	int v = general::SignExtend<4>(e);
 	if (v != e) {
-		BOOST_THROW_EXCEPTION(UnitRangeError() << BadUnitExponent(e) <<
+		DUDS_THROW_EXCEPTION(UnitRangeError() << BadUnitExponent(e) <<
 			BadUnit("Candela"));
 	}
 	u = (u & 0xFFFFFF0F) | (v << 4);
@@ -32,7 +33,7 @@ void Unit::setCandela(int e) {
 void Unit::setKelvin(int e) {
 	int v = general::SignExtend<4>(e);
 	if (v != e) {
-		BOOST_THROW_EXCEPTION(UnitRangeError() << BadUnitExponent(e) <<
+		DUDS_THROW_EXCEPTION(UnitRangeError() << BadUnitExponent(e) <<
 			BadUnit("Kelvin"));
 	}
 	u = (u & 0xFFFFF0FF) | (v << 8);
@@ -41,7 +42,7 @@ void Unit::setKelvin(int e) {
 void Unit::setKilogram(int e) {
 	int v = general::SignExtend<4>(e);
 	if (v != e) {
-		BOOST_THROW_EXCEPTION(UnitRangeError() << BadUnitExponent(e) <<
+		DUDS_THROW_EXCEPTION(UnitRangeError() << BadUnitExponent(e) <<
 			BadUnit("Kilogram"));
 	}
 	u = (u & 0xFFFF0FFF) | (v << 12);
@@ -50,7 +51,7 @@ void Unit::setKilogram(int e) {
 void Unit::setMeter(int e) {
 	int v = general::SignExtend<4>(e);
 	if (v != e) {
-		BOOST_THROW_EXCEPTION(UnitRangeError() << BadUnitExponent(e) <<
+		DUDS_THROW_EXCEPTION(UnitRangeError() << BadUnitExponent(e) <<
 			BadUnit("Meter"));
 	}
 	u = (u & 0xFFF0FFFF) | (v << 16);
@@ -59,7 +60,7 @@ void Unit::setMeter(int e) {
 void Unit::setMole(int e) {
 	int v = general::SignExtend<4>(e);
 	if (v != e) {
-		BOOST_THROW_EXCEPTION(UnitRangeError() << BadUnitExponent(e) <<
+		DUDS_THROW_EXCEPTION(UnitRangeError() << BadUnitExponent(e) <<
 			BadUnit("Mole"));
 	}
 	u = (u & 0xFF0FFFFF) | (v << 20);
@@ -68,7 +69,7 @@ void Unit::setMole(int e) {
 void Unit::setSecond(int e) {
 	int v = general::SignExtend<4>(e);
 	if (v != e) {
-		BOOST_THROW_EXCEPTION(UnitRangeError() << BadUnitExponent(e) <<
+		DUDS_THROW_EXCEPTION(UnitRangeError() << BadUnitExponent(e) <<
 			BadUnit("Second"));
 	}
 	u = (u & 0xF0FFFFFF) | (v << 24);
@@ -77,7 +78,7 @@ void Unit::setSecond(int e) {
 void Unit::setRadian(int e) {
 	int v = general::SignExtend<2>(e);
 	if (v != e) {
-		BOOST_THROW_EXCEPTION(UnitRangeError() << BadUnitExponent(e) <<
+		DUDS_THROW_EXCEPTION(UnitRangeError() << BadUnitExponent(e) <<
 			BadUnit("Radian"));
 	}
 	u = (u & 0xCFFFFFFF) | (v << 28);
@@ -86,7 +87,7 @@ void Unit::setRadian(int e) {
 void Unit::setSteradian(int e) {
 	int v = general::SignExtend<2>(e);
 	if (v != e) {
-		BOOST_THROW_EXCEPTION(UnitRangeError() << BadUnitExponent(e) <<
+		DUDS_THROW_EXCEPTION(UnitRangeError() << BadUnitExponent(e) <<
 			BadUnit("Steradian"));
 	}
 	u = (u & 0x3FFFFFFF) | (v << 30);

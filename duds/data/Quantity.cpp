@@ -13,21 +13,21 @@ namespace duds { namespace data {
 
 Quantity Quantity::operator + (const Quantity &q) const {
 	if (unit != q.unit) {
-		BOOST_THROW_EXCEPTION(UnitMismatch());
+		DUDS_THROW_EXCEPTION(UnitMismatch());
 	}
 	return Quantity(value + q.value, unit);
 }
 
 Quantity Quantity::operator - (const Quantity &q) const {
 	if (unit != q.unit) {
-		BOOST_THROW_EXCEPTION(UnitMismatch());
+		DUDS_THROW_EXCEPTION(UnitMismatch());
 	}
 	return Quantity(value - q.value, unit);
 }
 
 Quantity &Quantity::operator += (const Quantity &q) {
 	if (unit != q.unit) {
-		BOOST_THROW_EXCEPTION(UnitMismatch());
+		DUDS_THROW_EXCEPTION(UnitMismatch());
 	}
 	value += q.value;
 	return *this;
@@ -35,7 +35,7 @@ Quantity &Quantity::operator += (const Quantity &q) {
 
 Quantity &Quantity::operator -= (const Quantity &q) {
 	if (unit != q.unit) {
-		BOOST_THROW_EXCEPTION(UnitMismatch());
+		DUDS_THROW_EXCEPTION(UnitMismatch());
 	}
 	value -= q.value;
 	return *this;
@@ -55,28 +55,28 @@ Quantity &Quantity::operator /= (const Quantity &q) {
 
 bool Quantity::operator < (const Quantity &q) const {
 	if (unit != q.unit) {
-		BOOST_THROW_EXCEPTION(UnitMismatch());
+		DUDS_THROW_EXCEPTION(UnitMismatch());
 	}
 	return value < q.value;
 }
 
 bool Quantity::operator > (const Quantity &q) const {
 	if (unit != q.unit) {
-		BOOST_THROW_EXCEPTION(UnitMismatch());
+		DUDS_THROW_EXCEPTION(UnitMismatch());
 	}
 	return value > q.value;
 }
 
 bool Quantity::operator <= (const Quantity &q) const {
 	if (unit != q.unit) {
-		BOOST_THROW_EXCEPTION(UnitMismatch());
+		DUDS_THROW_EXCEPTION(UnitMismatch());
 	}
 	return value <= q.value;
 }
 
 bool Quantity::operator >= (const Quantity &q) const {
 	if (unit != q.unit) {
-		BOOST_THROW_EXCEPTION(UnitMismatch());
+		DUDS_THROW_EXCEPTION(UnitMismatch());
 	}
 	return value >= q.value;
 }
@@ -85,7 +85,7 @@ bool Quantity::operator >= (const Quantity &q) const {
 	::duds::time::interstellar::Femtoseconds &fs, const Quantity &q
 ) {
 	if (q.unit != units::Seconds) {
-		BOOST_THROW_EXCEPTION(UnitBadConversion() << BadUnit(q.unit));
+		DUDS_THROW_EXCEPTION(UnitBadConversion() << BadUnit(q.unit));
 	}
 	fs = duds::time::interstellar::Femtoseconds(
 		duds::time::interstellar::Femtoseconds::rep(
@@ -99,7 +99,7 @@ bool Quantity::operator >= (const Quantity &q) const {
 	::duds::time::interstellar::Nanoseconds &ns, const Quantity &q
 ) {
 	if (q.unit != units::Seconds) {
-		BOOST_THROW_EXCEPTION(UnitBadConversion() << BadUnit(q.unit));
+		DUDS_THROW_EXCEPTION(UnitBadConversion() << BadUnit(q.unit));
 	}
 	ns = duds::time::interstellar::Nanoseconds(
 		duds::time::interstellar::Nanoseconds::rep(

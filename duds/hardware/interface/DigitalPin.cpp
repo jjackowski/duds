@@ -18,7 +18,7 @@ DigitalPin::DigitalPin(
 	// Have a port? Then check for pin non-existence.
 	if (port && !port->exists(pin)) {
 		// bad pin
-		BOOST_THROW_EXCEPTION(PinDoesNotExist() <<
+		DUDS_THROW_EXCEPTION(PinDoesNotExist() <<
 			PinErrorId(gid) << DigitalPortAffected(port.get())
 		);
 	};

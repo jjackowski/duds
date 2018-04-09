@@ -10,6 +10,7 @@
 #include <duds/hardware/interface/MasterSyncSerialAccess.hpp>
 #include <duds/hardware/interface/MasterSyncSerialErrors.hpp>
 #include <duds/hardware/interface/Conversation.hpp>
+#include <duds/general/Errors.hpp>
 
 namespace duds { namespace hardware { namespace interface {
 
@@ -57,7 +58,7 @@ void MasterSyncSerial::retire(MasterSyncSerialAccess *acc) {
 		mssacc = nullptr;
 	} else {
 		// panic!  maybe limit this to debug builds
-		BOOST_THROW_EXCEPTION(SyncSerialInvalidAccess());
+		DUDS_THROW_EXCEPTION(SyncSerialInvalidAccess());
 	}
 }
 
@@ -72,17 +73,17 @@ void MasterSyncSerial::clockFrequency(unsigned int freq) {
 void MasterSyncSerial::clockPeriod(unsigned int period) {
 	// this object must not be communicating
 	if (flags & MssCommunicating) {
-		BOOST_THROW_EXCEPTION(SyncSerialInUse());
+		DUDS_THROW_EXCEPTION(SyncSerialInUse());
 	}
 	minHalfPeriod = period;
 }
 
 std::unique_ptr<MasterSyncSerialAccess> MasterSyncSerial::access() {
 	if (~flags & MssReady) {
-		BOOST_THROW_EXCEPTION(SyncSerialNotReady());
+		DUDS_THROW_EXCEPTION(SyncSerialNotReady());
 	}
 	if ((flags & MssOpen) || mssacc) {
-		BOOST_THROW_EXCEPTION(SyncSerialInUse());
+		DUDS_THROW_EXCEPTION(SyncSerialInUse());
 	}
 	open();
 	flags |= MssOpen;
@@ -92,13 +93,13 @@ std::unique_ptr<MasterSyncSerialAccess> MasterSyncSerial::access() {
 
 void MasterSyncSerial::access(MasterSyncSerialAccess &acc) {
 	if (~flags & MssReady) {
-		BOOST_THROW_EXCEPTION(SyncSerialNotReady());
+		DUDS_THROW_EXCEPTION(SyncSerialNotReady());
 	}
 	if ((flags & MssOpen) || mssacc) {
-		BOOST_THROW_EXCEPTION(SyncSerialInUse());
+		DUDS_THROW_EXCEPTION(SyncSerialInUse());
 	}
 	if (acc.mss) {
-		BOOST_THROW_EXCEPTION(SyncSerialAccessInUse());
+		DUDS_THROW_EXCEPTION(SyncSerialAccessInUse());
 	}
 	open();
 	flags |= MssOpen;
@@ -120,11 +121,11 @@ void MasterSyncSerial::accessStart(MasterSyncSerialAccess &acc) {
 void MasterSyncSerial::condStart() {
 	/*
 	if (~flags & MssReady()) {
-		BOOST_THROW_EXCEPTION(SyncSerialNotReady());
+		DUDS_THROW_EXCEPTION(SyncSerialNotReady());
 	}
 	*/
 	if (~flags & MssOpen) {
-		BOOST_THROW_EXCEPTION(SyncSerialNotOpen());
+		DUDS_THROW_EXCEPTION(SyncSerialNotOpen());
 	}
 	if (~flags & MssCommunicating) {
 		start();
@@ -135,11 +136,11 @@ void MasterSyncSerial::condStart() {
 void MasterSyncSerial::condStop() {
 	/*
 	if (~flags & MssReady()) {
-		BOOST_THROW_EXCEPTION(SyncSerialNotReady());
+		DUDS_THROW_EXCEPTION(SyncSerialNotReady());
 	}
 	*/
 	if (~flags & MssOpen) {
-		BOOST_THROW_EXCEPTION(SyncSerialNotOpen());
+		DUDS_THROW_EXCEPTION(SyncSerialNotOpen());
 	}
 	if (flags & MssCommunicating) {
 		stop();
@@ -180,10 +181,10 @@ void MasterSyncSerial::converseAlreadyOpen(Conversation &conv) {
 
 void MasterSyncSerial::converse(Conversation &conv) {
 	if (~flags & MssReady) {
-		BOOST_THROW_EXCEPTION(SyncSerialNotReady());
+		DUDS_THROW_EXCEPTION(SyncSerialNotReady());
 	}
 	if ((flags & MssOpen) || mssacc) {
-		BOOST_THROW_EXCEPTION(SyncSerialInUse());
+		DUDS_THROW_EXCEPTION(SyncSerialInUse());
 	}
 	open();
 	// mark as in use without memory allocations or shared pointers

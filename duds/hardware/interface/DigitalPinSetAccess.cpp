@@ -49,7 +49,7 @@ std::vector<unsigned int> DigitalPinSetAccess::subset(
 	std::vector<unsigned int>::const_iterator iter = pos.cbegin();
 	for (; iter != pos.cend(); ++iter) {
 		if ((*iter != -1) && (*iter >= pinvec.size())) {
-			BOOST_THROW_EXCEPTION(PinDoesNotExist() <<
+			DUDS_THROW_EXCEPTION(PinDoesNotExist() <<
 				PinErrorId(globalId(*iter))
 			);
 		}

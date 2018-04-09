@@ -11,6 +11,7 @@
 #define QUANTITY_HPP
 
 #include <duds/data/Units.hpp>
+#include <duds/general/Errors.hpp>
 #include <duds/time/interstellar/Interstellar.hpp>
 
 namespace duds { namespace data {
@@ -182,7 +183,7 @@ struct Quantity {
 	template <class Duration>
 	void toDuration(Duration &d) const {
 		if (unit != duds::data::units::Second) {
-			BOOST_THROW_EXCEPTION(UnitBadConversion() << BadUnit(unit));
+			DUDS_THROW_EXCEPTION(UnitBadConversion() << BadUnit(unit));
 		}
 		d = Duration(typename Duration::rep(value *
 			(double)(Duration::period::num) /
@@ -201,7 +202,7 @@ struct Quantity {
 	template <class Duration>
 	Duration toDuration() const {
 		if (unit != duds::data::units::Second) {
-			BOOST_THROW_EXCEPTION(UnitBadConversion() << BadUnit(unit));
+			DUDS_THROW_EXCEPTION(UnitBadConversion() << BadUnit(unit));
 		}
 		return Duration(typename Duration::rep(value *
 			(double)(Duration::period::num) /

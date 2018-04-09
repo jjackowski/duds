@@ -87,7 +87,7 @@ void SysFsPort::FsPin::open(
 		// allow for input only
 		value.open(fname.str().c_str(), std::ios_base::in);
 		if (!value.is_open()) {
-			BOOST_THROW_EXCEPTION(PinIoError() << SysFsPinErrorId(pin) <<
+			DUDS_THROW_EXCEPTION(PinIoError() << SysFsPinErrorId(pin) <<
 				boost::errinfo_file_name(fname.str())
 			);
 		}
@@ -107,7 +107,7 @@ void SysFsPort::FsPin::open(
 		direction.open(fname.str().c_str(), std::ios_base::in);
 		if (!direction.is_open()) {
 			value.close();
-			BOOST_THROW_EXCEPTION(PinIoError() << SysFsPinErrorId(pin) <<
+			DUDS_THROW_EXCEPTION(PinIoError() << SysFsPinErrorId(pin) <<
 				boost::errinfo_file_name(fname.str())
 			);
 		}
@@ -136,7 +136,7 @@ void SysFsPort::FsPin::open(
 			if (noOutput) {
 				// useless pin; an output that cannot be changed
 				value.close();
-				BOOST_THROW_EXCEPTION(PinUnsupportedOperation() <<
+				DUDS_THROW_EXCEPTION(PinUnsupportedOperation() <<
 					SysFsPinErrorId(pin)
 				);
 			}
@@ -148,7 +148,7 @@ void SysFsPort::FsPin::open(
 			DigitalPinConfig::OutputPushPull;
 	} else {
 		// unexpected value
-		BOOST_THROW_EXCEPTION(PinIoError() << SysFsPinErrorId(pin));
+		DUDS_THROW_EXCEPTION(PinIoError() << SysFsPinErrorId(pin));
 	}
 	// I don't like double negatives, but I'm not changing the logic to fix it.
 	if (!noOutput) {
@@ -166,7 +166,7 @@ void SysFsPort::FsPin::setDirection(bool output) {
 			direction << "in" << std::endl;
 		}
 		if (direction.fail()) {
-			BOOST_THROW_EXCEPTION(PinIoError() <<
+			DUDS_THROW_EXCEPTION(PinIoError() <<
 				SysFsPinErrorId(fsid)
 			);
 		} else if (output) {
@@ -184,7 +184,7 @@ bool SysFsPort::FsPin::read() {
 	char v;
 	value >> v;
 	if (value.fail()) {
-		BOOST_THROW_EXCEPTION(PinIoError() <<
+		DUDS_THROW_EXCEPTION(PinIoError() <<
 			SysFsPinErrorId(fsid)
 		);
 	}
@@ -206,7 +206,7 @@ void SysFsPort::FsPin::write(bool w) {
 		}
 		value << v << std::endl;
 		if (value.fail()) {
-			BOOST_THROW_EXCEPTION(PinIoError() <<
+			DUDS_THROW_EXCEPTION(PinIoError() <<
 				SysFsPinErrorId(fsid)
 			);
 		}

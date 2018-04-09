@@ -7,7 +7,7 @@
  *
  * Copyright (C) 2017  Jeff Jackowski
  */
-#include <boost/exception/info.hpp>
+#include <duds/general/Errors.hpp>
 
 namespace duds { namespace hardware { namespace interface {
 
@@ -23,7 +23,7 @@ struct SmbusError : virtual std::exception, virtual boost::exception { };
  * The received message included a bad checksum and Packet Error Checking is
  * in use.
  */
-struct SmbusErrorPec : SmbusError { };
+struct SmbusErrorPec : virtual SmbusError, virtual duds::general::ChecksumError { };
 
 /**
  * A message of an invalid length was specified, or a message too big for a
@@ -72,6 +72,6 @@ struct SmbusErrorBusy : SmbusErrorTimeout { };
 /**
  * Provides the device (slave) address along with an error.
  */
-typedef boost::error_info<struct tag_smbusdevaddr, int>  SmbusDeviceAddr;
+typedef boost::error_info<struct Info_smbusdevaddr, int>  SmbusDeviceAddr;
 
 } } }

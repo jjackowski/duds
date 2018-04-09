@@ -8,6 +8,7 @@
  * Copyright (C) 2017  Jeff Jackowski
  */
 #include <duds/hardware/interface/MasterSyncSerialErrors.hpp>
+#include <duds/general/Errors.hpp>
 #include <boost/exception/errinfo_file_name.hpp>
 #include <fcntl.h>
 #include <sys/ioctl.h>
@@ -42,7 +43,7 @@ void SpiMasterSyncSerial::open(
 ) {
 	// do not open when in use
 	if (flags & MssOpen) {
-		BOOST_THROW_EXCEPTION(SyncSerialInUse());
+		DUDS_THROW_EXCEPTION(SyncSerialInUse());
 	}
 	// close an open SPI device file
 	if (spifd >= 0) {
@@ -54,7 +55,7 @@ void SpiMasterSyncSerial::open(
 	// open the SPI device file
 	spifd = ::open(path.c_str(), O_RDWR);
 	if (spifd < 0) {
-		BOOST_THROW_EXCEPTION(SyncSerialIoError() <<
+		DUDS_THROW_EXCEPTION(SyncSerialIoError() <<
 			boost::errinfo_file_name(path));
 	}
 	std::uint8_t byte = 0;
@@ -69,7 +70,7 @@ void SpiMasterSyncSerial::open(
 	}
 	// set SPI mode flags
 	if (ioctl(spifd, SPI_IOC_WR_MODE, &byte) < 0) {
-		BOOST_THROW_EXCEPTION(SyncSerialIoError() <<
+		DUDS_THROW_EXCEPTION(SyncSerialIoError() <<
 			boost::errinfo_file_name(path));
 	}
 	// set bit order
@@ -79,13 +80,13 @@ void SpiMasterSyncSerial::open(
 		byte = 1;
 	}
 	if (ioctl(spifd, SPI_IOC_WR_LSB_FIRST, &byte) < 0) {
-		BOOST_THROW_EXCEPTION(SyncSerialIoError() <<
+		DUDS_THROW_EXCEPTION(SyncSerialIoError() <<
 			boost::errinfo_file_name(path));
 	}
 	// only 8 bits per word supported
 	byte = 8;
 	if (ioctl(spifd, SPI_IOC_WR_BITS_PER_WORD, &byte) < 0) {
-		BOOST_THROW_EXCEPTION(SyncSerialIoError() <<
+		DUDS_THROW_EXCEPTION(SyncSerialIoError() <<
 			boost::errinfo_file_name(path));
 	}
 	// set clock
@@ -98,17 +99,17 @@ void SpiMasterSyncSerial::open(
 
 void SpiMasterSyncSerial::setClockFrequency(unsigned int freq) {
 	if (flags & MssCommunicating) {
-		BOOST_THROW_EXCEPTION(SyncSerialInUse());
+		DUDS_THROW_EXCEPTION(SyncSerialInUse());
 	}
 	if (ioctl(spifd, SPI_IOC_WR_MAX_SPEED_HZ, &freq) < 0) {
-		BOOST_THROW_EXCEPTION(SyncSerialIoError());
+		DUDS_THROW_EXCEPTION(SyncSerialIoError());
 	}
 	MasterSyncSerial::clockFrequency(freq);
 }
 
 void SpiMasterSyncSerial::setClockPeriod(unsigned int nanos) {
 	if (flags & MssCommunicating) {
-		BOOST_THROW_EXCEPTION(SyncSerialInUse());
+		DUDS_THROW_EXCEPTION(SyncSerialInUse());
 	}
 	// hold the current clock period in case of error
 	unsigned int prev = minHalfPeriod;
@@ -121,7 +122,7 @@ void SpiMasterSyncSerial::setClockPeriod(unsigned int nanos) {
 		// revert the stored clock period
 		minHalfPeriod = prev;
 		// issue error
-		BOOST_THROW_EXCEPTION(SyncSerialIoError());
+		DUDS_THROW_EXCEPTION(SyncSerialIoError());
 	}
 }
 
@@ -139,17 +140,17 @@ void SpiMasterSyncSerial::transfer(
 	int bits
 ) {
 	if (~flags & MssCommunicating) {
-		BOOST_THROW_EXCEPTION(SyncSerialNotCommunicating());
+		DUDS_THROW_EXCEPTION(SyncSerialNotCommunicating());
 	}
 	// only full bytes may be transfered; no partial bytes
 	if (bits & 7) {
-		BOOST_THROW_EXCEPTION(SyncSerialUnsupported());
+		DUDS_THROW_EXCEPTION(SyncSerialUnsupported());
 	}
 	xfer.tx_buf = (ptrdiff_t)out;
 	xfer.rx_buf = (ptrdiff_t)in;
 	xfer.len = bits >> 3;
 	if (ioctl(spifd, SPI_IOC_MESSAGE(1), &xfer) < 0) {
-		BOOST_THROW_EXCEPTION(SyncSerialIoError());
+		DUDS_THROW_EXCEPTION(SyncSerialIoError());
 	}
 }
 

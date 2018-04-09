@@ -13,7 +13,6 @@
  * @author  Jeff Jackowski
  */
 
-#include <boost/exception/info.hpp>  // other includes may be needed to throw/inspect
 #include <duds/general/Errors.hpp>
 
 namespace duds { namespace hardware { namespace interface {
@@ -112,7 +111,7 @@ struct PinStoreMismatch : PinError { };
 / **
  * The name of a PinIndex; added by PinDirectory.
  * /
-typedef boost::error_info<struct tag_indexname, std::string>  PinErrorIndex;
+typedef boost::error_info<struct Info_indexname, std::string>  PinErrorIndex;
 
 */
 

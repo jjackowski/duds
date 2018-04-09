@@ -47,7 +47,7 @@ LeapSeconds::LeapSeconds(const std::string &zonefile) : currUntil(0) {
 int LeapSeconds::readZoneinfo(const std::string &zonefile) {
 	std::ifstream zf(zonefile, std::ios_base::in | std::ios_base::binary);
 	if (!zf.is_open()) {
-		BOOST_THROW_EXCEPTION(ZoneIoError() <<
+		DUDS_THROW_EXCEPTION(ZoneIoError() <<
 			boost::errinfo_file_name(zonefile));
 	}
 	// seek to the leap second records
@@ -56,7 +56,7 @@ int LeapSeconds::readZoneinfo(const std::string &zonefile) {
 	beuint32_t lsc, lstime, numls, transt, ltt, abr;
 	zf >> lsc >> transt >> ltt >> abr;
 	if (!zf.good()) {
-		BOOST_THROW_EXCEPTION(ZoneIoError() <<
+		DUDS_THROW_EXCEPTION(ZoneIoError() <<
 			boost::errinfo_file_name(zonefile));
 	}
 	zf.seekg(transt.val * 5 + ltt.val * 6 + abr.val, std::ios_base::cur);
@@ -73,13 +73,13 @@ int LeapSeconds::readZoneinfo(const std::string &zonefile) {
 			), duds::time::interstellar::Seconds(count.val + 10)));
 		// check for failure to add
 		if (!res.second) {
-			BOOST_THROW_EXCEPTION(ZoneDuplicateLeap() <<
+			DUDS_THROW_EXCEPTION(ZoneDuplicateLeap() <<
 				boost::errinfo_file_name(zonefile));
 		}
 	}
 	// too few leap seconds read from file?
 	if (lsc.val) {
-		BOOST_THROW_EXCEPTION(ZoneTruncated() <<
+		DUDS_THROW_EXCEPTION(ZoneTruncated() <<
 			boost::errinfo_file_name(zonefile));
 	}
 	// keep parsed leap seconds
@@ -117,7 +117,7 @@ void LeapSeconds::add(
 			leaps->emplace(std::make_pair(leapOn, iter->second + additional));
 		// duplicate?
 		} else if (iter->first == leapOn) {
-			BOOST_THROW_EXCEPTION(DuplicateLeapSecond());
+			DUDS_THROW_EXCEPTION(DuplicateLeapSecond());
 		// add to somewhere in the middle?
 		} else {
 			std::pair<LeapMap::iterator, bool> res =

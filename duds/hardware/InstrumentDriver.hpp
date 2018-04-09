@@ -105,11 +105,11 @@ public:
 	 * @pre          The function must never be called from more than one
 	 *               thread simultaneously.
 	 * @param clock  The clock driver to query for a time stamp.
-	 * @throw duds::general::Unimplemented  The implementing class does not
+	 * @throw duds::general::UnimplementedError  The implementing class does not
 	 *                                     allow sampling through this function.
 	 */
 	virtual void sample(ClockDriver &clock) {
-		BOOST_THROW_EXCEPTION(duds::general::Unimplemented());
+		DUDS_THROW_EXCEPTION(duds::general::UnimplementedError());
 	}
 	//virtual void changeStatus(/* Instrument or InstrumentAdapter ? */) = 0;
 

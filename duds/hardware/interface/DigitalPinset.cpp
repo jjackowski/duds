@@ -22,7 +22,7 @@ DigitalPinSet::DigitalPinSet(
 		for (; iter != pinvec.cend(); ++iter) {
 			if ((*iter != -1) && !port->exists(*iter)) {
 				// bad pin
-				BOOST_THROW_EXCEPTION(PinDoesNotExist() <<
+				DUDS_THROW_EXCEPTION(PinDoesNotExist() <<
 					PinErrorId(*iter) << DigitalPortAffected(port.get())
 				);
 			}

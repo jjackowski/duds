@@ -34,7 +34,7 @@ bool DigitalPortIndependentPins::proposeConfigImpl(
 	if ((propConf.size() != pvec.size()) || (
 		!initConf.empty() && initConf.size() != pvec.size()
 	)) {
-		BOOST_THROW_EXCEPTION(DigitalPinConfigRangeError() <<
+		DUDS_THROW_EXCEPTION(DigitalPinConfigRangeError() <<
 			DigitalPortAffected(this)
 		);
 	}
@@ -99,7 +99,7 @@ bool DigitalPortIndependentPins::proposeFullConfigImpl(
 	if ((propConf.size() != pins.size()) || (
 		!initConf.empty() && initConf.size() != pins.size()
 	)) {
-		BOOST_THROW_EXCEPTION(DigitalPinConfigRangeError() <<
+		DUDS_THROW_EXCEPTION(DigitalPinConfigRangeError() <<
 			DigitalPortAffected(this)
 		);
 	}

@@ -45,30 +45,30 @@ DigitalPinMasterSyncSerial::~DigitalPinMasterSyncSerial() {
 void DigitalPinMasterSyncSerial::checkPins(const DigitalPinSet &ps, Flags cfg) {
 	// there must be 2 pins for half-duplex, 3 for full duplex
 	if (((cfg & MssFullDuplex) && (ps.size() != 3)) || (ps.size() != 2)) {
-		BOOST_THROW_EXCEPTION(PinRangeError());
+		DUDS_THROW_EXCEPTION(PinRangeError());
 	}
 	// get the capabilities for inspection
 	std::vector<DigitalPinCap> caps = ps.capabilities();
 	// clock
 	if (!caps[ClockPin].canBeOutput()) {
-		BOOST_THROW_EXCEPTION(PinUnsupportedOperation() << PinErrorName("clock")
+		DUDS_THROW_EXCEPTION(PinUnsupportedOperation() << PinErrorName("clock")
 			<< PinErrorId(ps.globalId(ClockPin))
 		);
 	}
 	if (cfg & MssFullDuplex) {
 		if (!caps[OutputPin].canBeOutput()) {
-			BOOST_THROW_EXCEPTION(PinUnsupportedOperation() <<
+			DUDS_THROW_EXCEPTION(PinUnsupportedOperation() <<
 				PinErrorName("output") << PinErrorId(ps.globalId(OutputPin))
 			);
 		}
 		if (!caps[InputPin].canBeInput()) {
-			BOOST_THROW_EXCEPTION(PinUnsupportedOperation() <<
+			DUDS_THROW_EXCEPTION(PinUnsupportedOperation() <<
 				PinErrorName("input") << PinErrorId(ps.globalId(InputPin))
 			);
 		}
 	} else { // half-duplex
 		if (!caps[DataPin].canBeInput() || !caps[DataPin].canBeOutput()) {
-			BOOST_THROW_EXCEPTION(PinUnsupportedOperation() <<
+			DUDS_THROW_EXCEPTION(PinUnsupportedOperation() <<
 				PinErrorName("data") << PinErrorId(ps.globalId(DataPin))
 			);
 		}
@@ -79,7 +79,7 @@ void DigitalPinMasterSyncSerial::checkPins(const DigitalPinSet &ps, Flags cfg) {
 
 void DigitalPinMasterSyncSerial::setPins(const PinIndex &pi) {
 	if (flags & MssOpen) {
-		BOOST_THROW_EXCEPTION(SyncSerialInUse());
+		DUDS_THROW_EXCEPTION(SyncSerialInUse());
 	}
 	static const std::string names[4] = {
 		std::string("clock"),
@@ -121,10 +121,10 @@ void DigitalPinMasterSyncSerial::setPins(
 ) {
 	// this function is for half-duplex operation; fail on full-duplex
 	if (flags & MssFullDuplex) {
-		BOOST_THROW_EXCEPTION(SyncSerialNotFullDuplex());
+		DUDS_THROW_EXCEPTION(SyncSerialNotFullDuplex());
 	}
 	if (flags & MssOpen) {
-		BOOST_THROW_EXCEPTION(SyncSerialInUse());
+		DUDS_THROW_EXCEPTION(SyncSerialInUse());
 	}
 	checkPins(ps, clock, data, -1);
 	clk = clock;
@@ -145,10 +145,10 @@ void DigitalPinMasterSyncSerial::setPins(
 ) {
 	// this function is for full-duplex operation; fail on half-duplex
 	if (~flags & MssFullDuplex) {
-		BOOST_THROW_EXCEPTION(SyncSerialNotHalfDuplex());
+		DUDS_THROW_EXCEPTION(SyncSerialNotHalfDuplex());
 	}
 	if (flags & MssOpen) {
-		BOOST_THROW_EXCEPTION(SyncSerialInUse());
+		DUDS_THROW_EXCEPTION(SyncSerialInUse());
 	}
 	checkPins(ps, clock, output, input);
 	clk = clock;
@@ -163,18 +163,18 @@ void DigitalPinMasterSyncSerial::setPins(
 
 void DigitalPinMasterSyncSerial::setChipSelect(const ChipSelect &cs) {
 	if (~flags & MssUseSelect) {
-		BOOST_THROW_EXCEPTION(SyncSerialSelectNotUsed() <<
+		DUDS_THROW_EXCEPTION(SyncSerialSelectNotUsed() <<
 			ChipSelectIdError(cs.chipId()));
 	}
 	if (flags & MssOpen) {
-		BOOST_THROW_EXCEPTION(SyncSerialInUse());
+		DUDS_THROW_EXCEPTION(SyncSerialInUse());
 	}
 	if (!cs.haveManager()) {
-		BOOST_THROW_EXCEPTION(ChipSelectBadManager() <<
+		DUDS_THROW_EXCEPTION(ChipSelectBadManager() <<
 			ChipSelectIdError(cs.chipId()));
 	}
 	if (!cs.configured()) {
-		BOOST_THROW_EXCEPTION(ChipSelectInvalidChip() <<
+		DUDS_THROW_EXCEPTION(ChipSelectInvalidChip() <<
 			ChipSelectIdError(cs.chipId()));
 	}
 	sel = cs;
@@ -244,7 +244,7 @@ void DigitalPinMasterSyncSerial::transfer(
 	int bits
 ) {
 	if (sel && (~flags & MssCommunicating)) {
-		BOOST_THROW_EXCEPTION(SyncSerialNotCommunicating());
+		DUDS_THROW_EXCEPTION(SyncSerialNotCommunicating());
 	}
 	DigitalPinAccess &inpin = (flags & MssFullDuplex) ? acc[2] : acc[1];
 	const std::uint8_t *outpos = out;
@@ -256,7 +256,7 @@ void DigitalPinMasterSyncSerial::transfer(
 	if (~flags & MssFullDuplex) {
 		// either full duplex communication is used, or one of the buffers is NULL
 		if (in && out) {
-			BOOST_THROW_EXCEPTION(SyncSerialNotFullDuplex());
+			DUDS_THROW_EXCEPTION(SyncSerialNotFullDuplex());
 		}
 		// set data pin I/O direction
 		if (out) {

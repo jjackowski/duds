@@ -12,6 +12,7 @@
 
 #include <duds/Something.hpp>
 #include <duds/data/Measurement.hpp>
+#include <duds/general/Errors.hpp>
 #include <duds/hardware/MeasurementSignalSource.hpp>
 //#include <boost/signals2/signal.hpp>
 //#include <boost/uuid/uuid.hpp>
@@ -47,8 +48,8 @@ class GenericInstrumentAdapter;
  * the same kind of hardware, and for an abstraction that prevents the code
  * using the input from being tied to the code that provides the input.
  * The plan is to use this feature to allow updates for a GenericInstrument
- * to either come from the hardware or to travel over a network, and allow
- * code that uses the input from the instrument to be unaware of the
+ * to either come from the local hardware or to travel over a network, and
+ * allow code that uses the input from the instrument to be unaware of the
  * difference and able to function without a hardware driver for the
  * instrument.
  *
@@ -248,7 +249,7 @@ public:
 		// there must not already be an adapter object
 		if (adp) {
 			/** @todo  Add an attribute, either UUID or std::shared_ptr.  */
-			BOOST_THROW_EXCEPTION(InstrumentDriverAlreadySet());
+			DUDS_THROW_EXCEPTION(InstrumentDriverAlreadySet());
 		}
 		std::shared_ptr<Adapter> iadapt = std::make_shared<Adapter>(driver);
 		// give the driver its adapter object; may throw
@@ -270,7 +271,7 @@ public:
 		// there must not already be an adapter object
 		if (adp) {
 			/** @todo  Add an attribute, either UUID or std::shared_ptr.  */
-			BOOST_THROW_EXCEPTION(InstrumentDriverAlreadySet());
+			DUDS_THROW_EXCEPTION(InstrumentDriverAlreadySet());
 		}
 		std::shared_ptr<Adapter> iadapt =
 			std::make_shared<Adapter>(std::shared_ptr<Driver>());

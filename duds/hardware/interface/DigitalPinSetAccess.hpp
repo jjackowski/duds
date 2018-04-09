@@ -457,12 +457,12 @@ public:
 	void write(Int val, int bits) const {
 		// range check; must have enough pins
 		if ((bits < 1) || (bits > pinvec.size())) {
-			BOOST_THROW_EXCEPTION(PinRangeError());
+			DUDS_THROW_EXCEPTION(PinRangeError());
 		}
 		// range check; value must fit
 		/** @bug  Will fail for unsigned types with negative values. */
 		if (val >= (1 << bits)) {
-			BOOST_THROW_EXCEPTION(DigitalPinNumericRangeError() <<
+			DUDS_THROW_EXCEPTION(DigitalPinNumericRangeError() <<
 				DigitalPinNumericOutput(val) << DigitalPinNumericBits(bits)
 			);
 		}

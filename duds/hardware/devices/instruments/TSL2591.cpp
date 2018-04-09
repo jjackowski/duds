@@ -14,7 +14,8 @@
 namespace duds { namespace hardware { namespace devices { namespace instruments {
 
 /**
- * Prevent Doxygen from mixing this up with other source-file specific items.
+ * Prevent Doxygen from mixing this up with other source-file specific items
+ * from other files.
  * @internal
  */
 namespace TSL2591_internal {
@@ -89,7 +90,9 @@ com(std::move(c)), scale(0) {
 		std::int8_t id;
 		ex >> id;
 		if (id != 0x50) {
-			BOOST_THROW_EXCEPTION(DeviceMisidentified());
+			DUDS_THROW_EXCEPTION(DeviceMisidentified() <<
+				duds::hardware::interface::I2cDeviceAddr(com->address())
+			);
 		}
 		// attempt reset
 		firstcon.clear();
@@ -123,13 +126,13 @@ TSL2591::~TSL2591() {
 
 void TSL2591::init(int gain, int integration) {
 	if ((gain < 0) || (gain > 3)) {
-		BOOST_THROW_EXCEPTION(TSL2591BadGain());
+		DUDS_THROW_EXCEPTION(TSL2591BadGain());
 	}
 	if (integration >= 100) {
 		integration = (integration / 100) - 1;
 	}
 	if ((integration < 0) || (integration > 5)) {
-		BOOST_THROW_EXCEPTION(TSL2591BadIntegration());
+		DUDS_THROW_EXCEPTION(TSL2591BadIntegration());
 	}
 	// remake the initialization conversation
 	initialize.clear();
@@ -161,7 +164,7 @@ void TSL2591::suspend() {
 
 void TSL2591::resume() {
 	if (initialize.empty()) {
-		BOOST_THROW_EXCEPTION(DeviceUninitalized());
+		DUDS_THROW_EXCEPTION(DeviceUninitalized());
 	}
 	com->converse(initialize);
 }

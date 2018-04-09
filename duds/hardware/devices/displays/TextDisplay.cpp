@@ -8,6 +8,7 @@
  * Copyright (C) 2017  Jeff Jackowski
  */
 #include <duds/hardware/devices/displays/TextDisplay.hpp>
+#include <duds/general/Errors.hpp>
 #include <thread>
 
 namespace duds { namespace hardware { namespace devices { namespace displays {
@@ -35,7 +36,7 @@ bool TextDisplay::advance() {
 void TextDisplay::move(unsigned int c, unsigned int r) {
 	// range check
 	if ((c >= columnsize) || (r >= rowsize)) {
-		BOOST_THROW_EXCEPTION(TextDisplayRangeError() <<
+		DUDS_THROW_EXCEPTION(TextDisplayRangeError() <<
 			TextDisplayPositionInfo(Info_DisplayColRow(c, r)) <<
 			TextDisplaySizeInfo(Info_DisplayColRow(columnsize, rowsize))
 		);
@@ -90,7 +91,7 @@ void TextDisplay::write(
 ) {
 	// range check
 	if ((c >= columnsize) || (r >= rowsize)) {
-		BOOST_THROW_EXCEPTION(TextDisplayRangeError() <<
+		DUDS_THROW_EXCEPTION(TextDisplayRangeError() <<
 			TextDisplayPositionInfo(Info_DisplayColRow(c, r)) <<
 			TextDisplaySizeInfo(Info_DisplayColRow(columnsize, rowsize))
 		);
@@ -105,7 +106,7 @@ void TextDisplay::write(
 void TextDisplay::clearTo(unsigned int c, unsigned int r) {
 	// range check
 	if ((c >= columnsize) || (r >= rowsize)) {
-		BOOST_THROW_EXCEPTION(TextDisplayRangeError() <<
+		DUDS_THROW_EXCEPTION(TextDisplayRangeError() <<
 			TextDisplayPositionInfo(Info_DisplayColRow(c, r)) <<
 			TextDisplaySizeInfo(Info_DisplayColRow(columnsize, rowsize))
 		);

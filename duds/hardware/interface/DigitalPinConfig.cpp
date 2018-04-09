@@ -51,7 +51,7 @@ void DigitalPinConfig::checkValidity() const {
 	if (options & DirOutput) ++chk;
 	if (options & DirImmaterial) ++chk;
 	if (chk > 1) {
-		BOOST_THROW_EXCEPTION(DigitalPinConflictingDirectionError());
+		DUDS_THROW_EXCEPTION(DigitalPinConflictingDirectionError());
 	}
 	chk = 0;
 	if (options & InputNoPull) ++chk;
@@ -59,7 +59,7 @@ void DigitalPinConfig::checkValidity() const {
 	if (options & InputPullup) ++chk;
 	if (options & InputPullImmaterial) ++chk;
 	if (chk > 1) {
-		BOOST_THROW_EXCEPTION(DigitalPinConflictingPullError());
+		DUDS_THROW_EXCEPTION(DigitalPinConflictingPullError());
 	}
 	chk = 0;
 	if (options & EventNone) ++chk;
@@ -68,25 +68,25 @@ void DigitalPinConfig::checkValidity() const {
 	if (options & EventLevelHigh) ++chk;
 	if (options & EventImmaterial) ++chk;
 	if (chk > 1) {
-		BOOST_THROW_EXCEPTION(DigitalPinConflictingEventError());
+		DUDS_THROW_EXCEPTION(DigitalPinConflictingEventError());
 	}
 	chk = 0;
 	if (options & InterruptNone) ++chk;
 	if (options & InterruptOnEvent) ++chk;
 	if (options & InterruptImmaterial) ++chk;
 	if (chk > 1) {
-		BOOST_THROW_EXCEPTION(DigitalPinConflictingInterruptError());
+		DUDS_THROW_EXCEPTION(DigitalPinConflictingInterruptError());
 	}
 	chk = 0;
 	if (options & OutputPushPull) ++chk;
 	if (options & OutputHighImpedance) ++chk;
 	if (options & OutputImmaterial) ++chk;
 	if (chk > 1) {
-		BOOST_THROW_EXCEPTION(DigitalPinConflictingOutputError());
+		DUDS_THROW_EXCEPTION(DigitalPinConflictingOutputError());
 	}
 	if ((minOutputCurrent > 0) && (maxOutputCurrent > 0) &&
 	(minOutputCurrent > maxOutputCurrent)) {
-		BOOST_THROW_EXCEPTION(DigitalPinConflictingCurrentError());
+		DUDS_THROW_EXCEPTION(DigitalPinConflictingCurrentError());
 	}
 }
 

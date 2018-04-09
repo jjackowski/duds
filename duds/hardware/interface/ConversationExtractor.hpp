@@ -13,6 +13,7 @@
  * header files.
  */
 #include <duds/hardware/interface/Conversation.hpp>
+#include <duds/general/Errors.hpp>
 
 namespace duds { namespace hardware { namespace interface {
 
@@ -179,7 +180,7 @@ public:
 		static_assert(std::is_integral<Int>::value,
 			"Only integer values can be read by this function.");
 		if (remain < sizeof(Int)) {
-			BOOST_THROW_EXCEPTION(ConversationReadPastEnd());
+			DUDS_THROW_EXCEPTION(ConversationReadPastEnd());
 		}
 		const char *p = pos;
 		for (std::size_t loop = sizeof(Int); loop; --loop, ++p) {
@@ -208,7 +209,7 @@ public:
 		static_assert(std::is_integral<Int>::value,
 			"Only integer values can be read by this function.");
 		if (remain < sizeof(Int)) {
-			BOOST_THROW_EXCEPTION(ConversationReadPastEnd());
+			DUDS_THROW_EXCEPTION(ConversationReadPastEnd());
 		}
 		const char *p = pos;
 		for (std::size_t loop = sizeof(Int); loop; --loop, ++p) {
@@ -233,7 +234,7 @@ public:
 	void read(Int &i) {
 		// if at end of all parts, the iterator is c->cend() and pos is null
 		if (!pos) {
-			BOOST_THROW_EXCEPTION(ConversationReadPastEnd());
+			DUDS_THROW_EXCEPTION(ConversationReadPastEnd());
 		}
 		if ((*piter)->bigEndian()) {
 			readBe(i);
@@ -261,7 +262,7 @@ public:
 			"Only integer values can be read by this function.");
 		int len = (int)sizeof(Int) * count;
 		if (remain < len) {
-			BOOST_THROW_EXCEPTION(ConversationReadPastEnd());
+			DUDS_THROW_EXCEPTION(ConversationReadPastEnd());
 		}
 		const char *p = pos;
 		for (; count; --count, ++a) {
@@ -294,7 +295,7 @@ public:
 			"Only integer values can be read by this function.");
 		int len = (int)sizeof(Int) * count;
 		if (remain < len) {
-			BOOST_THROW_EXCEPTION(ConversationReadPastEnd());
+			DUDS_THROW_EXCEPTION(ConversationReadPastEnd());
 		}
 		const char *p = pos;
 		for (; count; --count, ++a) {
@@ -358,7 +359,7 @@ public:
 	void read(Int *a, std::size_t count) {
 		// if at end of all parts, the iterator is c->cend() and pos is null
 		if (!pos) {
-			BOOST_THROW_EXCEPTION(ConversationReadPastEnd());
+			DUDS_THROW_EXCEPTION(ConversationReadPastEnd());
 		}
 		if ((*piter)->bigEndian()) {
 			readBe(a, count);
@@ -384,7 +385,7 @@ public:
 	void read(Int (&a)[N]) {
 		// if at end of all parts, the iterator is c->cend() and pos is null
 		if (!pos) {
-			BOOST_THROW_EXCEPTION(ConversationReadPastEnd());
+			DUDS_THROW_EXCEPTION(ConversationReadPastEnd());
 		}
 		if ((*piter)->bigEndian()) {
 			readBe(a, N);
@@ -423,7 +424,7 @@ public:
 	template <class Cont, typename Iter>
 	void read(Cont &cont, Iter &start, std::size_t len) {
 		if (remain < len) {
-			BOOST_THROW_EXCEPTION(ConversationReadPastEnd());
+			DUDS_THROW_EXCEPTION(ConversationReadPastEnd());
 		}
 		cont.insert(start, pos, pos + len);
 		advance(len);

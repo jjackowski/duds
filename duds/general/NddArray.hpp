@@ -12,10 +12,10 @@
 
 #include <vector>
 #include <initializer_list>
+#include <duds/general/Errors.hpp>
 #include <boost/serialization/split_member.hpp>
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/vector.hpp>
-#include <boost/exception/exception.hpp>
 
 namespace duds { namespace general {
 
@@ -29,26 +29,26 @@ struct NddArrayError : virtual std::exception, virtual boost::exception { };
 /**
  * A specified dimension is zero.
  */
-struct EmptyDimension : NddArrayError { };
+struct EmptyDimensionError : NddArrayError { };
 
 /**
  * A specified dimension is beyond the range of the array.
  * Would be nice to also be a std::out_of_range, but having trouble getting
  * it to build.
  */
-struct OutOfRange : NddArrayError /*, virtual std::out_of_range {
-	OutOfRange() : std::out_of_range("") { }
+struct OutOfRangeError : NddArrayError /*, virtual std::out_of_range {
+	OutOfRangeError() : std::out_of_range("") { }
 }; */  { };
 
 /**
  * A specified position has a different number of dimensions than the array.
  */
-struct DimensionMismatch : NddArrayError { };
+struct DimensionMismatchError : NddArrayError { };
 
 /**
  * An empty array, one with zero dimensions, cannot be indexed.
  */
-struct ZeroSize : DimensionMismatch { };
+struct ZeroSizeError : DimensionMismatchError { };
 
 /**
  * N-Dimensional Dynamic Array.
@@ -128,8 +128,9 @@ private:
 	 *        uninitialized.
 	 * @post  @a array and @a elems are set. The default constructor of @a T
 	 *        has been called for each element.
-	 * @throw EmptyDimension   One of the elements in @a dims is zero. The array
-	 *                         is changed to the empty state before throwing.
+	 * @throw EmptyDimensionError   One of the elements in @a dims is zero. The
+	 *                              array is changed to the empty state before
+	 *                              throwing.
 	 * @todo  Handle overflow of @a elems.
 	 */
 	void makeArray() {
@@ -143,7 +144,7 @@ private:
 		if (!elems) {
 			array = nullptr;
 			dsize.clear();
-			BOOST_THROW_EXCEPTION(EmptyDimension());
+			DUDS_THROW_EXCEPTION(EmptyDimensionError());
 		}
 		// allocate memory
 		array = new T[elems];
@@ -190,20 +191,22 @@ private:
 	 * @param  pos  The position. It's number of elements must match the number
 	 *              of dimensions of this array.
 	 * @return      The element at the position.
-	 * @throw  ZeroSize           This object is empty and has no dimensions.
-	 * @throw  DimensionMismatch  The number of items in @a pos does not match
-	 *                            the number of dimensions in this object.
-	 * @throw  OutOfRange         A position is beyond the range of the array.
+	 * @throw  ZeroSizeError           This object is empty and has no dimensions.
+	 * @throw  DimensionMismatchError  The number of items in @a pos does not
+	 *                                 match the number of dimensions in this
+	 *                                 object.
+	 * @throw  OutOfRangeError         A position is beyond the range of the
+	 *                                 array.
 	 */
 	template <class Dim>
 	const T &indexArray(const Dim &pos) const {
 		// cannot index into an array with zero dimensions
 		if (dsize.empty()) {
-			BOOST_THROW_EXCEPTION(ZeroSize());
+			DUDS_THROW_EXCEPTION(ZeroSizeError());
 		}
 		// the position must have as many items as dimensions in the array
 		if (pos.size() != dsize.size()) {
-			BOOST_THROW_EXCEPTION(DimensionMismatch());
+			DUDS_THROW_EXCEPTION(DimensionMismatchError());
 		}
 		typename Dim::const_iterator p = pos.begin();
 		DimVec::const_iterator d = dsize.begin();
@@ -211,7 +214,7 @@ private:
 		do {
 			// range check
 			if (*p >= *d) {
-				BOOST_THROW_EXCEPTION(OutOfRange());
+				DUDS_THROW_EXCEPTION(OutOfRangeError());
 			}
 			// advance index
 			index += *p * step;
@@ -500,14 +503,14 @@ public:
 	 *         modified.
 	 * @tparam N  The size of the array.
 	 * @param  a  The destination array.
-	 * @throw  DimensionMismatch  This array does not have exactly one
+	 * @throw  DimensionMismatchError  This array does not have exactly one
 	 *                            dimension.
 	 */
 	template <std::size_t N>
 	void copyTo(std::array<T, N> &a) const {
 		// must be exactly one dimension
 		if (dsize.size() != 1) {
-			BOOST_THROW_EXCEPTION(DimensionMismatch());
+			DUDS_THROW_EXCEPTION(DimensionMismatchError());
 		}
 		// copy elements
 		const T *src = array;
@@ -523,13 +526,13 @@ public:
 	 * @pre    This object must have a single dimension.
 	 * @post   The destination's size will match this array's size.
 	 * @param  v  The destination vector.
-	 * @throw  DimensionMismatch  This array does not have exactly one
+	 * @throw  DimensionMismatchError  This array does not have exactly one
 	 *                            dimension.
 	 */
 	void copyTo(std::vector<T> &v) const {
 		// must be exactly one dimension
 		if (dsize.size() != 1) {
-			BOOST_THROW_EXCEPTION(DimensionMismatch());
+			DUDS_THROW_EXCEPTION(DimensionMismatchError());
 		}
 		// resize the vector to match
 		v.resize(elems);
@@ -550,14 +553,14 @@ public:
 	 *         modified.
 	 * @tparam N  The size of the array.
 	 * @param  a  The destination array.
-	 * @throw  DimensionMismatch  This array does not have exactly one
+	 * @throw  DimensionMismatchError  This array does not have exactly one
 	 *                            dimension.
 	 */
 	template <std::size_t N>
 	void copyTo(T (&a)[N]) const {
 		// must be exactly one dimension
 		if (dsize.size() != 1) {
-			BOOST_THROW_EXCEPTION(DimensionMismatch());
+			DUDS_THROW_EXCEPTION(DimensionMismatchError());
 		}
 		// copy elements
 		const T *src = array;
@@ -577,14 +580,14 @@ public:
 	 * @tparam X  The length of the destination array's first dimension.
 	 * @tparam Y  The length of the destination array's second dimension.
 	 * @param  a  The destination array.
-	 * @throw  DimensionMismatch  This array does not have exactly two
+	 * @throw  DimensionMismatchError  This array does not have exactly two
 	 *                            dimensions.
 	 */
 	template <std::size_t X, std::size_t Y>
 	void copyTo(T (&a)[X][Y]) const {
 		// must be exactly two dimensions
 		if (dsize.size() != 2) {
-			BOOST_THROW_EXCEPTION(DimensionMismatch());
+			DUDS_THROW_EXCEPTION(DimensionMismatchError());
 		}
 		// copy elements
 		const T *src;
@@ -605,10 +608,10 @@ public:
 	 * @param  pos  The position. It's number of elements must match the number
 	 *              of dimensions of this array.
 	 * @return      The element at the position.
-	 * @throw  ZeroSize           This object is empty and has no dimensions.
-	 * @throw  DimensionMismatch  The number of items in @a pos does not match
+	 * @throw  ZeroSizeError           This object is empty and has no dimensions.
+	 * @throw  DimensionMismatchError  The number of items in @a pos does not match
 	 *                            the number of dimensions in this object.
-	 * @throw  OutOfRange         A position is beyond the range of the array.
+	 * @throw  OutOfRangeError         A position is beyond the range of the array.
 	 */
 	template <class Dim>
 	T &operator()(const Dim &pos) {
@@ -621,10 +624,10 @@ public:
 	 * @param  pos  The position. It's number of elements must match the number
 	 *              of dimensions of this array.
 	 * @return      The element at the position.
-	 * @throw  ZeroSize           This object is empty and has no dimensions.
-	 * @throw  DimensionMismatch  The number of items in @a pos does not match
+	 * @throw  ZeroSizeError           This object is empty and has no dimensions.
+	 * @throw  DimensionMismatchError  The number of items in @a pos does not match
 	 *                            the number of dimensions in this object.
-	 * @throw  OutOfRange         A position is beyond the range of the array.
+	 * @throw  OutOfRangeError         A position is beyond the range of the array.
 	 */
 	T &operator()(const DimList &pos) {
 		// remove the const specifier from the return value of indexArray()
@@ -638,10 +641,10 @@ public:
 	 * @param  pos  The position. It's number of elements must match the number
 	 *              of dimensions of this array.
 	 * @return      The element at the position.
-	 * @throw  ZeroSize           This object is empty and has no dimensions.
-	 * @throw  DimensionMismatch  The number of items in @a pos does not match
+	 * @throw  ZeroSizeError           This object is empty and has no dimensions.
+	 * @throw  DimensionMismatchError  The number of items in @a pos does not match
 	 *                            the number of dimensions in this object.
-	 * @throw  OutOfRange         A position is beyond the range of the array.
+	 * @throw  OutOfRangeError         A position is beyond the range of the array.
 	 */
 	template <class Dim>
 	const T &operator()(const Dim &pos) const {
@@ -652,10 +655,10 @@ public:
 	 * @param  pos  The position. It's number of elements must match the number
 	 *              of dimensions of this array.
 	 * @return      The element at the position.
-	 * @throw  ZeroSize           This object is empty and has no dimensions.
-	 * @throw  DimensionMismatch  The number of items in @a pos does not match
+	 * @throw  ZeroSizeError           This object is empty and has no dimensions.
+	 * @throw  DimensionMismatchError  The number of items in @a pos does not match
 	 *                            the number of dimensions in this object.
-	 * @throw  OutOfRange         A position is beyond the range of the array.
+	 * @throw  OutOfRangeError         A position is beyond the range of the array.
 	 */
 	const T &operator()(const DimList &pos) const {
 		return indexArray<DimList>(pos);
@@ -667,10 +670,10 @@ public:
 	 * @param  pos  The position. It's number of elements must match the number
 	 *              of dimensions of this array.
 	 * @return      The element at the position.
-	 * @throw  ZeroSize           This object is empty and has no dimensions.
-	 * @throw  DimensionMismatch  The number of items in @a pos does not match
+	 * @throw  ZeroSizeError           This object is empty and has no dimensions.
+	 * @throw  DimensionMismatchError  The number of items in @a pos does not match
 	 *                            the number of dimensions in this object.
-	 * @throw  OutOfRange         A position is beyond the range of the array.
+	 * @throw  OutOfRangeError         A position is beyond the range of the array.
 	 */
 	template <class Dim>
 	T &at(const Dim &pos) {
@@ -683,10 +686,10 @@ public:
 	 * @param  pos  The position. It's number of elements must match the number
 	 *              of dimensions of this array.
 	 * @return      The element at the position.
-	 * @throw  ZeroSize           This object is empty and has no dimensions.
-	 * @throw  DimensionMismatch  The number of items in @a pos does not match
+	 * @throw  ZeroSizeError           This object is empty and has no dimensions.
+	 * @throw  DimensionMismatchError  The number of items in @a pos does not match
 	 *                            the number of dimensions in this object.
-	 * @throw  OutOfRange         A position is beyond the range of the array.
+	 * @throw  OutOfRangeError         A position is beyond the range of the array.
 	 */
 	T &at(const DimList &pos) {
 		// remove the const specifier from the return value of indexArray()
@@ -700,10 +703,10 @@ public:
 	 * @param  pos  The position. It's number of elements must match the number
 	 *              of dimensions of this array.
 	 * @return      The element at the position.
-	 * @throw  ZeroSize           This object is empty and has no dimensions.
-	 * @throw  DimensionMismatch  The number of items in @a pos does not match
+	 * @throw  ZeroSizeError           This object is empty and has no dimensions.
+	 * @throw  DimensionMismatchError  The number of items in @a pos does not match
 	 *                            the number of dimensions in this object.
-	 * @throw  OutOfRange         A position is beyond the range of the array.
+	 * @throw  OutOfRangeError         A position is beyond the range of the array.
 	 */
 	template <class Dim>
 	const T &at(const Dim &pos) const {
@@ -714,10 +717,10 @@ public:
 	 * @param  pos  The position. It's number of elements must match the number
 	 *              of dimensions of this array.
 	 * @return      The element at the position.
-	 * @throw  ZeroSize           This object is empty and has no dimensions.
-	 * @throw  DimensionMismatch  The number of items in @a pos does not match
+	 * @throw  ZeroSizeError           This object is empty and has no dimensions.
+	 * @throw  DimensionMismatchError  The number of items in @a pos does not match
 	 *                            the number of dimensions in this object.
-	 * @throw  OutOfRange         A position is beyond the range of the array.
+	 * @throw  OutOfRangeError         A position is beyond the range of the array.
 	 */
 	const T &at(const DimList &pos) const {
 		return indexArray<DimList>(pos);
@@ -725,22 +728,22 @@ public:
 	/**
 	 * The first element of the array. Its position is zero for all dimensions.
 	 * @return  The first element.
-	 * @throw   ZeroSize   This object is empty; there is no first element.
+	 * @throw   ZeroSizeError   This object is empty; there is no first element.
 	 */
 	T &front() {
 		if (!array) {
-			BOOST_THROW_EXCEPTION(ZeroSize());
+			DUDS_THROW_EXCEPTION(ZeroSizeError());
 		}
 		return *array;
 	}
 	/**
 	 * The first element of the array. Its position is zero for all dimensions.
 	 * @return  The first element.
-	 * @throw   ZeroSize   This object is empty; there is no first element.
+	 * @throw   ZeroSizeError   This object is empty; there is no first element.
 	 */
 	const T &front() const {
 		if (!array) {
-			BOOST_THROW_EXCEPTION(ZeroSize());
+			DUDS_THROW_EXCEPTION(ZeroSizeError());
 		}
 		return *array;
 	}
@@ -748,11 +751,11 @@ public:
 	 * The last element of the array. Its position is the maximum value for
 	 * all dimensions.
 	 * @return  The last element.
-	 * @throw   ZeroSize   This object is empty; there is no last element.
+	 * @throw   ZeroSizeError   This object is empty; there is no last element.
 	 */
 	T &back() {
 		if (!array) {
-			BOOST_THROW_EXCEPTION(ZeroSize());
+			DUDS_THROW_EXCEPTION(ZeroSizeError());
 		}
 		return array[elems - 1];
 	}
@@ -760,11 +763,11 @@ public:
 	 * The last element of the array. Its position is the maximum value for
 	 * all dimensions.
 	 * @return  The last element.
-	 * @throw   ZeroSize   This object is empty; there is no last element.
+	 * @throw   ZeroSizeError   This object is empty; there is no last element.
 	 */
 	const T &back() const {
 		if (!array) {
-			BOOST_THROW_EXCEPTION(ZeroSize());
+			DUDS_THROW_EXCEPTION(ZeroSizeError());
 		}
 		return array[elems - 1];
 	}
@@ -893,11 +896,11 @@ public:
 	 * Returns the size of dimension @a n.
 	 * @param n  The number of the dimension to inspect. Zero is the first
 	 *           dimension.
-	 * @throw OutOfRange  The array has fewer than @a n dimensions.
+	 * @throw OutOfRangeError  The array has fewer than @a n dimensions.
 	 */
 	SizeType dim(SizeType n) const {
 		if (n >= dsize.size()) {
-			BOOST_THROW_EXCEPTION(OutOfRange());
+			DUDS_THROW_EXCEPTION(OutOfRangeError());
 		}
 		return dsize[n];
 	}
@@ -940,7 +943,7 @@ public:
 	 *        be used.
 	 * @param dims  The new dimensions for the array. If it has no elements,
 	 *              the array will have zero dimensions.
-	 * @throw EmptyDimension  One of the elements in @a dims is zero.
+	 * @throw EmptyDimensionError  One of the elements in @a dims is zero.
 	 */
 	void remake(const DimList &dims) {
 		// no dimensions?
@@ -962,7 +965,7 @@ public:
 	 *        be used.
 	 * @param dims  The new dimensions for the array. If it is empty,
 	 *              the array will have zero dimensions.
-	 * @throw EmptyDimension  One of the elements in @a dims is zero.
+	 * @throw EmptyDimensionError  One of the elements in @a dims is zero.
 	 */
 	void remake(const DimVec &dims) {
 		// no dimensions?
@@ -988,7 +991,7 @@ public:
 	 * the new array, are handled as special cases so they can complete faster.
 	 *
 	 * @param dims  The new dimensions.
-	 * @throw EmptyDimension  One of the elements in @a dims is zero.
+	 * @throw EmptyDimensionError  One of the elements in @a dims is zero.
 	 * @throw exception       An exception thrown from the copy assignment
 	 *                        operator of @a T.
 	 */
@@ -1005,7 +1008,7 @@ public:
 			return NddArray(dims);
 		}
 		// new array for the new size
-		NddArray na(dims);  // may throw EmptyDimension
+		NddArray na(dims);  // may throw EmptyDimensionError
 		// union of source & destination dimensions
 		DimVec uniondim(std::min(dsize.size(), dims.size()));
 		typename Dim::const_iterator diter = dims.begin();
@@ -1076,7 +1079,7 @@ public:
 	 * the new array, are handled as special cases so they can complete faster.
 	 *
 	 * @param dims  The new dimensions.
-	 * @throw EmptyDimension  One of the elements in @a dims is zero.
+	 * @throw EmptyDimensionError  One of the elements in @a dims is zero.
 	 * @throw exception       An exception thrown from the copy assignment
 	 *                        operator of @a T.
 	 */
@@ -1096,7 +1099,7 @@ public:
 	 *        be used.
 	 *
 	 * @param dims  The new dimensions.
-	 * @throw EmptyDimension  One of the elements in @a dims is zero. The array
+	 * @throw EmptyDimensionError  One of the elements in @a dims is zero. The array
 	 *                        will be unchanged.
 	 * @throw exception       An exception thrown from the copy assignment
 	 *                        operator of @a T. The array will be unchanged.
@@ -1121,7 +1124,7 @@ public:
 	 *        be used.
 	 *
 	 * @param dims  The new dimensions.
-	 * @throw EmptyDimension  One of the elements in @a dims is zero. The array
+	 * @throw EmptyDimensionError  One of the elements in @a dims is zero. The array
 	 *                        will be unchanged.
 	 * @throw exception       An exception thrown from the copy assignment
 	 *                        operator of @a T. The array will be unchanged.

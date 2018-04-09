@@ -10,6 +10,7 @@
 #include <duds/hardware/interface/linux/DevI2c.hpp>
 #include <duds/hardware/interface/I2cErrors.hpp>
 #include <duds/hardware/interface/Conversation.hpp>
+#include <duds/general/Errors.hpp>
 #include <boost/exception/errinfo_errno.hpp>
 #include <boost/exception/errinfo_file_name.hpp>
 #include <fcntl.h>      // for open and O_RDWR
@@ -23,13 +24,13 @@ DevI2c::DevI2c(const std::string &devname, int devaddr) :
 dev(devname), addr(devaddr) {
 	fd = open(dev.c_str(), O_RDWR);
 	if (fd < 0) {
-		BOOST_THROW_EXCEPTION(I2cError() << boost::errinfo_errno(errno) <<
+		DUDS_THROW_EXCEPTION(I2cError() << boost::errinfo_errno(errno) <<
 			boost::errinfo_file_name(dev) << I2cDeviceAddr(addr)
 		);
 	}
 	if ((addr > 127) && (ioctl(fd, I2C_TENBIT, 1) < 0)) {
 		close(fd);
-		BOOST_THROW_EXCEPTION(I2cErrorUnsupported() <<
+		DUDS_THROW_EXCEPTION(I2cErrorUnsupported() <<
 			boost::errinfo_file_name(dev) << I2cDeviceAddr(addr)
 		);
 	}
@@ -45,7 +46,7 @@ void DevI2c::io(i2c_rdwr_ioctl_data &idat) {
 		res = errno;
 		switch (res) {
 			case EBUSY:
-				BOOST_THROW_EXCEPTION(I2cErrorBusy() <<
+				DUDS_THROW_EXCEPTION(I2cErrorBusy() <<
 					boost::errinfo_file_name(dev) <<
 					I2cDeviceAddr(addr)
 				);
@@ -53,28 +54,28 @@ void DevI2c::io(i2c_rdwr_ioctl_data &idat) {
 			case ENODEV:
 			case EREMOTEIO: // seems to be used for the same thing as above,
 							// but not documented as such in Linux I2C docs
-				BOOST_THROW_EXCEPTION(I2cErrorNoDevice() <<
+				DUDS_THROW_EXCEPTION(I2cErrorNoDevice() <<
 					boost::errinfo_file_name(dev) <<
 					boost::errinfo_errno(res) <<
 					I2cDeviceAddr(addr)
 				);
 			case EOPNOTSUPP:
-				BOOST_THROW_EXCEPTION(I2cErrorUnsupported() <<
+				DUDS_THROW_EXCEPTION(I2cErrorUnsupported() <<
 					boost::errinfo_file_name(dev) <<
 					I2cDeviceAddr(addr)
 				);
 			case EPROTO:
-				BOOST_THROW_EXCEPTION(I2cErrorProtocol() <<
+				DUDS_THROW_EXCEPTION(I2cErrorProtocol() <<
 					boost::errinfo_file_name(dev) <<
 					I2cDeviceAddr(addr)
 				);
 			case ETIMEDOUT:
-				BOOST_THROW_EXCEPTION(I2cErrorTimeout() <<
+				DUDS_THROW_EXCEPTION(I2cErrorTimeout() <<
 					boost::errinfo_file_name(dev) <<
 					I2cDeviceAddr(addr)
 				);
 			default:
-				BOOST_THROW_EXCEPTION(I2cError() <<
+				DUDS_THROW_EXCEPTION(I2cError() <<
 					boost::errinfo_file_name(dev) <<
 					boost::errinfo_errno(res) <<
 					I2cDeviceAddr(addr)
@@ -117,7 +118,7 @@ void DevI2c::converse(Conversation &conv) {
 			// message count now zero
 			idat.nmsgs = 0;
 		} else if (idat.nmsgs == (I2C_MAX_MSGS - 1)) {
-			BOOST_THROW_EXCEPTION(I2cErrorConversationLength() <<
+			DUDS_THROW_EXCEPTION(I2cErrorConversationLength() <<
 				boost::errinfo_file_name(dev) << I2cDeviceAddr(addr) <<
 				ConversationPartIndex(idx)
 			);
@@ -133,7 +134,7 @@ void DevI2c::converse(Conversation &conv) {
 				// because I2C != SMBus, but kernel code seems to be using it
 				// anyway.
 				if (cp.length() <= 32) {
-					BOOST_THROW_EXCEPTION(I2cErrorPartLength() <<
+					DUDS_THROW_EXCEPTION(I2cErrorPartLength() <<
 						boost::errinfo_file_name(dev) << I2cDeviceAddr(addr) <<
 						ConversationPartIndex(idx)
 					);
@@ -159,6 +160,10 @@ void DevI2c::converse(Conversation &conv) {
 	}
 	// should have one more ioctl call to complete the task
 	io(idat);
+}
+
+int DevI2c::address() const {
+	return addr;
 }
 
 } } } }

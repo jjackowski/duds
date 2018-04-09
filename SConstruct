@@ -1,6 +1,6 @@
 # This file is part of the DUDS project. It is subject to the BSD-style
 # license terms in the LICENSE file found in the top-level directory of this
-# distribution and at http://www.somewhere.org/somepath/license.html.
+# distribution and at https://github.com/jjackowski/duds/blob/master/LICENSE.
 # No part of DUDS, including this file, may be copied, modified, propagated,
 # or distributed except according to the terms contained in the LICENSE file.
 
@@ -43,6 +43,9 @@ buildopts.Add('BOOSTTAG',
 buildopts.Add('BOOSTVER',
 	'The version tag for Boost libraries; may be needed on Windows. Include a leading dash.',
 	'')
+buildopts.Add(PathVariable('EIGENINC',
+	'The directory containing the Eigen header files.',
+	'/usr/include/eigen3/', PathVariable.PathAccept))
 
 puname = platform.uname()
 
@@ -98,20 +101,26 @@ dbgenv.AppendUnique(
 	CCFLAGS = '$CCDBGFLAGS',
 	LINKFLAGS = '$LINKDBGFLAGS',
 	BINAPPEND = '-dbg',
-	BUILDTYPE = 'dbg'
+	BUILDTYPE = 'dbg',
 )
 
-# while SCons has a nice way of dealing with configurations, it doesn't
+# While SCons has a nice way of dealing with configurations, it doesn't
 # automatically add things in a way that works for the different build
 # enviornments here, unless the configuration is done once for each, which
 # doesn't seem to be necessary.
+# These libraries will be linked with a test program or will be deemed to not
+# exist, so this doesn't work with header-only libraries.
 optionalLibs = {
 	# key is the macro, value is the library
 	'LIBBOOST_FILESYSTEM' :
 		'libboost_filesystem${BOOSTTOOLSET}${BOOSTTAG}${BOOSTABI}${BOOSTVER}',
 	'LIBBOOST_TEST' :
 		'libboost_unit_test_framework${BOOSTTOOLSET}${BOOSTTAG}${BOOSTABI}${BOOSTVER}',
+	'LIBBOOST_PROGRAM_OPTIONS' :
+		'libboost_program_options${BOOSTTOOLSET}${BOOSTTAG}${BOOSTABI}${BOOSTVER}',
 }
+# Similar to above, but only for the debug build.
+optionalDbgLibs = { }
 
 #####
 # extra cleaning
@@ -130,6 +139,8 @@ if GetOption('clean'):
 		#'.sconsign.dblite',
 		#env.subst('.conf/${PSYS}-${PARCH}')
 	] ))
+	env['Use_Eigen'] = False
+	dbgenv['Use_Eigen'] = False
 
 #####
 # configure the build
@@ -173,6 +184,28 @@ else:
 	#if conf.CheckLib(dbgenv.subst('libboost_python${BOOSTTOOLSET}${BOOSTTAG}-py${BOOSTABI}${BOOSTVER}'), language = 'C++', autoadd=1):
 	#	dbgenv['USE_PYTHON'
 
+	# Boost stacktrace (broken in 1.65.0, maybe earlier; fixed in 1.65.1)
+	# includes push_options.pp, but the file isn't installed.
+	# Also, the dl library is required.
+	dbgenv.Append(CPPDEFINES = 'BOOST_STACKTRACE_USE_ADDR2LINE')
+	if conf.CheckCXXHeader('boost/stacktrace.hpp') and \
+	conf.CheckLib('dl', language = 'C++', autoadd=0):
+		optionalDbgLibs['DUDS_ERRORS_VERBOSE'] = 'dl'
+	# remove the macro used for the test
+	dbgenv['CPPDEFINES'] = env['CPPDEFINES']
+
+	# Eigen
+	dbgenv.Append(CPPPATH = '$EIGENINC')
+	if conf.CheckCXXHeader('Eigen/Geometry'):
+		env['Use_Eigen'] = True
+		dbgenv['Use_Eigen'] = True
+	else:
+		env['Use_Eigen'] = False
+		dbgenv['Use_Eigen'] = False
+	# remove the Eigen path; only add where needed
+	dbgenv['CPPPATH'] = env['CPPPATH']
+
+	# 128-bit integer support
 	if conf.CheckType('__int128', language = 'C++'):
 		conf.Define('HAVE_INT128', 1, 'A 128-bit integer type is available.')
 
@@ -180,6 +213,12 @@ else:
 
 # add back the libraries
 dbgenv['LIBS'] = env['LIBS']
+# put in additional debug libs
+for mac, lib in optionalDbgLibs.iteritems():
+	dbgenv.Append(
+		CPPDEFINES = mac,
+		LIBS = lib
+	)
 # remove Boost unit test library; should only be added for test programs
 if 'LIBBOOST_TEST' in optionalLibs:
 	del optionalLibs['LIBBOOST_TEST']
@@ -192,6 +231,7 @@ else:
 optenv = env.Clone()
 optenv.AppendUnique(
 	CCFLAGS = '$CCOPTFLAGS',
+	CPPDEFINES = 'NDEBUG',
 	LINKFLAGS = '$LINKOPTFLAGS',
 	BINAPPEND = '',
 	BUILDTYPE = 'opt'

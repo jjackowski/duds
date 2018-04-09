@@ -26,7 +26,7 @@ bool DigitalPortDependentPins::proposeConfigImpl(
 	if ((propConf.size() != pvec.size()) || (
 		!initConf.empty() && initConf.size() != pvec.size()
 	)) {
-		BOOST_THROW_EXCEPTION(DigitalPinConfigRangeError() <<
+		DUDS_THROW_EXCEPTION(DigitalPinConfigRangeError() <<
 			DigitalPortAffected(this)
 		);
 	}
@@ -49,7 +49,7 @@ bool DigitalPortDependentPins::proposeConfigImpl(
 	for (; piter != pvec.cend(); ++piter, ++pos, ++pConfIter, ++iConfIter) {
 		// multiple config check
 		if (visited[*piter]) {
-			BOOST_THROW_EXCEPTION(DigitalPinMultipleConfigError() <<
+			DUDS_THROW_EXCEPTION(DigitalPinMultipleConfigError() <<
 				PinErrorId(globalId(*piter)) << DigitalPortAffected(this)
 			);
 		}
@@ -154,7 +154,7 @@ bool DigitalPortDependentPins::proposeFullConfigImpl(
 	if ((propConf.size() != pins.size()) || (
 		!initConf.empty() && initConf.size() != pins.size()
 	)) {
-		BOOST_THROW_EXCEPTION(DigitalPinConfigRangeError() <<
+		DUDS_THROW_EXCEPTION(DigitalPinConfigRangeError() <<
 			DigitalPortAffected(this)
 		);
 	}

@@ -12,13 +12,11 @@
 #include <duds/hardware/interface/ConversationExtractor.hpp>
 #include <thread>
 
-#include <iostream>
-#include <iomanip>
-
 namespace duds { namespace hardware { namespace devices { namespace instruments {
 
 /**
- * Prevent Doxygen from mixing this up with other source-file specific items.
+ * Prevent Doxygen from mixing this up with other source-file specific items
+ * from other files.
  * @internal
  */
 namespace FXOS8700CQ_internal {
@@ -99,34 +97,31 @@ com(std::move(i2ccom)), datarate(0) {
 		std::uint8_t id;
 		ex >> id;
 		if (id != 0xC7) {
-			BOOST_THROW_EXCEPTION(DeviceMisidentified());
+			DUDS_THROW_EXCEPTION(DeviceMisidentified() <<
+				duds::hardware::interface::I2cDeviceAddr(com->address())
+			);
 		}
 		// make the device not active
 		cfg.magnetometer = 1;  // in case magnetometer was in use; takes longer
 		suspend();
 		// attempt reset
-		
-		/* this reset makes the device stop responding until a power cycle 
+		// This reset makes the device stop responding until a power cycle under
+		// certain conditions met by connecting the device to my notebook
+		// computer's I2C bus on its video output. Works fine on a Raspberry Pi.
 		firstcon.clear();
 		firstcon.addOutputVector() << (std::uint8_t)(RegConfig2) <<
 			(std::uint8_t)(0x40);
 		try {
-			std::cerr << "Staring reset" << std::endl;
 			// the reset causes the device to not ack the message
 			com->converse(firstcon);
 		} catch (duds::hardware::interface::I2cErrorNoDevice &) {
 			// bother; ignore it
-			std::cerr << "No dev on reset" << std::endl;
 		} catch (...) {
-			// could be a real issue, but should be unlikely to occur on the second
-			// conversation with the device
-			std::cerr << "Badness on reset" << std::endl;
+			// could be a real issue, but should be unlikely to occur
 			throw;
 		}
 		// give the device time to complete the reset
 		std::this_thread::sleep_for(std::chrono::milliseconds(2));
-		*/
-		std::cerr << "Reset done" << std::endl;
 	} catch (...) {
 		// move the I2C communicator back
 		i2ccom = std::move(com);
@@ -156,14 +151,14 @@ void FXOS8700CQ::configure(
 ) {
 	// one of the instruments must be enabled
 	if (!settings.accelerometer && !settings.magnetometer) {
-		BOOST_THROW_EXCEPTION(FXOS8700CQNoInsturment());
+		DUDS_THROW_EXCEPTION(FXOS8700CQNoInsturment());
 	}
 	if ( // low noise mode cannot be used with 8g range
 		(settings.accelLowNoise && (settings.maxMagnitude == Magnitude8g)) ||
 		// only thre valid values in 2 bits
 		(settings.maxMagnitude == 3)
 	) {
-		BOOST_THROW_EXCEPTION(FXOS8700CQBadMagnitude());
+		DUDS_THROW_EXCEPTION(FXOS8700CQBadMagnitude());
 	}
 	{ // sample rate configuration
 		float f = freq;
@@ -176,7 +171,7 @@ void FXOS8700CQ::configure(
 		// rate
 		std::map<float, int>::const_iterator dv = DataRateVals.lower_bound(f);
 		if (dv == DataRateVals.cend()) {
-			BOOST_THROW_EXCEPTION(
+			DUDS_THROW_EXCEPTION(
 				FXOS8700CQBadDataRate() << RequestedUpdateRate(freq)
 			);
 		}
@@ -188,11 +183,11 @@ void FXOS8700CQ::configure(
 	}
 	// prevent device from doing much prior to changing config
 	suspend();  // ensures it is inactive
-	
+
 	// the code below could be cleaned up, but until the device gives good
 	// data, the code may be wrong, so don't worry about cleaner or more
 	// optimal code yet
-	
+
 	// start with magnetometer config
 	duds::hardware::interface::Conversation conv;
 	std::uint8_t tmpregs[4] = {
@@ -247,7 +242,7 @@ void FXOS8700CQ::configure(
 	conv.addOutputVector() <<
 		(std::uint8_t)(RegFifoConfig) << (std::uint8_t)0;
 	com->converse(conv);
-	
+
 	cfg = settings;
 	// make the conversation to read in the device's sample data
 	bufq.clear();
