@@ -13,8 +13,6 @@
 #include <boost/variant.hpp>
 #include <duds/data/QuantityArray.hpp>
 #include <duds/general/LanguageTaggedString.hpp>
-#include <duds/time/interstellar/Interstellar.hpp>
-#include <array>
 
 #include <duds/data/ExtendedUnit.hpp>
 

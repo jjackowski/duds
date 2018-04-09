@@ -10,7 +10,6 @@
 #include <duds/hardware/MeasurementSignalSink.hpp>
 #include <duds/general/Spinlock.hpp>
 #include <utility>
-#include <mutex>
 
 namespace duds { namespace hardware {
 
