@@ -13,7 +13,8 @@
 namespace duds { namespace data {
 
 /**
- * A namespace to hold some data structures where they won't cause trouble.
+ * A namespace to hold some internal data structures where they won't
+ * cause trouble.
  */
 namespace _it_needs_to_go_somewhere_ {
 	/**

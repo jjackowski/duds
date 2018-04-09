@@ -20,8 +20,8 @@ namespace duds { namespace hardware { namespace devices { namespace displays {
  * per character. The most common displays are LCDs, but some compatible
  * controllers are found on VFDs. They have a parallel interface with three
  * control lines. Only the 4-bit wide data interface is supported, and only
- * sending data to the display is supported, in order to minimize the number
- * of pins required.
+ * sending data to the display is supported. This limits the number of digital
+ * I/O lines required.
  *
  * This class is @b not thread-safe because using it directly from multiple
  * threads makes little sense.
@@ -157,13 +157,13 @@ public:
 	 *        members. They will be the same as default-constructed objects
 	 *        after this function returns.
 	 * @param outPins    The set of pins used for 4-bit data output and the
-	 *                   text flag. They are, in order:
+	 *                   text flag. This object is moved to an internal member.
+	 *                   The pins are, in order:
 	 *                    -# Data bit 4
 	 *                    -# Data bit 5
 	 *                    -# Data bit 6
 	 *                    -# Data bit 7
 	 *                    -# Text flag; often labeled "RS"
-	 *                   The object is moved to an internal member.
 	 * @param enablePin  The chip select used for the enable line on the
 	 *                   display. It is often labeled "E".
 	 *                   The object is moved to an internal member.
@@ -198,13 +198,13 @@ public:
 	 *        members. They will be the same as default-constructed objects
 	 *        after this function returns.
 	 * @param outPins    The set of pins used for 4-bit data output and the
-	 *                   text flag. They are, in order:
+	 *                   text flag. This object is moved to an internal member.
+	 *                   The pins are, in order:
 	 *                    -# Data bit 4
 	 *                    -# Data bit 5
 	 *                    -# Data bit 6
 	 *                    -# Data bit 7
 	 *                    -# Text flag; often labeled "RS"
-	 *                   The object is moved to an internal member.
 	 * @param enablePin  The chip select used for the enable line on the
 	 *                   display. It is often labeled "E".
 	 *                   The object is moved to an internal member.

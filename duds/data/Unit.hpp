@@ -36,12 +36,12 @@ struct UnitRangeError : UnitError { };
 /**
  * The out-of-range exponent.
  */
-typedef boost::error_info<struct tag_unitexp, int>  BadUnitExponent;
+typedef boost::error_info<struct Info_unitexp, int>  BadUnitExponent;
 
 /**
  * The name of the bad unit.
  */
-typedef boost::error_info<struct tag_unitname, std::string>  BadUnit;
+typedef boost::error_info<struct Info_unitname, std::string>  BadUnit;
 
 /**
  * Indicates that two different Unit objects were used in an operation that
@@ -119,7 +119,7 @@ struct UnitBadConversion : UnitError { };
  * | Meter     | 2-3  | 20-24     | -16 to 15      | SI base unit
  * | Mole      | 3    | 25-29     | -16 to 15      | SI base unit
  * | Second    | 3-4  | 30-34     | -16 to 15      | SI base unit
- * | Radian    | 4    | 35-38     | -8 to 7        | Complements steradian
+ * | Radian    | 4    | 35-38     | -8 to 7        | Needed for torque
  * | Steradian | 4-5  | 39-42     | -8 to 7        | Needed for lumen
  * | Becquerel | 5    | 43-46     | -8 to 7        | Not the same as hertz
  * | Gray      | 5-6  | 47-50     | -8 to 7        | Not the same as sievert
@@ -136,14 +136,37 @@ struct UnitBadConversion : UnitError { };
  * | Meter     | 2-3  | 20-24     | -16 to 15      | SI base unit
  * | Mole      | 3    | 25-29     | -16 to 15      | SI base unit
  * | Second    | 3-4  | 30-34     | -16 to 15      | SI base unit
- * | Radian    | 4    | 35-38     | -8 to 7        | Complements steradian
+ * | Radian    | 4    | 35-38     | -8 to 7        | Needed for torque
  * | Steradian | 4-5  | 39-42     | -8 to 7        | Needed for lumen
- * | Property  | 5    | 43-46     | NA             | Arbitrary physical propery value
- * | Scale/off | 6-7  | 47-63     | NA             | Scale or offset?
+ * | Property  | 5    | 43-46     | NA (4 bits)    | Arbitrary physical propery value
+ * | Scale/off | 6-7  | 47-63     | NA (17 bits)   | Scale or offset?
  * The propery value is an arbitrary value that, when taken with the context
  * of the other values, indicates the physical property being measured. The
  * above suggestion allows for 16 different properties for each possible
  * combination of the base SI units.
+ *
+ * Yet another possible change (best?):
+ * | %Unit     | Byte | Bit range | Exponent range | Notes
+ * | :-------- | :--: | :-------: | :------------: | :-----------------------
+ * | Ampere    | 0    | 0-4       | -16 to 15      | SI base unit
+ * | Candela   | 0-1  | 5-9       | -16 to 15      | SI base unit
+ * | Kelvin    | 1    | 10-14     | -16 to 15      | SI base unit
+ * | Kilogram  | 1-2  | 15-19     | -16 to 15      | SI base unit
+ * | Meter     | 2-3  | 20-24     | -16 to 15      | SI base unit
+ * | Mole      | 3    | 25-29     | -16 to 15      | SI base unit
+ * | Second    | 3-4  | 30-34     | -16 to 15      | SI base unit
+ * | Radian    | 4    | 35-39     | -16 to 15      | Needed for torque
+ * | Steradian | 5    | 40-44     | -16 to 15      | Needed for lumen
+ * | Property  | 5-7  | 45-63     | NA (19 bits)   | Arbitrary physical propery value
+ * Property value meanings:
+ * - Ratio (non-zero to differentiate from unknown/unset)
+ *   - Relative humidity
+ * - Calibrated instrument
+ * - Raw unconverted data; meaning/units are device specific
+ * - Value from local (device) axis (?)
+ * - Something to help with ambiguity:
+ *   - Hertz versus Becquerel
+ *   - Sievert versus Gray
  *
  * @bug  Some units, like Watts cubed, cannot be represented. Consider larger
  *       fields. Maybe use larger fields on another type used for intermediate

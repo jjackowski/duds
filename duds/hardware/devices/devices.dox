@@ -1,0 +1,92 @@
+/*
+ * This file is part of the DUDS project. It is subject to the BSD-style
+ * license terms in the LICENSE file found in the top-level directory of this
+ * distribution and at http://www.somewhere.org/somepath/license.html.
+ * No part of DUDS, including this file, may be copied, modified, propagated,
+ * or distributed except according to the terms contained in the LICENSE file.
+ *
+ * Copyright (C) 2018  Jeff Jackowski
+ */
+namespace duds { namespace hardware { namespace devices {
+
+/**
+ * The namespace with support for various instruments that sense properties of
+ * the physical world.
+ *
+ * For a summary of the devices and what they do see the
+ * @ref SupDevInst "list of supported instruments".
+ */
+namespace instruments { }
+
+} } }
+
+/**
+
+@page SupDev  Supported Devices 
+
+@section SupDevClk  Clocks
+
+@subsection SupDevClkSoft  Software interfaces
+
+These clock drivers use clocks that are implemented in other software. They are typically handled by the operating system.
+
+- @ref duds::hardware::devices::clocks::GenericCppClockDriver "GenericCppClockDriver": uses the C++11 chrono library
+- @ref duds::hardware::devices::clocks::GenericLinuxClockDriver "GenericLinuxClockDriver": uses the adjtimex() function from Linux
+- @ref duds::hardware::devices::clocks::GenericPosixClockDriver "GenericPosixClockDriver": uses the clock_gettime() function from POSIX
+
+@section SupDevDisp  Displays
+
+@subsection SupDevDispGrph  Graphic
+
+None yet.
+
+@subsection SupDevDispText  Text-only
+
+- @ref duds::hardware::devices::displays::HD44780 "HD44780" and compatibles
+
+@section SupDevInst  Instruments
+
+@subsection SupDevInstAcc  Accelerometers
+
+- @ref duds::hardware::devices::instruments::FXOS8700CQ "FXOS8700CQ": triple axis accelerometer and magnetometer
+- @ref duds::hardware::devices::instruments::LSM9DS1AccelGyro "LSM9DS1": triple axis accelerometer, gyroscope, and magnetometer
+
+@subsection SupDevInstBright  Brightness
+
+None of the drivers here properly report brightness in physical units. The datasheets often make this difficult. Some devices have exposure settings, but measurements taken with different settings cannot be compared.
+
+- @ref duds::hardware::devices::instruments::APDS9301 "APDS9301": visible and infrared irradiance, computed illuminance
+- @ref duds::hardware::devices::instruments::ISL29125 "ISL29125": red, green, and blue
+- @ref duds::hardware::devices::instruments::TSL2591 "TSL2591": visible and infrared irradiance
+
+@subsection SupDevInstCurr  Current
+
+- @ref duds::hardware::devices::instruments::INA219 "INA219": DC voltage, current, and power
+
+@subsection SupDevInstRot  Gyroscopes
+
+- @ref duds::hardware::devices::instruments::LSM9DS1AccelGyro "LSM9DS1": triple axis accelerometer, gyroscope, and magnetometer
+
+@subsection SupDevInstHum  Humidity
+
+- @ref duds::hardware::devices::instruments::AM2320 "AM2320": temperature and relative humidity
+
+@subsection SupDevInstMag  Magetometers
+
+- @ref duds::hardware::devices::instruments::FXOS8700CQ "FXOS8700CQ": triple axis accelerometer and magnetometer
+- @ref duds::hardware::devices::instruments::LSM9DS1Mag "LSM9DS1": triple axis accelerometer, gyroscope, and magnetometer
+
+@subsection SupDevInstPwr  Power
+
+- @ref duds::hardware::devices::instruments::INA219 "INA219": DC voltage, current, and power
+
+@subsection SupDevInstTemp  Temperature sensors and thermal cameras
+
+- @ref duds::hardware::devices::instruments::AM2320 "AM2320": temperature and relative humidity
+- @ref duds::hardware::devices::instruments::AMG88xx "AMG88xx": temperature and thermal camera
+
+@subsection SupDevInstVolt  Voltage
+
+- @ref duds::hardware::devices::instruments::INA219 "INA219": DC voltage, current, and power
+
+*/

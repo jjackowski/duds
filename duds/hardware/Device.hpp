@@ -56,6 +56,7 @@ public:
 		std::shared_ptr<InstrumentDriver> driver;
 	};
 protected:
+	// not expected to have many entries, so vector may work best
 	std::vector<InstrumentAndDriver> instruments;
 public:
 	/**
@@ -67,6 +68,11 @@ public:
 	const std::shared_ptr<Instrument> &instrument(int idx) const {
 		return instruments[idx].instrument;
 	}
+	/*
+	const std::shared_ptr<Instrument> &instrument(const boost::uuids::uuid &id) const {
+		//return instruments[idx].instrument;
+	}
+	*/
 	std::size_t size() const {
 		return instruments.size();
 	}

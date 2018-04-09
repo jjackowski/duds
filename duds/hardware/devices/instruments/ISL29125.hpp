@@ -73,17 +73,17 @@ public:
 	 */
 	void resume();
 	/**
-	 * The device takes about 100ms to produce a 16-bit sample per color.
+	 * The device takes about 101ms to produce a 16-bit sample per color.
 	 * Sampling faster than that will read old values, but not bad data.
 	 */
 	void sample();
-	
+
 	// Not sure what the units are; may change with lux range and ADC sample
 	// size. With the narrow, 375lux, range and 16-bit samples:
 	//    red may be   (20/65536) uW/cm^2
 	//    green may be (18/65536) uW/cm^2
 	//    blue may be  (30/65536) uW/cm^2
-	
+
 	std::uint16_t red() const {
 		return r;
 	}
@@ -94,7 +94,7 @@ public:
 		return b;
 	}
 };
-	
+
 } } } }
 
 #endif        //  #ifndef ISL29125_HPP

@@ -187,14 +187,14 @@ protected:
 	 */
 	void shutdown();
 
-	/* *  Unimplemented
+	/* *  UnimplementedError
 	 * Adds pins to an already constructed port. The pins will be initialized
 	 * to an unavailable state to avoid use until after the implementation has
 	 * prepared the pin data for use.
 	 * @throw PinExists
 	 */
 	//void addPins(unsigned int maxId);
-	/* *  Unimplemented
+	/* *  UnimplementedError
 	 * Removes a pin from the port by changing its data to an unavailable state.
 	 * This function will block until the pin is not being accessed. Then it
 	 * will change the pin's state to unavailble. It will not change the size
@@ -651,7 +651,7 @@ public:
 	 * DigitalPort objects.
 	 * @param localId  The local pin ID; the one used to index into vectors
 	 *                 of pins or related information.
-	 * @throw duds::general::ObjectDestructed
+	 * @throw duds::general::ObjectDestructedError
 	 */
 	unsigned int globalId(unsigned int localId) const {
 		return localId + idOffset;
@@ -747,7 +747,7 @@ public:
 	 * @throw PinEmptyAccessRequest
 	 * @throw PinDoesNotExist   A requested pin does not exist within this
 	 *                          port.
-	 * @throw ObjectDestructed  The PinStore object was destructed before the
+	 * @throw ObjectDestructedError  The PinStore object was destructed before the
 	 *                          request could be fullfilled.
 	 * @throw PinInUse          A pin was requested twice or more; there is a
 	 *                          repeated value in @a pins. If thrown, @a acc
@@ -799,12 +799,12 @@ public:
 	 *              continues to run, much like a memory leak.
 	 * @post        If @a acc was empty, it will be given an array of length
 	 *              @a len. If it was not empty, the given array will be used.
-	 *              If a PinDoesNotExist or ObjectDestructed exception is
+	 *              If a PinDoesNotExist or ObjectDestructedError exception is
 	 *              thrown, @a acc will not be modified. Any other exception
 	 *              may be thrown after @a acc is modified.
 	 * @throw PinDoesNotExist   A requested pin does not exist within this
 	 *                          port.
-	 * @throw ObjectDestructed  The PinStore object was destructed before the
+	 * @throw ObjectDestructedError  The PinStore object was destructed before the
 	 *                          request could be fullfilled.
 	 * @throw PinInUse          A pin was requested twice or more; there is a
 	 *                          repeated value in @a pins. If thrown, @a acc
@@ -848,13 +848,13 @@ public:
 	 *              function @b must return false. If this condition is not met,
 	 *              some pins may be considered to be in-use as long as the
 	 *              process continues to run, much like a memory leak.
-	 * @post        If a PinDoesNotExist or ObjectDestructed exception is
+	 * @post        If a PinDoesNotExist or ObjectDestructedError exception is
 	 *              thrown, @a acc will not be modified. Any other exception
 	 *              may be thrown after @a acc is modified.
 	 * @throw PinEmptyAccessRequest
 	 * @throw PinDoesNotExist   A requested pin does not exist within this
 	 *                          port.
-	 * @throw ObjectDestructed  The PinStore object was destructed before the
+	 * @throw ObjectDestructedError  The PinStore object was destructed before the
 	 *                          request could be fullfilled.
 	 * @throw PinInUse          A pin was requested twice or more; there is a
 	 *                          repeated value in @a pins. If thrown, @a acc
@@ -899,7 +899,7 @@ public:
 	 *              will cause the calling thread to be deadlocked.
 	 * @param len   The length of the @a pins array.
 	 * @param acc   A DigitalPinSetAccess object.
-	 * @post        If a PinDoesNotExist, PinSetWrongPort, or ObjectDestructed
+	 * @post        If a PinDoesNotExist, PinSetWrongPort, or ObjectDestructedError
 	 *              exception is thrown, @a acc will not be modified. Any other
 	 *              exception may be thrown after @a acc is modified. Any
 	 *              modification will leave @a acc in a valid state, and
@@ -909,7 +909,7 @@ public:
 	 *                          port.
 	 * @throw PinSetWrongPort   The given access object has already been used
 	 *                          with another port.
-	 * @throw ObjectDestructed  The PinStore object was destructed before the
+	 * @throw ObjectDestructedError  The PinStore object was destructed before the
 	 *                          request could be fullfilled.
 	 * @throw PinInUse          A pin was requested twice or more; there is a
 	 *                          repeated value in @a pins. If thrown, @a acc

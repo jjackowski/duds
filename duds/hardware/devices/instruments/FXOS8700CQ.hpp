@@ -15,7 +15,7 @@
 namespace duds { namespace hardware { namespace devices { namespace instruments {
 
 /**
- * Base class for all TSL2591 specific errors.
+ * Base class for all FXOS8700CQ specific errors.
  */
 struct FXOS8700CQError : DeviceError { };
 /**
@@ -42,11 +42,14 @@ typedef boost::error_info<struct Info_UpdateRate, float>  RequestedUpdateRate;
  * magnetometer sample by as much as 70uT. This likely will be triggered by
  * any use of the I2C bus rather than just communication with the FXOS8700CQ.
  *
- * Attempting to reset the device by command over I2C causes the device to
- * quit responding until after it has gone through a power-on-reset, or maybe
- * reset using its reset input. This has impeded my attempt to work with the
- * device starting from an unknown state. It should still be possible with the
- * exception of the comatose state.
+ * Adafruit's board uses device address 0x1F. When using the board with
+ * the I2C bus on HDMI from a notebook computer, I found that the reset
+ * operation causes the device to ignore all communication until after a
+ * power cycle. Not sure why. I also found that with that setup and certain
+ * almost but not quite level orientations, the device fails to register
+ * gravity. It also has issues with the magnetometer data. Using the same
+ * device with a Raspberry Pi resulted in good accelerometer data, but
+ * bad magnetometer data. Could just be an issue with the board I have.
  *
  * @author  Jeff Jackowski
  */
@@ -69,10 +72,10 @@ public:
 	 * bit of a guess since its units are vaugely defined and callibration
 	 * is done based on the local pull of Earth's gravity.
 	 */
-	typedef duds::data::QuantityXyz  ProcessedSample;
+	typedef duds::data::QuantityXyz  ConvertedSample;
 	/**
-	  The magnitude options for the accelerometer.
-	  */
+	 * The magnitude options for the accelerometer.
+	 */
 	enum Magnitude {
 		/**
 		 * Selects the +/-2g accelerometer range.
@@ -118,7 +121,7 @@ public:
 		 * Enables the high-pass filter.
 		 */
 		unsigned int highPassFilter        : 1;
-		/** 
+		/**
 		 * Adjusts the cut-off frequency of the high-pass filter to be lower.
 		 */
 		unsigned int highPassLowCutoff     : 1;
@@ -144,7 +147,7 @@ public:
 		unsigned int oversampleRatio       : 3;
 		/**
 		 * Uses a thread to periodically read samples from the device.
-		 * @note  Unimplemented.
+		 * @note  UnimplementedError.
 		 * @todo  Implement a thread for reading.
 		 */
 		unsigned int threadedSample        : 1;
@@ -181,10 +184,8 @@ private:
 	std::int8_t drval;
 public:
 	/**
-	 * Attempts to identify the device, then suspends the device's operation,
-	 * Originaly this performed a reset, which requires 2ms to complete, but
-	 * found that the operation causes the device to ignore all communication
-	 * until after a power cycle.
+	 * Attempts to identify the device, then suspends the device's operation.
+	 * This resets the device, which requires 2ms to complete.
 	 *
 	 * Adafruit's board uses device address 0x1F.
 	 *

@@ -22,6 +22,10 @@ namespace devices {
 /**
  * The base type for errors from devices. These errors should be kept separate
  * from errors from methods of communication.
+ * @todo  Expand the set of general device errors to handle a wider variety of
+ *        errors to limit the need for device specific errors. However, maybe
+ *        all errors from a device should also be derived from a single class
+ *        using multiple inheritance. 
  */
 struct DeviceError : virtual std::exception, virtual boost::exception { };
 

@@ -121,10 +121,9 @@ protected:
 	static void convertIST(IST &dest, const Src &src) {
 		// src * Ratio / IST::period
 		typedef std::ratio_divide<Ratio, typename IST::period> r;
-		//typename IST::rep bigsrc = src;
 		dest = IST(typename IST::duration((src * r::num) / r::den));
 	}
-	#ifndef HAVE_INT128
+	#if !defined(HAVE_INT128) | defined(DOXYGEN)
 	/**
 	 * More specialized template to convert time stored in a 128-bit integer
 	 * to one of the types defined in duds::time::interstellar. The
@@ -141,7 +140,6 @@ protected:
 	static void convertIST(IST &dest, const duds::data::int128_t &src) {
 		// src * Ratio / IST::period
 		typedef std::ratio_divide<Ratio, typename IST::period> r;
-		//typename IST::rep bigsrc = src;
 		dest = IST(typename IST::duration(
 			((src * r::num) / r::den).template convert_to<typename IST::rep>()
 		));
@@ -185,7 +183,7 @@ protected:
 		// same as Femtoseconds
 		typedef std::ratio_divide<Ratio, std::femto> r;
 		duds::time::interstellar::Femtoseconds::rep bigsrc = src;
-		dest = duds::time::interstellar::Femtoseconds::duration(
+		dest = duds::time::interstellar::Femtoseconds(
 			(src * r::num) / r::den
 		);
 	}

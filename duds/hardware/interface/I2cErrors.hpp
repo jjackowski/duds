@@ -34,8 +34,10 @@ struct I2cErrorPartLength : I2cError { };
 struct I2cErrorConversationLength : I2cError { };
 
 /**
- * The device did not respond to its address. It could be a transient error,
- * or there may not be a device at the address.
+ * The device did not respond to its address (NACK). It could be a transient
+ * error, or there may not be a device at the address. Devices that support a
+ * reset by I2C command will normally result in this error after the reset
+ * command is sent.
  */
 struct I2cErrorNoDevice : I2cError { };
 
@@ -73,6 +75,6 @@ struct I2cErrorBusy : I2cErrorTimeout { };
 /**
  * Provides the device (slave) address along with an error.
  */
-typedef boost::error_info<struct tag_i2cdevaddr, int>  I2cDeviceAddr;
+typedef boost::error_info<struct Info_i2cdevaddr, int>  I2cDeviceAddr;
 
 } } }

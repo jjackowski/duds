@@ -13,8 +13,8 @@ namespace duds { namespace hardware { namespace devices { namespace instruments 
 
 INA219::INA219(
 	std::unique_ptr<duds::hardware::interface::Smbus> &c,
-	double s
-) : shunt(s) {
+	double sr
+) : shunt(sr) {
 	// reset device
 	c->transmitWordBe(0, 0x8000);
 	c->transmitWordBe(0, 0x1FFF);  // 128 samples, 16v bus
@@ -47,6 +47,10 @@ duds::data::Quantity INA219::busVoltage() const {
 
 duds::data::Quantity INA219::busCurrent() const {
 	return shuntVoltage() / shuntResistance();
+}
+
+duds::data::Quantity INA219::busPower() const {
+	return busVoltage() * busCurrent();
 }
 
 void INA219::sample() {

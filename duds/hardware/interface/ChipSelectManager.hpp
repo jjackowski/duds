@@ -162,7 +162,7 @@ public:
 	 * @throw  ChipSelectInvalidChip  The given @a chipId is invalid. The
 	 *                                exception will include the ChipSelectId
 	 *                                attribute with the requested chip ID.
-	 * @throw  ObjectDestructed       The manager object was destructed before
+	 * @throw  ObjectDestructedError       The manager object was destructed before
 	 *                                the access object could be obtained.
 	 */
 	std::unique_ptr<ChipAccess> access(int chipId);
@@ -185,7 +185,7 @@ public:
 	 * @throw  ChipSelectInvalidChip  The given @a chipId is invalid. The
 	 *                                exception will include the ChipSelectId
 	 *                                attribute with the requested chip ID.
-	 * @throw  ObjectDestructed       The manager object was destructed before
+	 * @throw  ObjectDestructedError       The manager object was destructed before
 	 *                                the access object could be obtained.
 	 */
 	void access(ChipAccess &acc, int chipId);
@@ -202,7 +202,7 @@ public:
 	 * @throw  ChipSelectInvalidChip  The given @a chipId is invalid. The
 	 *                                exception will include the ChipSelectId
 	 *                                attribute with the requested chip ID.
-	 * @throw  ObjectDestructed       The manager object was destructed before
+	 * @throw  ObjectDestructedError       The manager object was destructed before
 	 *                                the access object could be obtained.
 	 */
 	std::unique_ptr<ChipAccess> select(int chipId);
@@ -224,7 +224,7 @@ public:
 	 * @throw  ChipSelectInvalidChip  The given @a chipId is invalid. The
 	 *                                exception will include the ChipSelectId
 	 *                                attribute with the requested chip ID.
-	 * @throw  ObjectDestructed       The manager object was destructed before
+	 * @throw  ObjectDestructedError       The manager object was destructed before
 	 *                                the access object could be obtained.
 	 */
 	void select(ChipAccess &acc, int chipId);
