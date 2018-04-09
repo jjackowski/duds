@@ -1,3 +1,9 @@
+# This file is part of the DUDS project. It is subject to the BSD-style
+# license terms in the LICENSE file found in the top-level directory of this
+# distribution and at https://github.com/jjackowski/duds/blob/master/LICENSE.
+# No part of DUDS, including this file, may be copied, modified, propagated,
+# or distributed except according to the terms contained in the LICENSE file.
+
 Import('*')
 
 envser = env.Clone()
@@ -10,22 +16,26 @@ envthread.AppendUnique(
 	LIBS = 'pthread'
 )
 
-enveigen = envthread.Clone()
-enveigen.AppendUnique(
-	CPPPATH = '/usr/include/eigen3/'
-)
-
 # could loop through directories, but be lazy for now
 targets = [
 	#env.Program('ds1620', Glob('DS1620/*.cpp') + libs),  # broken
 	env.Program('time', ['time.cpp'] + libs),
 	envser.Program('units', ['units.cpp'] + libs),
+	envthread.Program('apds9301', ['apds9301test.cpp'] + libs),
+	envthread.Program('am2320', ['am2320test.cpp'] + libs),
+	envthread.Program('amg88xx', ['amg88xxtest.cpp'] + libs),
 	envthread.Program('ina219', ['ina219test.cpp'] + libs),
 	envthread.Program('isl29125', ['isl29125test.cpp'] + libs),
 	envthread.Program('tsl2591', ['tsl2591test.cpp'] + libs),
 	envthread.Program('textdisplay', ['textdisplay.cpp'] + libs),
 	envthread.Program('pwmbacklight', ['pwmbacklight.cpp'] + libs),
-	enveigen.Program('orientation', ['orientation.cpp'] + libs),
 ]
+
+if envthread['Use_Eigen']:
+	enveigen = envthread.Clone()
+	enveigen.AppendUnique(CPPPATH = '$EIGENINC')
+	targets.append(enveigen.Program('orientation', ['orientation.cpp'] + libs))
+	#targets.append(enveigen.Program('orientation-LSM9DS1', ['orientation-LSM9DS1.cpp'] + libs))
+	#targets.append(enveigen.Program('orientation-LCD', ['orientation-LCD.cpp'] + libs))
 
 Return('targets')
