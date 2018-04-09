@@ -52,7 +52,7 @@ constexpr Unit Weber    (DUDS_UNIT_VALUE(-1,  0,  0,  0,  2,  0, -2,  0,  0));
 constexpr Unit Tesla    (DUDS_UNIT_VALUE(-1,  0,  0,  1,  0,  0, -2,  0,  0));
 constexpr Unit Henry    (DUDS_UNIT_VALUE(-2,  0,  0,  1,  2,  0, -2,  0,  0));
 constexpr Unit Lumen    (DUDS_UNIT_VALUE( 0,  1,  0,  0,  0,  0,  0,  0,  1));
-constexpr Unit Lux      (DUDS_UNIT_VALUE( 0,  1,  0,  0, -2,  0,  0,  0,  0));
+constexpr Unit Lux      (DUDS_UNIT_VALUE( 0,  1,  0,  0, -2,  0,  0,  0,  1));
 constexpr Unit Becquerel(DUDS_UNIT_VALUE( 0,  0,  0,  0,  0,  0, -1,  0,  0));
 constexpr Unit Gray     (DUDS_UNIT_VALUE( 0,  0,  0,  0,  2,  0, -2,  0,  0));
 constexpr Unit Sievert  (DUDS_UNIT_VALUE( 0,  0,  0,  0,  2,  0, -2,  0,  0));
