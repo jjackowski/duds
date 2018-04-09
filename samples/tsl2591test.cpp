@@ -46,19 +46,21 @@ int main(int argc, char *argv[])
 try {
 	std::unique_ptr<duds::hardware::interface::I2c> i2c(
 		new duds::hardware::interface::linux::DevI2c(
-			"/dev/i2c-1",
+			argc > 1 ? argv[1] : "/dev/i2c-1",
 			0x29
 		)
 	);
 	duds::hardware::devices::instruments::TSL2591 meter(i2c);
 	int gain = 0;
+	int integration = 0;
+	/*
 	if (argc > 1) {
 		gain = argv[1][0] - '0';
 	}
-	int integration = 0;
 	if (argc > 2) {
 		integration = argv[2][0] - '0';
 	}
+	*/
 	meter.init(gain, integration);
 	std::this_thread::sleep_for(std::chrono::milliseconds(2));
 	std::thread doit(runtest, std::ref(meter));

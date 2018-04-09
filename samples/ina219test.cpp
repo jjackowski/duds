@@ -49,7 +49,7 @@ try {
 		new duds::hardware::interface::linux::DevSmbus(
 			"/dev/i2c-1",
 			0x40,
-			duds::hardware::interface::Smbus::NoPEC()
+			duds::hardware::interface::Smbus::NoPec()
 		)
 	);
 	duds::hardware::devices::instruments::INA219 meter(smbus, 0.1);

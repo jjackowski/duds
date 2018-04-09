@@ -7,7 +7,7 @@
  *
  * Copyright (C) 2017  Jeff Jackowski
  */
-#include <duds/hardware/devices/instruments/FXOS8700CQ.hpp>
+#include <duds/hardware/devices/instruments/LSM9DS1.hpp>
 #include <duds/hardware/interface/linux/DevI2c.hpp>
 #include <iostream>
 #include <thread>
@@ -49,24 +49,24 @@ float heading(const Eigen::Vector3f &dir) {
 	return h;
 }
 
-void runtest(duds::hardware::devices::instruments::FXOS8700CQ &accelmag)
+void runtest(duds::hardware::devices::instruments::LSM9DS1 &acclgyromag)
 try {
 	static const Eigen::Vector3f z(0, 0, 1);
-	duds::hardware::devices::instruments::FXOS8700CQ::RawSample rsA, rsM;
-	accelmag.start();
+	duds::hardware::devices::instruments::LSM9DS1::RawSample rsA, rsM;
+	acclgyromag.start();
 	std::cout.precision(1);
 	std::cout << std::fixed;
 	// doesn't account for time spent in loop
 	std::chrono::milliseconds delay = std::chrono::milliseconds(
-		(int)(1000.0f / accelmag.sampleRate())
+		(int)(1000.0f / /*acclgyromag.sampleRate()*/ 2.5f)
 	);
 	std::this_thread::sleep_for(delay);
 	do {
-		while (!accelmag.sample() && !quit) {
+		while (!acclgyromag.sample() && !quit) {
 			std::this_thread::sleep_for(std::chrono::milliseconds(8));
 		}
-		rsA = accelmag.rawAccelerometer();
-		rsM = accelmag.rawMagnetometer();
+		rsA = acclgyromag.rawAccelerometer();
+		rsM = acclgyromag.rawMagnetometer();
 		Eigen::Vector3f m(rsM.x, rsM.y, rsM.z);
 		Eigen::Vector3f g(rsA.x, rsA.y, rsA.z);
 		Eigen::Vector3f mT;
@@ -96,17 +96,19 @@ try {
 	boost::current_exception_diagnostic_information() << std::endl;
 }
 
-const duds::hardware::devices::instruments::FXOS8700CQ::Settings config = {
+const duds::hardware::devices::instruments::LSM9DS1::Settings config = {
 	/* .accelerometer = */ 1,
+	/* .gyroscope = */ 0,
 	/* .magnetometer = */ 1,
-	/* .accelLowNoise = */ 1,
-	/* .highPassFilter = */ 0,
-	0,
-	/* .maxMagnitude = */ duds::hardware::devices::instruments::FXOS8700CQ::Magnitude2g,
-	/* .oversampleMode = */ duds::hardware::devices::instruments::FXOS8700CQ::HighResolution,
-	/* .oversampleSleepMode = */ duds::hardware::devices::instruments::FXOS8700CQ::LowPower,
-	/* .oversampleRatio = */ 7,
-	0
+	/* .accelRange = */ duds::hardware::devices::instruments::LSM9DS1::AccelRange2g,
+	/* .gyroRange = */ duds::hardware::devices::instruments::LSM9DS1::GyroRange4p276rps,
+	/* .magRange = */ duds::hardware::devices::instruments::LSM9DS1::MagRange400uT,
+	/* .gyroLowPower = */ 1,
+	/* .gyroHighPass = */ 0,
+	/* .magLowPower = */ 0,
+	/* .xyMagMode = */ duds::hardware::devices::instruments::LSM9DS1::AxesHighPerformance,
+	/* .zMagMode = */ duds::hardware::devices::instruments::LSM9DS1::AxesHighPerformance,
+	/* .magTempComp = */ 0
 };
 
 int main(int argc, char *argv[])
@@ -128,18 +130,24 @@ try {
 		res(2) << "  angle: " << (angle * 180.0f / M_PI) << "  heading: " <<
 		(heading(res) * 180.0f / M_PI) << std::endl;
 	}
-	std::unique_ptr<duds::hardware::interface::I2c> i2c(
+	std::unique_ptr<duds::hardware::interface::I2c> magI2c(
 		new duds::hardware::interface::linux::DevI2c(
 			argc > 1 ? argv[1] : "/dev/i2c-1",
-			0x1F
+			0x1E
 		)
 	);
-	duds::hardware::devices::instruments::FXOS8700CQ accelmag(i2c);
-	accelmag.configure(4.0f, config);
+	std::unique_ptr<duds::hardware::interface::I2c> accelI2c(
+		new duds::hardware::interface::linux::DevI2c(
+			argc > 1 ? argv[1] : "/dev/i2c-1",
+			0x6B
+		)
+	);
+	duds::hardware::devices::instruments::LSM9DS1 acclgyromag(accelI2c, magI2c);
+	acclgyromag.configure(2.0f, 2.0f, config);
 	std::cout.precision(4);
-	std::cout << "Sampling frequency reported as " << accelmag.sampleRate() <<
-	"Hz" << std::endl;
-	std::thread doit(runtest, std::ref(accelmag));
+	//std::cout << "Sampling frequency reported as " << acclgyromag.sampleRate() <<
+	//"Hz" << std::endl;
+	std::thread doit(runtest, std::ref(acclgyromag));
 	std::cin.get();
 	quit = true;
 	doit.join();
