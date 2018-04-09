@@ -49,7 +49,6 @@ namespace duds { namespace hardware { namespace interface {
  * There isn't a matching access object because SMBus is specified in such a
  * way that it shouldn't be required.
  *
- * @todo  Add support for big-endian devices.
  * @todo  Add ability to query SMBus master's capabilities.
  *
  * @author  Jeff Jackowski
@@ -62,13 +61,13 @@ public:
 	 * Use with constructors to explicitly specify that Packet Error Checking
 	 * (PEC) be used. This should normally be the default.
 	 */
-	struct UsePEC { };
+	struct UsePec { };
 	/**
 	 * Use with constructors to specify that Packet Error Checking (PEC) will
 	 * not be used. This should be avoided unless it is unsupported, as is the
 	 * case with I2C devices.
 	 */
-	struct NoPEC { };
+	struct NoPec { };
 	// some flag for big-endian data; standard is little
 	/**
 	 * Read a single byte from the device without sending a command/register
@@ -377,6 +376,11 @@ public:
 		const std::vector<std::uint8_t> &out,
 		std::vector<std::uint8_t> &in
 	) = 0;
+	/**
+	 * Returns the address of the device that this object will attempt to
+	 * communicate with.
+	 */
+	virtual int address() const = 0;
 };
 
 } } }

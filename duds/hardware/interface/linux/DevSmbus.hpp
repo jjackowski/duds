@@ -85,7 +85,7 @@ public:
 	 * @throw SmbusError              The device file could not be opened or
 	 *                                failed to accept the device address.
 	 */
-	DevSmbus(const std::string &devname, int devaddr, UsePEC) :
+	DevSmbus(const std::string &devname, int devaddr, UsePec) :
 		DevSmbus(devname, devaddr, true) { }
 	/**
 	 * Opens the device file for the bus and specifies that Packet Error
@@ -99,7 +99,7 @@ public:
 	 * @throw SmbusError              The device file could not be opened or
 	 *                                failed to accept the device address.
 	 */
-	DevSmbus(const std::string &devname, int devaddr, NoPEC) :
+	DevSmbus(const std::string &devname, int devaddr, NoPec) :
 		DevSmbus(devname, devaddr, false) { }
 	/**
 	 * Closes the device file.
@@ -131,6 +131,7 @@ public:
 		const std::vector<std::uint8_t> &out,
 		std::vector<std::uint8_t> &in
 	);
+	virtual int address() const;
 };
 
 } } } }
