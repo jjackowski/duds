@@ -29,4 +29,3 @@ inline typename std::make_signed<T>::type SignExtend(const T x) {
 }
 
 } }
-

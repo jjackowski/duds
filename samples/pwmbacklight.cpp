@@ -121,11 +121,11 @@ try {
 	pwm.dutyZero();
 	pwm.disable();
 	std::this_thread::sleep_for(std::chrono::milliseconds(2));
-	//std::thread doit(runtest, std::ref(meter), std::ref(pwm));
-	//std::cin.get();
-	//quit = true;
-	//doit.join();
-	runtest(meter, pwm);
+	//runtest(meter, pwm);
+	std::thread doit(runtest, std::ref(meter), std::ref(pwm));
+	std::cin.get();
+	quit = true;
+	doit.join();
 } catch (...) {
 	std::cerr << "Program failed in main(): " <<
 	boost::current_exception_diagnostic_information() << std::endl;

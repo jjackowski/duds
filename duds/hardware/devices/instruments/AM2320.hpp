@@ -28,7 +28,14 @@ struct AM2320CrcError : virtual AM2320Error, virtual duds::general::CrcError { }
  * Support for the AM2320, a temperature and relative humidity sensor with
  * poorly written English documentation.
  *
- * This part seems to fail with a read error on about 1.2% of sample attempts.
+ * High processor loads on single-core systems prevents this code from
+ * successfully reading data from a AM2320. This doesn't happen with other I2C
+ * connected instruments on the same system. Not sure how to fix this.
+ *
+ * This part may fail with a read error on about 1.2% of sample attempts in
+ * some circuits. In other similar circuits, it may work without errors. I
+ * suspect the part is more susceptible to failure with lower pull-up
+ * resistance than other I2C parts.
  *
  * @bug   The CRC value is not checked because the calculated value never
  *        matches what the device sends. Even using the code from the

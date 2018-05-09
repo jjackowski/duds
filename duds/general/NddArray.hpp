@@ -1136,6 +1136,12 @@ public:
 		*this = std::move(makeWithNewSize<DimList>(dims));
 	}
 	/**
+	 * Returns the number of elements stored in the array.
+	 */
+	SizeType size() const {
+		return elems;
+	}
+	/**
 	 * Swaps array contents. The elements are not copied; it should be fairly
 	 * quick.
 	 * @post  Iterators working on this object will continue to work on
