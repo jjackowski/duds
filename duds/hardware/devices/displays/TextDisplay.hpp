@@ -11,6 +11,7 @@
 #define TEXTDISPLAY_HPP
 
 #include <duds/hardware/devices/displays/TextDisplayErrors.hpp>
+#include <boost/noncopyable.hpp>
 
 namespace duds { namespace hardware { namespace devices {
 
@@ -29,7 +30,7 @@ namespace displays {
  *
  * @author  Jeff Jackowski
  */
-class TextDisplay {
+class TextDisplay : boost::noncopyable {
 protected:
 	/**
 	 * Number of columns on the display.

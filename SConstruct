@@ -6,6 +6,7 @@
 
 import os
 import platform
+import subprocess
 
 # CXX = 'distcc g++' might use distcc correctly
 
@@ -50,8 +51,66 @@ buildopts.Add(PathVariable('EIGENINC',
 puname = platform.uname()
 
 #####
+# create environment for tools
+toolenv = Environment(
+	variables = buildopts,
+	PSYS = puname[0].lower(),
+	PARCH = puname[4].lower(),
+	BOOSTABI = '',
+	CCFLAGS = '$CCDBGFLAGS',
+	LINKFLAGS = '$LINKDBGFLAGS',
+	BINAPPEND = '-tools',
+	BUILDTYPE = 'dbg',
+	# include paths
+	CPPPATH = [
+		#'$BOOSTINC',
+		'#/.'
+	],
+	# options passed to C++ compiler
+	CXXFLAGS = [
+		'-std=gnu++11'  # allow gcc extentions to C++11, like __int128
+		#'-std=c++11'    # no GNU extensions, no 128-bit integer
+	],
+	LIBS = [
+		'libboost_program_options${BOOSTTOOLSET}${BOOSTTAG}${BOOSTABI}${BOOSTVER}',
+	]
+)
+
+#####
+# tool build
+
+tools = SConscript('tools/SConscript', exports = 'toolenv', duplicate=0,
+	variant_dir = toolenv.subst('bin/${PSYS}-${PARCH}-${BUILDTYPE}/tools'))
+# TODO:  loop through results and add then to build alias 'tools'
+
+#####
+# bit-per-pixel image compiler
+
+def BppiCppBuild(target, source, env):
+	return subprocess.call([
+		tools['bppic'].path,
+		source[0].path,
+		'-c',
+		target[0].path
+	]) != 0
+bppiCppBuilder = Builder(action = BppiCppBuild,
+	src_suffix = '.bppi', suffix = '.h')
+
+def BppiArcBuild(target, source, env):
+	return subprocess.call([
+		tools['bppic'].path,
+		source[0].path,
+		'-a',
+		target[0].path
+	]) != 0
+bppiArcBuilder = Builder(action = BppiArcBuild,
+	src_suffix = '.bppi', suffix = '.bppia')
+
+
+#####
 # create the template build environment
-env = Environment(variables = buildopts,
+env = Environment(
+	variables = buildopts,
 	PSYS = puname[0].lower(),
 	PARCH = puname[4].lower(),
 	BOOSTABI = '',
@@ -59,8 +118,6 @@ env = Environment(variables = buildopts,
 	#CXX = 'distcc armv6j-hardfloat-linux-gnueabi-g++',
 	# include paths
 	CPPPATH = [
-		#'.',  # this path looks surprised or confused
-		#'..',
 		#'$BOOSTINC',
 		'#/.'
 	],
@@ -90,9 +147,15 @@ env = Environment(variables = buildopts,
 		#'libboost_serialization${BOOSTTOOLSET}${BOOSTTAG}${BOOSTABI}${BOOSTVER}',
 		#'libboost_wserialization${BOOSTTOOLSET}${BOOSTTAG}${BOOSTABI}${BOOSTVER}',
 		'libboost_system${BOOSTTOOLSET}${BOOSTTAG}${BOOSTABI}${BOOSTVER}',
+		'libboost_program_options${BOOSTTOOLSET}${BOOSTTAG}${BOOSTABI}${BOOSTVER}',
 		#'m',
 	]
 )
+env.Append(BUILDERS = {
+	'BppiArc' : bppiArcBuilder,
+	'BppiCpp' : bppiCppBuilder,
+})
+
 
 #####
 # Debugging build enviornment
@@ -116,8 +179,8 @@ optionalLibs = {
 		'libboost_filesystem${BOOSTTOOLSET}${BOOSTTAG}${BOOSTABI}${BOOSTVER}',
 	'LIBBOOST_TEST' :
 		'libboost_unit_test_framework${BOOSTTOOLSET}${BOOSTTAG}${BOOSTABI}${BOOSTVER}',
-	'LIBBOOST_PROGRAM_OPTIONS' :
-		'libboost_program_options${BOOSTTOOLSET}${BOOSTTAG}${BOOSTABI}${BOOSTVER}',
+	#'LIBBOOST_PROGRAM_OPTIONS' :
+	#	'libboost_program_options${BOOSTTOOLSET}${BOOSTTAG}${BOOSTABI}${BOOSTVER}',
 }
 # Similar to above, but only for the debug build.
 optionalDbgLibs = { }
@@ -237,6 +300,9 @@ optenv.AppendUnique(
 	BUILDTYPE = 'opt'
 )
 
+#####
+# library build
+
 envs = [ dbgenv, optenv ]
 #trgs = [ [ ], [ ] ]
 
@@ -253,12 +319,12 @@ for env in envs:
 	env.Clean(libs, env.subst('bin/${PSYS}-${PARCH}-${BUILDTYPE}/lib'))
 	Alias('libs-' + env['BUILDTYPE'], libs)
 	# sample programs
-	samps = SConscript('samples/SConscript', exports = 'env libs', duplicate=0,
+	samps = SConscript('samples/SConscript', exports = 'env libs tools', duplicate=0,
 		variant_dir = env.subst('bin/${PSYS}-${PARCH}-${BUILDTYPE}/samples'))
 	Alias('samples-' + env['BUILDTYPE'], samps)
 	# test programs
 	if havetestlib: #'LIBBOOST_TEST' in optionalLibs:
-		tests = SConscript('tests/SConscript', exports = 'env libs', duplicate=0,
+		tests = SConscript('tests/SConscript', exports = 'env libs tools', duplicate=0,
 			variant_dir = env.subst('bin/${PSYS}-${PARCH}-${BUILDTYPE}/tests'))
 		Alias('tests-' + env['BUILDTYPE'], tests)
 

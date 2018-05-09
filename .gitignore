@@ -6,5 +6,6 @@ bin/
 config.log
 .conf/
 .sconsign.dblite
+duds/BuildConfig.h
 # local stuffs
 localbuildoptions*

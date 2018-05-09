@@ -5,12 +5,18 @@ testenv.AppendUnique(
 	LIBS = [
 		'libboost_unit_test_framework${BOOSTTOOLSET}${BOOSTTAG}${BOOSTABI}${BOOSTVER}',
 		'libboost_serialization${BOOSTTOOLSET}${BOOSTTAG}${BOOSTABI}${BOOSTVER}'
+	],
+	CPPDEFINES = [
+		( 'TEST_PATH', '\\"bin/${PSYS}-${PARCH}-${BUILDTYPE}/tests/\\"' )
 	]
 )
-
+imgarc = testenv.BppiArc('BppImageGood.bppi')
+testenv.Depends(imgarc, tools['bppic'])
 targets = [
 	testenv.Program('tests', Glob('*.cpp') + libs)
 ]
+
+testenv.Depends(targets[0], imgarc)
 
 Return('targets')
 

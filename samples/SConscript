@@ -13,13 +13,21 @@ envser.AppendUnique(
 
 envthread = env.Clone()
 envthread.AppendUnique(
-	LIBS = 'pthread'
+	LIBS = 'pthread',
+	CPPPATH = '.' #'bin/${PSYS}-${PARCH}-${BUILDTYPE}/samples'
 )
+
+imgarc = env.BppiCpp('neticons.bppi')
+env.Depends(imgarc, tools['bppic'])
+imgarcN = env.BppiCpp('numberparts.bppi')
+env.Depends(imgarcN, tools['bppic'])
 
 # could loop through directories, but be lazy for now
 targets = [
 	#env.Program('ds1620', Glob('DS1620/*.cpp') + libs),  # broken
 	env.Program('time', ['time.cpp'] + libs),
+	envthread.Program('addressLCD', ['addressLCD.cpp'] + libs),
+	envthread.Program('clockLCD', ['clockLCD.cpp'] + libs),
 	envser.Program('units', ['units.cpp'] + libs),
 	envthread.Program('apds9301', ['apds9301test.cpp'] + libs),
 	envthread.Program('am2320', ['am2320test.cpp'] + libs),
@@ -30,6 +38,11 @@ targets = [
 	envthread.Program('textdisplay', ['textdisplay.cpp'] + libs),
 	envthread.Program('pwmbacklight', ['pwmbacklight.cpp'] + libs),
 ]
+
+# These would be needed if image archive files, instead of header files, were
+# generated. SCons seems to be catching the dependency from the includes.
+#env.Depends(targets[1], imgarc)
+#env.Depends(targets[2], imgarcN)
 
 if envthread['Use_Eigen']:
 	enveigen = envthread.Clone()

@@ -104,13 +104,14 @@ Supported devices are listed on the @ref SupDev page.
 - gcc 6.4.x, 5.4.x
   - gcc 4.8.2 may still work
   - gcc 7.x.y and newer are untested
-- [Boost](http://www.boost.org/) version 1.62 or so
+- [Boost](http://www.boost.org/) version 1.62 or newer
   - Some older versions may work down to 1.56
   - Boost libraries used:
     - Date time
     - Exception (header only)
     - Filesystem (optional)
     - Multiprecision (header only)
+    - Program options
     - Serialization
     - Signals2 (header only)
     - Stacktrace (optional; header + dl library; Boost 1.65.1 or newer)

@@ -1,0 +1,46 @@
+/*
+ * This file is part of the DUDS project. It is subject to the BSD-style
+ * license terms in the LICENSE file found in the top-level directory of this
+ * distribution and at http://www.somewhere.org/somepath/license.html.
+ * No part of DUDS, including this file, may be copied, modified, propagated,
+ * or distributed except according to the terms contained in the LICENSE file.
+ *
+ * Copyright (C) 2018  Jeff Jackowski
+ */
+/**
+
+@page DUDStools  Tools
+
+@section DUDStoolsBppic  Bit-Per-Pixel Image Compiler
+
+The Bit-Per-Pixel Image Compiler (bppic) takes image data written in a text file and produces either C++ source code with data for use with the @ref duds::hardware::devices::displays::BppImage "BppImage" class, or an image archive file for use with  @ref duds::hardware::devices::displays::BppImageArchive "BppImageArchive". The compiler is itself a C++ program.
+
+@subsection DUDStoolsBppicSrc  Source file format
+
+The source file format is intended to make it easy to represent simple images, but it does have a few peculiarities. There are three different parsing areas in the file: in-between areas, image headers, and image data.
+
+@subsubsection DUDStoolsBppicSrcInBet  In-between areas
+
+These are the areas of the file that do not have any image data. They consist only of whitespace and comments. All comments begin with a slash ('/'). If the slash is followed by an asterisk ('*'), the comment will continue until the two characters are found in reverse. These comments will be added to the output file. Otherwise, the comment will end at the end of the line and will not be added to the output file. Comments are not nested.
+
+Comments may appear in the other two area types of the file as well.
+
+@subsubsection DUDStoolsBppicSrcImgHdr  Image headers
+
+These announce the start of an image. An image header starts in an in-between area with an alphabetic character. The character is the start of a valid C++ identifier that will name the image in the generated source code. It must be followed by any amount of any combination of whitespace and commas, then the width, followed by more whitespace and/or commas, and then the hieght. Following the hight, all characters are ignored until an opening curly brace ('{'). That brace begins the image data.
+
+@subsubsection DUDStoolsBppicSrcImgDat  Image data
+
+Each pixel of the image is represented by a space for a clear (0) pixel, or by an alphabetic character or pound sign ('#') for a set (1) pixel. A slash ('/') starts a rest-of-line comment. Except for a comment, if any of these characters are encountered on a line, that line provides the next row of image data. A row of image data cannot extend to the next line in the text file. Any other characters encountered are ignored. This allows numbers to be added to assist with placing the pixels within the specified size of the image.
+
+Characters for set pixels may not occur outside the image's width except inside a comment. Spaces, used for clear pixels, may occur outside the width; these will be ignored. Clear pixels do not need to pad out the width of the image. Unspecified pixels, both for width and hieght, will be clear. Characters for any pixels may not occcur outside the height of the image.
+
+The image is terminated with a closing curly brace ('}'). The text following it will be parsed as an in-between area.
+
+@subsection DUDStoolsBppicOut  Output
+
+C++ stuff.
+
+Image archive.
+
+*/

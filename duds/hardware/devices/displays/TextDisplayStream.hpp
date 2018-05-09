@@ -21,6 +21,9 @@ namespace duds { namespace hardware { namespace devices { namespace displays {
  * character at a time, but this works well for HD44780 type displays since
  * they need time to process the data and the implementation will relinquish
  * hardware access between characters.
+ *
+ * The way this class uses the functions in TextDisplay allows other code to
+ * output using TextDisplay directly and interchangeably with this class.
  * @author  Jeff Jackowski
  */
 template <class Char, class Traits = std::char_traits<Char> >

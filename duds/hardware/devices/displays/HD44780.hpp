@@ -14,6 +14,8 @@
 
 namespace duds { namespace hardware { namespace devices { namespace displays {
 
+class BppImage;
+
 /**
  * Implements text output to HD44780 and compatible displays. These displays
  * feature text output to a matrix that is typically 5 pixels wide by 8 tall
@@ -30,8 +32,6 @@ namespace duds { namespace hardware { namespace devices { namespace displays {
  *        to tell if there is a display on the other end, or if that display
  *        is functional.
  *
- * @todo  Support custom characters, preferably using a general interface that
- *        could work with other text displays using a 2D matrix.
  * @todo  Support the brightness control available on some VFDs.
  *
  * @author  Jeff Jackowski
@@ -169,7 +169,8 @@ public:
 	 *                   The object is moved to an internal member.
 	 * @warning          Only one HD44780 can be used with a
 	 *                   @ref duds::hardware::interface::ChipBinarySelectManager "ChipBinarySelectManager".
-	 *                   The other selectable item must not be a HD44780.
+	 *                   The other selectable item must not be a HD44780. A
+	 *                   logic inverter will not work around this issue.
 	 * @param c          The number of columns on the display. The value must
 	 *                   be between 1 and 20, and will almost always be either
 	 *                   16 or 20.
@@ -210,7 +211,8 @@ public:
 	 *                   The object is moved to an internal member.
 	 * @warning          Only one HD44780 can be used with a
 	 *                   @ref duds::hardware::interface::ChipBinarySelectManager "ChipBinarySelectManager".
-	 *                   The other selectable item must not be a HD44780.
+	 *                   The other selectable item must not be a HD44780. A
+	 *                   logic inverter will not work around this issue.
 	 * @param c          The number of columns on the display. The value must
 	 *                   be between 1 and 20, and will almost always be either
 	 *                   16 or 20.
@@ -234,6 +236,7 @@ public:
 	 * more than once.
 	 * @pre   The pins to use have already been configured, and the display
 	 *        size has been set.
+	 * @post  The display is in the "on" state; on() has been called.
 	 * @post  Functions that send data to the display may be used.
 	 * @post  The display is blank; it has no text.
 	 * @post  The cursor is positioned at the upper left corner.
@@ -263,6 +266,48 @@ public:
 	 * @pre  initialize() has been successfully called.
 	 */
 	virtual void clear();
+	/**
+	 * Loads a glyph into the display's CGRAM (Character Generator Random
+	 * %Access Memory). These displays typically allow for eight glyphs to be
+	 * specified and changed at will. Whenever a glyph is changed, any spot
+	 * on the display showing that character value will also change in
+	 * appearance.
+	 * 
+	 * The display uses character values 0 through 7 and 8 through 15 to
+	 * reference the glyphs. The 4th bit is ignored, so values 0 and 8 will
+	 * show the same glyph. The parameter @a idx works the same way.
+	 *
+	 * @par Issues using the glyphs in output
+	 * Using character value 0 is bothersome since it is usually interpreted
+	 * as the end of a string. std::string actually stores a length so it can
+	 * hold character zero, but any string literal assigned to it
+	 * is seen as a null terminated string unless a length is explicitly
+	 * provided.
+	 * @par
+	 * The characters '\\n' and '\\r' are 10 and 13, respectively, which puts
+	 * them into the 8 to 15 range for the glyphs. The
+	 * @ref TextDisplayBasicBuffer "TextDisplayBuffer" class, and thus
+	 * indirectly the @ref TextDisplayBasicStream "TextDisplayStream" class,
+	 * interpret these characters as a request to move the cursor rather than
+	 * a request to show a printable character. None of the TextDisplay::write()
+	 * functions do this; they handle all characters as printable. They can
+	 * also be used interchangeably with a
+	 * @ref TextDisplayBasicStream "TextDisplayStream".
+	 * @par
+	 * The best solution may be to use character values 1 through 8 for the
+	 * custom glyphs. It avoids unintended null termination, and allows any
+	 * custom glyph to be used from a
+	 * @ref TextDisplayBasicStream "TextDisplayStream". To make this a little
+	 * easier, @a idx can be given values 1 through 8 to be consistent.
+	 * @param glyph  The image to load. It may be no larger than 5 by 8. If
+	 *               smaller, it will be placed in the upper right.
+	 * @param idx    The index for the glyph. It must be between 0 and 15. The
+	 *               4th bit is ignored so values 8 through 15 work the same as
+	 *               values 0 through 7. Text that has a character with the
+	 *               same value, ignoring the 4th bit, will show the
+	 *               corresponding glyph.
+	 */
+	void setGlyph(const std::shared_ptr<BppImage> &glyph, int idx);
 };
 
 } } } }

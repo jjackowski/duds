@@ -23,6 +23,14 @@ struct TextDisplayRangeError : TextDisplayError { };
  * An attempt was made to use an uninitialized display object.
  */
 struct TextDisplayUninitialized : TextDisplayError { };
+/**
+ * The index given for a definable glyph was outside the allowable range.
+ */
+struct TextDisplayGlyphIndexError : TextDisplayError { };
+/**
+ * The image given for a definable glyph was an unsupported size.
+ */
+struct TextDisplayGlyphSizeError : TextDisplayError { };
 
 /**
  * Stores column and row data for display errors. The values may be for the
@@ -50,5 +58,9 @@ typedef boost::error_info<struct Info_DisplayPosition, Info_DisplayColRow>
  */
 typedef boost::error_info<struct Info_DisplaySize, Info_DisplayColRow>
 	TextDisplaySizeInfo;
+/**
+ * Index used for a definable glyph.
+ */
+typedef boost::error_info<struct Info_DisplayGlyph, int>  TextDisplayGlyphIndex;
 
 } } } }

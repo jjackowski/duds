@@ -8,6 +8,8 @@
  * Copyright (C) 2017  Jeff Jackowski
  */
 #include <duds/hardware/devices/displays/HD44780.hpp>
+#include <duds/hardware/devices/displays/BppImage.hpp>
+#include <duds/general/ReverseBits.hpp>
 #include <thread>
 
 namespace duds { namespace hardware { namespace devices { namespace displays {
@@ -248,6 +250,43 @@ void HD44780::clear() {
 	sendByte(acc, 1);
 	// display moves the cursor; update the position to match
 	cpos = rpos = 0;
+}
+
+void HD44780::setGlyph(const std::shared_ptr<BppImage> &glyph, int idx) {
+	// displays ignore the 4th bit
+	idx &= ~8;
+	// check for out of range index
+	if ((idx < 0) || (idx > 7)) {
+		DUDS_THROW_EXCEPTION(TextDisplayGlyphIndexError() <<
+			TextDisplayGlyphIndex(idx)
+		);
+	}
+	// check for bad image size
+	if ((glyph->width() > 5) || (glyph->height() > 8)) {
+		DUDS_THROW_EXCEPTION(TextDisplayGlyphSizeError() <<
+			ImageErrorDimensions(glyph->dimensions())
+		);
+	}
+	Access acc;
+	preparePins(acc);
+	// send command to set CGRAM address
+	sendByte(acc, 0x40 | (idx << 3));
+	// loop to send up to eight bytes
+	int y = 0;
+	for (; y < glyph->height(); ++y) {
+		// compute value to send to display
+		std::uint8_t row = *(glyph->bufferLine(y));
+		row = duds::general::ReverseBits(row) >> 3;
+		// send it
+		sendByte(acc, textFlag | row);
+	}
+	// allow less than 8 rows; clear unspecified rows
+	for (; y < 8; ++y) {
+		sendByte(acc, textFlag);
+	}
+	// change address back to current text position so any text writing request
+	// will work properly, not just those that set the position
+	sendByte(acc, 0x80 | (rowStartAddr[rpos] + cpos));
 }
 
 } } } }

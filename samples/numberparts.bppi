@@ -1,0 +1,61 @@
+/*
+ * Number parts
+ */
+
+
+NumPartUpLeft
+5, 8
+	01234 {
+0	XXXXX
+1	XXXXX
+2	XXXXX
+3	XXXXX
+4	XXX
+5	XXX
+6	XXX
+7	XXX
+}
+
+NumPartBarLeft
+5, 8
+	01234 {
+0	XXX
+1	XXX
+2	XXX
+3	XXX
+4	XXX
+5	XXX
+6	XXX
+7	XXX
+}
+
+NumPartBarUp
+5, 4
+	01234 {
+0	XXXXX
+1	XXXXX
+2	XXXXX
+3	XXXXX
+}
+
+NumPartBarCorn
+5, 4
+	01234 {
+0	XXX
+1	XXX
+2	XXX
+3	XXX
+}
+
+NumPartDot  // needed?  try NumPartBarCorn instead
+5, 8
+	01234 {
+0	 
+1	 
+2	 
+3	 
+4	XXX
+5	XXX
+6	XXX
+7	XXX
+}
