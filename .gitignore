@@ -8,4 +8,4 @@ config.log
 .sconsign.dblite
 duds/BuildConfig.h
 # local stuffs
-localbuildoptions*
+localbuildconfig*

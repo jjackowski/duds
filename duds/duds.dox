@@ -13,7 +13,7 @@
 
 @section DUDS  Distributed Update of Data from Something
 
-A silly name, because I'm not good at making up names, that attempts to describe the ultimate goal for this family of libraries. At present, DUDS only has a single library with functionality for time and interfacing with hardware through the Linux kernel. It aspires to be a set of libraries that include functionality for representing measurements taken from hardware, sending that data over a network, and doing so in a multi-platform environment.
+A silly name, because I'm not good at making up names, that attempts to describe the ultimate goal for this family of libraries. At present, DUDS only has a single library with functionality for time and interfacing with hardware through the Linux kernel. It aspires to be a set of libraries that include functionality for representing measurements taken from hardware, sending that data over a network, and doing so in a multi-platform environment. At the moment, it is more about using low-level hardware with a high-level interface.
 
 While only a single library results from the build at present, it will be broken up into several libraries as it grows to allow use of only part of DUDS functionality.
 
@@ -66,7 +66,7 @@ While it is not intentional to exclude people from using this library, the libra
 
 @section DUDSdocs Documentation
 
-The documentation is generated with the help of [Doxygen](http://www.doxygen.org/) and [Graphviz](http://www.graphviz.org/). Documentation comments are used throughout all header files and I consider writing them to be part of the development process. Currently, the documentation is limited to a reference with some sample source code thrown in.
+The documentation is generated with the help of [Doxygen](http://www.doxygen.org/) and [Graphviz](http://www.graphviz.org/). If you are looking at something else, like a Markdown page on Github, it may not be the most recent. Documentation comments are used throughout all header files and I consider writing them to be part of the development process. Currently, the documentation is limited to a reference with some sample source code thrown in.
 
 
 @section DUDSplat Supported Platforms
@@ -81,9 +81,9 @@ All development will be on Linux with gcc for a while longer, and I'm in no rush
 
 @subsection DUDSplatTHW Target Hardware
 
-The target hardware is the system that runs the operating system, DUDS, and the programs. Currently DUDS uses the user-space interfaces of the Linux kernel for hardware support. As a result, it requires the kernel to be built with support for the hardware. Unlike a number of other libraries, this prevents the code from working only on a particular processor or system board.
+The target hardware is the system that runs the operating system, DUDS, and the programs. Currently DUDS uses the user-space interfaces of the Linux kernel for hardware support. As a result, it requires the kernel to be built with support for the hardware. This limits hardware speciifc code in DUDS to drivers that communicate with gizmos through kernel interfaces like i2c-dev.
 
-The library is structured to allow support to be written for specific hardware, although the build system doesn't yet have the ability to build a subset of the code. For instance, a class derived from duds::hardware::interface::DigitalPort could support GPIO access for a specific target board, like a Raspberry PI, or a GPIO extender that isn't being used by the Linux kernel.
+The library is structured to allow support to be written for specific hardware, although the build system doesn't yet have the ability to build a subset of the code.
 
 @subsection DUDSplatDHW Device Hardware
 
@@ -96,18 +96,16 @@ Supported devices are listed on the @ref SupDev page.
 
 @subsection DUDSbuildList Long list
 
-- [SCons](http://scons.org/) 2.3 or so (it isn't very picky about the version)
+- [SCons](http://scons.org/) 2.3 to 2.5 or so (it isn't very picky about the version)
   - Python 2.7 to less than 3 (older versions possible with SCons 2.3.4 and older)
 - Build configuration options: run "scons -h"
   - The configuration can be changed for one build by specifying an option as an argument to scons.
   - To keep a configuration saved, set variables with the same name of the configuration options in Python syntax in localbuildconfig.py in the same directory as SConstruct.
 - gcc 6.4.x, 5.4.x
-  - gcc 4.8.2 may still work
   - gcc 7.x.y and newer are untested
 - [Boost](http://www.boost.org/) version 1.62 or newer
-  - Some older versions may work down to 1.56
   - Boost libraries used:
-    - Date time
+    - Date_time
     - Exception (header only)
     - Filesystem (optional)
     - Multiprecision (header only)
@@ -124,28 +122,20 @@ Supported devices are listed on the @ref SupDev page.
   - Windows will need several build options because there is no standard install that I know about. DUDS isn't useful on Windows at the moment, so don't worry about it.
 - Build host
   - Linux
-    - At least 1GB RAM if no swap space; more for parallel builds
-      - I let loose a template monster; it has a big party during the build.
-    - Raspberry Pi Models A, A+, B, B+, and Raspberry Pi Zero
-      - More than half an hour.
-      - Needs at least tens of megabytes of swap, or maybe 300MB or so if only 256MB of RAM are available.
-    - Raspberry Pi 2
-      - Around ten minutes without a parallel build. No swap space is needed when very little is running (no GUI), total RAM is reported as at least 896MB, and free RAM is 821MB. A very little swap space is needed when total RAM is 746MB.
-      - About seven minutes with -j 2. Swap space is required, although not much is needed.
-      - Under 5.5 minutes with -j 4.
-    - x86 and AMD64/Intel 64/x86-64
-      - Works fine; build times vary greatly and can be under a minute.
+    - Parallel builds work best with 1GB RAM per job and some swap space.
+      - Using "-j4" on a Raspberry Pi 2 or 3 isn't helpful. Using "-j2" needs swap space, but may be faster than "-j1", the default.
+    - Builds tested mostly on armv6 and amd64.
   - Windows
     - Not yet
     - VS2015 might be lacking some C++11 support needed by DUDS, and older versions will be lacking.
 
 @subsection DUDSbuildWord More Words!
 
-DUDS uses [SCons](http://scons.org/) 2.4 as its build system, which is written in Python and requires Python 2.7.x; Python 3.x will not work. Compiling and linking is done with gcc 4.8.2 or newer. Development has moved to gcc 5.4.0, so support of gcc 4.x.y is now luck.
+DUDS uses [SCons](http://scons.org/) 2.5 as its build system, which is written in Python and requires Python 2.7.x; Python 3.x will not work. Compiling and linking is done with gcc 5.4.0 or 6.4.0. Development has moved to gcc 6.4.0. Newer versions have not been tested.
 
-The so-called C++11 standard, officially ISO/IEC 14882:2011, is used by DUDS. Use of features in newer C++ specifications is being avoided for now.
+The so-called C++11 standard, officially ISO/IEC 14882:2011, is used by DUDS. Use of features in newer C++ specifications is being avoided for now, but C++14 may be used soon.
 
-The [Boost C++ library](http://www.boost.org/) is required. Version 1.56 or newer must be used; version 1.65.1 is best. Boost's multiprecision library is used for 128-bit integer support when gcc's __int128 is not available, and for serializing 128-bit integers even when __int128 is available. This results in some notable differences in 128-bit integer support on 32 and 64 bit platforms, but maintains a serialization format that is identical across platforms when things like endianness and padding do not affect the results.
+The [Boost C++ library](http://www.boost.org/) is required. Version 1.62 or newer must be used. Version 1.65.1 is best as it allows exceptions to include a stack trace. Boost's multiprecision library is used for 128-bit integer support when gcc's __int128 is not available, and for serializing 128-bit integers even when __int128 is available. This results in some notable differences in 128-bit integer support on 32 and 64 bit platforms, but maintains a serialization format that is identical across platforms when things like endianness and padding do not affect the results.
 
 The Boost unit test framework is used by a test program. This program does not require any special hardware to run. Some of the tests require leap second information from a zoneinfo (is that the proper name?) file. If the file isn't specified as the first argument to the program, those tests will be skipped.
 
@@ -173,11 +163,20 @@ There is some support in the build for handling building for multiple targets wi
 - Any programs that use the DUDS library that are not built by the same build script and use the header and library files in the DUDS development tree will need to be built after DUDS has been built for the same target and before it is built for another target. This is to ensure that duds/BuildConfig.h is correct for the target.
 
 
+@section DUDSZone Timezone configuration
+
+The time support in the DUDS library requires knowledge of leap seconds to support unambiguous times, but it can be used without this data. The data is read from the zoneinfo files that are common on Linux installations. Not all of these files include leap second data. The files in /usr/share/zoneinfo usually lack the data. The files in /usr/share/zoneinfo-leaps, or /usr/share/zoneinfo/right (older) should have the data.
+
+On Gentoo Linux, the files with leap second data are provided by the package sys-libs/timezone-data when the use flag leaps_timezone is given.
+
+The system should @b not be configured with a timezone from a zoneinfo file with leap second data. As of 2018 May 10, Gentoo's zoneinfo files with leap second data causes local timezones to differ from UTC by the regular amount minus 27 seconds. This matches no system of time I can find. It looks like the zonefile was intended to configure the system such that what it claimed was UTC was really TAI, but it only accounted for the 27 leap seconds and not the 10 second difference that existed when UTC officially started.
+
+
 @section DUDSi18n Internationalization
 
 Support for internationalization is mostly an attempt at keeping string literals out of the library or Human language neutral. For instance, the exception classes do not define error strings returned by std::exception::what().
 
-All std::string objects are presumed to contain UTF-8 strings.
+All std::string objects are presumed to contain UTF-8 strings, but nothing actually cares right now.
 
 */
 

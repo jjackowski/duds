@@ -73,11 +73,19 @@ class BppImageArchive : boost::noncopyable {
 public:
 	/**
 	 * Loads images from an image archive in the specified file.
+	 * If the archive stream has an image with the same name as one already
+	 * inside this object, the already loaded image will be replaced by putting
+	 * a new BppImage object in a new shared pointer in the old one's place.
+	 * This does not modify the previously loaded image of the same name.
 	 * @throw ImageArchiveStreamError  Failed to open the file.
 	 */
 	void load(const std::string &path);
 	/**
 	 * Loads images from the given input stream. Seeking is not performed.
+	 * If the archive stream has an image with the same name as one already
+	 * inside this object, the already loaded image will be replaced by putting
+	 * a new BppImage object in a new shared pointer in the old one's place.
+	 * This does not modify the previously loaded image of the same name.
 	 * @throw ImageNotArchiveStreamError
 	 *        The stream does not have an image archive stream.
 	 * @throw ImageArchiveStreamTruncatedError
@@ -90,10 +98,18 @@ public:
 	void load(std::istream &is);
 	/**
 	 * Adds an image to the archive.
+	 * @param name  The name to give the image. If there is already an image
+	 *              by that name in this archive, it will be replaced, but
+	 *              the image object will not be modified.
+	 * @param img   The image to store.
 	 */
 	void add(const std::string &name, const std::shared_ptr<BppImage> &img);
 	/**
 	 * Moves an image into the archive.
+	 * @param name  The name to give the image. If there is already an image
+	 *              by that name in this archive, it will be replaced, but
+	 *              the image object will not be modified.
+	 * @param img   The image to store. The shared pointer will be moved.
 	 */
 	void add(const std::string &name, std::shared_ptr<BppImage> &&img);
 	/**
