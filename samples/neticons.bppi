@@ -45,10 +45,10 @@ WirelessLAN_S2
 WirelessLAN_S1
 5, 8
 	01234 {
-0	
-1	
-2	
-3	
+0	 
+1	 
+2	 
+3	 
 4	XX
 5	  X
 6	X X
@@ -58,13 +58,13 @@ WirelessLAN_S1
 WirelessLAN_S0
 5, 8
 	01234 {
-0	
-1	
-2	
-3	
-4	
-5	X
-6	XX
+0	 
+1	 
+2	 
+3	 
+4	 
+5	 
+6	X
 7	
 }
 /*

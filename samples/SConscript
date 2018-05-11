@@ -17,9 +17,9 @@ envthread.AppendUnique(
 	CPPPATH = '.' #'bin/${PSYS}-${PARCH}-${BUILDTYPE}/samples'
 )
 
-imgarc = env.BppiCpp('neticons.bppi')
+imgarc = env.BppiArc('neticons.bppi')
 env.Depends(imgarc, tools['bppic'])
-imgarcN = env.BppiCpp('numberparts.bppi')
+imgarcN = env.BppiArc('numberparts.bppi')
 env.Depends(imgarcN, tools['bppic'])
 
 # could loop through directories, but be lazy for now
@@ -39,10 +39,10 @@ targets = [
 	envthread.Program('pwmbacklight', ['pwmbacklight.cpp'] + libs),
 ]
 
-# These would be needed if image archive files, instead of header files, were
+# These are be needed if image archive files, instead of header files, are
 # generated. SCons seems to be catching the dependency from the includes.
-#env.Depends(targets[1], imgarc)
-#env.Depends(targets[2], imgarcN)
+env.Depends(targets[1], imgarc)
+env.Depends(targets[2], imgarcN)
 
 if envthread['Use_Eigen']:
 	enveigen = envthread.Clone()

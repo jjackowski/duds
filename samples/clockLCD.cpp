@@ -9,9 +9,7 @@
  */
 /**
  * @file
- * A sample of using HD44780 and TextDisplayStream along with BppImage to
- * define graphic icons for use with the display. Shows IPv4 addresses on the
- * display with icons for wired and wireless networks.
+ * A sample of using HD44780 and BppImage to show large digits with the time.
  */
 
 #include <duds/hardware/devices/displays/HD44780.hpp>
@@ -21,7 +19,6 @@
 #include <duds/hardware/interface/ChipPinSelectManager.hpp>
 #include <duds/hardware/devices/clocks/LinuxClockDriver.hpp>
 #include <duds/time/planetary/Planetary.hpp>
-
 #include <iostream>
 #include <sstream>
 #include <thread>
@@ -32,11 +29,7 @@
 #include <boost/exception/diagnostic_information.hpp>
 #include <duds/general/IntegerBiDirIterator.hpp>
 
-namespace Font {
-	#include <numberparts.h>
-}
-
-char DigitPart(int x, int y, char d);
+duds::hardware::devices::displays::BppImageArchive imgArc;
 
 /**
  * A character in string for large output is not in the large font.
@@ -44,6 +37,21 @@ char DigitPart(int x, int y, char d);
 struct TextLargeCharUnsupported :
 duds::hardware::devices::displays::TextDisplayError { };
 
+/**
+ * Writes out a string with large 3x3 digits, spaces, and colons to a text
+ * display.
+ * @param disp  The destination display.
+ * @param str   The string to write. The values supported are:
+ *              - '0' through '9': writes 3x3 representation of the digit.
+ *              - ':': writes 1x3 colon
+ *              - '.': writes a dot, suitable for decimal point
+ *              - space: leaves 3x3 blank spot
+ *              - '~': leaves 1x3 blank spot
+ * @param c     The leftmost column where the string will start.
+ * @param r     The uppermost row where the string will start.
+ * @throw       TextLargeCharUnsupported  @a str has an unsupported character.
+ * @throw       TextDisplayRangeError    The string does not fit on the display.
+ */
 void WriteLarge(
 	const std::shared_ptr<duds::hardware::devices::displays::TextDisplay> &disp,
 	const std::string &str,
@@ -51,74 +59,178 @@ void WriteLarge(
 	unsigned int r
 );
 
-enum {
+/**
+ * The character values associated to large 3x3 digit parts.
+ */
+enum DigitPartCodes {
+	/**
+	 * Denotes a clear spot, a space, inside a large digit. This causes a
+	 * regular space to be sent to the display.
+	 */
 	Clear,
 	UpLeft,
 	BarLeft,
 	BarUp,
 	BarCorn,
-	Dot
+	/**
+	 * Used only for colon.
+	 */
+	Dot,
+	DownLeft = UpLeft,
+	BarDown = BarUp,
 };
 
+/**
+ * Returns the character value to use for the given part of a large 3x3 digit.
+ * @param ud  0 for characters shifted upward, or 1 for downward shift.
+ * @param x   The X coordinate into the digit.
+ * @param y   The Y coordinate into the digit.
+ * @param d   The digit; must be bewteen 0 and 9, not '0' and '9'.
+ * @return    The value to send to the display.
+ */
+char DigitPart(int ud, int x, int y, char d);
+
+/**
+ * Produces the value to store for DigitPart to retrieve. The character values
+ * for a single digit are packed into a single std::uint32_t. This macro
+ * results in the value for a part of a 3x3 digit that is ready to be OR'd
+ * together with the other digit parts.
+ * @param x  The X coordinate into the digit. It must be between 0 and 2.
+ * @param y  The Y coordinate into the digit. It must be between 0 and 2.
+ * @param c  The character value to store. It must be between 0 and 7.
+ */
 #define DIGSEG(x, y, c)  (((c) << ((x) * 3)) << ((y) * 9))
 
-const std::uint32_t DigitFont[] = {
-	// 0
-	DIGSEG(0, 0, UpLeft)  | DIGSEG(1, 0, BarUp)   | DIGSEG(2, 0, BarLeft) |
-	DIGSEG(0, 1, BarLeft) | DIGSEG(1, 1, Clear)   | DIGSEG(2, 1, BarLeft) |
-	DIGSEG(0, 2, BarUp)   | DIGSEG(1, 2, BarUp)   | DIGSEG(2, 2, BarCorn),
-	// 1
-	DIGSEG(0, 0, Clear)   | DIGSEG(1, 0, BarLeft) | DIGSEG(2, 0, Clear) |
-	DIGSEG(0, 1, Clear)   | DIGSEG(1, 1, BarLeft) | DIGSEG(2, 1, Clear) |
-	DIGSEG(0, 2, Clear)   | DIGSEG(1, 2, BarCorn) | DIGSEG(2, 2, Clear),
-	// 2
-	DIGSEG(0, 0, BarUp)   | DIGSEG(1, 0, BarUp)   | DIGSEG(2, 0, BarLeft) |
-	DIGSEG(0, 1, UpLeft)  | DIGSEG(1, 1, BarUp)   | DIGSEG(2, 1, BarCorn) |
-	DIGSEG(0, 2, BarUp)   | DIGSEG(1, 2, BarUp)   | DIGSEG(2, 2, BarCorn),
-	// 3
-	DIGSEG(0, 0, BarUp)   | DIGSEG(1, 0, BarUp)   | DIGSEG(2, 0, BarLeft) |
-	DIGSEG(0, 1, BarUp)   | DIGSEG(1, 1, BarUp)   | DIGSEG(2, 1, BarLeft) |
-	DIGSEG(0, 2, BarUp)   | DIGSEG(1, 2, BarUp)   | DIGSEG(2, 2, BarCorn),
-	// 4
-	DIGSEG(0, 0, BarLeft) | DIGSEG(1, 0, Clear)   | DIGSEG(2, 0, BarLeft) |
-	DIGSEG(0, 1, BarUp)   | DIGSEG(1, 1, BarUp)   | DIGSEG(2, 1, BarLeft) |
-	DIGSEG(0, 2, Clear)   | DIGSEG(1, 2, Clear)   | DIGSEG(2, 2, BarCorn),
-	// 5
-	DIGSEG(0, 0, UpLeft)  | DIGSEG(1, 0, BarUp)   | DIGSEG(2, 0, BarCorn) |
-	DIGSEG(0, 1, BarUp)   | DIGSEG(1, 1, BarUp)   | DIGSEG(2, 1, BarLeft) |
-	DIGSEG(0, 2, BarUp)   | DIGSEG(1, 2, BarUp)   | DIGSEG(2, 2, BarCorn),
-	// 6
-	DIGSEG(0, 0, UpLeft)  | DIGSEG(1, 0, BarUp)   | DIGSEG(2, 0, BarCorn) |
-	DIGSEG(0, 1, UpLeft)  | DIGSEG(1, 1, BarUp)   | DIGSEG(2, 1, BarLeft) |
-	DIGSEG(0, 2, BarUp)   | DIGSEG(1, 2, BarUp)   | DIGSEG(2, 2, BarCorn),
-	// 7
-	DIGSEG(0, 0, BarUp)   | DIGSEG(1, 0, BarUp)   | DIGSEG(2, 0, BarLeft) |
-	DIGSEG(0, 1, Clear)   | DIGSEG(1, 1, Clear)   | DIGSEG(2, 1, BarLeft) |
-	DIGSEG(0, 2, Clear)   | DIGSEG(1, 2, Clear)   | DIGSEG(2, 2, BarCorn),
-	// 8
-	DIGSEG(0, 0, UpLeft)  | DIGSEG(1, 0, BarUp)   | DIGSEG(2, 0, BarLeft) |
-	DIGSEG(0, 1, UpLeft)  | DIGSEG(1, 1, BarUp)   | DIGSEG(2, 1, BarLeft) |
-	DIGSEG(0, 2, BarUp)   | DIGSEG(1, 2, BarUp)   | DIGSEG(2, 2, BarCorn),
-	// 9
-	DIGSEG(0, 0, UpLeft)  | DIGSEG(1, 0, BarUp)   | DIGSEG(2, 0, BarLeft) |
-	DIGSEG(0, 1, BarUp)   | DIGSEG(1, 1, BarUp)   | DIGSEG(2, 1, BarLeft) |
-	DIGSEG(0, 2, BarUp)   | DIGSEG(1, 2, BarUp)   | DIGSEG(2, 2, BarCorn)
-	// could extend for hex, decimal point
+/**
+ * An array of font data used to write large 3x3 digits to a text display
+ * that supports at least 4 definable characters.
+ */
+const std::uint32_t DigitFont[2][10] = {
+	{ // shifted upward and to the left 
+		// 0
+		DIGSEG(0, 0, UpLeft)  | DIGSEG(1, 0, BarUp)   | DIGSEG(2, 0, BarLeft) |
+		DIGSEG(0, 1, BarLeft) | DIGSEG(1, 1, Clear)   | DIGSEG(2, 1, BarLeft) |
+		DIGSEG(0, 2, BarUp)   | DIGSEG(1, 2, BarUp)   | DIGSEG(2, 2, BarCorn),
+		// 1
+		DIGSEG(0, 0, Clear)   | DIGSEG(1, 0, BarLeft) | DIGSEG(2, 0, Clear) |
+		DIGSEG(0, 1, Clear)   | DIGSEG(1, 1, BarLeft) | DIGSEG(2, 1, Clear) |
+		DIGSEG(0, 2, Clear)   | DIGSEG(1, 2, BarCorn) | DIGSEG(2, 2, Clear),
+		// 2
+		DIGSEG(0, 0, BarUp)   | DIGSEG(1, 0, BarUp)   | DIGSEG(2, 0, BarLeft) |
+		DIGSEG(0, 1, UpLeft)  | DIGSEG(1, 1, BarUp)   | DIGSEG(2, 1, BarCorn) |
+		DIGSEG(0, 2, BarUp)   | DIGSEG(1, 2, BarUp)   | DIGSEG(2, 2, BarCorn),
+		// 3
+		DIGSEG(0, 0, BarUp)   | DIGSEG(1, 0, BarUp)   | DIGSEG(2, 0, BarLeft) |
+		DIGSEG(0, 1, BarUp)   | DIGSEG(1, 1, BarUp)   | DIGSEG(2, 1, BarLeft) |
+		DIGSEG(0, 2, BarUp)   | DIGSEG(1, 2, BarUp)   | DIGSEG(2, 2, BarCorn),
+		// 4
+		DIGSEG(0, 0, BarLeft) | DIGSEG(1, 0, Clear)   | DIGSEG(2, 0, BarLeft) |
+		DIGSEG(0, 1, BarUp)   | DIGSEG(1, 1, BarUp)   | DIGSEG(2, 1, BarLeft) |
+		DIGSEG(0, 2, Clear)   | DIGSEG(1, 2, Clear)   | DIGSEG(2, 2, BarCorn),
+		// 5
+		DIGSEG(0, 0, UpLeft)  | DIGSEG(1, 0, BarUp)   | DIGSEG(2, 0, BarCorn) |
+		DIGSEG(0, 1, BarUp)   | DIGSEG(1, 1, BarUp)   | DIGSEG(2, 1, BarLeft) |
+		DIGSEG(0, 2, BarUp)   | DIGSEG(1, 2, BarUp)   | DIGSEG(2, 2, BarCorn),
+		// 6
+		DIGSEG(0, 0, UpLeft)  | DIGSEG(1, 0, BarUp)   | DIGSEG(2, 0, BarCorn) |
+		DIGSEG(0, 1, UpLeft)  | DIGSEG(1, 1, BarUp)   | DIGSEG(2, 1, BarLeft) |
+		DIGSEG(0, 2, BarUp)   | DIGSEG(1, 2, BarUp)   | DIGSEG(2, 2, BarCorn),
+		// 7
+		DIGSEG(0, 0, BarUp)   | DIGSEG(1, 0, BarUp)   | DIGSEG(2, 0, BarLeft) |
+		DIGSEG(0, 1, Clear)   | DIGSEG(1, 1, Clear)   | DIGSEG(2, 1, BarLeft) |
+		DIGSEG(0, 2, Clear)   | DIGSEG(1, 2, Clear)   | DIGSEG(2, 2, BarCorn),
+		// 8
+		DIGSEG(0, 0, UpLeft)  | DIGSEG(1, 0, BarUp)   | DIGSEG(2, 0, BarLeft) |
+		DIGSEG(0, 1, UpLeft)  | DIGSEG(1, 1, BarUp)   | DIGSEG(2, 1, BarLeft) |
+		DIGSEG(0, 2, BarUp)   | DIGSEG(1, 2, BarUp)   | DIGSEG(2, 2, BarCorn),
+		// 9
+		DIGSEG(0, 0, UpLeft)  | DIGSEG(1, 0, BarUp)   | DIGSEG(2, 0, BarLeft) |
+		DIGSEG(0, 1, BarUp)   | DIGSEG(1, 1, BarUp)   | DIGSEG(2, 1, BarLeft) |
+		DIGSEG(0, 2, BarUp)   | DIGSEG(1, 2, BarUp)   | DIGSEG(2, 2, BarCorn)
+		// could extend for hex
+	},
+	{ // shifted downward and to the left 
+		// 0
+		DIGSEG(0, 0, BarDown) | DIGSEG(1, 0, BarDown) | DIGSEG(2, 0, BarCorn) |
+		DIGSEG(0, 1, BarLeft) | DIGSEG(1, 1, Clear)   | DIGSEG(2, 1, BarLeft) |
+		DIGSEG(0, 2, DownLeft)| DIGSEG(1, 2, BarDown) | DIGSEG(2, 2, BarLeft),
+		// 1
+		DIGSEG(0, 0, Clear)   | DIGSEG(1, 0, BarCorn) | DIGSEG(2, 0, Clear) |
+		DIGSEG(0, 1, Clear)   | DIGSEG(1, 1, BarLeft) | DIGSEG(2, 1, Clear) |
+		DIGSEG(0, 2, Clear)   | DIGSEG(1, 2, BarLeft) | DIGSEG(2, 2, Clear),
+		// 2
+		DIGSEG(0, 0, BarDown) | DIGSEG(1, 0, BarDown) | DIGSEG(2, 0, BarCorn) |
+		DIGSEG(0, 1, BarDown) | DIGSEG(1, 1, BarDown) | DIGSEG(2, 1, BarLeft) |
+		DIGSEG(0, 2, DownLeft)| DIGSEG(1, 2, BarDown) | DIGSEG(2, 2, BarCorn),
+		// 3
+		DIGSEG(0, 0, BarDown) | DIGSEG(1, 0, BarDown) | DIGSEG(2, 0, BarCorn) |
+		DIGSEG(0, 1, BarDown) | DIGSEG(1, 1, BarDown) | DIGSEG(2, 1, BarLeft) |
+		DIGSEG(0, 2, BarDown) | DIGSEG(1, 2, BarDown) | DIGSEG(2, 2, BarLeft),
+		// 4
+		DIGSEG(0, 0, BarCorn) | DIGSEG(1, 0, Clear)   | DIGSEG(2, 0, BarCorn) |
+		DIGSEG(0, 1, DownLeft)| DIGSEG(1, 1, BarDown) | DIGSEG(2, 1, BarLeft) |
+		DIGSEG(0, 2, Clear)   | DIGSEG(1, 2, Clear)   | DIGSEG(2, 2, BarLeft),
+		// 5
+		DIGSEG(0, 0, BarDown) | DIGSEG(1, 0, BarDown) | DIGSEG(2, 0, BarCorn) |
+		DIGSEG(0, 1, DownLeft)| DIGSEG(1, 1, BarDown) | DIGSEG(2, 1, BarCorn) |
+		DIGSEG(0, 2, BarDown) | DIGSEG(1, 2, BarDown) | DIGSEG(2, 2, BarLeft),
+		// 6
+		DIGSEG(0, 0, BarDown) | DIGSEG(1, 0, BarDown) | DIGSEG(2, 0, BarCorn) |
+		DIGSEG(0, 1, DownLeft)| DIGSEG(1, 1, BarDown) | DIGSEG(2, 1, BarCorn) |
+		DIGSEG(0, 2, DownLeft)| DIGSEG(1, 2, BarDown) | DIGSEG(2, 2, BarLeft),
+		// 7
+		DIGSEG(0, 0, BarDown) | DIGSEG(1, 0, BarDown) | DIGSEG(2, 0, BarCorn) |
+		DIGSEG(0, 1, Clear)   | DIGSEG(1, 1, Clear)   | DIGSEG(2, 1, BarLeft) |
+		DIGSEG(0, 2, Clear)   | DIGSEG(1, 2, Clear)   | DIGSEG(2, 2, BarLeft),
+		// 8
+		DIGSEG(0, 0, BarDown) | DIGSEG(1, 0, BarDown) | DIGSEG(2, 0, BarCorn) |
+		DIGSEG(0, 1, DownLeft)| DIGSEG(1, 1, BarDown) | DIGSEG(2, 1, BarLeft) |
+		DIGSEG(0, 2, DownLeft)| DIGSEG(1, 2, BarDown) | DIGSEG(2, 2, BarLeft),
+		// 9
+		DIGSEG(0, 0, BarDown) | DIGSEG(1, 0, BarDown) | DIGSEG(2, 0, BarCorn) |
+		DIGSEG(0, 1, DownLeft)| DIGSEG(1, 1, BarDown) | DIGSEG(2, 1, BarLeft) |
+		DIGSEG(0, 2, BarDown) | DIGSEG(1, 2, BarDown) | DIGSEG(2, 2, BarLeft)
+		// could extend for hex
+	},
 };
 
-char DigitPart(int x, int y, char d) {
-	return (DigitFont[d - '0'] >> (y * 9 + x * 3)) & 7;
+char DigitPart(int ud, int x, int y, char d) {
+	return (DigitFont[ud][d - '0'] >> (y * 9 + x * 3)) & 7;
+};
+
+enum GlyphSet {
+	None,
+	Upward,
+	Downward
+};
+
+static int glyphSet;
+
+static const char *glyphNames[2][5] = {
+	{ // up
+		"UpNumPartUpLeft",
+		"UpNumPartBarLeft",
+		"UpNumPartBarUp",
+		"UpNumPartBarCorn",
+		"UpNumPartDot"
+	},
+	{ // down
+		"DownNumPartDownLeft",
+		"DownNumPartBarLeft",
+		"DownNumPartBarDown",
+		"DownNumPartBarCorn",
+		"DownNumPartDot"
+	}
 };
 
 void WriteLarge(
-	const std::shared_ptr<duds::hardware::devices::displays::TextDisplay> &disp,
+	const std::shared_ptr<duds::hardware::devices::displays::HD44780> &disp,
 	const std::string &str,
 	unsigned int c,
 	unsigned int r
 ) {
-	//const std::shared_ptr<TextDisplay> &disp = tds.display();
 	// must start on line 0 or 1
-	if (c > 1) {
+	if (r > 1) {
 		DUDS_THROW_EXCEPTION(
 			duds::hardware::devices::displays::TextDisplayRangeError() <<
 			duds::hardware::devices::displays::TextDisplayPositionInfo(
@@ -126,13 +238,22 @@ void WriteLarge(
 			)
 		);
 	}
+	// do glyphs need to be loaded?
+	if ((glyphSet + 1) != r) {
+		glyphSet = r + 1;
+		for (int i = 0; i < 5; ++i) {
+			disp->setGlyph(imgArc.get(glyphNames[r][i]), i + 1);
+		}
+	}
 	// work out width
 	int width = 0;
 	for (char c : str) {
 		if ((c >= '0') && (c <= '9')) {
 			width += 3;
-		} else if (c == ':') {
+		} else if ((c == ':') || (c == '~') || (c == '.')) {
 			++width;
+		} else if (c == ' ') {
+			width += 3;
 		} else {
 			DUDS_THROW_EXCEPTION(TextLargeCharUnsupported());
 		}
@@ -150,18 +271,23 @@ void WriteLarge(
 		std::string line;
 		for (char c : str) {
 			if (c == ':') {
-				if (y < 2) {
-					line.push_back(Dot + 8);
+				// character only on two rows; other is a space
+				if ((!r && (y < 2)) || (r && ( y > 0))) {
+					line.push_back(Dot);
 				} else {
 					line.push_back(' ');
 				}
-			} else {
+			} else if (c == '~') {
+				line.push_back(' ');
+			} else if (c == '.') {
+				line.push_back(BarCorn);
+			} else if (c == ' ') {
+				line += "   ";
+			}else {
 				for (int x = 0; x < 3; ++x) {
-					char dp = DigitPart(x, y, c);
+					char dp = DigitPart(r, x, y, c);
 					if (!dp) {
 						dp = ' ';
-					} else {
-						dp += 8;
 					}
 					line.push_back(dp);
 				}
@@ -184,17 +310,83 @@ void runtest(const std::shared_ptr<displays::HD44780> &tmd)
 try {
 	duds::hardware::devices::clocks::LinuxClockDriver lcd;
 	duds::hardware::devices::clocks::LinuxClockDriver::Measurement::TimeSample ts;
+	displays::TextDisplayStream tds(tmd);
+	std::chrono::high_resolution_clock::time_point start;
+	float dispTime = 32768.0f;  // in microseconds
+	// examples never delete these
+	boost::gregorian::date_facet *dateform =
+		new boost::gregorian::date_facet("%a %b %e, %Y");
+	// change how dates are output to the stream
+	tds.imbue(std::locale(tds.getloc(), dateform));
 	do {
+		// used to tell how long it took to write the time & date to the display
+		start = std::chrono::high_resolution_clock::now();
+		//tds << displays::move(0,0);
 		lcd.sampleTime(ts);
-		boost::posix_time::time_duration time =
-			duds::time::planetary::earth->posix(ts.value).time_of_day();
+		// put time in time_t; integer value is in seconds UTC
+		std::time_t tt = duds::time::planetary::earth->timeUtc(ts.value);
+		// compute microseconds after time in tt
+		int uS = (ts.value.time_since_epoch().count() / 1000) % 1000000;
+		// adavnce time ahead by 64ms plus an estimate of how long it takes to
+		// write out the time and date
+		int advT = uS + 64000 + (int)dispTime;
+		// advancing past the sampled second in tt?
+		if (advT > 1000000) {
+			// advance tt to match
+			++tt;
+		}
+		// request local time; GNU version includes current timezone
+		std::tm ltime;
+		localtime_r(&tt, &ltime);
+		// test for showing both sets of large digits
+		if (ltime.tm_min & 1) {
+			tds << displays::move(0,3);
+		} else {
+			tds << displays::move(0,0);
+		}
+		// Get the date of the local time; Boost is better with the dates than
+		// C++11, but lacks local timezone. Looks like much of the Boost
+		// date_time library will be in C++20.
+		boost::gregorian::date date = boost::gregorian::date_from_tm(ltime);
+		// write out the date and timezone
+		tds << date << ' ' << std::setw(3) << ltime.tm_zone << displays::startLine;
+		// write out the time to a string stream
 		std::ostringstream oss;
-		oss << std::setfill('0') << std::setw(2) << time.hours() << ':' <<
-		std::setw(2) << time.minutes() << ':' << std::setw(2) << time.seconds();
-		//std::cout << "Writing time " << oss.str() << std::endl;
-		WriteLarge(tmd, oss.str(), 0, 0);
-		std::this_thread::sleep_for(std::chrono::milliseconds(980));
+		char sep;
+		// blinking colon
+		if (ltime.tm_sec & 1) {
+			sep = '~';
+		} else {
+			sep = ':';
+		}
+		oss << std::setfill(' ') << std::setw(2) << ltime.tm_hour << sep <<
+		std::setfill('0') << std::setw(2) << ltime.tm_min << sep <<
+		std::setw(2) << ltime.tm_sec;
+		// write out the time as 3x3 digits to the display
+		if (ltime.tm_min & 1) {  // test for showing both sets of large digits
+			WriteLarge(tmd, oss.str(), 0, 0);
+		} else {
+			WriteLarge(tmd, oss.str(), 0, 1);
+		}
+		// update exponential moving average of how long it takes to display the
+		// thime
+		auto timeTaken = std::chrono::high_resolution_clock::now() - start;
+		dispTime = dispTime * 0.8f + 0.2f *
+			(float)(std::chrono::duration_cast<std::chrono::microseconds>(
+				timeTaken
+			).count());
+		// time to wait for display update
+		std::chrono::microseconds delay(1000000 - uS - 64000 - (int)dispTime);
+		// sleep for at least 16ms
+		if (delay.count() > 16384) {
+			std::this_thread::sleep_for(delay);
+		} else {
+			std::this_thread::sleep_for(std::chrono::milliseconds(16));
+		}
 	} while (!quit);
+	// I am curious how long this is. Answer is about 70ms.
+	std::cout << "Last moving average of time taken to display: " <<
+	dispTime << "uS" << std::endl;
 } catch (...) {
 	std::cerr << "Program failed in runtest(): " <<
 	boost::current_exception_diagnostic_information() << std::endl;
@@ -227,27 +419,17 @@ try {
 			return 0;
 		}
 	} */
-	
-	// load some icons before messing with hardware
-	/*
-	displays::BppImageArchive imgArc;
-	imgArc.load("neticons.bppia");
-	std::shared_ptr<displays::BppImage> wiredIcon = imgArc.get("WiredLAN");
-	std::shared_ptr<displays::BppImage> wirelessIcon = imgArc.get("WirelessLAN_S2");
-	*/
 	duds::time::planetary::Earth::make();
-	
-	std::shared_ptr<displays::BppImage> NumPartUpLeft =
-		displays::BppImage::make(Font::NumPartUpLeft);
-	std::shared_ptr<displays::BppImage> NumPartBarLeft =
-		displays::BppImage::make(Font::NumPartBarLeft);
-	std::shared_ptr<displays::BppImage> NumPartBarUp =
-		displays::BppImage::make(Font::NumPartBarUp);
-	std::shared_ptr<displays::BppImage> NumPartBarCorn =
-		displays::BppImage::make(Font::NumPartBarCorn);
-	std::shared_ptr<displays::BppImage> NumPartDot =
-		displays::BppImage::make(Font::NumPartDot);
-	
+	{
+		std::string iconpath(argv[0]);
+		while (!iconpath.empty() && (iconpath.back() != '/')) {
+			iconpath.pop_back();
+		}
+		iconpath += "numberparts.bppia";
+		// load some icons before messing with hardware
+		imgArc.load(iconpath);
+	}
+
 	// configure display
 	//                       LCD pins:  4  5   6   7  RS   E
 	std::vector<unsigned int> gpios = { 5, 6, 19, 26, 20, 21 };
@@ -275,11 +457,6 @@ try {
 			lcdset, lcdsel, 20, 4
 		);
 	tmd->initialize();
-	tmd->setGlyph(NumPartUpLeft, 1);
-	tmd->setGlyph(NumPartBarLeft, 2);
-	tmd->setGlyph(NumPartBarUp, 3);
-	tmd->setGlyph(NumPartBarCorn, 4);
-	tmd->setGlyph(NumPartDot, 5);
 
 	std::thread doit(&runtest, std::ref(tmd));
 

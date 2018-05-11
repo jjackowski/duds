@@ -34,7 +34,7 @@
 #include <linux/wireless.h>
 #include <boost/program_options.hpp>
 
-#include <neticons.h>
+//#include <neticons.h>
 
 constexpr int valw = 8;
 bool quit = false;
@@ -82,16 +82,16 @@ public:
 		wlQuery();
 	}
 	/*
-	
+
 	iw_statistics *stats;
-	
+
 	//have to use a socket for ioctl
 	int sockfd = socket(AF_INET, SOCK_DGRAM, 0);
-	
+
 	//make room for the iw_statistics object
 	req.u.data.pointer = (iw_statistics *)malloc(sizeof(iw_statistics));
 	req.u.data.length = sizeof(iw_statistics);
-	
+
 	//this will gather the signal strength
 	if(ioctl(sockfd, SIOCGIWSTATS, &req) == -1){
 	  //die with error, invalid interface
@@ -102,7 +102,7 @@ public:
 	  //signal is measured in dBm and is valid for us to use
 	  sigInfo->level=((iw_statistics *)req.u.data.pointer)->qual.level - 256;
 	}
-	
+
 	//SIOCGIWESSID for ssid
 	char buffer[32];
 	memset(buffer, 0, 32);
@@ -117,7 +117,7 @@ public:
 	  memcpy(&sigInfo->ssid, req.u.essid.pointer, req.u.essid.length);
 	  memset(&sigInfo->ssid[req.u.essid.length],0,1);
 	}
-	
+
 	//SIOCGIWRATE for bits/sec (convert to mbit)
 	int bitrate=-1;
 	//this will get the bitrate of the link
@@ -128,8 +128,8 @@ public:
 	  memcpy(&bitrate, &req.u.bitrate, sizeof(int));
 	  sigInfo->bitrate=bitrate/1000000;
 	}
-	
-	
+
+
 	//SIOCGIFHWADDR for mac addr
 	ifreq req2;
 	strcpy(req2.ifr_name, iwname);
@@ -229,7 +229,7 @@ void show(
 			if (nif.isWireless()) {
 				tds << '\2';
 			} else {
-				tds << '\1';
+				tds << '\4';
 			}
 			std::string addr = nif.address().to_string();
 			int len = tmd->columns() - addr.size() - 1;
@@ -257,6 +257,11 @@ void show(
 				}
 			}
 		}
+		/*
+		if (cnt < tmd->rows()) {
+			tds << "Wireless: \10\1\2\3";
+		}
+		*/
 	}
 } catch (...) {
 	std::cerr << "Test failed in show():\n" <<
@@ -311,14 +316,23 @@ try {
 			}
 		}
 	}
-	
+
+	std::string iconpath(argv[0]);
+	while (!iconpath.empty() && (iconpath.back() != '/')) {
+		iconpath.pop_back();
+	}
+	iconpath += "neticons.bppia";
 	// load some icons before messing with hardware
-	/*
 	displays::BppImageArchive imgArc;
-	imgArc.load("neticons.bppia");
+	imgArc.load(iconpath);
 	std::shared_ptr<displays::BppImage> wiredIcon = imgArc.get("WiredLAN");
-	std::shared_ptr<displays::BppImage> wirelessIcon = imgArc.get("WirelessLAN_S2");
-	*/
+	std::shared_ptr<displays::BppImage> wirelessIcon[4] = {
+		imgArc.get("WirelessLAN_S0"),
+		imgArc.get("WirelessLAN_S1"),
+		imgArc.get("WirelessLAN_S2"),
+		imgArc.get("WirelessLAN_S3"),
+	};
+	/*
 	std::shared_ptr<displays::BppImage> wiredIcon =
 		displays::BppImage::make(WiredLAN);
 		//std::make_shared<displays::BppImage>(WiredLAN);
@@ -326,7 +340,8 @@ try {
 		std::make_shared<displays::BppImage>(WirelessLAN_S2);
 	//std::shared_ptr<displays::BppImage> blockIcon =
 	//	std::make_shared<displays::BppImage>(TestBlock);
-	
+	*/
+
 	// configure display
 	//                       LCD pins:  4  5   6   7  RS   E
 	std::vector<unsigned int> gpios = { 5, 6, 19, 26, 20, 21 };
@@ -354,8 +369,10 @@ try {
 			lcdset, lcdsel, lcd20x4 ? 20 : 16, lcd20x4 ? 4 : 2
 		);
 	tmd->initialize();
-	tmd->setGlyph(wiredIcon, 1);
-	tmd->setGlyph(wirelessIcon, 2);
+	tmd->setGlyph(wiredIcon, 4);
+	for (int i = 0; i < 4; ++i) {
+		tmd->setGlyph(wirelessIcon[i], i);
+	}
 
 	show(tmd);
 

@@ -16,8 +16,9 @@
 #include <duds/hardware/devices/clocks/LinuxClockDriver.hpp>
 #include <duds/hardware/devices/clocks/PosixClockDriver.hpp>
 #include <duds/hardware/devices/clocks/CppClockDriver.hpp>
-#include <boost/exception/diagnostic_information.hpp> 
+#include <boost/exception/diagnostic_information.hpp>
 #include <ratio>
+//#include <sys/time.h>
 
 struct beuint32_t {
 	std::uint32_t val;
@@ -86,16 +87,16 @@ try {
 	boost::posix_time::ptime epoch(boost::gregorian::date(1970,1,1));
 	for (; zf.good() && (lsc.val > 0); --lsc.val) {
 		beuint32_t when, count;
-		// when will store the time when the leap second is added 
+		// when will store the time when the leap second is added
 		zf >> when >> count;
 		IST::Seconds secs(when.val);
 		IST::SecondTime ist(secs);
 		IST::Metricform m(ist);
 		IST::Hectoform e(ist);
-		
+
 		IST::Milliseconds tm(secs);
 		IST::Femtoseconds fs(secs);
-		
+
 		std::cout << lsc.val << ":\t" << count.val + 10 << " \t " << when.val <<
 		"\t " << (epoch + boost::posix_time::seconds(when.val - count.val -1)).date()
 		<< " \t  " << m << "   " << e << std::endl;
@@ -125,6 +126,9 @@ try {
 			timeout(ls, t, ist);
 		}
 	}
+
+	//tzset();
+
 	timeout(ls, 0, IST::SecondClock::now());
 	duds::hardware::devices::clocks::LinuxClockDriver lcd;
 	duds::hardware::devices::clocks::PosixClockDriver pcd(CLOCK_TAI), rtcd(CLOCK_REALTIME);
@@ -140,9 +144,11 @@ try {
 	timeout(ls, 0, rtts.value);
 	boost::posix_time::ptime pt;
 	pt = earth->posix(lts.value);  // should be in UTC
-	std::cout << pt << "  <-- lts" << std::endl;
+	std::cout << pt << "  <-- lts UTC" << std::endl;
+	pt = duds::time::planetary::ToPosix(lts.value);
+	std::cout << pt << "  <-- lts TAI" << std::endl;
 	pt = earth->posix(pts.value);  // should be wrong (UTC - leaps)
-	std::cout << pt << std::endl;
+	std::cout << pt << "  <-- wrong" << std::endl;
 	pt = duds::time::planetary::ToPosix(pts.value);  // should be in UTC
 	std::cout << pt << std::endl;
 	pt = duds::time::planetary::ToPosix(cts.value);
@@ -152,6 +158,25 @@ try {
 	pt = earth->timeZero() + boost::posix_time::milliseconds(  // UTC
 		IST::MilliTime(rtts.value).time_since_epoch().count());
 	std::cout << pt << std::endl;
+
+	//tzset();
+	//std::cout << "timezone = " << timezone << std::endl;
+	tm testm;
+	std::time_t tt = (std::time_t)std::chrono::duration_cast<std::chrono::seconds>(
+		lts.value.time_since_epoch()).count();
+	localtime_r(&tt, &testm);
+	std::cout << "localtime T " << std::setfill(' ') << std::setw(2) << std::right <<
+	testm.tm_hour << ':' << std::setfill('0') << std::setw(2) << testm.tm_min <<
+	':' << std::setw(2) << testm.tm_sec << " in zone " << testm.tm_zone <<
+	" (TAI referenced)" << std::endl;
+	tt = earth->timeUtc(lts.value);
+	localtime_r(&tt, &testm);
+	std::cout << "localtime L " << std::setfill(' ') << std::setw(2) <<
+	testm.tm_hour << ':' << std::setfill('0') << std::setw(2) << testm.tm_min <<
+	':' << std::setw(2) << testm.tm_sec << " in zone " << testm.tm_zone <<
+	std::endl;
+	std::cout << "tm_gmtoff = " << testm.tm_gmtoff << std::endl;
+
 	return 0;
 }
 catch (...) {

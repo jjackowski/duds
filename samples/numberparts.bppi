@@ -3,7 +3,7 @@
  */
 
 
-NumPartUpLeft
+UpNumPartUpLeft
 5, 8
 	01234 {
 0	XXXXX
@@ -16,7 +16,7 @@ NumPartUpLeft
 7	XXX
 }
 
-NumPartBarLeft
+UpNumPartBarLeft
 5, 8
 	01234 {
 0	XXX
@@ -29,7 +29,7 @@ NumPartBarLeft
 7	XXX
 }
 
-NumPartBarUp
+UpNumPartBarUp
 5, 4
 	01234 {
 0	XXXXX
@@ -38,7 +38,7 @@ NumPartBarUp
 3	XXXXX
 }
 
-NumPartBarCorn
+UpNumPartBarCorn
 5, 4
 	01234 {
 0	XXX
@@ -47,7 +47,7 @@ NumPartBarCorn
 3	XXX
 }
 
-NumPartDot  // needed?  try NumPartBarCorn instead
+UpNumPartDot
 5, 8
 	01234 {
 0	 
@@ -58,4 +58,68 @@ NumPartDot  // needed?  try NumPartBarCorn instead
 5	XXX
 6	XXX
 7	XXX
+}
+
+
+
+
+DownNumPartDownLeft
+5, 8
+	01234 {
+0	XXX
+1	XXX
+2	XXX
+3	XXX
+4	XXXXX
+5	XXXXX
+6	XXXXX
+7	XXXXX
+}
+
+DownNumPartBarLeft
+5, 8
+	01234 {
+0	XXX
+1	XXX
+2	XXX
+3	XXX
+4	XXX
+5	XXX
+6	XXX
+7	XXX
+}
+
+DownNumPartBarDown
+5, 8
+	01234 {
+0	 
+1	 
+2	 
+3	 
+4	XXXXX
+5	XXXXX
+6	XXXXX
+7	XXXXX
+}
+
+DownNumPartBarCorn
+5, 8
+	01234 {
+0	 
+1	 
+2	 
+3	 
+4	XXX
+5	XXX
+6	XXX
+7	XXX
+}
+
+DownNumPartDot
+5, 4
+	01234 {
+0	XXX
+1	XXX
+2	XXX
+3	XXX
 }
