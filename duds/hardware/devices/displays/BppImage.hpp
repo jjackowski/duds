@@ -159,7 +159,7 @@ typedef boost::error_info<struct Info_ImageDimensions, ImageDimensions>
  * black @b or white picture.
  *
  * The image data is stored as a vector of PixelBlock objects. These are
- * pointer-sized integers. The LSb of the first PixelBlock represents the 
+ * pointer-sized integers. The LSb of the first PixelBlock represents the
  * left-most pixel of the top-most row. Each succesive bit and PixelBlock moves
  * to the right. PixelBlocks do not span rows, so unused space will fill the
  * higher value bits of the right-most PixelBlock at the end of each row.
@@ -476,7 +476,7 @@ public:
 		ConstBoolProxy operator*() const {
 			return ConstBoolProxy(this);
 		}
-		
+
 		// incomplete attempt at fulfilling all standard iterator requirements
 		//typedef std::forward_iterator_tag iterator_category;
 		typedef bool value_type;
@@ -617,6 +617,11 @@ public:
 	BppImage(const BppImage &src);
 	/**
 	 * Copies constant image data into a new image.
+	 * This is intended for use with the output of the
+	 * @ref DUDStoolsBppic "Bit-Per-Pixel Image Compiler" (bppic). The
+	 * BppImageArchive uses this constructor with data from an archive made
+	 * by bppic, and it can be used directly with the const char arrays from
+	 * the C++ output of bppic.
 	 * @param data  The source data. It starts with the width and height, in
 	 *              that order. Both are two bytes in little endian form.
 	 *              Following that is the image data. The LSb of each byte is
@@ -849,7 +854,7 @@ public:
 	 * Returns a ConstPixel end iterator.
 	 */
 	ConstPixel cend() const {
-		return ConstPixel(this, -1, -1);
+		return ConstPixel(this, ConstPixel::End());
 	}
 	/**
 	 * Returns a ConstPixel end iterator.

@@ -32,6 +32,13 @@ void Earth::make(const std::string &path) {
 	earth->leaps.readZoneinfo(path);
 }
 
+std::time_t Earth::timeUtc(
+	const duds::time::interstellar::SecondTime &t
+) const {
+	duds::time::interstellar::Seconds ls = leaps.leapSeconds(t);
+	return (std::time_t)((t - ls).time_since_epoch().count());
+}
+
 boost::gregorian::date Earth::date(
 	const duds::time::interstellar::SecondTime &t
 ) const {

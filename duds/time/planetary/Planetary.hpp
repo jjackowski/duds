@@ -30,12 +30,12 @@ namespace time {
 namespace planetary {
 
 using std::unique_ptr;
-
+/*
 class PlanetaryTime {
 	LeapSeconds leaps;
 	int days;
 };
-
+*/
 
 // move to earth.hpp
 /**
@@ -48,6 +48,10 @@ public:
 	LeapSeconds leaps;
 	static const boost::gregorian::date &dateZero();
 	static const boost::posix_time::ptime &timeZero();
+	/**
+	 * Makes the Earth planetary time object using the given zoneinfo file for
+	 * data on leap seconds.
+	 */
 	static void make(const std::string &path = "/usr/share/zoneinfo-leaps/UTC");
 	typedef duds::time::interstellar::Femtoseconds duration;
 	typedef duration::rep rep;
@@ -76,6 +80,24 @@ public:
 			)
 		));
 	}
+	/**
+	 * Converts from IST to UTC and provides a std::time_t result.
+	 */
+	std::time_t timeUtc(
+		const duds::time::interstellar::SecondTime &t
+	) const;
+	template <class ISTime>
+	/**
+	 * Converts from IST to UTC and provides a std::time_t result.
+	 */
+	std::time_t timeUtc(const ISTime &t) const {
+		return timeUtc(interstellar::SecondTime(
+			std::chrono::duration_cast<interstellar::Seconds>(
+				t.time_since_epoch()
+			)
+		));
+	}
+
 	/**
 	 * Converts from UTC to TAI and provides a date result.
 	 */
@@ -128,7 +150,7 @@ public:
 		));
 	}
 	// UTC
-	
+
 	/**
 	 * Adds leap seconds to the given time in UTC, resulting in TAI.
 	 * @param time  The time that needs leap seconds.
@@ -144,7 +166,7 @@ public:
 		assert(bound.within(time));
 		time += bound.leaps;
 	}
-	
+
 	/**
 	 * Converts a Gregorian calendar date into one of the time formats defined
 	 * inside the duds::time::interstellar namespace.
