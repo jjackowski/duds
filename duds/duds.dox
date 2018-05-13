@@ -36,7 +36,7 @@ A few files in duds/general have code I did not write. They are marked with the 
 @section DUDSgoal  Goals
 
 - Be a well designed C++ happy library that is multi-platform where applicable.
-- Take advantage of C++11.
+- Take advantage of C++14.
 - Support multi-threaded programs.
 - Support dynamic resource usage.
 - Favor correctness over performance.
@@ -133,7 +133,7 @@ Supported devices are listed on the @ref SupDev page.
 
 DUDS uses [SCons](http://scons.org/) 2.5 as its build system, which is written in Python and requires Python 2.7.x; Python 3.x will not work. Compiling and linking is done with gcc 5.4.0 or 6.4.0. Development has moved to gcc 6.4.0. Newer versions have not been tested.
 
-The so-called C++11 standard, officially ISO/IEC 14882:2011, is used by DUDS. Use of features in newer C++ specifications is being avoided for now, but C++14 may be used soon.
+The so-called C++14 standard, officially ISO/IEC 14882:2014, is used by DUDS. Use of features in newer C++ specifications is being avoided for now, but C++14 may be used soon.
 
 The [Boost C++ library](http://www.boost.org/) is required. Version 1.62 or newer must be used. Version 1.65.1 is best as it allows exceptions to include a stack trace. Boost's multiprecision library is used for 128-bit integer support when gcc's __int128 is not available, and for serializing 128-bit integers even when __int128 is available. This results in some notable differences in 128-bit integer support on 32 and 64 bit platforms, but maintains a serialization format that is identical across platforms when things like endianness and padding do not affect the results.
 

@@ -68,7 +68,7 @@ toolenv = Environment(
 	],
 	# options passed to C++ compiler
 	CXXFLAGS = [
-		'-std=gnu++11'  # allow gcc extentions to C++11, like __int128
+		'-std=gnu++14'  # allow gcc extentions to C++, like __int128
 		#'-std=c++11'    # no GNU extensions, no 128-bit integer
 	],
 	LIBS = [
@@ -127,7 +127,7 @@ env = Environment(
 	],
 	# options passed to C++ compiler
 	CXXFLAGS = [
-		'-std=gnu++11'  # allow gcc extentions to C++11, like __int128
+		'-std=gnu++14'  # allow gcc extentions to C++, like __int128
 		#'-std=c++11'    # no GNU extensions, no 128-bit integer
 	],
 	# macros

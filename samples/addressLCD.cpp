@@ -36,7 +36,6 @@
 
 //#include <neticons.h>
 
-constexpr int valw = 8;
 bool quit = false;
 
 namespace displays = duds::hardware::devices::displays;
@@ -163,15 +162,32 @@ public:
 	bool operator < (const NetInterface &ni) const {
 		return ifname < ni.name();
 	}
+	bool operator < (const std::string &ni) const {
+		return ifname < ni;
+	}
 };
 
-std::set<NetInterface> netifs;
+bool operator < (const std::string &name, const NetInterface &ni) {
+	return name < ni.name();
+}
 
-void Fillnetifs() {
+struct GenericTransparentComp {
+	typedef int is_transparent;
+	template <class A, class B>
+	bool operator()(const A &a, const B &b) const {
+		return a < b;
+	}
+};
+
+std::set<NetInterface, GenericTransparentComp> netifs;
+
+int Fillnetifs() {
+	std::set<std::string> seen;
 	ifaddrs *ifAddrStruct = nullptr;
 	ifaddrs *ifa = nullptr;
 	getifaddrs(&ifAddrStruct);
-
+	int updates = 0;
+	
 	for (ifa = ifAddrStruct; ifa; ifa = ifa->ifa_next) {
 		if (!ifa->ifa_addr) {
 			continue;
@@ -184,7 +200,25 @@ void Fillnetifs() {
 				//&((sockaddr_in*)ifa->ifa_addr)->sin_addr
 			);
 			if (!ip4.is_loopback() && !ip4.is_multicast()) {
-				netifs.emplace(ifa->ifa_name, ip4);
+				// look for an existing network
+				std::set<NetInterface>::iterator iter = netifs.find(ifa->ifa_name);
+				// found it?
+				if (iter != netifs.end()) {
+					// different address?
+					if (iter->address() != ip4) {
+						// replace the object
+						netifs.erase(iter);
+						netifs.emplace(ifa->ifa_name, ip4);
+						++updates;
+					}
+					// if same address, leave object as is
+				} else {
+					// new network, new object
+					netifs.emplace(ifa->ifa_name, ip4);
+					++updates;
+				}
+				// always mark as seen
+				seen.insert(ifa->ifa_name);
 			}
 		}
 		// IPv6 address?
@@ -203,6 +237,20 @@ void Fillnetifs() {
 	if (ifAddrStruct) {
 		freeifaddrs(ifAddrStruct);
 	}
+	// check for removals
+	std::set<NetInterface, GenericTransparentComp>::iterator iter = netifs.begin();
+	while (iter != netifs.end()) {
+		std::set<std::string>::iterator siter = seen.find(iter->name());
+		// not found?
+		if (siter == seen.end()) {
+			// remove it
+			iter = netifs.erase(iter);
+			++updates;
+		} else {
+			++iter;
+		}
+	}
+	return updates;
 }
 
 /*  Display
@@ -221,48 +269,62 @@ void show(
 	const std::shared_ptr<displays::HD44780> &tmd
 ) try {
 	displays::TextDisplayStream tds(tmd);
-	int cnt = 0;
-	if (netifs.empty()) {
-		tds << "No networks.";
-	} else {
-		for ( auto const &nif : netifs ) {
-			if (nif.isWireless()) {
-				tds << '\2';
+	int updates = 1;
+	Fillnetifs();
+	do {
+		if (updates) {
+			std::cout << "--- Network change ---" << std::endl;
+			tmd->initialize();
+			if (netifs.empty()) {
+				tds << "No networks.";
+				std::cout << "Found no network interfaces." << std::endl;
 			} else {
-				tds << '\4';
-			}
-			std::string addr = nif.address().to_string();
-			int len = tmd->columns() - addr.size() - 1;
-			/*
-			std::cout << "cnt = " << cnt << ", len = " << len << std::endl;
-			assert(len >= 0);
-			for (int spaces = len /2 + (len & 1); spaces > 0; --spaces) {
-				tds << ' ';
-			}
-			*/
-			if (len) {
-				tds << ' ';
-			}
-			tds << addr << displays::startLine;
-			if (++cnt == tmd->rows()) {
-				// no more space
-				break;
-			}
-			if (nif.isWireless() && tmd->rows() > 2) {
-				tds << std::right << std::setw(tmd->columns()) << nif.essid() <<
-				displays::startLine << std::left;
-				if (++cnt == tmd->rows()) {
-					// no more space
-					break;
+				int cnt = 0;
+				for ( auto const &nif : netifs ) {
+					if (nif.isWireless()) {
+						tds << '\2';
+					} else {
+						tds << '\4';
+					}
+					std::string addr = nif.address().to_string();
+					int len = tmd->columns() - addr.size() - 1;
+					if (len) {
+						tds << ' ';
+					}
+					tds << addr << displays::startLine;
+					// console output
+					std::cout << nif.name() << ": " << addr << "\n\t";
+					if (nif.isWireless()) {
+						std::cout << "Wireless, ESSID: " << nif.essid() << std::endl;
+					} else {
+						std::cout << "Wired" << std::endl;
+					}
+					if (++cnt == tmd->rows()) {
+						// no more space
+						break;
+					}
+					// the wireless network name is displayed on 4 row displays or
+					// when it is the only network
+					if (nif.isWireless() && ((tmd->rows() > 2) || (netifs.size() == 1))) {
+						tds << std::right << std::setw(tmd->columns()) << nif.essid() <<
+						displays::startLine << std::left;
+						if (++cnt == tmd->rows()) {
+							// no more space
+							break;
+						}
+					}
 				}
+				/* icon test
+				if (cnt < tmd->rows()) {
+					tds << "Wireless: \10\1\2\3";
+				}
+				*/
 			}
 		}
-		/*
-		if (cnt < tmd->rows()) {
-			tds << "Wireless: \10\1\2\3";
-		}
-		*/
-	}
+		// wait for changes
+		std::this_thread::sleep_for(std::chrono::seconds(16));
+		updates = Fillnetifs();
+	} while (!quit);
 } catch (...) {
 	std::cerr << "Test failed in show():\n" <<
 	boost::current_exception_diagnostic_information()
@@ -273,7 +335,7 @@ typedef duds::general::IntegerBiDirIterator<unsigned int>  uintIterator;
 
 int main(int argc, char *argv[])
 try {
-	bool lcd20x4 = false;
+	bool lcd20x4 = false, noinput = false;
 	{ // option parsing
 		boost::program_options::options_description optdesc(
 			"Options for addressLCD"
@@ -286,7 +348,13 @@ try {
 			( // the LCD size
 				"lcd20x4",
 				"Use 20x4 LCD instead of 16x2"
-			) // the time between samples
+			)
+			( // don't read from cin; run everything on one thread
+				"noinput",
+				"Do not accept input for termination request. OpenRC will claim "
+				"this program has crashed without this option because it appears "
+				"to send the termination request."
+			)
 		;
 		boost::program_options::variables_map vm;
 		boost::program_options::store(
@@ -302,18 +370,8 @@ try {
 		if (vm.count("lcd20x4")) {
 			lcd20x4 = true;
 		}
-	}
-	Fillnetifs();
-	if (netifs.empty()) {
-		std::cout << "Found no network interfaces." << std::endl;
-	} else {
-		for ( auto const &nif : netifs ) {
-			std::cout << nif.name() << ": " << nif.address() << "\n\t";
-			if (nif.isWireless()) {
-				std::cout << "Wireless, ESSID: " << nif.essid() << std::endl;
-			} else {
-				std::cout << "Wired" << std::endl;
-			}
+		if (vm.count("noinput")) {
+			noinput = true;
 		}
 	}
 
@@ -374,9 +432,15 @@ try {
 		tmd->setGlyph(wirelessIcon[i], i);
 	}
 
-	show(tmd);
-
-	std::cin.get();
+	if (noinput) {
+		// will not return
+		show(tmd);
+	} else {
+		std::thread doit(show, std::ref(tmd));
+		std::cin.get();
+		quit = true;
+		doit.join();
+	}
 } catch (...) {
 	std::cerr << "Test failed in main():\n" <<
 	boost::current_exception_diagnostic_information() << std::endl;
