@@ -90,16 +90,45 @@ struct DigitalPinCannotOutputError : DigitalPinConfigError { };
  */
 struct DigitalPinCannotInputError : DigitalPinConfigError { };
 
+/**
+ * An attempt was made to output a number in binary on a set of pins that was
+ * too small to represent the number.
+ */
 struct DigitalPinNumericRangeError : PinError { };
+
+/**
+ * The requested number to output; seen with DigitalPinNumericRangeError
+ * exceptions.
+ */
 typedef boost::error_info<
 	struct Info_DigitalPinNumericOutput,
 	std::int64_t
 > DigitalPinNumericOutput;
+
+/**
+ * The number of bits available for a numeric output.
+ */
 typedef boost::error_info<
 	struct Info_DigitalPinNumericBits,
 	int
 > DigitalPinNumericBits;
 
+/**
+ * A required DigitalPort object was not supplied. This can occur if a shared
+ * pointer to a DigitalPort is empty.
+ */
+struct DigitalPortDoesNotExistError : PinError { };
+
+/**
+ * The provided DigitalPort object lacks a required pin.
+ */
+struct DigitalPortLacksPinError : PinError { };
+
+/**
+ * The provided DigitalPort object has a pin it is explicitly required to not
+ * have.
+ */
+struct DigitalPortHasPinError : PinError { };
 
 /**
  * Holds error types and codes that detail why a configuration for a digital

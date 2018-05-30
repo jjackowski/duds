@@ -19,13 +19,14 @@
 #include <duds/hardware/devices/displays/BppImageArchive.hpp>
 #include <duds/hardware/interface/linux/SysFsPort.hpp>
 #include <duds/hardware/interface/ChipPinSelectManager.hpp>
+#include <duds/hardware/interface/PinConfiguration.hpp>
+#include <boost/property_tree/info_parser.hpp>
 #include <iostream>
 #include <thread>
 #include <iomanip>
 #include <algorithm>
 #include <assert.h>
 #include <boost/exception/diagnostic_information.hpp>
-#include <duds/general/IntegerBiDirIterator.hpp>
 #include <sys/types.h>
 #include <ifaddrs.h>
 #include <netinet/in.h>
@@ -187,7 +188,7 @@ int Fillnetifs() {
 	ifaddrs *ifa = nullptr;
 	getifaddrs(&ifAddrStruct);
 	int updates = 0;
-	
+
 	for (ifa = ifAddrStruct; ifa; ifa = ifa->ifa_next) {
 		if (!ifa->ifa_addr) {
 			continue;
@@ -331,10 +332,11 @@ void show(
 	<< std::endl;
 }
 
-typedef duds::general::IntegerBiDirIterator<unsigned int>  uintIterator;
+//typedef duds::general::IntegerBiDirIterator<unsigned int>  uintIterator;
 
 int main(int argc, char *argv[])
 try {
+	std::string confpath;
 	bool lcd20x4 = false, noinput = false;
 	{ // option parsing
 		boost::program_options::options_description optdesc(
@@ -354,6 +356,12 @@ try {
 				"Do not accept input for termination request. OpenRC will claim "
 				"this program has crashed without this option because it appears "
 				"to send the termination request."
+			)
+			(
+				"conf,c",
+				boost::program_options::value<std::string>(&confpath)->
+					default_value("samples/pins.conf"),
+				"Pin configuration file; REQUIRED"
 			)
 		;
 		boost::program_options::variables_map vm;
@@ -375,14 +383,13 @@ try {
 		}
 	}
 
-	std::string iconpath(argv[0]);
-	while (!iconpath.empty() && (iconpath.back() != '/')) {
-		iconpath.pop_back();
+	std::string binpath(argv[0]);
+	while (!binpath.empty() && (binpath.back() != '/')) {
+		binpath.pop_back();
 	}
-	iconpath += "neticons.bppia";
 	// load some icons before messing with hardware
 	displays::BppImageArchive imgArc;
-	imgArc.load(iconpath);
+	imgArc.load(binpath + "neticons.bppia");
 	std::shared_ptr<displays::BppImage> wiredIcon = imgArc.get("WiredLAN");
 	std::shared_ptr<displays::BppImage> wirelessIcon[4] = {
 		imgArc.get("WirelessLAN_S0"),
@@ -400,7 +407,20 @@ try {
 	//	std::make_shared<displays::BppImage>(TestBlock);
 	*/
 
+	// read in digital pin config
+	boost::property_tree::ptree tree;
+	boost::property_tree::read_info(confpath, tree);
+	boost::property_tree::ptree &pinconf = tree.get_child("pins");
+	duds::hardware::interface::PinConfiguration pc(pinconf);
+
 	// configure display
+	std::shared_ptr<duds::hardware::interface::linux::SysFsPort> port =
+		duds::hardware::interface::linux::SysFsPort::makeConfiguredPort(pc);
+	duds::hardware::interface::DigitalPinSet lcdset;
+	duds::hardware::interface::ChipSelect lcdsel;
+	pc.getPinSetAndSelect(lcdset, lcdsel, "lcd");
+
+	/* old
 	//                       LCD pins:  4  5   6   7  RS   E
 	std::vector<unsigned int> gpios = { 5, 6, 19, 26, 20, 21 };
 	std::shared_ptr<duds::hardware::interface::linux::SysFsPort> port =
@@ -409,18 +429,16 @@ try {
 		);
 	assert(!port->simultaneousOperations());  //  :-(
 	// select pin
-	std::unique_ptr<duds::hardware::interface::DigitalPinAccess> selacc =
-		port->access(5); // gpio 21
 	std::shared_ptr<duds::hardware::interface::ChipPinSelectManager> selmgr =
 		std::make_shared<duds::hardware::interface::ChipPinSelectManager>(
-			selacc
+			port->access(5)
 		);
-	assert(!selacc);
 	duds::hardware::interface::ChipSelect lcdsel(selmgr, 1);
 	// set for LCD data
 	gpios.clear();
 	gpios.insert(gpios.begin(), uintIterator(0), uintIterator(5));
 	duds::hardware::interface::DigitalPinSet lcdset(port, gpios);
+	*/
 	// LCD driver
 	std::shared_ptr<displays::HD44780> tmd =
 		std::make_shared<displays::HD44780>(

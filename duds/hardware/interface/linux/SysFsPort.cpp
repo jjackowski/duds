@@ -10,6 +10,7 @@
 #include <boost/exception/errinfo_file_name.hpp>
 #include <sstream>
 #include <duds/hardware/interface/linux/SysFsPort.hpp>
+#include <duds/hardware/interface/PinConfiguration.hpp>
 
 namespace duds { namespace hardware { namespace interface { namespace linux {
 
@@ -28,6 +29,34 @@ DigitalPortIndependentPins(ids.size(), firstid), fspins(ids.size()) {
 			throw;
 		}
 	}
+}
+
+std::shared_ptr<SysFsPort> SysFsPort::makeConfiguredPort(
+	PinConfiguration &pc,
+	const std::string &name
+) {
+	// find the port's config object
+	const PinConfiguration::Port &port = pc.port(name);
+	// enumerate the pins
+	std::vector<unsigned int> gpios;
+	unsigned int next = port.idOffset;
+	gpios.reserve(port.pins.size());
+	for (auto const &pin : port.gidIndex()) {
+		// need empty spots?
+		if (pin.gid < next) {
+			// add unavailable pins
+			gpios.insert(gpios.end(), pin.gid - next, -1);
+		}
+		// add available pin
+		gpios.push_back(pin.pid);
+		next = pin.gid + 1;
+	}
+	std::shared_ptr<SysFsPort> sp = std::make_shared<SysFsPort>(
+		gpios,       // <--- CHANGE this to a move
+		port.idOffset
+	);
+	pc.attachPort(sp, name);
+	return sp;
 }
 
 SysFsPort::~SysFsPort() {

@@ -33,6 +33,7 @@ targets = [
 	envthread.Program('am2320', ['am2320test.cpp'] + libs),
 	envthread.Program('amg88xx', ['amg88xxtest.cpp'] + libs),
 	envthread.Program('ina219', ['ina219test.cpp'] + libs),
+	envthread.Program('ina219LCD', ['ina219LCD.cpp'] + libs),
 	envthread.Program('isl29125', ['isl29125test.cpp'] + libs),
 	envthread.Program('tsl2591', ['tsl2591test.cpp'] + libs),
 	envthread.Program('textdisplay', ['textdisplay.cpp'] + libs),
@@ -43,6 +44,7 @@ targets = [
 # generated. SCons seems to be catching the dependency from the includes.
 env.Depends(targets[1], imgarc)
 env.Depends(targets[2], imgarcN)
+env.Depends(targets[8], imgarcN)
 
 if envthread['Use_Eigen']:
 	enveigen = envthread.Clone()

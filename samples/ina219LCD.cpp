@@ -7,28 +7,22 @@
  *
  * Copyright (C) 2018  Jeff Jackowski
  */
-/**
- * @file
- * A sample of using HD44780 and BppImage to show large digits with the time.
- */
-
+#include <duds/hardware/devices/instruments/INA219.hpp>
+#include <duds/hardware/interface/linux/DevSmbus.hpp>
 #include <duds/hardware/devices/displays/HD44780.hpp>
 #include <duds/hardware/devices/displays/TextDisplayStream.hpp>
 #include <duds/hardware/devices/displays/BppImageArchive.hpp>
 #include <duds/hardware/interface/linux/SysFsPort.hpp>
 #include <duds/hardware/interface/ChipPinSelectManager.hpp>
-#include <duds/hardware/devices/clocks/LinuxClockDriver.hpp>
-#include <duds/time/planetary/Planetary.hpp>
 #include <duds/hardware/interface/PinConfiguration.hpp>
 #include <boost/property_tree/info_parser.hpp>
 #include <iostream>
 #include <sstream>
 #include <thread>
 #include <iomanip>
-#include <algorithm>
-#include <chrono>
 #include <assert.h>
 #include <boost/exception/diagnostic_information.hpp>
+#include <duds/general/IntegerBiDirIterator.hpp>
 #include <boost/program_options.hpp>
 
 duds::hardware::devices::displays::BppImageArchive imgArc;
@@ -107,8 +101,8 @@ char DigitPart(int ud, int x, int y, char d);
  * An array of font data used to write large 3x3 digits to a text display
  * that supports at least 4 definable characters.
  */
-const std::uint32_t DigitFont[2][10] = {
-	{ // shifted upward and to the left 
+const std::uint32_t DigitFont[2][12] = {
+	{ // shifted upward and to the left
 		// 0
 		DIGSEG(0, 0, UpLeft)  | DIGSEG(1, 0, BarUp)   | DIGSEG(2, 0, BarLeft) |
 		DIGSEG(0, 1, BarLeft) | DIGSEG(1, 1, Clear)   | DIGSEG(2, 1, BarLeft) |
@@ -148,10 +142,18 @@ const std::uint32_t DigitFont[2][10] = {
 		// 9
 		DIGSEG(0, 0, UpLeft)  | DIGSEG(1, 0, BarUp)   | DIGSEG(2, 0, BarLeft) |
 		DIGSEG(0, 1, BarUp)   | DIGSEG(1, 1, BarUp)   | DIGSEG(2, 1, BarLeft) |
-		DIGSEG(0, 2, BarUp)   | DIGSEG(1, 2, BarUp)   | DIGSEG(2, 2, BarCorn)
+		DIGSEG(0, 2, BarUp)   | DIGSEG(1, 2, BarUp)   | DIGSEG(2, 2, BarCorn),
 		// could extend for hex
+		// V
+		DIGSEG(0, 0, BarLeft) | DIGSEG(1, 0, Clear)   | DIGSEG(2, 0, BarLeft) |
+		DIGSEG(0, 1, BarLeft) | DIGSEG(1, 1, UpLeft)  | DIGSEG(2, 1, BarCorn) |
+		DIGSEG(0, 2, BarUp)   | DIGSEG(1, 2, BarCorn) | DIGSEG(2, 2, Clear),
+		// W
+		DIGSEG(0, 0, BarLeft) | DIGSEG(1, 0, Clear)   | DIGSEG(2, 0, BarLeft) |
+		DIGSEG(0, 1, BarLeft) | DIGSEG(1, 1, BarLeft) | DIGSEG(2, 1, BarLeft) |
+		DIGSEG(0, 2, BarUp)   | DIGSEG(1, 2, BarUp)   | DIGSEG(2, 2, BarCorn)
 	},
-	{ // shifted downward and to the left 
+	{ // shifted downward and to the left
 		// 0
 		DIGSEG(0, 0, BarDown) | DIGSEG(1, 0, BarDown) | DIGSEG(2, 0, BarCorn) |
 		DIGSEG(0, 1, BarLeft) | DIGSEG(1, 1, Clear)   | DIGSEG(2, 1, BarLeft) |
@@ -191,8 +193,16 @@ const std::uint32_t DigitFont[2][10] = {
 		// 9
 		DIGSEG(0, 0, BarDown) | DIGSEG(1, 0, BarDown) | DIGSEG(2, 0, BarCorn) |
 		DIGSEG(0, 1, DownLeft)| DIGSEG(1, 1, BarDown) | DIGSEG(2, 1, BarLeft) |
-		DIGSEG(0, 2, BarDown) | DIGSEG(1, 2, BarDown) | DIGSEG(2, 2, BarLeft)
+		DIGSEG(0, 2, BarDown) | DIGSEG(1, 2, BarDown) | DIGSEG(2, 2, BarLeft),
 		// could extend for hex
+		// V
+		DIGSEG(0, 0, BarLeft) | DIGSEG(1, 0, Clear)   | DIGSEG(2, 0, BarLeft) |
+		DIGSEG(0, 1, BarLeft) | DIGSEG(1, 1, BarDown) | DIGSEG(2, 1, BarCorn) |
+		DIGSEG(0, 2, DownLeft)| DIGSEG(1, 2, BarLeft) | DIGSEG(2, 2, Clear),
+		// W
+		DIGSEG(0, 0, BarCorn) | DIGSEG(1, 0, Clear)   | DIGSEG(2, 0, BarCorn) |
+		DIGSEG(0, 1, BarLeft) | DIGSEG(1, 1, BarCorn) | DIGSEG(2, 1, BarLeft) |
+		DIGSEG(0, 2, DownLeft)| DIGSEG(1, 2, DownLeft)| DIGSEG(2, 2, BarLeft)
 	},
 };
 
@@ -206,7 +216,7 @@ enum GlyphSet {
 	Downward
 };
 
-static int glyphSet = 2;
+static int glyphSet;
 
 static const char *glyphNames[2][5] = {
 	{ // up
@@ -241,7 +251,7 @@ void WriteLarge(
 		);
 	}
 	// do glyphs need to be loaded?
-	if ((glyphSet + 1) != r) {
+	if (glyphSet != (r + 1)) {
 		glyphSet = r + 1;
 		for (int i = 0; i < 5; ++i) {
 			disp->setGlyph(imgArc.get(glyphNames[r][i]), i + 1);
@@ -250,12 +260,10 @@ void WriteLarge(
 	// work out width
 	int width = 0;
 	for (char c : str) {
-		if ((c >= '0') && (c <= '9')) {
+		if (((c >= '0') && (c <= '9')) || (c == ' ') || (c == ';') /* || (c == 'V') || (c == 'W') */) {
 			width += 3;
 		} else if ((c == ':') || (c == '~') || (c == '.')) {
 			++width;
-		} else if (c == ' ') {
-			width += 3;
 		} else {
 			DUDS_THROW_EXCEPTION(TextLargeCharUnsupported());
 		}
@@ -282,7 +290,11 @@ void WriteLarge(
 			} else if (c == '~') {
 				line.push_back(' ');
 			} else if (c == '.') {
-				line.push_back(BarCorn);
+				if (y > 1) {
+					line.push_back(BarCorn);
+				} else {
+					line.push_back(' ');
+				}
 			} else if (c == ' ') {
 				line += "   ";
 			}else {
@@ -300,113 +312,103 @@ void WriteLarge(
 	}
 }
 
-
 // -----------------------------------------------------------------------
 
 
 namespace displays = duds::hardware::devices::displays;
 
+constexpr int valw = 8;
 bool quit = false;
+typedef duds::general::IntegerBiDirIterator<unsigned int>  uintIterator;
 
-void runtest(const std::shared_ptr<displays::HD44780> &tmd)
+void runtest(
+	duds::hardware::devices::instruments::INA219 &ina,
+	const std::shared_ptr<displays::HD44780> &tmd,
+	const int delay,
+	const int step
+)
 try {
-	duds::hardware::devices::clocks::LinuxClockDriver lcd;
-	duds::hardware::devices::clocks::LinuxClockDriver::Measurement::TimeSample ts;
+	std::cout.precision(5);
 	displays::TextDisplayStream tds(tmd);
-	std::chrono::high_resolution_clock::time_point start;
-	float dispTime = 32768.0f;  // in microseconds
-	// examples never delete these
-	boost::gregorian::date_facet *dateform =
-		new boost::gregorian::date_facet("%a %b %e, %Y");
-	// change how dates are output to the stream
-	tds.imbue(std::locale(tds.getloc(), dateform));
+	tds << "Power     max:" << std::setfill(' ') << std::right << std::fixed;
+	tds.precision(2);
+	double maxpow = 0;
+	double maxstep = 0;
+	int s = step;
+	// short delay to limit the effect of starting the program on the results
+	std::this_thread::sleep_for(std::chrono::milliseconds(128));
 	do {
-		// used to tell how long it took to write the time & date to the display
-		start = std::chrono::high_resolution_clock::now();
-		//tds << displays::move(0,0);
-		lcd.sampleTime(ts);
-		// put time in time_t; integer value is in seconds UTC
-		std::time_t tt = duds::time::planetary::earth->timeUtc(ts.value);
-		// compute microseconds after time in tt
-		int uS = (ts.value.time_since_epoch().count() / 1000) % 1000000;
-		// adavnce time ahead by 64ms plus an estimate of how long it takes to
-		// write out the time and date
-		int advT = uS + 64000 + (int)dispTime;
-		// advancing past the sampled second in tt?
-		if (advT > 1000000) {
-			// advance tt to match
-			++tt;
+		ina.sample();
+		duds::data::Quantity shnV = ina.shuntVoltage();
+		duds::data::Quantity busV = ina.busVoltage();
+		duds::data::Quantity busI = ina.busCurrent();
+		assert(busV.unit == duds::data::units::Volt);
+		assert(busI.unit == duds::data::units::Ampere);
+		assert(shnV.unit == duds::data::units::Volt);
+		duds::data::Quantity busP = busV * busI;
+		assert(busP.unit == duds::data::units::Watt);
+		if (busP.value > maxpow) {
+			maxpow = busP.value;
 		}
-		// request local time; GNU version includes current timezone
-		std::tm ltime;
-		localtime_r(&tt, &ltime);
-		// test for showing both sets of large digits
-		if (ltime.tm_min & 1) {
-			tds << displays::move(0,3);
-		} else {
-			tds << displays::move(0,0);
+		if (busP.value > maxstep) {
+			maxstep = busP.value;
 		}
-		// Get the date of the local time; Boost is better with the dates than
-		// C++11, but lacks local timezone. Looks like much of the Boost
-		// date_time library will be in C++20.
-		boost::gregorian::date date = boost::gregorian::date_from_tm(ltime);
-		// write out the date and timezone
-		tds << date << ' ' << std::setw(3) << ltime.tm_zone << displays::startLine;
-		// write out the time to a string stream
-		std::ostringstream oss;
-		char sep;
-		// blinking colon
-		if (ltime.tm_sec & 1) {
-			sep = '~';
-		} else {
-			sep = ':';
+		/*
+		std::cout << "Shunt: " << std::setw(valw) << shnV.value <<
+			"v   Bus: " << std::setw(valw) << busV.value << "v  " <<
+			std::setw(valw) << busI.value << "A  " << std::setw(valw) <<
+			busP.value <<
+			'W' << std::endl;
+			*/
+		if (!--s) {
+			s = step;
+			std::ostringstream oss;
+			oss.precision(2);
+			oss << std::setfill(' ') << std::setw(4) << std::right << std::fixed <<
+			maxstep << ';';  // 'W' is in array 2 past '9';
+			//std::cout << "\tDisp out: \"" << oss.str() << "\"" << std::endl;
+			WriteLarge(tmd, oss.str(), 7, 1);
+			tds << displays::move(tmd->columns() - 5, 0) << std::setw(4) <<
+			maxpow << 'W';
+			maxstep = 0;
 		}
-		oss << std::setfill(' ') << std::setw(2) << ltime.tm_hour << sep <<
-		std::setfill('0') << std::setw(2) << ltime.tm_min << sep <<
-		std::setw(2) << ltime.tm_sec;
-		// write out the time as 3x3 digits to the display
-		if (ltime.tm_min & 1) {  // test for showing both sets of large digits
-			WriteLarge(tmd, oss.str(), 0, 0);
-		} else {
-			WriteLarge(tmd, oss.str(), 0, 1);
-		}
-		// update exponential moving average of how long it takes to display the
-		// thime
-		auto timeTaken = std::chrono::high_resolution_clock::now() - start;
-		dispTime = dispTime * 0.8f + 0.2f *
-			(float)(std::chrono::duration_cast<std::chrono::microseconds>(
-				timeTaken
-			).count());
-		// time to wait for display update
-		std::chrono::microseconds delay(1000000 - uS - 64000 - (int)dispTime);
-		// sleep for at least 16ms
-		if (delay.count() > 16384) {
-			std::this_thread::sleep_for(delay);
-		} else {
-			std::this_thread::sleep_for(std::chrono::milliseconds(16));
-		}
+		std::this_thread::sleep_for(std::chrono::milliseconds(delay));
 	} while (!quit);
-	// I am curious how long this is. Answer is about 70ms.
-	std::cout << "Last moving average of time taken to display: " <<
-	dispTime << "uS" << std::endl;
 } catch (...) {
 	std::cerr << "Program failed in runtest(): " <<
 	boost::current_exception_diagnostic_information() << std::endl;
 }
 
-//typedef duds::general::IntegerBiDirIterator<unsigned int>  uintIterator;
-
 int main(int argc, char *argv[])
 try {
-	std::string confpath;
+	std::string i2cpath, confpath;
+	int delay, step;
 	{ // option parsing
 		boost::program_options::options_description optdesc(
-			"Options for clockLCD"
+			"Options for INA219 test"
 		);
 		optdesc.add_options()
 			( // help info
 				"help,h",
 				"Show this help message"
+			)
+			( // the I2C device file to use
+				"dev",
+				boost::program_options::value<std::string>(&i2cpath)->
+					default_value("/dev/i2c-1"),
+				"Specify SMBus device file"
+			) // the time between samples
+			(
+				"delay,d",
+				boost::program_options::value<int>(&delay)->
+					default_value(10),
+				"Time in milliseconds bewteen samples"
+			)
+			(
+				"step,s",
+				boost::program_options::value<int>(&step)->
+					default_value(100),
+				"The number of samples between LCD updates"
 			)
 			(
 				"conf,c",
@@ -422,12 +424,20 @@ try {
 		);
 		boost::program_options::notify(vm);
 		if (vm.count("help")) {
-			std::cout << "Show network addresses on attached text LCD\n" <<
-			argv[0] << " [options]\n" << optdesc << std::endl;
+			std::cout << "Test program for using an INA219 and displaying the "
+			"results to a HD44780\n" << argv[0] << " [options]\n" << optdesc
+			<< std::endl;
 			return 0;
 		}
 	}
-	duds::time::planetary::Earth::make();
+	std::unique_ptr<duds::hardware::interface::Smbus> smbus(
+		new duds::hardware::interface::linux::DevSmbus(
+			i2cpath,
+			0x40,
+			duds::hardware::interface::Smbus::NoPec()
+		)
+	);
+	duds::hardware::devices::instruments::INA219 meter(smbus, 0.1);
 	{
 		std::string binpath(argv[0]);
 		while (!binpath.empty() && (binpath.back() != '/')) {
@@ -449,7 +459,7 @@ try {
 	duds::hardware::interface::DigitalPinSet lcdset;
 	duds::hardware::interface::ChipSelect lcdsel;
 	pc.getPinSetAndSelect(lcdset, lcdsel, "lcd");
-	
+
 	/* old
 	//                       LCD pins:  4  5   6   7  RS   E
 	std::vector<unsigned int> gpios = { 5, 6, 19, 26, 20, 21 };
@@ -475,14 +485,12 @@ try {
 			lcdset, lcdsel, 20, 4
 		);
 	tmd->initialize();
-
-	std::thread doit(&runtest, std::ref(tmd));
-
+	std::thread doit(runtest, std::ref(meter), std::ref(tmd), delay, step);
 	std::cin.get();
 	quit = true;
 	doit.join();
 } catch (...) {
-	std::cerr << "Test failed in main():\n" <<
-	boost::current_exception_diagnostic_information() << std::endl;
+	std::cerr << "ERROR: " << boost::current_exception_diagnostic_information()
+	<< std::endl;
 	return 1;
 }

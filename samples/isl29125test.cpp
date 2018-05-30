@@ -59,13 +59,10 @@ try {
 		);
 	assert(!port->simultaneousOperations());  //  :-(
 	// select pin
-	std::unique_ptr<duds::hardware::interface::DigitalPinAccess> selacc =
-		port->access(5); // gpio 21
 	std::shared_ptr<duds::hardware::interface::ChipPinSelectManager> selmgr =
 		std::make_shared<duds::hardware::interface::ChipPinSelectManager>(
-			selacc
+			port->access(5) // gpio 21
 		);
-	assert(!selacc);
 	duds::hardware::interface::ChipSelect lcdsel(selmgr, 1);
 	// set for LCD data
 	gpios.clear();

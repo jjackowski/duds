@@ -44,6 +44,8 @@ constexpr DigitalPinConfig::Flags DigitalPinConfig::OutputImmaterial;
 constexpr DigitalPinConfig::Flags DigitalPinConfig::OutputNoChange;
 constexpr DigitalPinConfig::Flags DigitalPinConfig::OutputMask;
 constexpr DigitalPinConfig::Flags DigitalPinConfig::OperationNoChange;
+constexpr DigitalPinConfig::Flags DigitalPinConfig::InputState;
+constexpr DigitalPinConfig::Flags DigitalPinConfig::OutputState;
 
 void DigitalPinConfig::checkValidity() const {
 	int chk = 0;

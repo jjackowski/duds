@@ -15,7 +15,11 @@
 // I was hoping such things wouldn't be here, but I was wrong.
 #undef linux
 
-namespace duds { namespace hardware { namespace interface { namespace linux {
+namespace duds { namespace hardware { namespace interface {
+
+class PinConfiguration;
+
+namespace linux {
 
 /**
  * Used to add the ID number assigned to a pin by the Linux filesystem.
@@ -160,6 +164,15 @@ public:
 	 *                                 files with the direction set to output.
 	 */
 	SysFsPort(const std::vector<unsigned int> &ids, unsigned int firstid);
+	/**
+	 * Make a SysFsPort object according to the given configuration, and attach
+	 * to the configuration.
+	 * @throw PortDoesNotExistError
+	 */
+	static std::shared_ptr<SysFsPort> makeConfiguredPort(
+		PinConfiguration &pc,
+		const std::string &name = "default"
+	);
 	/* *
 	 * Make a SysFsPort object with the given pins.
 	 * @param ids  The key is the pin ID from the filesystem. The value is
@@ -171,7 +184,7 @@ public:
 	//SysFsPort();
 	#endif
 	virtual ~SysFsPort();
-	
+
 	// virtual functions required by Digitalport
 protected:
 	virtual void configurePort(

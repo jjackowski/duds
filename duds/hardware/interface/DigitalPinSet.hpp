@@ -39,10 +39,29 @@ public:
 	 *              be repeated is -1.
 	 * @throw       PinDoesNotExist  A given pin does not exist in the
 	 *                               given port.
+	 * @throw       DigitalPortDoesNotExistError
 	 */
 	DigitalPinSet(
 		const std::shared_ptr<DigitalPort> &port,
-		const std::vector<unsigned int> pvec
+		const std::vector<unsigned int> &pvec
+	);
+	/**
+	 * Constructs a DigitalPinSet object with the given port and pins.
+	 * @param port  A shared pointer to the DigitalPort object that handles
+	 *              the pins.
+	 * @param pvec  A vector with the global pin IDs for all the pins to
+	 *              represent. A value of -1 represents a gap, the lack  of a
+	 *              pin at the corresponding position. The only value that may
+	 *              be repeated is -1.
+	 *              The value is moved to an internal vector. If an exception
+	 *              is thrown, the value is moved back.
+	 * @throw       PinDoesNotExist  A given pin does not exist in the
+	 *                               given port.
+	 * @throw       DigitalPortDoesNotExistError
+	 */
+	DigitalPinSet(
+		const std::shared_ptr<DigitalPort> &port,
+		std::vector<unsigned int> &&pvec
 	);
 	/**
 	 * Obtains an access object for all the pins in this set.

@@ -13,10 +13,33 @@ namespace duds { namespace hardware { namespace interface {
 
 DigitalPinSet::DigitalPinSet(
 	const std::shared_ptr<DigitalPort> &port,
-	const std::vector<unsigned int> pvec
+	const std::vector<unsigned int> &pvec
 ) : DigitalPinBase(port), pinvec(pvec) {
-	// Have a port?
-	if (port) {
+	// no port?
+	if (!port) {
+		DUDS_THROW_EXCEPTION(DigitalPortDoesNotExistError());
+	}
+	// check for pin non-existence
+	std::vector<unsigned int>::const_iterator iter = pinvec.cbegin();
+	for (; iter != pinvec.cend(); ++iter) {
+		if ((*iter != -1) && !port->exists(*iter)) {
+			// bad pin
+			DUDS_THROW_EXCEPTION(PinDoesNotExist() <<
+				PinErrorId(*iter) << DigitalPortAffected(port.get())
+			);
+		}
+	}
+}
+
+DigitalPinSet::DigitalPinSet(
+	const std::shared_ptr<DigitalPort> &port,
+	std::vector<unsigned int> &&pvec
+) : DigitalPinBase(port), pinvec(std::move(pvec)) {
+	try {
+		// no port?
+		if (!port) {
+			DUDS_THROW_EXCEPTION(DigitalPortDoesNotExistError());
+		}
 		// check for pin non-existence
 		std::vector<unsigned int>::const_iterator iter = pinvec.cbegin();
 		for (; iter != pinvec.cend(); ++iter) {
@@ -27,6 +50,10 @@ DigitalPinSet::DigitalPinSet(
 				);
 			}
 		}
+	} catch (...) {
+		// restore the provided vector
+		pvec = std::move(pinvec);
+		throw;
 	}
 }
 
