@@ -11,6 +11,12 @@
 
 namespace duds { namespace hardware { namespace interface {
 
+ChipMultiplexerSelectManager::ChipMultiplexerSelectManager(
+	std::unique_ptr<DigitalPinSetAccess> &&acc
+) {
+	setAccess(std::move(acc));
+}
+
 bool ChipMultiplexerSelectManager::validChip(int chipId) const noexcept {
 	if (outacc) {
 		return (chipId > 0) && (chipId < (1 << outacc->size()));
@@ -19,7 +25,7 @@ bool ChipMultiplexerSelectManager::validChip(int chipId) const noexcept {
 }
 
 void ChipMultiplexerSelectManager::setAccess(
-	std::unique_ptr<DigitalPinSetAccess> &acc
+	std::unique_ptr<DigitalPinSetAccess> &&acc
 ) {
 	if (!acc || !acc->havePins()) {
 		DUDS_THROW_EXCEPTION(PinDoesNotExist());
@@ -82,4 +88,3 @@ void ChipMultiplexerSelectManager::deselect() {
 }
 
 } } }
-

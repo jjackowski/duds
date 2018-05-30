@@ -38,14 +38,6 @@ public:
 	ChipSelect() noexcept;
 	/**
 	 * Makes a ChipSelect to select @a chipId from @a csm.
-	 * @param csm     A pointer to the manager, or NULL to be non-configured.
-	 * @param chipId  A non-negative chip ID, or negative to be non-configured.
-	 * @throw ChipSelectInvalidChip  The manager reports that the given chip
-	 *                               ID is invalid.
-	 */
-	ChipSelect(ChipSelectManager *csm, int chipId);
-	/**
-	 * Makes a ChipSelect to select @a chipId from @a csm.
 	 * @param csm     A shared_ptr to the manager. It should be empty to be
 	 *                non-configured.
 	 * @param chipId  A non-negative chip ID, or negative to be non-configured.
@@ -53,6 +45,15 @@ public:
 	 *                               ID is invalid.
 	 */
 	ChipSelect(const std::shared_ptr<ChipSelectManager> &csm, int chipId);
+	/**
+	 * Makes a ChipSelect to select @a chipId from @a csm.
+	 * @param csm     A shared_ptr to the manager. It will be moved into this
+	 *                object.
+	 * @param chipId  A non-negative chip ID, or negative to be non-configured.
+	 * @throw ChipSelectInvalidChip  The manager reports that the given chip
+	 *                               ID is invalid. @a csm will be unchanged.
+	 */
+	ChipSelect(std::shared_ptr<ChipSelectManager> &&csm, int chipId);
 	/**
 	 * Obtains a ChipAccess object.
 	 * @post    The chip is not selected, but the resource is acquired.
@@ -109,12 +110,6 @@ public:
 	 * Returns true if this object was configured with a chip to select.
 	 */
 	bool configured() const {
-		return cid >= 0;
-	}
-	/**
-	 * Returns true if this object appears to be in a usable state.
-	 */
-	bool usable() const {
 		return mgr && (cid >= 0);
 	}
 	/**
@@ -122,7 +117,7 @@ public:
 	 * usable state.
 	 */
 	operator bool () const {
-		return usable();
+		return configured();
 	}
 	/**
 	 * Returns the chip ID of the chip this object will select.
@@ -130,6 +125,29 @@ public:
 	int chipId() const {
 		return cid;
 	}
+	/**
+	 * Changes the manager and chip to select.
+	 * @param csm     A shared_ptr to the manager. It should be empty to be
+	 *                non-configured.
+	 * @param chipId  A non-negative chip ID, or negative to be non-configured.
+	 * @throw ChipSelectInvalidChip  The manager reports that the given chip
+	 *                               ID is invalid.
+	 */
+	void modify(const std::shared_ptr<ChipSelectManager> &csm, int chipId);
+	/**
+	 * Changes the manager and chip to select.
+	 * @param csm     A shared_ptr to the manager. It will be moved into this
+	 *                object.
+	 * @param chipId  A non-negative chip ID, or negative to be non-configured.
+	 * @throw ChipSelectInvalidChip  The manager reports that the given chip
+	 *                               ID is invalid. @a csm will be unchanged.
+	 */
+	void modify(std::shared_ptr<ChipSelectManager> &&csm, int chipId);
+	/**
+	 * Returns the object to the default constructed state of not having a
+	 * manager or a valid chip ID.
+	 */
+	void reset() noexcept;
 };
 
 } } }

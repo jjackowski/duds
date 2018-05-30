@@ -15,34 +15,18 @@ namespace duds { namespace hardware { namespace interface {
 
 ChipSelect::ChipSelect() noexcept : cid(-1) { }
 
-ChipSelect::ChipSelect(ChipSelectManager *csm, int chipId) {
-	if (csm && (chipId >= 0)) {
-		std::shared_ptr<ChipSelectManager> m = csm->shared_from_this();
-		if (!m->validChip(cid = chipId)) {
-			DUDS_THROW_EXCEPTION(ChipSelectInvalidChip() <<
-				ChipSelectIdError(chipId));
-		}
-		mgr = std::move(m);
-	}
-	else {
-		cid = -1;
-	}
+ChipSelect::ChipSelect(
+	const std::shared_ptr<ChipSelectManager> &csm,
+	int chipId
+) {
+	modify(csm, chipId);
 }
 
 ChipSelect::ChipSelect(
-	const std::shared_ptr<ChipSelectManager> &csm,
-	int chipId) :
-cid(chipId) {
-	if (csm && (chipId >= 0)) {
-		if (!csm->validChip(cid = chipId)) {
-			DUDS_THROW_EXCEPTION(ChipSelectInvalidChip() <<
-				ChipSelectIdError(chipId));
-		}
-		mgr = csm;
-	}
-	else {
-		cid = -1;
-	}
+	std::shared_ptr<ChipSelectManager> &&csm,
+	int chipId
+) {
+	modify(std::move(csm), chipId);
 }
 
 std::unique_ptr<ChipAccess> ChipSelect::access() {
@@ -75,6 +59,39 @@ void ChipSelect::select(ChipAccess &acc) {
 			ChipSelectIdError(cid));
 	}
 	mgr->select(acc, cid);
+}
+
+void ChipSelect::modify(const std::shared_ptr<ChipSelectManager> &csm, int chipId) {
+	if (csm && (chipId >= 0)) {
+		if (!csm->validChip(chipId)) {
+			DUDS_THROW_EXCEPTION(ChipSelectInvalidChip() <<
+				ChipSelectIdError(chipId));
+		}
+		mgr = csm;
+		cid = chipId;
+	}
+	else {
+		reset();
+	}
+}
+
+void ChipSelect::modify(std::shared_ptr<ChipSelectManager> &&csm, int chipId) {
+	if (csm && (chipId >= 0)) {
+		if (!csm->validChip(chipId)) {
+			DUDS_THROW_EXCEPTION(ChipSelectInvalidChip() <<
+				ChipSelectIdError(chipId));
+		}
+		mgr = csm;
+		cid = chipId;
+	}
+	else {
+		reset();
+	}
+}
+
+void ChipSelect::reset() noexcept {
+	mgr.reset();
+	cid = -1;
 }
 
 } } }

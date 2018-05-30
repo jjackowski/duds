@@ -25,7 +25,7 @@ void ChipBinarySelectManager::deselect() {
 }
 
 void ChipBinarySelectManager::setSelectPin(
-	std::unique_ptr<DigitalPinAccess> &dpa,
+	std::unique_ptr<DigitalPinAccess> &&dpa,
 	int initSel
 ) {
 	if (!dpa) {
@@ -73,9 +73,9 @@ void ChipBinarySelectManager::setSelectPin(
 ChipBinarySelectManager::ChipBinarySelectManager() { }
 
 ChipBinarySelectManager::ChipBinarySelectManager(
-	std::unique_ptr<DigitalPinAccess> &dpa, int initSel
+	std::unique_ptr<DigitalPinAccess> &&dpa, int initSel
 ) {
-	setSelectPin(dpa, initSel);
+	setSelectPin(std::move(dpa), initSel);
 }
 
 ChipBinarySelectManager::~ChipBinarySelectManager() {

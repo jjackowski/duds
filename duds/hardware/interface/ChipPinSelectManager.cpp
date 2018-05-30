@@ -25,7 +25,7 @@ void ChipPinSelectManager::deselect() {
 }
 
 void ChipPinSelectManager::setSelectPin(
-	std::unique_ptr<DigitalPinAccess> &dpa,
+	std::unique_ptr<DigitalPinAccess> &&dpa,
 	SelectState selectState
 ) {
 	if (!dpa || !dpa->havePin()) {
@@ -60,10 +60,10 @@ void ChipPinSelectManager::setSelectPin(
 }
 
 ChipPinSelectManager::ChipPinSelectManager(
-	std::unique_ptr<DigitalPinAccess> &dpa,
+	std::unique_ptr<DigitalPinAccess> &&dpa,
 	SelectState selectState
 ) {
-	setSelectPin(dpa, selectState);
+	setSelectPin(std::move(dpa), selectState);
 }
 
 ChipPinSelectManager::~ChipPinSelectManager() {

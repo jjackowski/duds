@@ -71,10 +71,6 @@ public:
 	 * Constructs a ChipPinSelectManager with a pin to use for selection.
 	 * @param dpa          The access object for the select pin.
 	 * @param selectState  The pin state that selects the pin.
-	 * @pre   @a dpa is not empty; it has a valid DigitalPinAccess object.
-	 * @post  @a dpa is empty. The object it contained is used to set the pin
-	 *        state to output and to deselect the chip. Any exceptions from this
-	 *        are @b not caught.
 	 * @throw ChipSelectInUse  A ChipAccess object provided by this manager
 	 *                         currently exists.
 	 * @throw PinUnsupportedOperation  The given pin does not support output.
@@ -82,7 +78,7 @@ public:
 	 *                                 provide access to any pin.
 	 */
 	ChipPinSelectManager(
-		std::unique_ptr<DigitalPinAccess> &dpa,
+		std::unique_ptr<DigitalPinAccess> &&dpa,
 		SelectState selectState = SelectLow
 	);
 	/**
@@ -94,10 +90,6 @@ public:
 	 * Sets the DigitalPinAccess object to use for the chip select line.
 	 * @param dpa          The access object for the select pin.
 	 * @param selectState  The pin state that selects the pin.
-	 * @pre   @a dpa is not empty; it has a valid DigitalPinAccess object.
-	 * @post  @a dpa is empty. The object it contained is used to set the pin
-	 *        state to output and to deselect the chip. Any exceptions from this
-	 *        are @b not caught.
 	 * @throw ChipSelectInUse  A ChipAccess object provided by this manager
 	 *                         currently exists.
 	 * @throw PinUnsupportedOperation  The given pin does not support output.
@@ -105,7 +97,7 @@ public:
 	 *                                 provide access to any pin.
 	 */
 	void setSelectPin(
-		std::unique_ptr<DigitalPinAccess> &dpa,
+		std::unique_ptr<DigitalPinAccess> &&dpa,
 		SelectState selectState = SelectLow
 	);
 };

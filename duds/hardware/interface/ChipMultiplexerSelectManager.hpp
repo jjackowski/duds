@@ -35,7 +35,20 @@ public:
 	/**
 	 * Default constructor.
 	 */
-	ChipMultiplexerSelectManager();
+	ChipMultiplexerSelectManager() = default;
+	/**
+	 * Constructs the manager and sets the access object used to output the
+	 * number of the chip to select.
+	 * @param acc  The access object to use. It must provide access to at least
+	 *             one pin.
+	 * @throw PinDoesNotExist    Either the access object does not have
+	 *                           any pins, or @a acc is empty. If thrown, no
+	 *                           changes to this chip select manager will be
+	 *                           made.
+	 * @throw DigitalPinCannotInputError  One of the provided pins is incapable
+	 *                                    of output.
+	 */
+	ChipMultiplexerSelectManager(std::unique_ptr<DigitalPinSetAccess> &&acc);
 	/**
 	 * Valid chip IDs are greater than zero and can be represented in the same
 	 * number of bits as there are pins provided to the multiplexer.
@@ -47,9 +60,6 @@ public:
 	 * @pre        No chip is currently selected by this manager.
 	 * @param acc  The access object to use. It must provide access to at least
 	 *             one pin.
-	 * @post       If successful, @a acc will be empty. The object will be
-	 *             moved into the member @a outacc. If an exception is thrown,
-	 *             @a acc will remain unchanged.
 	 * @throw ChipSelectInUse    A ChipAccess object provided by this
 	 *                           manager currently exists.
 	 * @throw PinDoesNotExist    Either the access object does not have
@@ -59,7 +69,7 @@ public:
 	 * @throw DigitalPinCannotInputError  One of the provided pins is incapable
 	 *                                    of output.
 	 */
-	void setAccess(std::unique_ptr<DigitalPinSetAccess> &acc);
+	void setAccess(std::unique_ptr<DigitalPinSetAccess> &&acc);
 	/**
 	 * Returns the access object that was used by this chip select manager.
 	 * @pre       No chip is currently selected by this manager.
@@ -72,4 +82,3 @@ public:
 };
 
 } } }
-
