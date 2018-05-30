@@ -10,12 +10,12 @@ Import('*')
 
 targets = [
 	# include all source files in the DUDS library using a very simple method
-	#env.SharedLibrary('duds', Glob('*.cpp') + Glob('*/*.cpp') +
-	#	Glob('*/*/*.cpp') + Glob('*/*/linux/*cpp') + Glob('*/devices/*/*cpp') ),
+	env.SharedLibrary('duds', Glob('*.cpp') + Glob('*/*.cpp') +
+		Glob('*/*/*.cpp') + Glob('*/*/linux/*cpp') + Glob('*/devices/*/*cpp') ),
 	# changed to static temporarily to ease the use of eclipse programs and
 	# delay learning more about software istalls
-	env.StaticLibrary('duds', Glob('*.cpp') + Glob('*/*.cpp') +
-		Glob('*/*/*.cpp') + Glob('*/*/linux/*cpp') + Glob('*/devices/*/*cpp') )
+	#env.StaticLibrary('duds', Glob('*.cpp') + Glob('*/*.cpp') +
+	#	Glob('*/*/*.cpp') + Glob('*/*/linux/*cpp') + Glob('*/devices/*/*cpp') )
 		# + Glob('*/*/*/*.cpp') +  Glob('*/*/*/*/*.cpp'))
 		# above changed to just have linux only to help build new code & fix
 		# up old code; do change it back

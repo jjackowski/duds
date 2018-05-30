@@ -16,7 +16,10 @@ buildopts = Variables('localbuildconfig.py')
 buildopts.Add(BoolVariable('debug', 'Produce a debugging build', True))
 buildopts.Add('CCDBGFLAGS',
 	'The flags to use with the compiler for debugging builds.',
-	'-g -fno-common -Og')
+	'-g -fno-common -O0')
+	#'-g -fno-common -Og')
+	# -Og should be good for debugging, but too often it prevents important
+	# data structures from being inspected by gdb
 buildopts.Add('CCOPTFLAGS',
 	'The flags to use with the compiler for optimized non-debugging builds.',
 	'-O2 -ffunction-sections -fno-common -ffast-math')
