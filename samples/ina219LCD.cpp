@@ -88,14 +88,20 @@ char DigitPart(int ud, int x, int y, char d);
 
 /**
  * Produces the value to store for DigitPart to retrieve. The character values
- * for a single digit are packed into a single std::uint32_t. This macro
- * results in the value for a part of a 3x3 digit that is ready to be OR'd
- * together with the other digit parts.
+ * for a single digit are packed into a single std::uint32_t. The result is
+ * a value for a part of a 3x3 digit that is ready to be OR'd together with
+ * the other digit parts.
  * @param x  The X coordinate into the digit. It must be between 0 and 2.
  * @param y  The Y coordinate into the digit. It must be between 0 and 2.
  * @param c  The character value to store. It must be between 0 and 7.
  */
-#define DIGSEG(x, y, c)  (((c) << ((x) * 3)) << ((y) * 9))
+constexpr std::uint32_t DigSeg(
+	std::uint32_t x,
+	std::uint32_t y,
+	std::uint32_t c
+) {
+	return (c << (x * 3)) << (y * 9);
+}
 
 /**
  * An array of font data used to write large 3x3 digits to a text display
@@ -104,105 +110,105 @@ char DigitPart(int ud, int x, int y, char d);
 const std::uint32_t DigitFont[2][12] = {
 	{ // shifted upward and to the left
 		// 0
-		DIGSEG(0, 0, UpLeft)  | DIGSEG(1, 0, BarUp)   | DIGSEG(2, 0, BarLeft) |
-		DIGSEG(0, 1, BarLeft) | DIGSEG(1, 1, Clear)   | DIGSEG(2, 1, BarLeft) |
-		DIGSEG(0, 2, BarUp)   | DIGSEG(1, 2, BarUp)   | DIGSEG(2, 2, BarCorn),
+		DigSeg(0, 0, UpLeft)  | DigSeg(1, 0, BarUp)   | DigSeg(2, 0, BarLeft) |
+		DigSeg(0, 1, BarLeft) | DigSeg(1, 1, Clear)   | DigSeg(2, 1, BarLeft) |
+		DigSeg(0, 2, BarUp)   | DigSeg(1, 2, BarUp)   | DigSeg(2, 2, BarCorn),
 		// 1
-		DIGSEG(0, 0, Clear)   | DIGSEG(1, 0, BarLeft) | DIGSEG(2, 0, Clear) |
-		DIGSEG(0, 1, Clear)   | DIGSEG(1, 1, BarLeft) | DIGSEG(2, 1, Clear) |
-		DIGSEG(0, 2, Clear)   | DIGSEG(1, 2, BarCorn) | DIGSEG(2, 2, Clear),
+		DigSeg(0, 0, Clear)   | DigSeg(1, 0, BarLeft) | DigSeg(2, 0, Clear) |
+		DigSeg(0, 1, Clear)   | DigSeg(1, 1, BarLeft) | DigSeg(2, 1, Clear) |
+		DigSeg(0, 2, Clear)   | DigSeg(1, 2, BarCorn) | DigSeg(2, 2, Clear),
 		// 2
-		DIGSEG(0, 0, BarUp)   | DIGSEG(1, 0, BarUp)   | DIGSEG(2, 0, BarLeft) |
-		DIGSEG(0, 1, UpLeft)  | DIGSEG(1, 1, BarUp)   | DIGSEG(2, 1, BarCorn) |
-		DIGSEG(0, 2, BarUp)   | DIGSEG(1, 2, BarUp)   | DIGSEG(2, 2, BarCorn),
+		DigSeg(0, 0, BarUp)   | DigSeg(1, 0, BarUp)   | DigSeg(2, 0, BarLeft) |
+		DigSeg(0, 1, UpLeft)  | DigSeg(1, 1, BarUp)   | DigSeg(2, 1, BarCorn) |
+		DigSeg(0, 2, BarUp)   | DigSeg(1, 2, BarUp)   | DigSeg(2, 2, BarCorn),
 		// 3
-		DIGSEG(0, 0, BarUp)   | DIGSEG(1, 0, BarUp)   | DIGSEG(2, 0, BarLeft) |
-		DIGSEG(0, 1, BarUp)   | DIGSEG(1, 1, BarUp)   | DIGSEG(2, 1, BarLeft) |
-		DIGSEG(0, 2, BarUp)   | DIGSEG(1, 2, BarUp)   | DIGSEG(2, 2, BarCorn),
+		DigSeg(0, 0, BarUp)   | DigSeg(1, 0, BarUp)   | DigSeg(2, 0, BarLeft) |
+		DigSeg(0, 1, BarUp)   | DigSeg(1, 1, BarUp)   | DigSeg(2, 1, BarLeft) |
+		DigSeg(0, 2, BarUp)   | DigSeg(1, 2, BarUp)   | DigSeg(2, 2, BarCorn),
 		// 4
-		DIGSEG(0, 0, BarLeft) | DIGSEG(1, 0, Clear)   | DIGSEG(2, 0, BarLeft) |
-		DIGSEG(0, 1, BarUp)   | DIGSEG(1, 1, BarUp)   | DIGSEG(2, 1, BarLeft) |
-		DIGSEG(0, 2, Clear)   | DIGSEG(1, 2, Clear)   | DIGSEG(2, 2, BarCorn),
+		DigSeg(0, 0, BarLeft) | DigSeg(1, 0, Clear)   | DigSeg(2, 0, BarLeft) |
+		DigSeg(0, 1, BarUp)   | DigSeg(1, 1, BarUp)   | DigSeg(2, 1, BarLeft) |
+		DigSeg(0, 2, Clear)   | DigSeg(1, 2, Clear)   | DigSeg(2, 2, BarCorn),
 		// 5
-		DIGSEG(0, 0, UpLeft)  | DIGSEG(1, 0, BarUp)   | DIGSEG(2, 0, BarCorn) |
-		DIGSEG(0, 1, BarUp)   | DIGSEG(1, 1, BarUp)   | DIGSEG(2, 1, BarLeft) |
-		DIGSEG(0, 2, BarUp)   | DIGSEG(1, 2, BarUp)   | DIGSEG(2, 2, BarCorn),
+		DigSeg(0, 0, UpLeft)  | DigSeg(1, 0, BarUp)   | DigSeg(2, 0, BarCorn) |
+		DigSeg(0, 1, BarUp)   | DigSeg(1, 1, BarUp)   | DigSeg(2, 1, BarLeft) |
+		DigSeg(0, 2, BarUp)   | DigSeg(1, 2, BarUp)   | DigSeg(2, 2, BarCorn),
 		// 6
-		DIGSEG(0, 0, UpLeft)  | DIGSEG(1, 0, BarUp)   | DIGSEG(2, 0, BarCorn) |
-		DIGSEG(0, 1, UpLeft)  | DIGSEG(1, 1, BarUp)   | DIGSEG(2, 1, BarLeft) |
-		DIGSEG(0, 2, BarUp)   | DIGSEG(1, 2, BarUp)   | DIGSEG(2, 2, BarCorn),
+		DigSeg(0, 0, UpLeft)  | DigSeg(1, 0, BarUp)   | DigSeg(2, 0, BarCorn) |
+		DigSeg(0, 1, UpLeft)  | DigSeg(1, 1, BarUp)   | DigSeg(2, 1, BarLeft) |
+		DigSeg(0, 2, BarUp)   | DigSeg(1, 2, BarUp)   | DigSeg(2, 2, BarCorn),
 		// 7
-		DIGSEG(0, 0, BarUp)   | DIGSEG(1, 0, BarUp)   | DIGSEG(2, 0, BarLeft) |
-		DIGSEG(0, 1, Clear)   | DIGSEG(1, 1, Clear)   | DIGSEG(2, 1, BarLeft) |
-		DIGSEG(0, 2, Clear)   | DIGSEG(1, 2, Clear)   | DIGSEG(2, 2, BarCorn),
+		DigSeg(0, 0, BarUp)   | DigSeg(1, 0, BarUp)   | DigSeg(2, 0, BarLeft) |
+		DigSeg(0, 1, Clear)   | DigSeg(1, 1, Clear)   | DigSeg(2, 1, BarLeft) |
+		DigSeg(0, 2, Clear)   | DigSeg(1, 2, Clear)   | DigSeg(2, 2, BarCorn),
 		// 8
-		DIGSEG(0, 0, UpLeft)  | DIGSEG(1, 0, BarUp)   | DIGSEG(2, 0, BarLeft) |
-		DIGSEG(0, 1, UpLeft)  | DIGSEG(1, 1, BarUp)   | DIGSEG(2, 1, BarLeft) |
-		DIGSEG(0, 2, BarUp)   | DIGSEG(1, 2, BarUp)   | DIGSEG(2, 2, BarCorn),
+		DigSeg(0, 0, UpLeft)  | DigSeg(1, 0, BarUp)   | DigSeg(2, 0, BarLeft) |
+		DigSeg(0, 1, UpLeft)  | DigSeg(1, 1, BarUp)   | DigSeg(2, 1, BarLeft) |
+		DigSeg(0, 2, BarUp)   | DigSeg(1, 2, BarUp)   | DigSeg(2, 2, BarCorn),
 		// 9
-		DIGSEG(0, 0, UpLeft)  | DIGSEG(1, 0, BarUp)   | DIGSEG(2, 0, BarLeft) |
-		DIGSEG(0, 1, BarUp)   | DIGSEG(1, 1, BarUp)   | DIGSEG(2, 1, BarLeft) |
-		DIGSEG(0, 2, BarUp)   | DIGSEG(1, 2, BarUp)   | DIGSEG(2, 2, BarCorn),
+		DigSeg(0, 0, UpLeft)  | DigSeg(1, 0, BarUp)   | DigSeg(2, 0, BarLeft) |
+		DigSeg(0, 1, BarUp)   | DigSeg(1, 1, BarUp)   | DigSeg(2, 1, BarLeft) |
+		DigSeg(0, 2, BarUp)   | DigSeg(1, 2, BarUp)   | DigSeg(2, 2, BarCorn),
 		// could extend for hex
 		// V
-		DIGSEG(0, 0, BarLeft) | DIGSEG(1, 0, Clear)   | DIGSEG(2, 0, BarLeft) |
-		DIGSEG(0, 1, BarLeft) | DIGSEG(1, 1, UpLeft)  | DIGSEG(2, 1, BarCorn) |
-		DIGSEG(0, 2, BarUp)   | DIGSEG(1, 2, BarCorn) | DIGSEG(2, 2, Clear),
+		DigSeg(0, 0, BarLeft) | DigSeg(1, 0, Clear)   | DigSeg(2, 0, BarLeft) |
+		DigSeg(0, 1, BarLeft) | DigSeg(1, 1, UpLeft)  | DigSeg(2, 1, BarCorn) |
+		DigSeg(0, 2, BarUp)   | DigSeg(1, 2, BarCorn) | DigSeg(2, 2, Clear),
 		// W
-		DIGSEG(0, 0, BarLeft) | DIGSEG(1, 0, Clear)   | DIGSEG(2, 0, BarLeft) |
-		DIGSEG(0, 1, BarLeft) | DIGSEG(1, 1, BarLeft) | DIGSEG(2, 1, BarLeft) |
-		DIGSEG(0, 2, BarUp)   | DIGSEG(1, 2, BarUp)   | DIGSEG(2, 2, BarCorn)
+		DigSeg(0, 0, BarLeft) | DigSeg(1, 0, Clear)   | DigSeg(2, 0, BarLeft) |
+		DigSeg(0, 1, BarLeft) | DigSeg(1, 1, BarLeft) | DigSeg(2, 1, BarLeft) |
+		DigSeg(0, 2, BarUp)   | DigSeg(1, 2, BarUp)   | DigSeg(2, 2, BarCorn)
 	},
 	{ // shifted downward and to the left
 		// 0
-		DIGSEG(0, 0, BarDown) | DIGSEG(1, 0, BarDown) | DIGSEG(2, 0, BarCorn) |
-		DIGSEG(0, 1, BarLeft) | DIGSEG(1, 1, Clear)   | DIGSEG(2, 1, BarLeft) |
-		DIGSEG(0, 2, DownLeft)| DIGSEG(1, 2, BarDown) | DIGSEG(2, 2, BarLeft),
+		DigSeg(0, 0, BarDown) | DigSeg(1, 0, BarDown) | DigSeg(2, 0, BarCorn) |
+		DigSeg(0, 1, BarLeft) | DigSeg(1, 1, Clear)   | DigSeg(2, 1, BarLeft) |
+		DigSeg(0, 2, DownLeft)| DigSeg(1, 2, BarDown) | DigSeg(2, 2, BarLeft),
 		// 1
-		DIGSEG(0, 0, Clear)   | DIGSEG(1, 0, BarCorn) | DIGSEG(2, 0, Clear) |
-		DIGSEG(0, 1, Clear)   | DIGSEG(1, 1, BarLeft) | DIGSEG(2, 1, Clear) |
-		DIGSEG(0, 2, Clear)   | DIGSEG(1, 2, BarLeft) | DIGSEG(2, 2, Clear),
+		DigSeg(0, 0, Clear)   | DigSeg(1, 0, BarCorn) | DigSeg(2, 0, Clear) |
+		DigSeg(0, 1, Clear)   | DigSeg(1, 1, BarLeft) | DigSeg(2, 1, Clear) |
+		DigSeg(0, 2, Clear)   | DigSeg(1, 2, BarLeft) | DigSeg(2, 2, Clear),
 		// 2
-		DIGSEG(0, 0, BarDown) | DIGSEG(1, 0, BarDown) | DIGSEG(2, 0, BarCorn) |
-		DIGSEG(0, 1, BarDown) | DIGSEG(1, 1, BarDown) | DIGSEG(2, 1, BarLeft) |
-		DIGSEG(0, 2, DownLeft)| DIGSEG(1, 2, BarDown) | DIGSEG(2, 2, BarCorn),
+		DigSeg(0, 0, BarDown) | DigSeg(1, 0, BarDown) | DigSeg(2, 0, BarCorn) |
+		DigSeg(0, 1, BarDown) | DigSeg(1, 1, BarDown) | DigSeg(2, 1, BarLeft) |
+		DigSeg(0, 2, DownLeft)| DigSeg(1, 2, BarDown) | DigSeg(2, 2, BarCorn),
 		// 3
-		DIGSEG(0, 0, BarDown) | DIGSEG(1, 0, BarDown) | DIGSEG(2, 0, BarCorn) |
-		DIGSEG(0, 1, BarDown) | DIGSEG(1, 1, BarDown) | DIGSEG(2, 1, BarLeft) |
-		DIGSEG(0, 2, BarDown) | DIGSEG(1, 2, BarDown) | DIGSEG(2, 2, BarLeft),
+		DigSeg(0, 0, BarDown) | DigSeg(1, 0, BarDown) | DigSeg(2, 0, BarCorn) |
+		DigSeg(0, 1, BarDown) | DigSeg(1, 1, BarDown) | DigSeg(2, 1, BarLeft) |
+		DigSeg(0, 2, BarDown) | DigSeg(1, 2, BarDown) | DigSeg(2, 2, BarLeft),
 		// 4
-		DIGSEG(0, 0, BarCorn) | DIGSEG(1, 0, Clear)   | DIGSEG(2, 0, BarCorn) |
-		DIGSEG(0, 1, DownLeft)| DIGSEG(1, 1, BarDown) | DIGSEG(2, 1, BarLeft) |
-		DIGSEG(0, 2, Clear)   | DIGSEG(1, 2, Clear)   | DIGSEG(2, 2, BarLeft),
+		DigSeg(0, 0, BarCorn) | DigSeg(1, 0, Clear)   | DigSeg(2, 0, BarCorn) |
+		DigSeg(0, 1, DownLeft)| DigSeg(1, 1, BarDown) | DigSeg(2, 1, BarLeft) |
+		DigSeg(0, 2, Clear)   | DigSeg(1, 2, Clear)   | DigSeg(2, 2, BarLeft),
 		// 5
-		DIGSEG(0, 0, BarDown) | DIGSEG(1, 0, BarDown) | DIGSEG(2, 0, BarCorn) |
-		DIGSEG(0, 1, DownLeft)| DIGSEG(1, 1, BarDown) | DIGSEG(2, 1, BarCorn) |
-		DIGSEG(0, 2, BarDown) | DIGSEG(1, 2, BarDown) | DIGSEG(2, 2, BarLeft),
+		DigSeg(0, 0, BarDown) | DigSeg(1, 0, BarDown) | DigSeg(2, 0, BarCorn) |
+		DigSeg(0, 1, DownLeft)| DigSeg(1, 1, BarDown) | DigSeg(2, 1, BarCorn) |
+		DigSeg(0, 2, BarDown) | DigSeg(1, 2, BarDown) | DigSeg(2, 2, BarLeft),
 		// 6
-		DIGSEG(0, 0, BarDown) | DIGSEG(1, 0, BarDown) | DIGSEG(2, 0, BarCorn) |
-		DIGSEG(0, 1, DownLeft)| DIGSEG(1, 1, BarDown) | DIGSEG(2, 1, BarCorn) |
-		DIGSEG(0, 2, DownLeft)| DIGSEG(1, 2, BarDown) | DIGSEG(2, 2, BarLeft),
+		DigSeg(0, 0, BarDown) | DigSeg(1, 0, BarDown) | DigSeg(2, 0, BarCorn) |
+		DigSeg(0, 1, DownLeft)| DigSeg(1, 1, BarDown) | DigSeg(2, 1, BarCorn) |
+		DigSeg(0, 2, DownLeft)| DigSeg(1, 2, BarDown) | DigSeg(2, 2, BarLeft),
 		// 7
-		DIGSEG(0, 0, BarDown) | DIGSEG(1, 0, BarDown) | DIGSEG(2, 0, BarCorn) |
-		DIGSEG(0, 1, Clear)   | DIGSEG(1, 1, Clear)   | DIGSEG(2, 1, BarLeft) |
-		DIGSEG(0, 2, Clear)   | DIGSEG(1, 2, Clear)   | DIGSEG(2, 2, BarLeft),
+		DigSeg(0, 0, BarDown) | DigSeg(1, 0, BarDown) | DigSeg(2, 0, BarCorn) |
+		DigSeg(0, 1, Clear)   | DigSeg(1, 1, Clear)   | DigSeg(2, 1, BarLeft) |
+		DigSeg(0, 2, Clear)   | DigSeg(1, 2, Clear)   | DigSeg(2, 2, BarLeft),
 		// 8
-		DIGSEG(0, 0, BarDown) | DIGSEG(1, 0, BarDown) | DIGSEG(2, 0, BarCorn) |
-		DIGSEG(0, 1, DownLeft)| DIGSEG(1, 1, BarDown) | DIGSEG(2, 1, BarLeft) |
-		DIGSEG(0, 2, DownLeft)| DIGSEG(1, 2, BarDown) | DIGSEG(2, 2, BarLeft),
+		DigSeg(0, 0, BarDown) | DigSeg(1, 0, BarDown) | DigSeg(2, 0, BarCorn) |
+		DigSeg(0, 1, DownLeft)| DigSeg(1, 1, BarDown) | DigSeg(2, 1, BarLeft) |
+		DigSeg(0, 2, DownLeft)| DigSeg(1, 2, BarDown) | DigSeg(2, 2, BarLeft),
 		// 9
-		DIGSEG(0, 0, BarDown) | DIGSEG(1, 0, BarDown) | DIGSEG(2, 0, BarCorn) |
-		DIGSEG(0, 1, DownLeft)| DIGSEG(1, 1, BarDown) | DIGSEG(2, 1, BarLeft) |
-		DIGSEG(0, 2, BarDown) | DIGSEG(1, 2, BarDown) | DIGSEG(2, 2, BarLeft),
+		DigSeg(0, 0, BarDown) | DigSeg(1, 0, BarDown) | DigSeg(2, 0, BarCorn) |
+		DigSeg(0, 1, DownLeft)| DigSeg(1, 1, BarDown) | DigSeg(2, 1, BarLeft) |
+		DigSeg(0, 2, BarDown) | DigSeg(1, 2, BarDown) | DigSeg(2, 2, BarLeft),
 		// could extend for hex
 		// V
-		DIGSEG(0, 0, BarLeft) | DIGSEG(1, 0, Clear)   | DIGSEG(2, 0, BarLeft) |
-		DIGSEG(0, 1, BarLeft) | DIGSEG(1, 1, BarDown) | DIGSEG(2, 1, BarCorn) |
-		DIGSEG(0, 2, DownLeft)| DIGSEG(1, 2, BarLeft) | DIGSEG(2, 2, Clear),
+		DigSeg(0, 0, BarLeft) | DigSeg(1, 0, Clear)   | DigSeg(2, 0, BarLeft) |
+		DigSeg(0, 1, BarLeft) | DigSeg(1, 1, BarDown) | DigSeg(2, 1, BarCorn) |
+		DigSeg(0, 2, DownLeft)| DigSeg(1, 2, BarLeft) | DigSeg(2, 2, Clear),
 		// W
-		DIGSEG(0, 0, BarCorn) | DIGSEG(1, 0, Clear)   | DIGSEG(2, 0, BarCorn) |
-		DIGSEG(0, 1, BarLeft) | DIGSEG(1, 1, BarCorn) | DIGSEG(2, 1, BarLeft) |
-		DIGSEG(0, 2, DownLeft)| DIGSEG(1, 2, DownLeft)| DIGSEG(2, 2, BarLeft)
+		DigSeg(0, 0, BarCorn) | DigSeg(1, 0, Clear)   | DigSeg(2, 0, BarCorn) |
+		DigSeg(0, 1, BarLeft) | DigSeg(1, 1, BarCorn) | DigSeg(2, 1, BarLeft) |
+		DigSeg(0, 2, DownLeft)| DigSeg(1, 2, DownLeft)| DigSeg(2, 2, BarLeft)
 	},
 };
 

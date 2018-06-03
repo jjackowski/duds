@@ -54,7 +54,7 @@ class NetInterface {
 		// copy in network interface name
 		std::copy_n(
 			ifname.begin(),
-			std::min(ifname.size(), sizeof(req.ifr_name)),
+			std::min(ifname.size() + 1, sizeof(req.ifr_name)),
 			req.ifr_name
 		);
 		// ask for network name

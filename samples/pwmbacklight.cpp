@@ -117,7 +117,7 @@ try {
 	}
 	meter.init(gain, integration);
 	duds::hardware::interface::linux::SysPwm pwm(0, 0);
-	pwm.frequency(10000);
+	pwm.frequency(400);
 	pwm.dutyZero();
 	pwm.disable();
 	std::this_thread::sleep_for(std::chrono::milliseconds(2));
