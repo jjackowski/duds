@@ -203,9 +203,7 @@ void PinConfiguration::Port::parse(
 				);
 			}
 			// keep track of the last seen global ID
-			if (seqinspect->gid > last) {
-				last = seqinspect->gid;
-			}
+			last = seqinspect->gid;
 		}
 		// attempt to assign global ID if not specified
 		else if (seqinspect->gid == PinConfiguration::Pin::NoIdSpecified) {
@@ -338,7 +336,7 @@ PinConfiguration::SelMgr::SelMgr(
 				// the subtree is required
 				DUDS_THROW_EXCEPTION(SelectNoPinsError());
 			}
-			// pinconf->pinGlobalId
+			// inspect the pins subtree
 			for (auto const &pinitem : piter->second) {
 				// get the item's value
 				std::string pn = pinitem.second.get_value<std::string>();
@@ -732,6 +730,22 @@ const ChipSelect &PinConfiguration::getSelect(
 		);
 	}
 	return siter->second.sel;
+}
+
+DigitalPin PinConfiguration::getPin(
+	const std::string &pinName
+) const {
+	const PinConfiguration::Pins::index<index_name>::type &nidx =
+		allpins.get<index_name>();
+	PinConfiguration::Pins::index<index_name>::type::iterator niter =
+		nidx.find(pinName);
+	if (niter == nidx.end()) {
+		DUDS_THROW_EXCEPTION(PinBadIdError() << PinBadId(pinName));
+	}
+	if (!niter->parent || !niter->parent->dport) {
+		DUDS_THROW_EXCEPTION(PortDoesNotExistError() << PinBadId(pinName));
+	}
+	return DigitalPin(niter->parent->dport, niter->gid);
 }
 
 

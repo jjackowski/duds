@@ -13,8 +13,8 @@
 #include <boost/multi_index/sequenced_index.hpp>
 #include <boost/multi_index/hashed_index.hpp>
 #include <boost/multi_index/member.hpp>
-#include <duds/general/Errors.hpp>
 #include <duds/hardware/interface/DigitalPinSet.hpp>
+#include <duds/hardware/interface/DigitalPin.hpp>
 #include <duds/hardware/interface/ChipSelect.hpp>
 #include <unordered_map>
 #include <set>
@@ -138,17 +138,18 @@ typedef boost::error_info<struct Info_SetName, std::string>
 	SetName;
 
 /**
- * Parses configuration data for DigitalPort, DigitalPinSet, ChipSelectManager,
- * and ChipSelect objects. The configuration data can be inspected without
- * creating any of the objects to be configured, and thus without accessing
- * the hardware affected by the configuration. Separate from this object,
- * a DigitalPort must be created. The port to configure must be attached to
- * this configuration by a call to attachPort(). This will create all the other
- * objects listed in the configuration. Those objects can be found by querying
- * for their name.
+ * Parses configuration data for DigitalPort, DigitalPin, DigitalPinSet,
+ * ChipSelectManager, and ChipSelect objects. The configuration data can
+ * be inspected without creating any of the objects to be configured, and
+ * thus without accessing the hardware affected by the configuration.
+ * Separate from this object, a DigitalPort must be created. The port to
+ * configure must be attached to this configuration by a call to attachPort().
+ * This will create all the other objects listed in the configuration.
+ * Those objects can be found by querying for their name.
  *
  * Intended usage follows this order:
- * -# Parse a configuration file with boost::property_tree.
+ * -# Parse a configuration file with
+ *    [boost::property_tree](https://www.boost.org/doc/libs/1_67_0/doc/html/property_tree.html).
  * -# Construct a PinConfiguration and give it a subtree from the parsed
  *    configuration.
  * -# Make a suitable DigitalPort object.
@@ -157,6 +158,11 @@ typedef boost::error_info<struct Info_SetName, std::string>
  * -# Query the PinConfiguration for the needed objects by name.
  * -# The PinConfiguration may be destroyed when it no longer needs to be
  *    queried.
+ *
+ * [Boost property tree](https://www.boost.org/doc/libs/1_67_0/doc/html/property_tree.html)
+ * is used to parse and represnt data prior to passing that data to this object.
+ * See the @ref DUDStoolsPinConf page for detailed documentation on what is
+ * expected of the property tree.
  *
  * This object is not thread-safe during parsing. When parsing is not underway,
  * all queries are thread-safe.
@@ -462,6 +468,12 @@ public:
 	/**
 	 * Constructs and parses the pin configuration that starts at the given
 	 * subtree.
+	 *
+	 * [Boost property tree](https://www.boost.org/doc/libs/1_67_0/doc/html/property_tree.html)
+	 * is used to parse and represnt data prior to passing that data to this
+	 * object. See the @ref DUDStoolsPinConf page for detailed documentation
+	 * on what is expected of the property tree.
+	 *
 	 * @param pt  The property tree node that is the parent of all the pin
 	 *            configuration nodes. No boost::property_tree::ptree objects
 	 *            are retained in this class.
@@ -481,6 +493,12 @@ public:
 	PinConfiguration(const boost::property_tree::ptree &pt);
 	/**
 	 * Parses the pin configuration that starts at the given subtree.
+	 *
+	 * [Boost property tree](https://www.boost.org/doc/libs/1_67_0/doc/html/property_tree.html)
+	 * is used to parse and represnt data prior to passing that data to this
+	 * function. See the @ref DUDStoolsPinConf page for detailed documentation
+	 * on what is expected of the property tree.
+	 *
 	 * @param pt  The property tree node that is the parent of all the pin
 	 *            configuration nodes. No boost::property_tree::ptree objects
 	 *            are retained in this class.
@@ -596,7 +614,7 @@ public:
 	/**
 	 * Gets the DigitalPinSet object named in the configuration.
 	 * @pre  A configuration has been successfully parsed, and the DigitalPort
-	 *       object(s) needed for the set have been attached.
+	 *       object needed for the set has been attached.
 	 * @param setName  The name given to the pin set in the configuration.
 	 * @throw SetDoesNotExistError
 	 */
@@ -604,11 +622,24 @@ public:
 	/**
 	 * Gets the ChipSelect object named in the configuration.
 	 * @pre  A configuration has been successfully parsed, and the DigitalPort
-	 *       object(s) needed for the set have been attached.
+	 *       object needed for the set has been attached.
 	 * @param selName  The name given to the chip select in the configuration.
 	 * @throw SelectDoesNotExistError
 	 */
 	const ChipSelect &getSelect(const std::string &selName) const;
+	/**
+	 * Makes a DigitalPin object for the named pin in the configuration.
+	 * @pre  A configuration has been successfully parsed, and the DigitalPort
+	 *       object that handles the pin has been attached.
+	 * @param pinName  The name of the pin in the configuration.
+	 * @throw PinBadIdError          The configuration does not define a pin
+	 *                               with the given name.
+	 * @throw PortDoesNotExistError  The port that supplies the pin has not
+	 *                               been attached to this configuration.
+	 * @throw PinDoesNotExist        The attched DigitalPort object claims to
+	 *                               not have the pin.
+	 */
+	DigitalPin getPin(const std::string &pinName) const;
 	/**
 	 * True if the named chip select has been found in the already parsed
 	 * configuration. This is used inside the parsing code, but can be used

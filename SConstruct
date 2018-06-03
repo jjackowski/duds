@@ -306,36 +306,37 @@ optenv.AppendUnique(
 #####
 # library build
 
-envs = [ dbgenv, optenv ]
-#trgs = [ [ ], [ ] ]
-
-for env in envs:
-	# add in optional libraries
-	for mac, lib in optionalLibs.iteritems():
-		env.Append(
-			#CPPDEFINES = ('HAVE_' + mac, 1),
-			LIBS = lib
-		)
-	# build library
-	libs = SConscript('duds/SConscript', exports = 'env', duplicate=0,
-		variant_dir = env.subst('bin/${PSYS}-${PARCH}-${BUILDTYPE}/lib'))
-	env.Clean(libs, env.subst('bin/${PSYS}-${PARCH}-${BUILDTYPE}/lib'))
-	Alias('libs-' + env['BUILDTYPE'], libs)
-	# sample programs
-	samps = SConscript('samples/SConscript', exports = 'env libs tools', duplicate=0,
-		variant_dir = env.subst('bin/${PSYS}-${PARCH}-${BUILDTYPE}/samples'))
-	Alias('samples-' + env['BUILDTYPE'], samps)
-	# test programs
-	if havetestlib: #'LIBBOOST_TEST' in optionalLibs:
-		tests = SConscript('tests/SConscript', exports = 'env libs tools', duplicate=0,
-			variant_dir = env.subst('bin/${PSYS}-${PARCH}-${BUILDTYPE}/tests'))
-		Alias('tests-' + env['BUILDTYPE'], tests)
-
-Alias('libs', 'libs-dbg')
-Alias('samples', 'samples-dbg')
-if havetestlib:
-	Alias('tests', 'tests-dbg')
-Default('libs-dbg')
+if not GetOption('help'):
+	envs = [ dbgenv, optenv ]
+	#trgs = [ [ ], [ ] ]
+	
+	for env in envs:
+		# add in optional libraries
+		for mac, lib in optionalLibs.iteritems():
+			env.Append(
+				#CPPDEFINES = ('HAVE_' + mac, 1),
+				LIBS = lib
+			)
+		# build library
+		libs = SConscript('duds/SConscript', exports = 'env', duplicate=0,
+			variant_dir = env.subst('bin/${PSYS}-${PARCH}-${BUILDTYPE}/lib'))
+		env.Clean(libs, env.subst('bin/${PSYS}-${PARCH}-${BUILDTYPE}/lib'))
+		Alias('libs-' + env['BUILDTYPE'], libs)
+		# sample programs
+		samps = SConscript('samples/SConscript', exports = 'env libs tools', duplicate=0,
+			variant_dir = env.subst('bin/${PSYS}-${PARCH}-${BUILDTYPE}/samples'))
+		Alias('samples-' + env['BUILDTYPE'], samps)
+		# test programs
+		if havetestlib: #'LIBBOOST_TEST' in optionalLibs:
+			tests = SConscript('tests/SConscript', exports = 'env libs tools', duplicate=0,
+				variant_dir = env.subst('bin/${PSYS}-${PARCH}-${BUILDTYPE}/tests'))
+			Alias('tests-' + env['BUILDTYPE'], tests)
+	
+	Alias('libs', 'libs-dbg')
+	Alias('samples', 'samples-dbg')
+	if havetestlib:
+		Alias('tests', 'tests-dbg')
+	Default('libs-dbg')
 
 #####
 # setup help text for the build options
@@ -346,5 +347,6 @@ if GetOption('help'):
 	print '  libs        - Same as libs-dbg'
 	print '  samples-dbg - All sample programs; debugging build.'
 	print '  samples     - Same as samples-dbg.'
-	print '  tests-dbg   - All unit test programs; debugging build.'
-	print '  tests       - Same as tests-dbg.'
+	if havetestlib:
+		print '  tests-dbg   - All unit test programs; debugging build.'
+		print '  tests       - Same as tests-dbg.'

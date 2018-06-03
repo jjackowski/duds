@@ -42,14 +42,14 @@ The image is terminated with a closing curly brace ('}'). The text following it 
 The same image twice, first with few comments, then heavily commented.
 
 @code
-/* * (space between asterisks so Doxygen will let you see this) 
+/* * (space between asterisks so Doxygen will let you see this)
  * Tiny wireless LAN icon for use with HD44780 type text displays.
  */
 WirelessLAN
 5, 8
 	01234 {
 0	 // space in front of comment
-1	 
+1
 2	XXX
 3	   X
 4	XX  X
@@ -57,15 +57,15 @@ WirelessLAN
 6	X X X
 }
 
-/* 
+/*
  * This comment will be found in C++ output files. The double-slash
  * comments will not.
  */
 WirelessLAN_commented  // the name, must be unique in the source file
 5, 8                   // width then height
-    Completely ignored text. Better style-wise to use comments anyway.
-    // No space before the start of the next comment, or it will be the
-    // first row of the image.
+    Completely ignored text. Better style-wise to use comments.
+    // No space before the start of the comment after '{', or it will
+    // be the first row of the image.
 	01234 {// the number on this line is ignored, '{' starts image data
 0	 // tab then space between '0' and '/'; only the space is important
 1	 // need the space after tab, or line is ignored, boo!
@@ -85,5 +85,275 @@ Except for the width and height, the numbers in the code segment will be ignored
 The C++ output is a const char array for each image with the same name as the image. It can be used as a header file, but must be included by only one source file. Changing the output to generate a source file and a header file could fix this. The output does not include any namespaces, which would be nice to support, but a namespace can be put around an include statement as a workaround.
 
 The image archive file has the advantage of not requiring a new build to try out a change to an image. A @ref duds::hardware::devices::displays::BppImageArchive "BppImageArchive" object can read in the file and provide shared pointers to the images. Lookups are done by the image name.
+
+
+@section DUDStoolsPinConf  Digital Pin Configuration
+
+@note  This really isn't a tool, but it should be documented separate from the implementing class and it isn't yet clear to me where else to put it.
+
+The @ref duds::hardware::interface::PinConfiguration "PinConfiguration" class parses configuration data that has been put into a [Boost property tree](https://www.boost.org/doc/libs/1_67_0/doc/html/property_tree.html). The property tree library can parse text files in several forms. This documentation will show the files using the INFO form.
+
+Once the parsing is complete, the data is available for inspection from data structures inside the PinConfiguration object. Before configured objects are created, a @ref duds::hardware::interface::DigitalPort "DigitalPort" object must be constructed and @ref duds::hardware::interface::PinConfiguration::attachPort() "attached" to the PinConfiguration. After that, pre-made and configured @ref duds::hardware::interface::DigitalPin "DigitalPin", @ref duds::hardware::interface::DigitalPinSet "DigitalPinSet", @ref duds::hardware::interface::ChipSelect "ChipSelect", and @ref duds::hardware::interface::ChipSelectManager "ChipSelectManager" objects are available through the PinConfiguration by name look-up.
+
+@subsection DUDStoolsPinConfTreeCode  Property tree code
+
+The PinConfiguration class has a @ref duds::hardware::interface::PinConfiguration::PinConfiguration(const boost::property_tree::ptree &) "constructor" and a @ref duds::hardware::interface::PinConfiguration::parse(const boost::property_tree::ptree &) "parse()" function that take a boost::property_tree::ptree object. This is the root of the tree that PinConfiguration will inspect. This allows the code to chose the boost::property_tree parser to use, and means that the parsed file may include items that PinConfiguration will not parse.
+
+The following program demonstrates how to parse the property tree. It finds a sub-tree under the key "pins" and passes it to PinConfiguration. Other keys could exist at the root level for program-specific use; PinConfiguration will not see these items. The program will report errors in the configuration data.
+
+@code
+#include <duds/hardware/interface/PinConfiguration.hpp>
+#include <boost/property_tree/info_parser.hpp>
+#include <boost/exception/diagnostic_information.hpp>
+#include <iostream>
+
+int main()
+try {
+	// will hold the root of the parsed file
+	boost::property_tree::ptree tree;
+	// parse a file into the property tree
+	boost::property_tree::read_info("pins.conf", tree);
+	// find the subtree at the key "pins"
+	boost::property_tree::ptree &pinconf = tree.get_child("pins");
+	// use the subtree as the pin configuration
+	duds::hardware::interface::PinConfiguration pc(pinconf);
+	// place some useful code here
+	return 0;
+} catch (...) {
+	std::cerr << "Program failed in main():\n" <<
+	boost::current_exception_diagnostic_information() << std::endl;
+	return 1;
+}
+@endcode
+
+@subsection DUDStoolsPinConfTreeData  Property tree file data
+
+The above program will parse files like this one, which configures pins for use with a @ref duds::hardware::devices::displays::HD44780 "HD44780" display (long lines my wrap less than nicely):
+
+@code
+pins {
+	ports {
+		default {
+			idoffset 0  ; this is the default; may be omitted
+			5 {
+				lcdData4
+			}
+			6 {
+				lcdData5
+			}
+			16 {
+				lcdData6
+			}
+			20 {
+				lcdData7
+			}
+			26 {
+				lcdText ; often labeled RS
+			}
+			1 {
+				lcdSelectPin
+			}
+		}
+	}
+	selects {
+		lcdSelMgr Pin {
+			pin lcdSelectPin
+			name lcdSelect
+		}
+	}
+	sets {
+		lcd {
+			pins {
+				lcdData4
+				lcdData5
+				lcdData6
+				lcdData7
+				lcdText
+			}
+			select lcdSelect
+		}
+	}
+}
+@endcode
+
+The semicolon character is used to mark the rest of the line as a comment.
+
+@subsubsection DUDStoolsPinConfTreeDataPort Ports
+
+The ports subtree describes the requirements for @ref duds::hardware::interface::DigitalPort "DigitalPort" objects. The section currently caters to @ref duds::hardware::interface::linux::SysFsPort "SysFsPort", so it may change in the future to better support other implementations. PinConfiguration does not instantiate DigitalPort objects to avoid limiting what implementations may be used, so this subtree may describe less than what is available, but only what is described may be used in the rest of the configuration tree.
+
+The port description starts with a name, which is "default" in this example. Any string may be used; whitespace can be included if the string is quoted. The name of each port must be unique among all the ports in the configuration, but may be the same as a name used for something other than a port.
+
+An optional type string may follow the name of the port; this is not shown in the example. The value will be available in the @ref duds::hardware::interface::PinConfiguration::Port::typeval "typeval" field of the port's configuration. This is intended to provide a hint as to what DigitalPort implementation should be used. Most programs likely will not need this, and may ignore the value. If the value is not specified in the configuration, the typeval field will contain an empty string.
+
+Following the port name and optional type value is an opening curly brace that starts the subtree detailing the individual pins that the port is expected to have or not have. It may be in one of three forms. The example shows the form that is best to use in the general case.
+
+@code
+5 {           ; port specific pin ID
+	lcdData4  ; arbitrary pin name
+}
+@endcode
+
+The above form (same as the more complete example) starts with a port specific ID number for the pin. Which pin is selected is entirely dependent upon the DigitalPort implementation and the underlying hardware. The global pin ID, used by the software using the DUDS library, is not specified explicitly here. That ID will be assigned after completing parsing the port's configuration.
+
+The assigned global IDs will start at the port's ID offset, which will be zero if not specified. After that, the global ID will be the next unused ID that follows the last used global ID in the sequence order of the configuration.
+
+Inside the curly braces is an optional arbitrary name assigned to the pin for the purpose of making configuring the pins easier. A pin's names must be unique across all pins in the configuration. A PinConfiguration can be queried for DigitalPins and their configuration by name. Elsewhere in the configuration tree, a pin may be referenced by either its global ID, or by its name. Using a name makes it easier to rearrange the pin configuration, which can make it easier to support multiple hardware configurations or changing configurations during development.
+
+The pin name may be omitted by not giving the subtree with the name. The example above would lack pin names, but otherwise be identical, if the port was specified like this:
+
+@code
+default {
+	5
+	6
+	16
+	20
+	26
+	1
+}
+@endcode
+
+Because other parts of the example use pin names, those parts would also need modification to make a valid configuration. Please don't. The pain of the additional typing is less than the pain of dealing with all the global pin IDs.
+
+There are cases when a global pin ID needs to be specified, such as a case when a global ID needs to be skipped. If skipped over, no requirement is made of whatever pin may or may not be assigned that global ID by the DigitalPort. The pins may be specified in any order in the configuration, including a random ordering of global IDs. If some pins lack an explicit global ID, they will be assigned the next unused ID that follows the last used global ID in the sequence order of the configuration.
+
+This snippet shows the first four pins from the above complete example defined in a different sequence order, but with the same IDs, by specifying the global ID:
+
+@code
+2 16 {        ; global pin ID followed by port specific pin ID
+	lcdData6  ; arbitrary pin name
+}
+0 5 {
+	lcdData4
+}
+6 {           ; assigned global ID 1
+	lcdData5
+}
+20 {          ; assigned global ID 3
+	lcdData7
+}
+@endcode
+
+A global ID may also be required to not have a pin. This is different from not mentioning a global ID in the configuration because the lack of a mention makes no requirement. If the pin's port specific ID is given as "none", then attempting to use a DigitalPort that supplies a pin at that ID will cause a @ref duds::hardware::interface::DigitalPortHasPinError "DigitalPortHasPinError" exception to be thrown.
+
+@code
+6 none    ; global pin ID that must lack a usable pin
+@endcode
+
+@subsubsection DUDStoolsPinConfTreeDataSel Selects
+
+The selects subtree is used to define @ref duds::hardware::interface::ChipSelectManager "ChipSelectManager" objects, along with @ref duds::hardware::interface::ChipSelect "ChipSelect" objects in a parent-child style relationship.
+
+@code
+selects {
+	lcdSelMgr Pin {
+		pin lcdSelectPin
+		name lcdSelect
+		select low  ; optional, low is the default
+	}
+}
+@endcode
+
+The above snippet describes a chip select manager and one chip select. It starts with a name for the manager. The name must be unique across all select managers in the configuration. It is followed by the type of the manager. Different types require different data in their sub-trees. The types are:
+  - Pin: @ref duds::hardware::interface::ChipPinSelectManager "ChipPinSelectManager"
+  - Multiplexer: @ref duds::hardware::interface::ChipMultiplexerSelectManager "ChipMultiplexerSelectManager"
+  - Binary: @ref duds::hardware::interface::ChipBinarySelectManager "ChipBinarySelectManager"
+
+@par Pin manager
+This manager uses a single pin to select and deselect exactly one device. The example configuration sets the pin to use with the key "pin", and names the resulting ChipSelect object with the "name" key. The "select" key configures the logic state used to select the device. It can be given a value of 0 or "low", 1 or "high". The default is low.
+
+@par Multiplexer manager
+This manager selects a chip by outputting a number in binary using several pins. The number zero is used for no selection. It takes a list of pins to use in order from the least to most significant bit in the "pins" key. All pins must come from the same port. The "selects" key has list of chip selects with the key as the unique name, and the value with the number to output to select the corresponding device
+
+@code
+pins {
+	ports {
+		default {
+			17 {
+				bit0
+			}
+			27 {
+				bit1
+			}
+			22 {
+				bit2
+			}
+		}
+	}
+	selects {
+		muxSel Multiplexer {
+			pins { ; configures output pins to use
+				bit0  ; LSb
+				bit1  ; sequence, not name, determines bit position
+				bit2  ; MSb
+			}
+			selects { ; configuration for ChipSelect objects
+				; name-value pairs; value is number to output; must be > 0
+				SelectA  2
+				SelectB  3
+				SelectC  7
+			}
+		}
+	}
+}
+@endcode
+
+@par Binary manager
+This manager selects one of two devices by toggling the output state of a single pin. This means that a device is selected at all times. Not all devices will work properly with this manager. The pin to use is configured with the "pin" key. The "high" and "low" keys name a chip select for the high and low logic states, respectively. The "init" key selects the initial logic state, and the output state to use when the software isn't attempting to select either device. The values 0 or "low", and 1 or "high" are accepted.
+
+@code
+pins {
+	ports {
+		default {
+			25 {
+				binSelPin
+			}
+		}
+	}
+	selects {
+		binSel Binary {
+			pin  binSelPin
+			low  SelectLow
+			high SelectHigh
+			init low
+		}
+	}
+}
+@endcode
+
+@subsubsection DUDStoolsPinConfTreeDataSets Pin sets
+
+@ref duds::hardware::interface::DigitalPinSet "DigitalPinSet" objects are used to atomically claim multiple pins for use. While DigitalPinSets do not have a chip select, the configuration optionally allows a pin set to be associated with a select. This assists working with hardware that uses multiple control lines or a parallel data bus along with a chip select. Use the @ref duds::hardware::interface::PinConfiguration::getPinSetAndSelect() "getPinSetAndSelect()" function to look up a pin set and its associated chip select.
+
+@code
+sets {
+	lcd {
+		pins {
+			lcdData4  ; LSb, set position 0
+			lcdData5
+			lcdData6
+			lcdData7
+			lcdText   ; MSb, set position 4
+		}
+		select lcdSelect  ; optional; may be omitted
+	}
+}
+@endcode
+
+Each pin set is given an arbitrary name that must be unique among all sets in the configuration. In the example, the name is "lcd". Inside the set's sub-tree is the key "pins". It contains the list of pins that the set will operate upon. All pins must come from the same port. The optional key "select" names a chip select object that will be associated with the set.
+
+If a set lacks an associated chip select, then it may optionally be written in an abbreviated form. This form lacks the "pins" key, and has the list of pins as a direct child of the set:
+
+@code
+sets {
+	lcd {
+		lcdData4  ; LSb, set position 0
+		lcdData5
+		lcdData6
+		lcdData7
+		lcdText   ; MSb, set position 4
+	}
+}
+@endcode
 
 */

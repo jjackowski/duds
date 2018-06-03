@@ -103,6 +103,7 @@ Supported devices are listed on the @ref SupDev page.
   - To keep a configuration saved, set variables with the same name of the configuration options in Python syntax in localbuildconfig.py in the same directory as SConstruct.
 - gcc 6.4.x, 5.4.x
   - gcc 7.x.y and newer are untested
+  - Any output from gcc 7.1 and newer will not link correctly with any output from earlier versions of gcc. There are *huge* warnings about this with gcc 6.4.0.
 - [Boost](http://www.boost.org/) version 1.62 or newer
   - Boost libraries used:
     - Date_time
@@ -125,6 +126,9 @@ Supported devices are listed on the @ref SupDev page.
     - Parallel builds work best with 1GB RAM per job and some swap space.
       - Using "-j4" on a Raspberry Pi 2 or 3 isn't helpful. Using "-j2" needs swap space, but may be faster than "-j1", the default.
     - Builds tested mostly on armv6 and amd64.
+    - Time building with command "scons samples":
+      - Raspberry Pi Zero: about 75 minutes
+      - Raspberry Pi 3 Model B: about 18 minutes; faster with -j2.
   - Windows
     - Not yet
     - VS2015 might be lacking some C++11 support needed by DUDS, and older versions will be lacking.
