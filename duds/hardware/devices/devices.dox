@@ -42,7 +42,7 @@ None yet.
 
 @subsection SupDevDispText  Text-only
 
-- @ref duds::hardware::devices::displays::HD44780 "HD44780" and compatibles
+- @ref duds::hardware::devices::displays::HD44780 "HD44780" and compatibles (SPLC780D)
 
 @section SupDevInst  Instruments
 

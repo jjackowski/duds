@@ -25,7 +25,7 @@ namespace displays {
 /**
  * A fairly generic interface to a character based display that lacks color.
  *
- * This class is @b not thread-safe because using text displays directly from
+ * This class is @b not thread-safe because using a text display directly from
  * multiple threads makes little sense.
  *
  * @author  Jeff Jackowski

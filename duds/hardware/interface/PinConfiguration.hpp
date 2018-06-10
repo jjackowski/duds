@@ -25,7 +25,10 @@ class ChipSelectManager;
 class DigitalPort;
 
 /**
- * Base for all errors directly thrown by PinConfiguration.
+ * Base for all errors directly thrown by PinConfiguration. These errors
+ * should all be related to the configuration itself, or to the operation of
+ * PinConfiguration, and not to issues related to DigitalPort and other objects
+ * used by PinConfiguration.
  */
 struct PinConfigurationError : virtual std::exception, virtual boost::exception { };
 /**

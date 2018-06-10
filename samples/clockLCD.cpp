@@ -34,7 +34,7 @@
 duds::hardware::devices::displays::BppImageArchive imgArc;
 
 /**
- * A character in string for large output is not in the large font.
+ * A character in the string for large output is not in the large font.
  */
 struct TextLargeCharUnsupported :
 duds::hardware::devices::displays::TextDisplayError { };
@@ -46,7 +46,7 @@ duds::hardware::devices::displays::TextDisplayError { };
  * @param str   The string to write. The values supported are:
  *              - '0' through '9': writes 3x3 representation of the digit.
  *              - ':': writes 1x3 colon
- *              - '.': writes a dot, suitable for decimal point
+ *              - '.': writes 1x3 a dot, suitable for decimal point
  *              - space: leaves 3x3 blank spot
  *              - '~': leaves 1x3 blank spot
  * @param c     The leftmost column where the string will start.

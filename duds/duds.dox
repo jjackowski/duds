@@ -103,7 +103,7 @@ Supported devices are listed on the @ref SupDev page.
   - To keep a configuration saved, set variables with the same name of the configuration options in Python syntax in localbuildconfig.py in the same directory as SConstruct.
 - gcc 6.4.x, 5.4.x
   - gcc 7.x.y and newer are untested
-  - Any output from gcc 7.1 and newer will not link correctly with any output from earlier versions of gcc. There are *huge* warnings about this with gcc 6.4.0.
+  - Any output for ARM processors from gcc 7.1 and newer will not link correctly with any output from earlier versions of gcc. There are @b huge warnings about this with gcc 6.4.0.
 - [Boost](http://www.boost.org/) version 1.62 or newer
   - Boost libraries used:
     - Date_time
@@ -111,6 +111,7 @@ Supported devices are listed on the @ref SupDev page.
     - Filesystem (optional)
     - Multiprecision (header only)
     - Program options
+    - Property tree (header only)
     - Serialization
     - Signals2 (header only)
     - Stacktrace (optional; header + dl library; Boost 1.65.1 or newer)

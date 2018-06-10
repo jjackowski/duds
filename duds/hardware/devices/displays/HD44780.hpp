@@ -17,13 +17,14 @@ namespace duds { namespace hardware { namespace devices { namespace displays {
 class BppImage;
 
 /**
- * Implements text output to HD44780 and compatible displays. These displays
- * feature text output to a matrix that is typically 5 pixels wide by 8 tall
- * per character. The most common displays are LCDs, but some compatible
- * controllers are found on VFDs. They have a parallel interface with three
- * control lines. Only the 4-bit wide data interface is supported, and only
- * sending data to the display is supported. This limits the number of digital
- * I/O lines required.
+ * Implements text output to HD44780 and compatible display controllers,
+ * such as the SPLC780D.
+ * These displays feature text output to a matrix that is typically 5
+ * pixels wide by 8 tall per character. The most common displays are LCDs,
+ * but some compatible controllers are found on VFDs. They have a parallel
+ * interface with three control lines. Only the 4-bit wide data interface
+ * is supported, and only sending data to the display is supported. This
+ * limits the number of digital I/O lines required.
  *
  * This class is @b not thread-safe because using it directly from multiple
  * threads makes little sense.
@@ -272,7 +273,7 @@ public:
 	 * specified and changed at will. Whenever a glyph is changed, any spot
 	 * on the display showing that character value will also change in
 	 * appearance.
-	 * 
+	 *
 	 * The display uses character values 0 through 7 and 8 through 15 to
 	 * reference the glyphs. The 4th bit is ignored, so values 0 and 8 will
 	 * show the same glyph. The parameter @a idx works the same way.
