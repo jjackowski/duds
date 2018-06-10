@@ -75,11 +75,14 @@ BOOST_AUTO_TEST_CASE(BppImage_ZebraHorizInc) {
 	BPPN::BppImage::ConstPixel cp = img->cbegin();
 	BOOST_CHECK(cp != BPPN::BppImage::EndPixel());
 	BPPN::BppImage::ConstPixel cend = img->cend();
+	BOOST_CHECK_EQUAL(*cp, true);
 	for (int y = 0; y < 8; ++y) {
 		for (int x = 0; x < 8; ++cp, ++x) {
 			BOOST_CHECK(cp != cend);
 			BOOST_CHECK_EQUAL(cp.x(), x);
 			BOOST_CHECK_EQUAL(cp.y(), y);
+			BOOST_CHECK_EQUAL(cp.absX(), x);
+			BOOST_CHECK_EQUAL(cp.absY(), y);
 			if (y & 1) {
 				BOOST_CHECK_EQUAL((x & 1), cp.state());
 				BOOST_CHECK_EQUAL((x & 1), *cp);
@@ -102,6 +105,8 @@ BOOST_AUTO_TEST_CASE(BppImage_ZebraHorizDec) {
 			BOOST_CHECK(cp != cend);
 			BOOST_CHECK_EQUAL(cp.x(), x);
 			BOOST_CHECK_EQUAL(cp.y(), y);
+			BOOST_CHECK_EQUAL(cp.absX(), x);
+			BOOST_CHECK_EQUAL(cp.absY(), y);
 			if (y & 1) {
 				BOOST_CHECK_EQUAL((x & 1), cp.state());
 				BOOST_CHECK_EQUAL((x & 1), *cp);
@@ -124,6 +129,8 @@ BOOST_AUTO_TEST_CASE(BppImage_ZebraVertInc) {
 			BOOST_CHECK(cp != cend);
 			BOOST_CHECK_EQUAL(cp.x(), x);
 			BOOST_CHECK_EQUAL(cp.y(), y);
+			BOOST_CHECK_EQUAL(cp.absX(), x);
+			BOOST_CHECK_EQUAL(cp.absY(), y);
 			if (y & 1) {
 				BOOST_CHECK_EQUAL((x & 1), cp.state());
 				BOOST_CHECK_EQUAL((x & 1), *cp);
@@ -146,12 +153,79 @@ BOOST_AUTO_TEST_CASE(BppImage_ZebraVertDec) {
 			BOOST_CHECK(cp != cend);
 			BOOST_CHECK_EQUAL(cp.x(), x);
 			BOOST_CHECK_EQUAL(cp.y(), y);
+			BOOST_CHECK_EQUAL(cp.absX(), x);
+			BOOST_CHECK_EQUAL(cp.absY(), y);
 			if (y & 1) {
 				BOOST_CHECK_EQUAL((x & 1), cp.state());
 				BOOST_CHECK_EQUAL((x & 1), *cp);
 			} else {
 				BOOST_CHECK_EQUAL(!(x & 1), cp.state());
 				BOOST_CHECK_EQUAL(!(x & 1), *cp);
+			}
+		}
+	}
+	BOOST_CHECK(cp == cend);
+	BOOST_CHECK(cp == BPPN::BppImage::EndPixel());
+}
+
+BOOST_AUTO_TEST_CASE(BppImage_SubZebraHorizInc) {
+	BPPN::BppImage::ConstPixel cp = img->cbegin(
+		BPPN::ImageLocation(2, 1),
+		BPPN::ImageDimensions(3, 4)
+	);
+	BOOST_CHECK_EQUAL(cp.location(), BPPN::ImageLocation(0, 0));
+	BOOST_CHECK_EQUAL(cp.absLocation(), BPPN::ImageLocation(2, 1));
+	BOOST_CHECK_EQUAL(cp.origin(), BPPN::ImageLocation(2, 1));
+	BOOST_CHECK_EQUAL(cp.dimensions(), BPPN::ImageDimensions(3, 4));
+	BOOST_CHECK(cp != BPPN::BppImage::EndPixel());
+	BPPN::BppImage::ConstPixel cend = img->cend();
+	BOOST_CHECK_EQUAL(*cp, false);
+	for (int y = 0; y < 4; ++y) {
+		for (int x = 0; x < 3; ++cp, ++x) {
+			BOOST_CHECK(cp != cend);
+			BOOST_CHECK_EQUAL(cp.x(), x);
+			BOOST_CHECK_EQUAL(cp.y(), y);
+			BOOST_CHECK_EQUAL(cp.absX(), x + 2);
+			BOOST_CHECK_EQUAL(cp.absY(), y + 1);
+			if (y & 1) {
+				BOOST_CHECK_EQUAL(!(x & 1), cp.state());
+				BOOST_CHECK_EQUAL(!(x & 1), *cp);
+			} else {
+				BOOST_CHECK_EQUAL((x & 1), cp.state());
+				BOOST_CHECK_EQUAL((x & 1), *cp);
+			}
+		}
+	}
+	BOOST_CHECK(cp == cend);
+	BOOST_CHECK(cp == BPPN::BppImage::EndPixel());
+}
+
+BOOST_AUTO_TEST_CASE(BppImage_SubZebraVertInc) {
+	BPPN::BppImage::ConstPixel cp = img->cbegin(
+		BPPN::ImageLocation(2, 1),
+		BPPN::ImageDimensions(3, 4),
+		BPPN::BppImage::VertInc
+	);
+	BOOST_CHECK_EQUAL(cp.location(), BPPN::ImageLocation(2, 0));
+	BOOST_CHECK_EQUAL(cp.absLocation(), BPPN::ImageLocation(4, 1));
+	BOOST_CHECK_EQUAL(cp.origin(), BPPN::ImageLocation(2, 1));
+	BOOST_CHECK_EQUAL(cp.dimensions(), BPPN::ImageDimensions(3, 4));
+	BOOST_CHECK(cp != BPPN::BppImage::EndPixel());
+	BPPN::BppImage::ConstPixel cend = img->cend();
+	BOOST_CHECK_EQUAL(*cp, false);
+	for (int x = 2; x >= 0; --x) {
+		for (int y = 0; y < 4; ++cp, ++y) {
+			BOOST_CHECK(cp != cend);
+			BOOST_CHECK_EQUAL(cp.x(), x);
+			BOOST_CHECK_EQUAL(cp.y(), y);
+			BOOST_CHECK_EQUAL(cp.absX(), x + 2);
+			BOOST_CHECK_EQUAL(cp.absY(), y + 1);
+			if (y & 1) {
+				BOOST_CHECK_EQUAL(!(x & 1), cp.state());
+				BOOST_CHECK_EQUAL(!(x & 1), *cp);
+			} else {
+				BOOST_CHECK_EQUAL((x & 1), cp.state());
+				BOOST_CHECK_EQUAL((x & 1), *cp);
 			}
 		}
 	}

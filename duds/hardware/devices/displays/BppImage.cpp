@@ -175,6 +175,29 @@ void BppImage::bufferSpot(
 	addr = &(img[blkPerLine * il.y + (il.x / (sizeof(PixelBlock) * 8))]);
 }
 
+ImageLocation BppImage::startPosition(Direction dir) const {
+	return startPosition(ImageLocation(0, 0), dim, dir);
+}
+
+ImageLocation BppImage::startPosition(
+	const ImageLocation &origin,
+	const ImageDimensions &size,
+	Direction dir
+) {
+	switch (dir) {
+		case HorizInc:
+			return ImageLocation(origin.x, origin.y);
+		case VertInc:
+			return ImageLocation(origin.x + size.w - 1, origin.y);
+		case HorizDec:
+			return ImageLocation(origin.x + size.w - 1, origin.y + size.h - 1);
+		case VertDec:
+			return ImageLocation(origin.x, origin.y + size.h - 1);
+		default:
+			DUDS_THROW_EXCEPTION(ImageError());
+	}
+}
+
 BppImage::Pixel BppImage::pixel(const ImageLocation &il, Direction dir) {
 	if (dim.withinBounds(il)) {
 		return Pixel(this, il, dir);
@@ -211,18 +234,18 @@ BppImage::Pixel BppImage::begin(Direction dir) {
 	if (img.empty()) {
 		DUDS_THROW_EXCEPTION(ImageZeroSizeError());
 	}
-	switch (dir) {
-		case HorizInc:
-			return Pixel(this, 0, 0, dir);
-		case VertInc:
-			return Pixel(this, dim.w - 1, 0, dir);
-		case HorizDec:
-			return Pixel(this, dim.w - 1, dim.h - 1, dir);
-		case VertDec:
-			return Pixel(this, 0, dim.h - 1, dir);
-		default:
-			DUDS_THROW_EXCEPTION(ImageError());
+	return Pixel(this, startPosition(dir), dir);
+}
+
+BppImage::Pixel BppImage::begin(
+	const ImageLocation &origin,
+	const ImageDimensions &size,
+	Direction dir
+) {
+	if (img.empty()) {
+		DUDS_THROW_EXCEPTION(ImageZeroSizeError());
 	}
+	return Pixel(this, origin, size, startPosition(dir), dir);
 }
 
 BppImage::ConstPixel BppImage::cbegin() const {
@@ -236,20 +259,19 @@ BppImage::ConstPixel BppImage::cbegin(Direction dir) const {
 	if (img.empty()) {
 		DUDS_THROW_EXCEPTION(ImageZeroSizeError());
 	}
-	switch (dir) {
-		case HorizInc:
-			return ConstPixel(this, 0, 0, dir);
-		case VertInc:
-			return ConstPixel(this, dim.w - 1, 0, dir);
-		case HorizDec:
-			return ConstPixel(this, dim.w - 1, dim.h - 1, dir);
-		case VertDec:
-			return ConstPixel(this, 0, dim.h - 1, dir);
-		default:
-			DUDS_THROW_EXCEPTION(ImageError());
-	}
+	return ConstPixel(this, startPosition(dir), dir);
 }
 
+BppImage::ConstPixel BppImage::cbegin(
+	const ImageLocation &origin,
+	const ImageDimensions &size,
+	Direction dir
+) const {
+	if (img.empty()) {
+		DUDS_THROW_EXCEPTION(ImageZeroSizeError());
+	}
+	return ConstPixel(this, origin, size, startPosition(ImageLocation(0,0), size, dir), dir);
+}
 
 bool BppImage::state(const ImageLocation &il) const {
 	const PixelBlock *a;
@@ -299,7 +321,7 @@ BppImage::ConstPixel::ConstPixel(
 	const BppImage *img,
 	const ImageLocation &il,
 	Direction d
-) : dir(d),
+) : dir(d), orig(0, 0), dim(img->dimensions()),
 // ConstPixel stores a pointer to a non-const BppImage, even though  it will
 // not modify the image, because it is the base class for Pixel
 src(const_cast<BppImage*>(img)) {
@@ -307,8 +329,28 @@ src(const_cast<BppImage*>(img)) {
 	location(il);
 	// do not request a buffer spot when making an end iterator
 	if ((il.x != -1) && (il.y != -1)) {
-		src->bufferSpot(blk, mask, pos.x, pos.y);
+		src->bufferSpot(blk, mask, pos);
 	}
+}
+
+BppImage::ConstPixel::ConstPixel(
+	const BppImage *img,
+	const ImageLocation &o,
+	const ImageDimensions &s,
+	const ImageLocation &p,
+	Direction d
+) : dir(d),
+// ConstPixel stores a pointer to a non-const BppImage, even though  it will
+// not modify the image, because it is the base class for Pixel
+src(const_cast<BppImage*>(img)) {
+	// set the location, origin, and dimensions; throw if out of bounds
+	origdimloc(o, s, p);
+	/*  broken, but should it be fixed?
+	// do not request a buffer spot when making an end iterator
+	if ((il.x != -1) && (il.y != -1)) {
+		src->bufferSpot(blk, mask, orig + pos);
+	}
+	*/
 }
 
 BppImage::ConstPixel::ConstPixel(const BppImage::Pixel &p) :
@@ -321,7 +363,6 @@ BppImage::ConstPixel &BppImage::ConstPixel::operator = (
 }
 
 BppImage::ConstPixel &BppImage::ConstPixel::operator ++() {
-	ImageDimensions dim = src->dimensions();
 	/**
 	 * @todo  All direction increments are suboptimal; can be improved.
 	 *
@@ -338,12 +379,14 @@ BppImage::ConstPixel &BppImage::ConstPixel::operator ++() {
 					break;
 				}
 				pos.x = 0;
-				mask = 1;
-				++blk;
+				// was fine when origin was (0,0) and dim matched the image
+				//mask = 1;
+				//++blk;
+				src->bufferSpot(blk, mask, orig + pos);
 			} else {
 				mask <<= 1;
+				// advance to next block of pixels?
 				if (!mask) {
-					//src->bufferSpot(blk, mask, pos.x, pos.y);
 					mask = 1;
 					++blk;
 				}
@@ -358,7 +401,7 @@ BppImage::ConstPixel &BppImage::ConstPixel::operator ++() {
 				}
 				pos.y = 0;
 			}
-			src->bufferSpot(blk, mask, pos.x, pos.y);
+			src->bufferSpot(blk, mask, orig + pos);
 			break;
 		case HorizDec:
 			if (--pos.x < 0) {
@@ -368,12 +411,14 @@ BppImage::ConstPixel &BppImage::ConstPixel::operator ++() {
 					break;
 				}
 				pos.x = dim.w - 1;
-				mask = 1 << (pos.x % (sizeof(PixelBlock) * 8));
-				--blk;
+				// was fine when origin was (0,0) and dim matched the image
+				//mask = 1 << (pos.x % (sizeof(PixelBlock) * 8));
+				//--blk;
+				src->bufferSpot(blk, mask, orig + pos);
 			} else {
 				mask >>= 1;
+				// advance to next block of pixels?
 				if (!mask) {
-					//src->bufferSpot(blk, mask, pos.x, pos.y);
 					mask = 1 << (pos.x % (sizeof(PixelBlock) * 8));
 					--blk;
 				}
@@ -388,7 +433,7 @@ BppImage::ConstPixel &BppImage::ConstPixel::operator ++() {
 				}
 				pos.y = dim.h - 1;
 			}
-			src->bufferSpot(blk, mask, pos.x, pos.y);
+			src->bufferSpot(blk, mask, orig + pos);
 			break;
 		default:
 			// PANIC!!!
@@ -398,14 +443,82 @@ BppImage::ConstPixel &BppImage::ConstPixel::operator ++() {
 }
 
 void BppImage::ConstPixel::location(const ImageLocation &il) {
-	if (src->dimensions().withinBounds(il)) {
+	if (dim.withinBounds(il)) {
+		// store the location
 		pos = il;
+		// set internal data to use new location
+		src->bufferSpot(blk, mask, orig + pos);
 	} else {
 		DUDS_THROW_EXCEPTION(ImageBoundsError() <<
-			ImageErrorDimensions(src->dimensions()) <<
+			ImageErrorDimensions(dim) <<
 			ImageErrorLocation(il)
 		);
 	}
+}
+
+void BppImage::ConstPixel::origin(const ImageLocation &il) {
+	if (src->dimensions().withinBounds(il + dim)) {
+		// store the new origin
+		orig = il;
+		// update internal data to use new location
+		src->bufferSpot(blk, mask, orig + pos);
+	} else {
+		DUDS_THROW_EXCEPTION(ImageBoundsError() <<
+			ImageErrorDimensions(dim) <<
+			ImageErrorLocation(il)
+		);
+	}
+}
+
+void BppImage::ConstPixel::dimensions(const ImageDimensions &d) {
+	if (d.withinBounds(pos) &&
+		src->dimensions().withinBounds(pos + d)		
+	) {
+		// store the new dimensions
+		dim = d;
+		// spot in image buffer unchanged
+	} else {
+		DUDS_THROW_EXCEPTION(ImageBoundsError() <<
+			ImageErrorDimensions(d) <<
+			ImageErrorLocation(pos)
+		);
+	}
+}
+
+void BppImage::ConstPixel::origdimloc(
+	const ImageLocation &o,
+	const ImageDimensions &d,
+	const ImageLocation &p
+) {
+	if (d.withinBounds(p) &&
+		src->dimensions().withinBounds(o + d)
+	) {
+		// store the new data
+		orig = o;
+		dim = d;
+		pos = p;
+		// set internal data to use new location
+		src->bufferSpot(blk, mask, orig + pos);
+	} else {
+		DUDS_THROW_EXCEPTION(ImageBoundsError() <<
+			ImageErrorDimensions(d) <<
+			ImageErrorLocation(p)
+		);
+	}
+}
+
+bool BppImage::ConstPixel::operator == (const ConstPixel &cp) const {
+	// check for a possible end iterator
+	if (!src || !cp.src) {
+		// check positions only; dimensions and origin do not matter
+		return (
+			(pos.x == -1) && (pos.y == -1) &&
+			(cp.pos.x == -1) && (cp.pos.y == -1)
+		); 
+	}
+	// all data must match
+	return (src == cp.src) && (pos == cp.pos) &&
+		(orig == cp.orig) && (dim == cp.dim);
 }
 
 bool BppImage::ConstPixel::state() const {

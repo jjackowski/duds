@@ -9,7 +9,7 @@
  */
 #include <duds/hardware/devices/displays/BppImage.hpp>
 #include <boost/noncopyable.hpp>
-#include <map>
+#include <unordered_map>
 
 namespace duds { namespace hardware { namespace devices { namespace displays {
 
@@ -69,7 +69,7 @@ class BppImageArchive : boost::noncopyable {
 	/**
 	 * The images keyed by name.
 	 */
-	std::map< std::string, std::shared_ptr< BppImage > >  arc;
+	std::unordered_map< std::string, std::shared_ptr< BppImage > >  arc;
 public:
 	/**
 	 * Loads images from an image archive in the specified file.

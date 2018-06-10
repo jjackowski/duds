@@ -114,8 +114,8 @@ void BppImageArchive::add(
 const std::shared_ptr<BppImage> &BppImageArchive::get(
 	const std::string &name
 ) const {
-	std::map< std::string, std::shared_ptr< BppImage > >::const_iterator iter =
-		arc.find(name);
+	std::unordered_map< std::string, std::shared_ptr< BppImage > >::const_iterator
+		iter = arc.find(name);
 	if (iter != arc.end()) {
 		return iter->second;
 	}
@@ -125,8 +125,8 @@ const std::shared_ptr<BppImage> &BppImageArchive::get(
 std::shared_ptr<BppImage> BppImageArchive::tryGet(
 	const std::string &name
 ) const {
-	std::map< std::string, std::shared_ptr< BppImage > >::const_iterator iter =
-		arc.find(name);
+	std::unordered_map< std::string, std::shared_ptr< BppImage > >::const_iterator
+		iter = arc.find(name);
 	if (iter != arc.end()) {
 		return iter->second;
 	}

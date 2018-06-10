@@ -16,6 +16,8 @@
 
 namespace duds { namespace hardware { namespace devices { namespace displays {
 
+struct ImageDimensions;
+
 /**
  * Stores a location within an image.
  * @todo  Maybe put location increment functions here? Will Need dimentions and
@@ -51,6 +53,13 @@ struct ImageLocation {
 	constexpr bool operator != (const ImageLocation &il) const {
 		return (x != il.x) || (y != il.y);
 	}
+	constexpr ImageLocation operator + (const ImageLocation &il) const {
+		return ImageLocation(x + il.x, y + il.y);
+	}
+	constexpr ImageLocation operator - (const ImageLocation &il) const {
+		return ImageLocation(x - il.x, y - il.y);
+	}
+	constexpr ImageLocation operator + (const ImageDimensions &id) const;
 };
 
 /**
@@ -119,6 +128,12 @@ inline void swap(ImageDimensions &d0, ImageDimensions &d1) {
 	std::swap(d0.h, d1.h);
 }
 
+constexpr ImageLocation ImageLocation::operator + (
+	const ImageDimensions &id
+) const {
+	return ImageLocation(x + id.w, y + id.h);
+}
+
 /**
  * The base class for errors related to the use of images.
  */
@@ -165,8 +180,9 @@ typedef boost::error_info<struct Info_ImageDimensions, ImageDimensions>
  * higher value bits of the right-most PixelBlock at the end of each row.
  *
  * @author  Jeff Jackowski
+ * @todo    Complete documentation.
  */
-class BppImage : public std::enable_shared_from_this<BppImage> {
+class BppImage /*: public std::enable_shared_from_this<BppImage> */ {
 public:
 	typedef std::uintptr_t  PixelBlock;
 private:
@@ -252,7 +268,11 @@ public:
 		 * will be set to the maximum height and X incremented. If X passes
 		 * the width limit, the position will instead be changed to (-1,-1).
 		 */
-		VertDec
+		VertDec,
+		Rotate0DCW = HorizInc,
+		Rotate90DCW = VertInc,
+		Rotate180DCW = HorizDec,
+		Rotate270DCW = VertDec,
 	};
 
 	/**
@@ -263,7 +283,13 @@ public:
 	struct EndPixel { };
 	class Pixel;
 	/**
-	 * A forward iterator that visits each location of the image.
+	 * A forward iterator like class that visits each location of the image or
+	 * a subset of the image.
+	 * The iterator becomes invalid whenever one of these actions occur on
+	 * the source image:
+	 * - The dimensions are changed.
+	 * - It is swapped with another image.
+	 * - It is destructed.
 	 */
 	class ConstPixel {
 	public:
@@ -290,6 +316,16 @@ public:
 		 */
 		ImageLocation pos;
 		/**
+		 * Upper left corner of the image to limit the iteration to a portion
+		 * of the whole image.
+		 */
+		ImageLocation orig;
+		/**
+		 * The dimensions of the image to iterate over; can be used to limit
+		 * the portion visited by the iterator.
+		 */
+		ImageDimensions dim;
+		/**
 		 * The direction to move when incremented.
 		 */
 		Direction dir;
@@ -297,11 +333,19 @@ public:
 		/**
 		 * Construct a ConstPixel to nowhere.
 		 */
-		ConstPixel() : blk(nullptr), pos(-1, -1) { }
+		constexpr ConstPixel() :
+			src(nullptr),
+			blk(nullptr),
+			mask(0),
+			pos(-1, -1),
+			orig(0, 0),
+			dim(0, 0),
+			dir(HorizInc)
+			{ }
 		/**
 		 * Construct a ConstPixel to nowhere.
 		 */
-		ConstPixel(const EndPixel) : ConstPixel() { }
+		constexpr ConstPixel(const EndPixel) : ConstPixel() { }
 		/**
 		 * Obvious copy constructor.
 		 */
@@ -322,7 +366,7 @@ public:
 		 */
 		ConstPixel(
 			const BppImage *img,
-			const ImageLocation &il,
+			const ImageLocation &il = ImageLocation(0, 0),
 			Direction d = HorizInc
 		);
 		/**
@@ -332,10 +376,41 @@ public:
 		 */
 		ConstPixel(
 			const BppImage *img,
-			int x = 0,
-			int y = 0,
+			int x,
+			int y,
 			Direction d = HorizInc
 		) : ConstPixel(img, ImageLocation(x, y), d) { }
+		/**
+		 * Construct a ConstPixel to iterate over a subset of the image, and
+		 * start at a given spot.
+		 * @param img  The source image to iterate over.
+		 * @param o    The origin (top left); used to limit the iteration to
+		 *             a subset of the image data. The top left location is not
+		 *             modified by the iteration direction @a d. The area to
+		 *             iterate over must exist within the source image.
+		 * @param s    The size of the image to iterate over. This is used to
+		 *             limit the iteration to a subset of the image data. The
+		 *             axes for width and height are not modified by the
+		 *             iteration direction @a d. The area to iterate over must
+		 *             exist within the source image.
+		 * @param p    The starting position of the iteration. Its axes are not
+		 *             modified by the iteration direction @a d. It must specify
+		 *             a position within the dimensions @a s. It will not change
+		 *             when iteration will end.
+		 * @param d    The direction of the iteration as defined in the enum
+		 *             Direction.
+		 * @throw      ImageBoundsError  Either the starting position @a p is
+		 *                               beyond the dimensions @a s, or the area
+		 *                               to iterate over goes beyond the bounds
+		 *                               of the source image @a img.
+		 */
+		ConstPixel(
+			const BppImage *img,
+			const ImageLocation &o,
+			const ImageDimensions &s,
+			const ImageLocation &p = ImageLocation(0, 0),
+			Direction d = HorizInc
+		);
 		/**
 		 * Obvious assignment operator.
 		 */
@@ -377,11 +452,12 @@ public:
 		 */
 		//bool stateAtOffset(int inc) const;
 		/**
-		 * Obvious equality operator.
+		 * Less than obvious equality operator.
+		 * If either operand has a source image of nullptr, then they are equal
+		 * only if both have a position of (-1,-1), Otherwise, all fields must
+		 * exactly match.
 		 */
-		bool operator == (const ConstPixel &cp) const {
-			return (src == cp.src) && (pos == cp.pos);
-		}
+		bool operator == (const ConstPixel &cp) const;
 		/**
 		 * True if this object is an end iterator or an iterator to nowhere.
 		 */
@@ -415,35 +491,135 @@ public:
 		//operator +(int);
 		//operator +=(int);  ?
 		/**
-		 * Returns the horizontal coordinate of the referenced pixel.
+		 * Returns the horizontal coordinate of the referenced pixel relative
+		 * to this object's origin.
 		 */
 		int x() const {
 			return pos.x;
 		}
 		/**
-		 * Returns the vertical coordinate of the referenced pixel.
+		 * Returns the vertical coordinate of the referenced pixel relative
+		 * to this object's origin.
 		 */
 		int y() const {
 			return pos.y;
 		}
 		/**
-		 * Returns the coordinates of the referenced pixel.
+		 * Returns the coordinates of the referenced pixel relative
+		 * to this object's origin.
 		 */
 		const ImageLocation &location() const {
 			return pos;
 		}
 		/**
-		 * Changes the location referenced by this ConstPixel.
+		 * Changes the location referenced by this ConstPixel relative to its
+		 * origin.
 		 * @throw  ImageBoundsError
 		 */
 		void location(const ImageLocation &il);
 		/**
-		 * Changes the location referenced by this ConstPixel.
+		 * Changes the location referenced by this ConstPixel relative to its
+		 * origin.
 		 * @throw  ImageBoundsError
 		 */
 		void location(int x, int y) {
 			location(ImageLocation(x, y));
 		}
+		/**
+		 * Returns the absolute horizontal coordinate of the referenced pixel.
+		 */
+		int absX() const {
+			return orig.x + pos.x;
+		}
+		/**
+		 * Returns the absolute vertical coordinate of the referenced pixel.
+		 */
+		int absY() const {
+			return orig.y + pos.y;
+		}
+		/**
+		 * Returns the absolute coordinates of the referenced pixel.
+		 */
+		ImageLocation absLocation() const {
+			return orig + pos;
+		}
+		/**
+		 * Returns the X coordinate of this object's origin used to limit the
+		 * area of the source image that will be visited.
+		 */
+		int originX() const {
+			return orig.x;
+		}
+		/**
+		 * Returns the Y coordinate of this object's origin used to limit the
+		 * area of the source image that will be visited.
+		 */
+		int originY() const {
+			return orig.y;
+		}
+		/**
+		 * Returns this object's origin used to limit the area of the source
+		 * image that will be visited.
+		 */
+		const ImageLocation &origin() const {
+			return orig;
+		}
+		/**
+		 * Changes the origin of this object. The relative position and the
+		 * dimensions are not changed. This means the absolute position will
+		 * change, and that the dimensions must still fit within the source
+		 * image.
+		 */
+		void origin(const ImageLocation &il);
+		/**
+		 * Returns the width of this object's dimensions used to limit the
+		 * area of the source image that will be visited.
+		 */
+		int width() const {
+			return dim.w;
+		}
+		/**
+		 * Returns the height of this object's dimensions used to limit the
+		 * area of the source image that will be visited.
+		 */
+		int height() const {
+			return dim.h;
+		}
+		/**
+		 * Returns this object's dimensions used to limit the
+		 * area of the source image that will be visited.
+		 */
+		const ImageDimensions &dimensions() const {
+			return dim;
+		}
+		/**
+		 * Changes the dimensions of this object. The relative position and the
+		 * origin are not changed. This means the absolute position will also
+		 * not change. The dimensions must fit within the source image.
+		 */
+		void dimensions(const ImageDimensions &d);
+		/**
+		 * Changes the origin, dimensions, and relative position of this object.
+		 * This will aslo change the absolute position. The new image subset
+		 * must fit within the bounds of the source image.
+		 * @param o    The origin (top left); used to limit the iteration to
+		 *             a subset of the image data. The top left location is not
+		 *             modified by the iteration direction. The area to
+		 *             iterate over must exist within the source image.
+		 * @param d    The size of the image to iterate over. This is used to
+		 *             limit the iteration to a subset of the image data. The
+		 *             axes for width and height are not modified by the
+		 *             iteration direction. The area to iterate over must
+		 *             exist within the source image.
+		 * @param p    The current relative position. Its axes are not
+		 *             modified by the iteration direction. It must specify
+		 *             a position within the dimensions @a d.
+		 */
+		void origdimloc(
+			const ImageLocation &o,
+			const ImageDimensions &d,
+			const ImageLocation &p
+		);
 		/* *
 		 * Changes the coordinate perpendicular to the set direction as if by
 		 * incrementing this pixel by an amount equal to @a l multiplied by
@@ -495,8 +671,8 @@ public:
 		 * @throw ImageBoundsError
 		 */
 		Pixel(
-			const BppImage *img,
-			const ImageLocation &il,
+			BppImage *img,
+			const ImageLocation &il = ImageLocation(0, 0),
 			Direction d = HorizInc
 		) : ConstPixel(img, il, d) { }
 		/**
@@ -505,11 +681,42 @@ public:
 		 * @throw ImageBoundsError
 		 */
 		Pixel(
-			const BppImage *img,
-			int x = 0,
-			int y = 0,
+			BppImage *img,
+			int x,
+			int y,
 			Direction d = HorizInc
 		) : ConstPixel(img, ImageLocation(x, y), d) { }
+		/**
+		 * Construct a Pixel to iterate over a subset of the image, and
+		 * start at a given spot.
+		 * @param img  The source image to iterate over.
+		 * @param o    The origin (top left); used to limit the iteration to
+		 *             a subset of the image data. The top left location is not
+		 *             modified by the iteration direction @a d. The area to
+		 *             iterate over must exist within the source image.
+		 * @param s    The size of the image to iterate over. This is used to
+		 *             limit the iteration to a subset of the image data. The
+		 *             axes for width and height are not modified by the
+		 *             iteration direction @a d. The area to iterate over must
+		 *             exist within the source image.
+		 * @param p    The starting position of the iteration. Its axes are not
+		 *             modified by the iteration direction @a d. It must specify
+		 *             a position within the dimensions @a s. It will not change
+		 *             when iteration will end.
+		 * @param d    The direction of the iteration as defined in the enum
+		 *             Direction.
+		 * @throw      ImageBoundsError  Either the starting position @a p is
+		 *                               beyond the dimensions @a s, or the area
+		 *                               to iterate over goes beyond the bounds
+		 *                               of the source image @a img.
+		 */
+		Pixel(
+			BppImage *img,
+			const ImageLocation &o,
+			const ImageDimensions &s,
+			const ImageLocation &p = ImageLocation(0, 0),
+			Direction d = HorizInc
+		) : ConstPixel(img, o, s, p, d) { }
 		/**
 		 * Obvious assignment operator.
 		 */
@@ -801,6 +1008,20 @@ public:
 			il
 		);
 	}
+	/**
+	 * Returns the starting location needed to iterate over the entire image
+	 * in the given direction.
+	 */
+	ImageLocation startPosition(Direction dir = HorizInc) const;
+	/**
+	 * Returns the starting location needed to iterate over the specified
+	 * subeset of an image in the given direction.
+	 */
+	static ImageLocation startPosition(
+		const ImageLocation &origin,
+		const ImageDimensions &size,
+		Direction dir = HorizInc
+	);
 
 	Pixel pixel(const ImageLocation &il, Direction dir = HorizInc);
 	Pixel pixel(int x, int y, Direction dir = HorizInc) {
@@ -824,6 +1045,27 @@ public:
 	 */
 	Pixel begin(Direction dir);
 	/**
+	 * Returns a Pixel (iterator) to the start of a subset the image for the
+	 * given direction. Different directions and subsets start in different
+	 * locations, but will iterate over the entire subset of the image.
+	 * @param origin  The origin (top left); used to limit the iteration to
+	 *                a subset of the image data. The top left location is not
+	 *                modified by the iteration direction @a dir. The area to
+	 *                iterate over must exist within the source image.
+	 * @param size    The size of the image to iterate over. This is used to
+	 *                limit the iteration to a subset of the image data. The
+	 *                axes for width and height are not modified by the
+	 *                iteration direction @a dir. The area to iterate over must
+	 *                exist within the source image.
+	 * @param dir     The direction of the iteration as defined in the enum
+	 *                Direction.
+	 */
+	Pixel begin(
+		const ImageLocation &origin,
+		const ImageDimensions &size,
+		Direction dir = HorizInc
+	);
+	/**
 	 * Returns a ConstPixel (iterator) to the upper left of the image.
 	 */
 	ConstPixel cbegin() const;
@@ -834,6 +1076,27 @@ public:
 	 */
 	ConstPixel cbegin(Direction dir) const;
 	/**
+	 * Returns a ConstPixel (iterator) to the start of a subset the image for
+	 * the given direction. Different directions and subsets start in different
+	 * locations, but will iterate over the entire subset of the image.
+	 * @param origin  The origin (top left); used to limit the iteration to
+	 *                a subset of the image data. The top left location is not
+	 *                modified by the iteration direction @a dir. The area to
+	 *                iterate over must exist within the source image.
+	 * @param size    The size of the image to iterate over. This is used to
+	 *                limit the iteration to a subset of the image data. The
+	 *                axes for width and height are not modified by the
+	 *                iteration direction @a dir. The area to iterate over must
+	 *                exist within the source image.
+	 * @param dir     The direction of the iteration as defined in the enum
+	 *                Direction.
+	 */
+	ConstPixel cbegin(
+		const ImageLocation &origin,
+		const ImageDimensions &size,
+		Direction dir = HorizInc
+	) const;
+	/**
 	 * Returns a ConstPixel (iterator) to the upper left of the image.
 	 */
 	ConstPixel begin() const {
@@ -841,23 +1104,31 @@ public:
 	}
 	/**
 	 * Convenience function that returns EndPixel, which can be used as an end
-	 * iterator.
+	 * iterator with any ConstPixel or Pixel object, regardless what BppImage
+	 * object they are working upon.
 	 */
 	static EndPixel endPixel() {
 		return EndPixel();
 	}
 	/**
-	 * Returns a Pixel end iterator.
+	 * Returns a Pixel end iterator. This is less efficient than using an
+	 * EndPixel object, but is more consistent with how iterators are used.
 	 */
 	Pixel end();
 	/**
-	 * Returns a ConstPixel end iterator.
+	 * Returns a ConstPixel end iterator. It can be used as an end iterator
+	 * with any ConstPixel, regardless of the source BppImage object in use.
+	 * It is less efficient than using an EndPixel object, but its constexpr
+	 * status should mitigate this compared to using the non-const end().
 	 */
-	ConstPixel cend() const {
-		return ConstPixel(this, ConstPixel::End());
+	static constexpr ConstPixel cend() {
+		return ConstPixel();
 	}
 	/**
-	 * Returns a ConstPixel end iterator.
+	 * Returns a ConstPixel end iterator. It can be used as an end iterator
+	 * with any ConstPixel, regardless of the source BppImage object in use.
+	 * It is less efficient than using an EndPixel object, but its constexpr
+	 * status should mitigate this compared to using the non-const end().
 	 */
 	ConstPixel end() const {
 		return cend();
