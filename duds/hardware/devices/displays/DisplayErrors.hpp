@@ -5,8 +5,11 @@
  * No part of DUDS, including this file, may be copied, modified, propagated,
  * or distributed except according to the terms contained in the LICENSE file.
  *
- * Copyright (C) 2017  Jeff Jackowski
+ * Copyright (C) 2018  Jeff Jackowski
  */
+#ifndef DISPLAYERRORS_HPP
+#define DISPLAYERRORS_HPP
+
 #include <boost/exception/info.hpp>
 
 namespace duds { namespace hardware { namespace devices { namespace displays {
@@ -14,23 +17,28 @@ namespace duds { namespace hardware { namespace devices { namespace displays {
 /**
  * Base class for all errors specifically from a TextDisplay.
  */
-struct TextDisplayError : virtual std::exception, virtual boost::exception { };
+struct DisplayError : virtual std::exception, virtual boost::exception { };
 /**
- * The specified display size or location is unsupported.
+ * The specified display size is unsupported, or there is a display size
+ * mismatch.
  */
-struct TextDisplayRangeError : TextDisplayError { };
+struct DisplaySizeError : DisplayError { };
+/**
+ * The specified location is beyond the bounds of the display.
+ */
+struct DisplayBoundsError : DisplayError { };
 /**
  * An attempt was made to use an uninitialized display object.
  */
-struct TextDisplayUninitialized : TextDisplayError { };
+struct DisplayUninitialized : DisplayError { };
 /**
  * The index given for a definable glyph was outside the allowable range.
  */
-struct TextDisplayGlyphIndexError : TextDisplayError { };
+struct DisplayGlyphIndexError : DisplayError { };
 /**
  * The image given for a definable glyph was an unsupported size.
  */
-struct TextDisplayGlyphSizeError : TextDisplayError { };
+struct DisplayGlyphSizeError : DisplayError { };
 
 /**
  * Stores column and row data for display errors. The values may be for the
@@ -61,6 +69,8 @@ typedef boost::error_info<struct Info_DisplaySize, Info_DisplayColRow>
 /**
  * Index used for a definable glyph.
  */
-typedef boost::error_info<struct Info_DisplayGlyph, int>  TextDisplayGlyphIndex;
+typedef boost::error_info<struct Info_DisplayGlyph, int>  DisplayGlyphIndex;
 
 } } } }
+
+#endif        //  #ifndef DISPLAYERRORS_HPP

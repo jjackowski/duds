@@ -442,7 +442,10 @@ try {
 	// LCD driver
 	std::shared_ptr<displays::HD44780> tmd =
 		std::make_shared<displays::HD44780>(
-			lcdset, lcdsel, lcd20x4 ? 20 : 16, lcd20x4 ? 4 : 2
+			std::move(lcdset),
+			std::move(lcdsel),
+			lcd20x4 ? 20 : 16,
+			lcd20x4 ? 4 : 2
 		);
 	tmd->initialize();
 	tmd->setGlyph(wiredIcon, 4);

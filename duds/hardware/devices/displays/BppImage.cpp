@@ -137,7 +137,7 @@ void BppImage::resize(int width, int height) {
 	}
 	if ((width == 0) || (height == 0)) {
 		clear();
-	} else {
+	} else if ((width != dim.w) || (height != dim.h)) {
 		/** @todo  Keep portion of image. */
 		/** @bug   Image data is corrupt, but buffer is the correct size and usable. */
 		img.resize(bufferBlockSize(dim.w, dim.h));
@@ -306,6 +306,66 @@ void BppImage::blankImage(bool s) {
 	}
 }
 
+static bool opset(bool dest, bool src) {
+	return src;
+}
+
+static bool opand(bool dest, bool src) {
+	return dest && src;
+}
+
+static bool opor(bool dest, bool src) {
+	return dest || src;
+}
+
+static bool opxor(bool dest, bool src) {
+	return dest ^ src;
+}
+
+const BppImage::OpFunction BppImage::OpFunctions[OpTotal] = {
+	opset,
+	opand,
+	opor,
+	opxor
+};
+
+void BppImage::write(
+	const BppImage * const src,
+	const ImageLocation &destLoc,
+	const ImageLocation &srcLoc,
+	const ImageDimensions &size,
+	Direction srcDir,
+	Operation op
+) {
+	if ((op < OpSet) || (op > OpXor)) {
+		// bad data
+		DUDS_THROW_EXCEPTION(ImageError());
+	}
+	// source iterator
+	ConstPixel siter = src->cbegin(srcLoc, size, srcDir);
+	// destination iterator
+	Pixel diter = begin(destLoc, size);
+	// iteratate over the images
+	for (; siter != EndPixel(); ++diter, ++siter) {
+		*diter = OpFunctions[op](*diter, *siter);
+	}
+}
+
+void BppImage::write(
+	const BppImage * const src,
+	const ImageLocation &dest,
+	Direction srcDir,
+	Operation op
+) {
+	// source dimensions clipped to available destination size
+	ImageDimensions d(
+		std::min(src->width(), dim.w - dest.x),
+		std::min(src->height(), dim.h - dest.y)
+	);
+	// do the writing
+	write(src, dest, ImageLocation(0, 0), d, srcDir, op);
+}
+
 // -------------------------------------------------------------------
 
 BppImage::ConstPixel::ConstPixel(
@@ -472,7 +532,7 @@ void BppImage::ConstPixel::origin(const ImageLocation &il) {
 
 void BppImage::ConstPixel::dimensions(const ImageDimensions &d) {
 	if (d.withinBounds(pos) &&
-		src->dimensions().withinBounds(pos + d)		
+		src->dimensions().withinBounds(pos + d)
 	) {
 		// store the new dimensions
 		dim = d;
@@ -514,7 +574,7 @@ bool BppImage::ConstPixel::operator == (const ConstPixel &cp) const {
 		return (
 			(pos.x == -1) && (pos.y == -1) &&
 			(cp.pos.x == -1) && (cp.pos.y == -1)
-		); 
+		);
 	}
 	// all data must match
 	return (src == cp.src) && (pos == cp.pos) &&

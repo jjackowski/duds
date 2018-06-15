@@ -20,8 +20,6 @@ struct ImageDimensions;
 
 /**
  * Stores a location within an image.
- * @todo  Maybe put location increment functions here? Will Need dimentions and
- *        direction to work.
  * @author  Jeff Jackowski
  */
 struct ImageLocation {
@@ -53,12 +51,21 @@ struct ImageLocation {
 	constexpr bool operator != (const ImageLocation &il) const {
 		return (x != il.x) || (y != il.y);
 	}
+	/**
+	 * Add locations together.
+	 */
 	constexpr ImageLocation operator + (const ImageLocation &il) const {
 		return ImageLocation(x + il.x, y + il.y);
 	}
+	/**
+	 * Subtract locations.
+	 */
 	constexpr ImageLocation operator - (const ImageLocation &il) const {
 		return ImageLocation(x - il.x, y - il.y);
 	}
+	/**
+	 * Add in dimensions.
+	 */
 	constexpr ImageLocation operator + (const ImageDimensions &id) const;
 };
 
@@ -935,16 +942,27 @@ public:
 	 * @throw ImageZeroSizeError
 	 */
 	PixelBlock *buffer();
-
-	// C++ containers are going with data() for underlying buffer
+	/**
+	 * Provides access to the internal vector storing the image data.
+	 */
+	// C++ containers are going with data() for underlying container
 	const std::vector<PixelBlock> &data() const {
 		return img;
 	}
-
+	/**
+	 * Returns a pointer to the start of the given line.
+	 * @param py  The Y-coordinate of the line.
+	 * @return    The address of the start of line @a py.
+	 */
 	// improve error handling; move to cpp
 	const PixelBlock *bufferLine(int py) const {
 		return &(img[blkPerLine * py]);
 	}
+	/**
+	 * Returns a pointer to the start of the given line.
+	 * @param py  The Y-coordinate of the line.
+	 * @return    The address of the start of line @a py.
+	 */
 	PixelBlock *bufferLine(int py) {
 		return &(img[blkPerLine * py]);
 	}
@@ -1011,11 +1029,17 @@ public:
 	/**
 	 * Returns the starting location needed to iterate over the entire image
 	 * in the given direction.
+	 * @param dir  The iteration direction. Each direction starts at a different
+	 *             corner of the image.
 	 */
 	ImageLocation startPosition(Direction dir = HorizInc) const;
 	/**
 	 * Returns the starting location needed to iterate over the specified
 	 * subeset of an image in the given direction.
+	 * @param origin  The origin; the top left of the image subset.
+	 * @param size    The size of the image subset extending from the origin.
+	 * @param dir     The iteration direction. Each direction starts at a
+	 *                different corner of the image.
 	 */
 	static ImageLocation startPosition(
 		const ImageLocation &origin,
@@ -1162,8 +1186,48 @@ public:
 	 * @post  All pixels will be set to @a state.
 	 */
 	void blankImage(bool state = false);
-	// add ability to specifiy operation: set, or, and, xor
-	//void write(const std::shared_ptr<BppImage> &img, int dx, int dy, int sx, int sy, int w, int h);
+
+	enum Operation {
+		OpSet,
+		OpAnd,
+		OpOr,
+		OpXor,
+		OpTotal
+	};
+	typedef bool (*OpFunction)(bool dest, bool src);
+	static const OpFunction OpFunctions[OpTotal];
+	void write(
+		const BppImage * const src,
+		const ImageLocation &destLoc,
+		const ImageLocation &srcLoc,
+		const ImageDimensions &size,
+		Direction srcDir = HorizInc,
+		Operation op = OpSet
+	);
+	void write(
+		const std::shared_ptr<const BppImage> &src,
+		const ImageLocation &destLoc,
+		const ImageLocation &srcLoc,
+		const ImageDimensions &size,
+		Direction srcDir = HorizInc,
+		Operation op = OpSet
+	) {
+		write(src.get(), destLoc, srcLoc, size, srcDir, op);
+	}
+	void write(
+		const BppImage * const src,
+		const ImageLocation &dest,
+		Direction srcDir = HorizInc,
+		Operation op = OpSet
+	);
+	void write(
+		const std::shared_ptr<const BppImage> &src,
+		const ImageLocation &dest,
+		Direction srcDir = HorizInc,
+		Operation op = OpSet
+	) {
+		write(src.get(), dest, srcDir, op);
+	}
 };
 
 inline void swap(BppImage &bi0, BppImage &bi1) {

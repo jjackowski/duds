@@ -5,26 +5,30 @@
  * No part of DUDS, including this file, may be copied, modified, propagated,
  * or distributed except according to the terms contained in the LICENSE file.
  *
- * Copyright (C) 2017  Jeff Jackowski
+ * Copyright (C) 2018  Jeff Jackowski
  */
 #include <duds/hardware/interface/DigitalPinSet.hpp>
 #include <duds/hardware/interface/ChipSelect.hpp>
-#include <duds/hardware/devices/displays/TextDisplay.hpp>
+#include <duds/hardware/devices/displays/BppGraphicDisplay.hpp>
 #include <chrono>
 
 namespace duds { namespace hardware { namespace devices { namespace displays {
 
-class BppImage;
-
 /**
- * Implements text output to HD44780 and compatible display controllers,
- * such as the SPLC780D.
- * These displays feature text output to a matrix that is typically 5
- * pixels wide by 8 tall per character. The most common displays are LCDs,
- * but some compatible controllers are found on VFDs. They have a parallel
- * interface with three control lines. Only the 4-bit wide data interface
- * is supported, and only sending data to the display is supported. This
- * limits the number of digital I/O lines required.
+ * Implements graphic output to the ST7920 LCD controller using a 4-bit
+ * parallel interface.
+ *
+ * @note  If a darkend pixel has no adjacent darkened pixel in the same column,
+ *        it will have low contrast. Two or more contiguous darkened pixels
+ *        in the same column have much better contrast.
+ *
+ * The controller manages a display up to 256 by 64 pixels with an internal
+ * frame buffer. This driver maintains its own frame buffer so that it can
+ * update only the portions of the frame that change. The controller has a
+ * parallel interface that is almost identical to the HD44780's. It has three
+ * control lines and 4 or 8 data lines. Only the 4-bit wide data
+ * interface is supported, and only sending data to the display is supported.
+ * This limits the number of digital I/O lines required.
  *
  * This class is @b not thread-safe because using it directly from multiple
  * threads makes little sense.
@@ -33,11 +37,9 @@ class BppImage;
  *        to tell if there is a display on the other end, or if that display
  *        is functional.
  *
- * @todo  Support the brightness control available on some VFDs.
- *
  * @author  Jeff Jackowski
  */
-class HD44780 : public TextDisplay {
+class ST7920 : public BppGraphicDisplay {
 	/**
 	 * Represents the 5 output lines, other than enable, that are needed to
 	 * communicate with the LCD. The pins are, in order:
@@ -45,15 +47,15 @@ class HD44780 : public TextDisplay {
 	 * -# Data bit 5
 	 * -# Data bit 6
 	 * -# Data bit 7
-	 * -# Text flag; often labled "RS"
+	 * -# Image data flag; often labled "RS"
 	 */
 	duds::hardware::interface::DigitalPinSet outputs;
 	/**
 	 * Used to represent the enable line of the LCD. It must go low to make
 	 * the display read data.
-	 * @warning  Only one HD44780 object can be used with a
+	 * @warning  Only one ST7920 object can be used with a
 	 *           @ref duds::hardware::interface::ChipBinarySelectManager "ChipBinarySelectManager".
-	 *           The other selectable item must not be a HD44780.
+	 *           The other selectable item must not be a ST7920.
 	 */
 	duds::hardware::interface::ChipSelect enable;
 	/**
@@ -112,7 +114,7 @@ class HD44780 : public TextDisplay {
 	/**
 	 * Obtains access to the pins and configures them for output.
 	 * Before obtaining access, a call to wait() is made. In the case of sending
-	 * a single byte to the display, this allows at least 48us for other
+	 * a single byte to the display, this allows at least 78us for other
 	 * threads to use the hardware.
 	 * @param acc  The object that contains the access objects to fill.
 	 * @throw DisplayUninitialized  The display object has not been
@@ -132,25 +134,37 @@ class HD44780 : public TextDisplay {
 	 *             done instead of the normal two.
 	 */
 	void sendByte(Access &acc, int val);
-	virtual void moveImpl(unsigned int c, unsigned int r);
 	/**
-	 * Writes a single character to the display. Using this function rather
-	 * than one that writes a string allows the display's bus to be freed after
-	 * each character to allow other uses for those lines.
+	 * Writes a contiguous block of pixel data to the display after setting the
+	 * next location to write.
+	 * @param acc    The access objects required to communicate with the
+	 *               display.
+	 * @param start  The starting address of the pixel data to send.
+	 * @param end    The ending address of the pixel data to send. May be the
+	 *               same as @a start, but should not extend past the end of
+	 *               the current horizontal line.
+	 * @param pos    The starting position to send to the display. The
+	 *               Y-coordinate is in the LSB, and the X-coordinate is
+	 *               shifted to lose the low order 4 bits and placed in the
+	 *               next significant byte.
 	 */
-	virtual void writeImpl(int c);
-	void writeImpl(Access &acc, const std::string &text);
-	virtual void writeImpl(const std::string &text);
-	virtual void writeImpl(
-		const std::string &text,
-		unsigned int c,
-		unsigned int r
+	void writeBlock(
+		ST7920::Access &acc,
+		const std::uint16_t *start,
+		const std::uint16_t *end,
+		int pos
 	);
+	/**
+	 * Writes out only the changed portions of the image to the display, and
+	 * updates the image in @a frmbuf to match.
+	 * @param img  The new image to show.
+	 */
+	virtual void outputFrame(const BppImage *img);
 public:
 	/**
 	 * Initializes the object with an invalid display size and no pins to use.
 	 */
-	HD44780();
+	ST7920();
 	/**
 	 * Initializes the object with everything required to begin communicating
 	 * with the display, but does not initalize the display.
@@ -168,31 +182,30 @@ public:
 	 * @param enablePin  The chip select used for the enable line on the
 	 *                   display. It is often labeled "E".
 	 *                   The object is moved to an internal member.
-	 * @warning          Only one HD44780 can be used with a
+	 * @warning          Only one ST7920 can be used with a
 	 *                   @ref duds::hardware::interface::ChipBinarySelectManager "ChipBinarySelectManager".
-	 *                   The other selectable item must not be a HD44780. A
+	 *                   The other selectable item must not be a ST7920. A
 	 *                   logic inverter will not work around this issue.
-	 * @param c          The number of columns on the display. The value must
-	 *                   be between 1 and 20, and will almost always be either
-	 *                   16 or 20.
-	 * @param r          The number of rows on the display. The value must be
-	 *                   between 1 and 4.
-	 * @throw DisplayRangeError  Either the column or row size is
-	 *                           outside the supported range.
+	 * @param w          The width of the display in pixels. It must not exceed
+	 *                   256.
+	 * @param h          The height of the display in pixels. It must not exceed
+	 *                   64.
+	 * @throw DisplaySizeError   Either the width or height is beyond the
+	 *                           supported range.
 	 * @throw duds::hardware::interface::PinDoesNotExist
 	 * @throw duds::hardware::interface::PinRangeError
 	 * @throw duds::hardware::interface::DigitalPinCannotOutputError
 	 */
-	HD44780(
+	ST7920(
 		duds::hardware::interface::DigitalPinSet &&outPins,
 		duds::hardware::interface::ChipSelect &&enablePin,
-		unsigned int c,
-		unsigned int r
+		unsigned int w,
+		unsigned int h
 	);
 	/**
 	 * Calls off().
 	 */
-	virtual ~HD44780();
+	virtual ~ST7920();
 	/**
 	 * Sets the pins to use for communicating with the display. After calling
 	 * this, initialize() must be called before using the display.
@@ -210,17 +223,16 @@ public:
 	 * @param enablePin  The chip select used for the enable line on the
 	 *                   display. It is often labeled "E".
 	 *                   The object is moved to an internal member.
-	 * @warning          Only one HD44780 can be used with a
+	 * @warning          Only one ST7920 can be used with a
 	 *                   @ref duds::hardware::interface::ChipBinarySelectManager "ChipBinarySelectManager".
-	 *                   The other selectable item must not be a HD44780. A
+	 *                   The other selectable item must not be a ST7920. A
 	 *                   logic inverter will not work around this issue.
-	 * @param c          The number of columns on the display. The value must
-	 *                   be between 1 and 20, and will almost always be either
-	 *                   16 or 20.
-	 * @param r          The number of rows on the display. The value must be
-	 *                   between 1 and 4.
-	 * @throw DisplayRangeError  Either the column or row size is
-	 *                           outside the supported range.
+	 * @param w          The width of the display in pixels. It must not exceed
+	 *                   256.
+	 * @param h          The height of the display in pixels. It must not exceed
+	 *                   64.
+	 * @throw DisplaySizeError   Either the width or height is beyond the
+	 *                           supported range.
 	 * @throw duds::hardware::interface::PinDoesNotExist
 	 * @throw duds::hardware::interface::PinRangeError
 	 * @throw duds::hardware::interface::DigitalPinCannotOutputError
@@ -228,8 +240,8 @@ public:
 	void configure(
 		duds::hardware::interface::DigitalPinSet &&outPins,
 		duds::hardware::interface::ChipSelect &&enablePin,
-		unsigned int c,
-		unsigned int r
+		unsigned int w,
+		unsigned int h
 	);
 	/**
 	 * Initializes the display for use. This function must be called before
@@ -239,79 +251,28 @@ public:
 	 *        size has been set.
 	 * @post  The display is in the "on" state; on() has been called.
 	 * @post  Functions that send data to the display may be used.
-	 * @post  The display is blank; it has no text.
-	 * @post  The cursor is positioned at the upper left corner.
+	 * @post  The display is blank.
 	 * @throw DisplayUninitialized  The display object has not been
 	 *                              given any pins to use.
 	 */
 	void initialize();
 	/**
-	 * Commands the display to turn off. This should prevent any text from being
-	 * visible, but may not appear to do anything else. The text displayed
-	 * prior to calling this function should remain in the display's buffer.
+	 * Commands the display to turn off. This should make the display appear
+	 * blank, but it does not clear the display's frame buffer. Sending any
+	 * command or data to the display will cause it to start displaying its
+	 * image again.
 	 * @pre  initialize() has been successfully called.
 	 * @bug  Name isn't technically correct; change it.
 	 */
 	void off();
 	/**
-	 * Commands the display to turn on. This is done inside initialize() so it
-	 * is only needed if off() is called. The contents of the displays buffer
-	 * should become visible after this function.
+	 * Commands the display to turn on. There is no need to use this with the
+	 * ST7920 LCD controller. The function exists for consistency with other
+	 * display classes.
 	 * @pre  initialize() has been successfully called.
 	 * @bug  Name isn't technically correct; change it.
 	 */
 	void on();
-	/**
-	 * Removes all text from the display and moves the cursor to the upper left
-	 * corner.
-	 * @pre  initialize() has been successfully called.
-	 */
-	virtual void clear();
-	/**
-	 * Loads a glyph into the display's CGRAM (Character Generator Random
-	 * %Access Memory). These displays typically allow for eight glyphs to be
-	 * specified and changed at will. Whenever a glyph is changed, any spot
-	 * on the display showing that character value will also change in
-	 * appearance.
-	 *
-	 * The display uses character values 0 through 7 and 8 through 15 to
-	 * reference the glyphs. The 4th bit is ignored, so values 0 and 8 will
-	 * show the same glyph. The parameter @a idx works the same way.
-	 *
-	 * @par Issues using the glyphs in output
-	 * Using character value 0 is bothersome since it is usually interpreted
-	 * as the end of a string. std::string actually stores a length so it can
-	 * hold character zero, but any string literal assigned to it
-	 * is seen as a null terminated string unless a length is explicitly
-	 * provided.
-	 * @par
-	 * The characters '\\n' and '\\r' are 10 and 13, respectively, which puts
-	 * them into the 8 to 15 range for the glyphs. The
-	 * @ref TextDisplayBasicBuffer "TextDisplayBuffer" class, and thus
-	 * indirectly the @ref TextDisplayBasicStream "TextDisplayStream" class,
-	 * interpret these characters as a request to move the cursor rather than
-	 * a request to show a printable character. None of the TextDisplay::write()
-	 * functions do this; they handle all characters as printable. They can
-	 * also be used interchangeably with a
-	 * @ref TextDisplayBasicStream "TextDisplayStream".
-	 * @par
-	 * The best solution may be to use character values 1 through 8 for the
-	 * custom glyphs. It avoids unintended null termination, and allows any
-	 * custom glyph to be used from a
-	 * @ref TextDisplayBasicStream "TextDisplayStream". To make this a little
-	 * easier, @a idx can be given values 1 through 8 to be consistent.
-	 * @param glyph  The image to load. It may be no larger than 5 by 8. If
-	 *               smaller, it will be placed in the upper right.
-	 * @param idx    The index for the glyph. It must be between 0 and 15. The
-	 *               4th bit is ignored so values 8 through 15 work the same as
-	 *               values 0 through 7. Text that has a character with the
-	 *               same value, ignoring the 4th bit, will show the
-	 *               corresponding glyph.
-	 * @throw DisplayGlyphIndexError  The index value @a idx is outside the
-	 *                                supported range of 0 to 15, inclusive.
-	 * @throw DisplayGlyphSizeError   The image is too large.
-	 */
-	void setGlyph(const std::shared_ptr<BppImage> &glyph, int idx);
 };
 
 } } } }

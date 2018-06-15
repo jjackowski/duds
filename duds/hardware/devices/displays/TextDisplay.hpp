@@ -10,8 +10,8 @@
 #ifndef TEXTDISPLAY_HPP
 #define TEXTDISPLAY_HPP
 
-#include <duds/hardware/devices/displays/TextDisplayErrors.hpp>
 #include <boost/noncopyable.hpp>
+#include <duds/hardware/devices/displays/DisplayErrors.hpp>
 
 namespace duds { namespace hardware { namespace devices {
 
@@ -111,8 +111,8 @@ public:
 	 * Moves the cursor to the given location.
 	 * @param c  The destination column.
 	 * @param r  The destination row.
-	 * @throw TextDisplayRangeError  The requested position is beyond the
-	 *                               display's boundries.
+	 * @throw DisplayBoundsError  The requested position is beyond the
+	 *                            display's boundries.
 	 */
 	void move(unsigned int c, unsigned int r);
 	/**
@@ -140,6 +140,8 @@ public:
 	 * @param text  The string to write.
 	 * @param c     The starting column.
 	 * @param r     The starting row.
+	 * @throw DisplayBoundsError  The requested position is beyond the
+	 *                            display's boundries.
 	 */
 	void write(const std::string &text, unsigned int c, unsigned int r);
 	/**
@@ -155,8 +157,8 @@ public:
 	 * at the position, then writes one more.
 	 * @param c     The end column.
 	 * @param r     The end row.
-	 * @throw TextDisplayRangeError  The requested position is beyond the
-	 *                               display's boundries.
+	 * @throw DisplayBoundsError  The requested position is beyond the
+	 *                            display's boundries.
 	 */
 	void clearTo(unsigned int c, unsigned int r);
 	/**

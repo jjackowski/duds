@@ -30,8 +30,8 @@ duds::hardware::devices::displays::BppImageArchive imgArc;
 /**
  * A character in string for large output is not in the large font.
  */
-struct TextLargeCharUnsupported :
-duds::hardware::devices::displays::TextDisplayError { };
+struct LargeCharUnsupported :
+duds::hardware::devices::displays::DisplayError { };
 
 /**
  * Writes out a string with large 3x3 digits, spaces, and colons to a text
@@ -250,14 +250,14 @@ void WriteLarge(
 	// must start on line 0 or 1
 	if (r > 1) {
 		DUDS_THROW_EXCEPTION(
-			duds::hardware::devices::displays::TextDisplayRangeError() <<
+			duds::hardware::devices::displays::DisplayBoundsError() <<
 			duds::hardware::devices::displays::TextDisplayPositionInfo(
 				duds::hardware::devices::displays::Info_DisplayColRow(c, r)
 			)
 		);
 	}
 	// do glyphs need to be loaded?
-	if (glyphSet != (r + 1)) {
+	if ((glyphSet + 1) != r) {
 		glyphSet = r + 1;
 		for (int i = 0; i < 5; ++i) {
 			disp->setGlyph(imgArc.get(glyphNames[r][i]), i + 1);
@@ -266,17 +266,17 @@ void WriteLarge(
 	// work out width
 	int width = 0;
 	for (char c : str) {
-		if (((c >= '0') && (c <= '9')) || (c == ' ') || (c == ';') /* || (c == 'V') || (c == 'W') */) {
+		if (((c >= '0') && (c <= '9')) || (c == ' ') || (c == ';')) {
 			width += 3;
 		} else if ((c == ':') || (c == '~') || (c == '.')) {
 			++width;
 		} else {
-			DUDS_THROW_EXCEPTION(TextLargeCharUnsupported());
+			DUDS_THROW_EXCEPTION(LargeCharUnsupported());
 		}
 	}
 	if ((c + width) > disp->columns()) {
 		DUDS_THROW_EXCEPTION(
-			duds::hardware::devices::displays::TextDisplayRangeError() <<
+			duds::hardware::devices::displays::DisplayBoundsError() <<
 			duds::hardware::devices::displays::TextDisplayPositionInfo(
 				duds::hardware::devices::displays::Info_DisplayColRow(c, r)
 			)
@@ -488,7 +488,7 @@ try {
 	// LCD driver
 	std::shared_ptr<displays::HD44780> tmd =
 		std::make_shared<displays::HD44780>(
-			lcdset, lcdsel, 20, 4
+			std::move(lcdset), std::move(lcdsel), 20, 4
 		);
 	tmd->initialize();
 	std::thread doit(runtest, std::ref(meter), std::ref(tmd), delay, step);

@@ -50,6 +50,7 @@ Raspbian.
 
 - Displays
 	- HD44780 (SPLC780D)
+	- ST7920
 - Instruments
 	- Accelerometers
 		- FXOS8700CQ

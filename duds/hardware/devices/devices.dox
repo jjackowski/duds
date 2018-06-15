@@ -38,7 +38,7 @@ These clock drivers use clocks that are implemented in other software. They are 
 
 @subsection SupDevDispGrph  Graphic
 
-None yet.
+- @ref duds::hardware::devices::displays::ST7920 "ST7920"
 
 @subsection SupDevDispText  Text-only
 

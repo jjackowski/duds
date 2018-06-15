@@ -36,7 +36,7 @@ bool TextDisplay::advance() {
 void TextDisplay::move(unsigned int c, unsigned int r) {
 	// range check
 	if ((c >= columnsize) || (r >= rowsize)) {
-		DUDS_THROW_EXCEPTION(TextDisplayRangeError() <<
+		DUDS_THROW_EXCEPTION(DisplayBoundsError() <<
 			TextDisplayPositionInfo(Info_DisplayColRow(c, r)) <<
 			TextDisplaySizeInfo(Info_DisplayColRow(columnsize, rowsize))
 		);
@@ -91,7 +91,7 @@ void TextDisplay::write(
 ) {
 	// range check
 	if ((c >= columnsize) || (r >= rowsize)) {
-		DUDS_THROW_EXCEPTION(TextDisplayRangeError() <<
+		DUDS_THROW_EXCEPTION(DisplayBoundsError() <<
 			TextDisplayPositionInfo(Info_DisplayColRow(c, r)) <<
 			TextDisplaySizeInfo(Info_DisplayColRow(columnsize, rowsize))
 		);
@@ -106,7 +106,7 @@ void TextDisplay::write(
 void TextDisplay::clearTo(unsigned int c, unsigned int r) {
 	// range check
 	if ((c >= columnsize) || (r >= rowsize)) {
-		DUDS_THROW_EXCEPTION(TextDisplayRangeError() <<
+		DUDS_THROW_EXCEPTION(DisplayBoundsError() <<
 			TextDisplayPositionInfo(Info_DisplayColRow(c, r)) <<
 			TextDisplaySizeInfo(Info_DisplayColRow(columnsize, rowsize))
 		);

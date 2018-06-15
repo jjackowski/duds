@@ -5,46 +5,47 @@
  * No part of DUDS, including this file, may be copied, modified, propagated,
  * or distributed except according to the terms contained in the LICENSE file.
  *
- * Copyright (C) 2017  Jeff Jackowski
+ * Copyright (C) 2018  Jeff Jackowski
  */
-#include <duds/hardware/devices/displays/HD44780.hpp>
-#include <duds/hardware/devices/displays/BppImage.hpp>
+
+#include <duds/hardware/devices/displays/ST7920.hpp>
+#include <duds/hardware/devices/displays/DisplayErrors.hpp>
 #include <duds/general/ReverseBits.hpp>
 #include <thread>
 
 namespace duds { namespace hardware { namespace devices { namespace displays {
 
-HD44780::HD44780() : outcfg(5) { }
+ST7920::ST7920() : outcfg(5) { }
 
-HD44780::HD44780(
+ST7920::ST7920(
 	duds::hardware::interface::DigitalPinSet &&outPins,
 	duds::hardware::interface::ChipSelect &&enablePin,
-	unsigned int c,
-	unsigned int r
+	unsigned int w,
+	unsigned int h
 ) :
-	TextDisplay(c, r),
+	BppGraphicDisplay(ImageDimensions(w, h)),
 	outcfg(5),
 	soonestSend(std::chrono::high_resolution_clock::now())
 {
-	configure(std::move(outPins), std::move(enablePin), c, r);
+	configure(std::move(outPins), std::move(enablePin), w, h);
 }
 
-HD44780::~HD44780() {
+ST7920::~ST7920() {
 	if (outputs.havePins()) {
 		off();
 	}
 }
 
-void HD44780::configure(
+void ST7920::configure(
 	duds::hardware::interface::DigitalPinSet &&outPins,
 	duds::hardware::interface::ChipSelect &&enablePin,
-	unsigned int c,
-	unsigned int r
+	unsigned int w,
+	unsigned int h
 ) {
 	// range check on display size
-	if ((c > 20) || (c < 1) || (r > 4) || (r < 1)) {
+	if ((w > 256) || (w < 16) || (h > 64) || (h < 16)) {
 		DUDS_THROW_EXCEPTION(DisplaySizeError() <<
-			TextDisplaySizeInfo(Info_DisplayColRow(c, r))
+			ImageErrorFrameDimensions(ImageDimensions(w, h))
 		);
 	}
 	if (!outPins.havePins() || !enablePin) {
@@ -78,18 +79,17 @@ void HD44780::configure(
 	// an exception
 	outputs = std::move(outPins);
 	enable = std::move(enablePin);
-	columnsize = c;
-	rowsize = r;
+	frmbuf.resize(w, h);
 }
 
-void HD44780::wait() const {
+void ST7920::wait() const {
 	auto remain = soonestSend - std::chrono::high_resolution_clock::now();
 	if (remain.count() > 0) {
 		std::this_thread::sleep_for(remain);
 	}
 }
 
-void HD44780::preparePins(HD44780::Access &acc) {
+void ST7920::preparePins(ST7920::Access &acc) {
 	if (!outputs.havePins()) {
 		DUDS_THROW_EXCEPTION(DisplayUninitialized());
 	}
@@ -104,15 +104,15 @@ void HD44780::preparePins(HD44780::Access &acc) {
 	acc.output.modifyConfig(outcfg);
 }
 
-void HD44780::sendByte(HD44780::Access &acc, int val) {
+void ST7920::sendByte(ST7920::Access &acc, int val) {
 	// write out the text flag as the MSb along with the high-order nibble
 	acc.output.write((val & 0x1F0) >> 4);  // 5-bit output
 	// wait
-	std::this_thread::sleep_for(std::chrono::nanoseconds(250));
+	std::this_thread::sleep_for(std::chrono::nanoseconds(600));
 	// tell LCD to read
 	acc.enable.select();
 	// another wait
-	std::this_thread::sleep_for(std::chrono::nanoseconds(250));
+	std::this_thread::sleep_for(std::chrono::nanoseconds(600));
 	// LCD should be done reading
 	acc.enable.deselect();
 	// sending a whole byte?
@@ -120,26 +120,28 @@ void HD44780::sendByte(HD44780::Access &acc, int val) {
 		// write out the low-order nibble; leave command flag alone
 		acc.output.write(val & 0xF, 4);  // 4-bit output
 		// wait
-		std::this_thread::sleep_for(std::chrono::nanoseconds(250));
+		std::this_thread::sleep_for(std::chrono::nanoseconds(600));
 		// tell LCD to read
 		acc.enable.select();
 		// wait again
-		std::this_thread::sleep_for(std::chrono::nanoseconds(250));
+		std::this_thread::sleep_for(std::chrono::nanoseconds(600));
 		// LCD should be done reading
 		acc.enable.deselect();
 	}
 	// record time when more data can be sent
 	soonestSend = std::chrono::high_resolution_clock::now();
-	if (val < 4) {
+	if (val < 2) {
 		soonestSend += std::chrono::milliseconds(2);
 	} else {
-		soonestSend += std::chrono::microseconds(48);
+		soonestSend += std::chrono::microseconds(78);
 	}
 }
 
-void HD44780::initialize() {
+void ST7920::initialize() {
 	// LCD intialization commands in reverse order they are sent
-	static const std::uint8_t initdata[8] = {
+	static const std::uint8_t initdata[10] = {
+		0x26,            // use graphic output
+		0x24,            // use extended commands
 		0x6,             // increment cursor, no display shift
 		0xC,             // turn on display w/o cursor
 		0x1,             // clear display
@@ -155,140 +157,94 @@ void HD44780::initialize() {
 	acc.enable.select();
 	std::this_thread::sleep_for(std::chrono::milliseconds(4));
 	acc.enable.deselect();
-	int loop = 7;
-	for (; loop >= 4; --loop) {
+	int loop = 9;
+	for (; loop >= 6; --loop) {
 		sendByte(acc, nibbleFlag | initdata[loop]);
-		std::this_thread::sleep_for(std::chrono::milliseconds(2));
-	}
-	// now using 4-bit bus mode for one row only; are more rows in use?
-	if (rowsize > 1) {
-		// configure for multiple rows; use 4-bit bus mode
-		sendByte(acc, 0x28);
 		std::this_thread::sleep_for(std::chrono::milliseconds(2));
 	}
 	for (; loop >= 0; --loop) {
 		sendByte(acc, initdata[loop]);
 		std::this_thread::sleep_for(std::chrono::milliseconds(2));
 	}
-	// cursor should now be at the upper left corner
-	cpos = rpos = 0;
 }
 
-void HD44780::off() {
+void ST7920::off() {
 	Access acc;
 	preparePins(acc);
-	sendByte(acc, 8);  // display off command
+	sendByte(acc, 1);  // suspend command
 }
 
-void HD44780::on() {
+void ST7920::on() {
 	Access acc;
 	preparePins(acc);
-	sendByte(acc, 12);  // display on command
+	sendByte(acc, 0x26);  // graphic display mode; previously set
 }
 
-/**
- * The address used by the display for the start of each row.
- */
-static std::uint8_t rowStartAddr[4] = {
-	0, 0x40, 0x14, 0x54
-};
-
-void HD44780::moveImpl(unsigned int c, unsigned int r) {
-	Access acc;
-	preparePins(acc);
-	// send command to change display address or'd with the address
-	sendByte(acc, 0x80 | (rowStartAddr[r] + c));
-}
-
-void HD44780::writeImpl(Access &acc, const std::string &text) {
-	// loop through characters
-	std::string::const_iterator iter = text.begin();
-	do {
-		wait();
-		// send the lower byte of the next character; discard the rest
-		sendByte(acc, textFlag | (*iter & 0xFF));
-		// need to reposition cursor?
-		if (advance()) {
-			wait();
-			// send command to change display address or'd with the address
-			// of the current position
-			sendByte(acc, 0x80 | (rowStartAddr[rpos] + cpos));
-		}
-	} while (++iter != text.end());
-}
-
-void HD44780::writeImpl(int c) {
-	Access acc;
-	preparePins(acc);
-	// send the lower byte of the character; discard the rest
-	sendByte(acc, textFlag | (c & 0xFF));
-}
-
-void HD44780::writeImpl(const std::string &text) {
-	Access acc;
-	preparePins(acc);
-	writeImpl(acc, text);
-}
-
-void HD44780::writeImpl(
-	const std::string &text,
-	unsigned int c,
-	unsigned int r
+void ST7920::writeBlock(
+	ST7920::Access &acc,
+	const std::uint16_t *start,
+	const std::uint16_t *end,
+	int pos
 ) {
-	Access acc;
-	preparePins(acc);
-	// move cursor
-	sendByte(acc, 0x80 | (rowStartAddr[r] + c));
-	cpos = c;
-	rpos = r;
-	// do the write
-	writeImpl(acc, text);
+	// set location
+	wait();
+	sendByte(acc, (pos & 0x3F) | 0x80);
+	wait();
+	sendByte(acc, ((pos >> 8) & 0x3F) | 0x80);
+	do {
+		// BppImage and the display use the opposite ordering of bits
+		std::uint16_t out = duds::general::ReverseBits(*start);
+		// write out the image data
+		wait();
+		sendByte(acc, textFlag | (out >> 8));
+		wait();
+		sendByte(acc, textFlag | (out & 0xFF));
+	} while (start++ != end);
 }
 
-void HD44780::clear() {
+void ST7920::outputFrame(const BppImage *img) {
 	Access acc;
 	preparePins(acc);
-	// send clear command
-	sendByte(acc, 1);
-	// display moves the cursor; update the position to match
-	cpos = rpos = 0;
-}
-
-void HD44780::setGlyph(const std::shared_ptr<BppImage> &glyph, int idx) {
-	// displays ignore the 4th bit
-	idx &= ~8;
-	// check for out of range index
-	if ((idx < 0) || (idx > 7)) {
-		DUDS_THROW_EXCEPTION(DisplayGlyphIndexError() <<
-			DisplayGlyphIndex(idx)
-		);
+	// width in 16-bit ints
+	int wblk = width() / 16 + (((width() % 16) > 0) ? 1 : 0);
+	// loop through the images
+	for (int h = 0; h < height(); ++h) {
+		// pointers to two-byte ints of image data; display works with 2 bytes
+		std::uint16_t *dpix = (std::uint16_t*)frmbuf.bufferLine(h);     // dest
+		const std::uint16_t *spix = (std::uint16_t*)img->bufferLine(h); // src
+		std::uint16_t *cx = nullptr, *lx; // first and last changed X coordinate
+		int spos; // starting location of change
+		for (int w = 0; w < wblk; ++dpix, ++spix, ++w) {
+			// find differences between frame buffer and new image
+			if (*dpix != *spix) {
+				// record new value
+				*dpix = *spix;
+				// no change pending?
+				if (!cx) {
+					// mark this change
+					cx = lx = dpix;
+					spos = w;
+				}
+				// more than 1 spot (two bytes) since last change?
+				else if (lx < (dpix - 1)) {
+					// send pending change
+					writeBlock(acc, cx, lx, h | (spos << 8));
+					// mark new change
+					cx = lx = dpix;
+					spos = w;
+				}
+				// add to pending change
+				else {
+					lx = dpix;
+				}
+			}
+		}
+		// have pending change?
+		if (cx) {
+			// send pending change
+			writeBlock(acc, cx, lx, h | (spos << 8));
+		}
 	}
-	// check for bad image size
-	if ((glyph->width() > 5) || (glyph->height() > 8)) {
-		DUDS_THROW_EXCEPTION(DisplayGlyphSizeError() <<
-			ImageErrorDimensions(glyph->dimensions())
-		);
-	}
-	Access acc;
-	preparePins(acc);
-	// send command to set CGRAM address
-	sendByte(acc, 0x40 | (idx << 3));
-	// loop to send up to eight bytes
-	int y = 0;
-	for (; y < glyph->height(); ++y) {
-		// compute value to send to display
-		std::uint8_t row = *(glyph->bufferLine(y));
-		row = duds::general::ReverseBits(row) >> 3;
-		// send it
-		sendByte(acc, textFlag | row);
-	}
-	// allow less than 8 rows; clear unspecified rows
-	for (; y < 8; ++y) {
-		sendByte(acc, textFlag);
-	}
-	// change address back to current text position so any text writing request
-	// will work properly, not just those that set the position
-	sendByte(acc, 0x80 | (rowStartAddr[rpos] + cpos));
 }
 
 } } } }

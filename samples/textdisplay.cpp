@@ -78,7 +78,7 @@ try {
 	// LCD driver
 	std::shared_ptr<displays::HD44780> tmd =
 		std::make_shared<displays::HD44780>(
-			lcdset, lcdsel, 16, 2
+			std::move(lcdset), std::move(lcdsel), 16, 2
 		);
 	
 	std::cout << "Init" << std::endl;
