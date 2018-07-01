@@ -10,6 +10,7 @@
 #include <duds/hardware/devices/displays/HD44780.hpp>
 #include <duds/hardware/devices/displays/BppImage.hpp>
 #include <duds/general/ReverseBits.hpp>
+#include <duds/general/YieldingWait.hpp>
 #include <thread>
 
 namespace duds { namespace hardware { namespace devices { namespace displays {
@@ -85,7 +86,7 @@ void HD44780::configure(
 void HD44780::wait() const {
 	auto remain = soonestSend - std::chrono::high_resolution_clock::now();
 	if (remain.count() > 0) {
-		std::this_thread::sleep_for(remain);
+		duds::general::YieldingWait(remain);
 	}
 }
 
@@ -108,11 +109,11 @@ void HD44780::sendByte(HD44780::Access &acc, int val) {
 	// write out the text flag as the MSb along with the high-order nibble
 	acc.output.write((val & 0x1F0) >> 4);  // 5-bit output
 	// wait
-	std::this_thread::sleep_for(std::chrono::nanoseconds(250));
+	duds::general::YieldingWait(250);
 	// tell LCD to read
 	acc.enable.select();
 	// another wait
-	std::this_thread::sleep_for(std::chrono::nanoseconds(250));
+	duds::general::YieldingWait(250);
 	// LCD should be done reading
 	acc.enable.deselect();
 	// sending a whole byte?
@@ -120,11 +121,11 @@ void HD44780::sendByte(HD44780::Access &acc, int val) {
 		// write out the low-order nibble; leave command flag alone
 		acc.output.write(val & 0xF, 4);  // 4-bit output
 		// wait
-		std::this_thread::sleep_for(std::chrono::nanoseconds(250));
+		duds::general::YieldingWait(250);
 		// tell LCD to read
 		acc.enable.select();
 		// wait again
-		std::this_thread::sleep_for(std::chrono::nanoseconds(250));
+		duds::general::YieldingWait(250);
 		// LCD should be done reading
 		acc.enable.deselect();
 	}

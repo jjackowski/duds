@@ -17,6 +17,10 @@
 #include <duds/hardware/devices/displays/ST7920.hpp>
 #include <duds/hardware/devices/displays/BppImageArchive.hpp>
 #include <duds/hardware/interface/linux/SysFsPort.hpp>
+#ifndef USE_SYSFS_PORT
+#include <duds/hardware/interface/linux/GpioDevPort.hpp>
+#endif
+#include <duds/hardware/interface/test/FakePort.hpp>
 #include <duds/hardware/interface/ChipPinSelectManager.hpp>
 #include <duds/hardware/interface/PinConfiguration.hpp>
 #include <boost/property_tree/info_parser.hpp>
@@ -55,7 +59,8 @@ R PatternFill(P pattern) {
 }
 
 void runtest(
-	const std::shared_ptr<displays::ST7920> &disp
+	const std::shared_ptr<displays::ST7920> &disp,
+	bool once
 ) try {
 	displays::BppImage img(disp->frame().dimensions());
 	displays::BppImage::PixelBlock pval;
@@ -159,8 +164,11 @@ void runtest(
 				break;
 		}
 		disp->write(&img);
-		std::this_thread::sleep_for(std::chrono::seconds(2));
+		if (!once) {
+			std::this_thread::sleep_for(std::chrono::seconds(2));
+		}
 		if (++pat > 15) {
+			if (once) return;
 			pat = 0;
 		}
 	} while (!quit);
@@ -174,7 +182,13 @@ int main(int argc, char *argv[])
 try {
 	std::string confpath;
 	int dispW, dispH;
-	bool noinput = false;
+	bool noinput = false, once = false, fakeport = false;
+	bool usegpiodev =
+		#ifdef USE_SYSFS_PORT
+		false;
+		#else
+		true;
+		#endif
 	{ // option parsing
 		boost::program_options::options_description optdesc(
 			"Options for ST7920 test"
@@ -202,11 +216,30 @@ try {
 					default_value("samples/pins.conf"),
 				"Pin configuration file; REQUIRED"
 			)
+			(
+				"sysfs,s",
+				"Use the GPIO interface at /sys/class/gpio/."
+			)
+			#ifndef USE_SYSFS_PORT
+			(
+				"gpiodev,g",
+				"Use the GPIO device file."
+			)
+			#endif
+			(
+				"fake,f",
+				"Use the FakePort interface for GPIO."
+			)
 			( // don't read from cin; run everything on one thread
 				"noinput",
 				"Do not accept input for termination request. OpenRC will claim "
 				"this program has crashed without this option because it appears "
 				"to send the termination request."
+			)
+			(
+				"once,1",
+				"Run once through all test patterns without a delay. Implies "
+				"noinput. Use this for profiling."
 			)
 		;
 		boost::program_options::variables_map vm;
@@ -222,6 +255,22 @@ try {
 		}
 		if (vm.count("noinput")) {
 			noinput = true;
+		}
+		if (vm.count("once")) {
+			once = true;
+			noinput = true;
+		}
+		if (vm.count("fake")) {
+			fakeport = true;
+		} else {
+			if (vm.count("sysfs")) {
+				usegpiodev = false;
+			}
+			#ifndef USE_SYSFS_PORT
+			if (vm.count("gpiodev")) {
+				usegpiodev = true;
+			}
+			#endif
 		}
 	}
 
@@ -248,8 +297,23 @@ try {
 	duds::hardware::interface::PinConfiguration pc(pinconf);
 
 	// configure display
-	std::shared_ptr<duds::hardware::interface::linux::SysFsPort> port =
-		duds::hardware::interface::linux::SysFsPort::makeConfiguredPort(pc);
+	std::shared_ptr<duds::hardware::interface::DigitalPort> port;
+	if (fakeport) {
+		port = duds::hardware::interface::test::FakePort::makeConfiguredPort(pc);
+	} else {
+		#ifdef USE_SYSFS_PORT
+		port = duds::hardware::interface::linux::SysFsPort::makeConfiguredPort(pc);
+		#else
+		if (usegpiodev) {
+			port =
+				duds::hardware::interface::linux::GpioDevPort::makeConfiguredPort(pc);
+		} else {
+			port =
+				duds::hardware::interface::linux::SysFsPort::makeConfiguredPort(pc);
+		}
+		#endif
+	}
+
 	duds::hardware::interface::DigitalPinSet lcdset;
 	duds::hardware::interface::ChipSelect lcdsel;
 	pc.getPinSetAndSelect(lcdset, lcdsel, "lcd");
@@ -261,10 +325,10 @@ try {
 	disp->initialize();
 
 	if (noinput) {
-		// will not return
-		runtest(disp);
+		// will not return, unless once is true
+		runtest(disp, once);
 	} else {
-		std::thread doit(runtest, std::ref(disp));
+		std::thread doit(runtest, std::ref(disp), once);
 		std::cin.get();
 		quit = true;
 		doit.join();

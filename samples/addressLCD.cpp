@@ -17,7 +17,11 @@
 #include <duds/hardware/devices/displays/HD44780.hpp>
 #include <duds/hardware/devices/displays/TextDisplayStream.hpp>
 #include <duds/hardware/devices/displays/BppImageArchive.hpp>
+#ifdef USE_SYSFS_PORT
 #include <duds/hardware/interface/linux/SysFsPort.hpp>
+#else
+#include <duds/hardware/interface/linux/GpioDevPort.hpp>
+#endif
 #include <duds/hardware/interface/ChipPinSelectManager.hpp>
 #include <duds/hardware/interface/PinConfiguration.hpp>
 #include <boost/property_tree/info_parser.hpp>
@@ -414,8 +418,13 @@ try {
 	duds::hardware::interface::PinConfiguration pc(pinconf);
 
 	// configure display
+	#ifdef USE_SYSFS_PORT
 	std::shared_ptr<duds::hardware::interface::linux::SysFsPort> port =
 		duds::hardware::interface::linux::SysFsPort::makeConfiguredPort(pc);
+	#else
+	std::shared_ptr<duds::hardware::interface::linux::GpioDevPort> port =
+		duds::hardware::interface::linux::GpioDevPort::makeConfiguredPort(pc);
+	#endif
 	duds::hardware::interface::DigitalPinSet lcdset;
 	duds::hardware::interface::ChipSelect lcdsel;
 	pc.getPinSetAndSelect(lcdset, lcdsel, "lcd");

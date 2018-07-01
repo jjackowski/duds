@@ -22,11 +22,17 @@ DigitalPortIndependentPins(ids.size(), firstid), fspins(ids.size()) {
 	FsPinVector::iterator fiter = fspins.begin();
 	std::vector<unsigned int>::const_iterator iiter = ids.cbegin();
 	for (; piter != pins.end(); ++firstid, ++iiter, ++fiter, ++piter) {
-		try {
-			fiter->open(piter->conf, piter->cap, *iiter);
-		} catch (PinError &pe) {
-			pe << PinErrorId(firstid);
-			throw;
+		// check for an empty spot
+		if (*iiter == -1) {
+			piter->markNonexistent();
+		} else {
+			// attempt to access the resources
+			try {
+				fiter->open(piter->conf, piter->cap, *iiter);
+			} catch (PinError &pe) {
+				pe << PinErrorId(firstid);
+				throw;
+			}
 		}
 	}
 }
@@ -43,7 +49,7 @@ std::shared_ptr<SysFsPort> SysFsPort::makeConfiguredPort(
 	gpios.reserve(port.pins.size());
 	for (auto const &pin : port.gidIndex()) {
 		// need empty spots?
-		if (pin.gid < next) {
+		if (pin.gid > next) {
 			// add unavailable pins
 			gpios.insert(gpios.end(), pin.gid - next, -1);
 		}
@@ -52,7 +58,7 @@ std::shared_ptr<SysFsPort> SysFsPort::makeConfiguredPort(
 		next = pin.gid + 1;
 	}
 	std::shared_ptr<SysFsPort> sp = std::make_shared<SysFsPort>(
-		gpios,       // <--- CHANGE this to a move
+		gpios,
 		port.idOffset
 	);
 	pc.attachPort(sp, name);
@@ -70,19 +76,25 @@ bool SysFsPort::simultaneousOperations() const {
 
 void SysFsPort::configurePort(
 	unsigned int localPinId,
-	const DigitalPinConfig &cfg
+	const DigitalPinConfig &cfg,
+	DigitalPinAccessBase::PortData *
 ) {
-	assert(cfg & (DigitalPinConfig::DirInput | DigitalPinConfig::DirOutput));
-	try {
-		// change direction
-		fspins[localPinId].setDirection(cfg & DigitalPinConfig::DirOutput);
-	} catch (PinError &pe) {
-		pe << PinErrorId(globalId(localPinId));
-		throw;
+	// only configure existing pins
+	/** @bug  Is this the right place for such a check? Should it be done
+	 *        by the caller?  */
+	if (pins[localPinId]) {
+		assert(cfg & (DigitalPinConfig::DirInput | DigitalPinConfig::DirOutput));
+		try {
+			// change direction
+			fspins[localPinId].setDirection(cfg & DigitalPinConfig::DirOutput);
+		} catch (PinError &pe) {
+			pe << PinErrorId(globalId(localPinId));
+			throw;
+		}
 	}
 }
 
-bool SysFsPort::inputImpl(unsigned int gid)
+bool SysFsPort::inputImpl(unsigned int gid,	DigitalPinAccessBase::PortData *)
 try {
 	return fspins[localId(gid)].read();
 } catch (PinError &pe) {
@@ -90,8 +102,11 @@ try {
 	throw;
 }
 
-void SysFsPort::outputImpl(unsigned int lid, bool state)
-try {
+void SysFsPort::outputImpl(
+	unsigned int lid,
+	bool state,
+	DigitalPinAccessBase::PortData *
+) try {
 	fspins[lid].write(state);
 } catch (PinError &pe) {
 	pe << PinErrorId(globalId(lid));
@@ -116,7 +131,7 @@ void SysFsPort::FsPin::open(
 		// allow for input only
 		value.open(fname.str().c_str(), std::ios_base::in);
 		if (!value.is_open()) {
-			DUDS_THROW_EXCEPTION(PinIoError() << SysFsPinErrorId(pin) <<
+			DUDS_THROW_EXCEPTION(PinIoError() << PinErrorPortId(pin) <<
 				boost::errinfo_file_name(fname.str())
 			);
 		}
@@ -136,7 +151,7 @@ void SysFsPort::FsPin::open(
 		direction.open(fname.str().c_str(), std::ios_base::in);
 		if (!direction.is_open()) {
 			value.close();
-			DUDS_THROW_EXCEPTION(PinIoError() << SysFsPinErrorId(pin) <<
+			DUDS_THROW_EXCEPTION(PinIoError() << PinErrorPortId(pin) <<
 				boost::errinfo_file_name(fname.str())
 			);
 		}
@@ -166,7 +181,7 @@ void SysFsPort::FsPin::open(
 				// useless pin; an output that cannot be changed
 				value.close();
 				DUDS_THROW_EXCEPTION(PinUnsupportedOperation() <<
-					SysFsPinErrorId(pin)
+					PinErrorPortId(pin)
 				);
 			}
 		} else {
@@ -177,7 +192,7 @@ void SysFsPort::FsPin::open(
 			DigitalPinConfig::OutputPushPull;
 	} else {
 		// unexpected value
-		DUDS_THROW_EXCEPTION(PinIoError() << SysFsPinErrorId(pin));
+		DUDS_THROW_EXCEPTION(PinIoError() << PinErrorPortId(pin));
 	}
 	// I don't like double negatives, but I'm not changing the logic to fix it.
 	if (!noOutput) {
@@ -196,7 +211,7 @@ void SysFsPort::FsPin::setDirection(bool output) {
 		}
 		if (direction.fail()) {
 			DUDS_THROW_EXCEPTION(PinIoError() <<
-				SysFsPinErrorId(fsid)
+				PinErrorPortId(fsid)
 			);
 		} else if (output) {
 			// assure the logic to avoid unneeded changes will see the next
@@ -214,7 +229,7 @@ bool SysFsPort::FsPin::read() {
 	value >> v;
 	if (value.fail()) {
 		DUDS_THROW_EXCEPTION(PinIoError() <<
-			SysFsPinErrorId(fsid)
+			PinErrorPortId(fsid)
 		);
 	}
 	return v == '1';
@@ -236,7 +251,7 @@ void SysFsPort::FsPin::write(bool w) {
 		value << v << std::endl;
 		if (value.fail()) {
 			DUDS_THROW_EXCEPTION(PinIoError() <<
-				SysFsPinErrorId(fsid)
+				PinErrorPortId(fsid)
 			);
 		}
 		// record this as the current output

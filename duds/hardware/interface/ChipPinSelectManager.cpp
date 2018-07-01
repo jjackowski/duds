@@ -50,7 +50,7 @@ void ChipPinSelectManager::setSelectPin(
 		);
 	}
 	// assure a deselected state prior to requesting output
-	dpa->output(!selstate);
+	dpa->output(!selectState);
 	// work out the actual output config
 	dpa->modifyConfig(DigitalPinConfig(cap.firstOutputDriveConfigFlags()));
 	// store this access object; seems good if it got this far without

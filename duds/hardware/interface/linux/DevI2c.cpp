@@ -41,9 +41,8 @@ DevI2c::~DevI2c() {
 }
 
 void DevI2c::io(i2c_rdwr_ioctl_data &idat) {
-	int res;
 	if (ioctl(fd, I2C_RDWR, &idat) < 0) {
-		res = errno;
+		int res = errno;
 		switch (res) {
 			case EBUSY:
 				DUDS_THROW_EXCEPTION(I2cErrorBusy() <<

@@ -7,6 +7,9 @@
  *
  * Copyright (C) 2017  Jeff Jackowski
  */
+#ifndef DIGITALPORTINDEPENDENTPINS_HPP
+#define DIGITALPORTINDEPENDENTPINS_HPP
+
 #include <duds/hardware/interface/DigitalPort.hpp>
 
 namespace duds { namespace hardware { namespace interface {
@@ -68,18 +71,28 @@ protected:
 	) const;
 	/**
 	 * Changes the hardware configuration for the whole port by calling
-	 * configurePort(const DigitalPinConfig &, unsigned int) for each pin.
-	 * This only makes sense for ports that do not support simultaneous
-	 * operations. An assertion exists to prevent such misuse.
+	 * configurePort(const DigitalPinConfig &, unsigned int, DigitalPinAccessBase::PortData *)
+	 * for each pin.
+	 * This makes sense for ports that do not support simultaneous operations,
+	 * ports that do not benifit from them for configuration, and for tesing
+	 * an implementation prior to fully implementing simultaneous operations.
 	 * @param cfgs   The new configuration. The indices are the local pin IDs.
 	 *               The size must match the size of @a pins.
+	 * @param pdata  A pointer to the port specific data stored in the
+	 *               corresponding access object for the pins.
 	 */
-	virtual void configurePort(const std::vector<DigitalPinConfig> &cfgs);
+	virtual void configurePort(
+		const std::vector<DigitalPinConfig> &cfgs,
+		DigitalPinAccessBase::PortData *pdata
+	);
 	// a reminder to C++ that this function has been declared; bother
 	virtual void configurePort(
 		unsigned int localPinId,
-		const DigitalPinConfig &cfg
+		const DigitalPinConfig &cfg,
+		DigitalPinAccessBase::PortData *pdata
 	) = 0;
 };
 
 } } }
+
+#endif        //  #ifndef DIGITALPORTINDEPENDENTPINS_HPP

@@ -215,12 +215,14 @@ struct DigitalPinConfig {
 	 * The last known input state from the pin. This flag is updated on any
 	 * single pin read operation for the pin. It is handled independently of
 	 * the output state.
+	 * @todo  This is not yet implemented in DigitalPort.
 	 */
 	static constexpr Flags InputState = Flags::Bit(20);
 	/**
 	 * The set output state for the pin. This flag is updated on any single
 	 * pin write operation for the pin. It is handled independently of
 	 * the input state.
+	 * @todo  This is not yet implemented in DigitalPort.
 	 */
 	static constexpr Flags OutputState = Flags::Bit(21);
 	/**

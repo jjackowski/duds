@@ -65,6 +65,11 @@ struct SelectManagerUnknownTypeError : PinConfigurationError { };
  */
 struct SelectManagerDoesNotExistError : PinConfigurationError { };
 /**
+ * A required chip select manager has not yet been created most likely because
+ * the port providing its pins has not yet been attached.
+ */
+struct SelectManagerNotCreated : PinConfigurationError { };
+/**
  * The configuration gives the same name to more than one chip select.
  */
 struct SelectDuplicateError : PinConfigurationError { };
@@ -98,6 +103,11 @@ struct SetDuplicateError : PinConfigurationError { };
  * The requested pin set is not defined by the configuration.
  */
 struct SetDoesNotExistError : PinConfigurationError { };
+/**
+ * A required pin set has not yet been created most likely because
+ * the port providing its pins has not yet been attached.
+ */
+struct SetNotCreatedError : PinConfigurationError { };
 
 /**
  * The name of the port as it appears in the configuration.
@@ -290,6 +300,9 @@ public:
 		/**
 		 * A hint as to what DigitalPort implementation should be used. It can
 		 * be ignored.
+		 * @todo  Used for device file path in
+		 *        duds::hardware::interface::linux::GpioDevPort::makeConfiguredPort(),
+		 *        so maybe change the name.
 		 */
 		std::string typeval;
 		/**
@@ -608,6 +621,8 @@ public:
 	 * @param setName  The name given to the pin set in the configuration.
 	 * @throw SetDoesNotExistError
 	 * @throw SelectDoesNotExistError
+	 * @throw SetNotCreatedError
+	 * @throw SelectManagerNotCreated
 	 */
 	void getPinSetAndSelect(
 		DigitalPinSet &dpset,
@@ -620,6 +635,7 @@ public:
 	 *       object needed for the set has been attached.
 	 * @param setName  The name given to the pin set in the configuration.
 	 * @throw SetDoesNotExistError
+	 * @throw SetNotCreatedError
 	 */
 	const DigitalPinSet &getPinSet(const std::string &setName) const;
 	/**
@@ -628,6 +644,7 @@ public:
 	 *       object needed for the set has been attached.
 	 * @param selName  The name given to the chip select in the configuration.
 	 * @throw SelectDoesNotExistError
+	 * @throw SelectManagerNotCreated
 	 */
 	const ChipSelect &getSelect(const std::string &selName) const;
 	/**

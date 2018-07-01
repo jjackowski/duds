@@ -60,12 +60,12 @@ std::vector<unsigned int> DigitalPinSetAccess::subset(
 
 void DigitalPinSetAccess::modifyConfig(const DigitalPinConfig &conf) const {
 	std::vector<DigitalPinConfig> c(pinvec.size(), conf);
-	port()->modifyConfig(pinvec, c);
+	port()->modifyConfig(pinvec, c, &portdata);
 }
 
 void DigitalPinSetAccess::output(bool state) const {
 	std::vector<bool> s(pinvec.size(), state);
-	port()->output(pinvec, s);
+	port()->output(pinvec, s, &portdata);
 }
 
 } } }

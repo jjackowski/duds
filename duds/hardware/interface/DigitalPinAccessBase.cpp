@@ -18,6 +18,8 @@ DigitalPinAccessBase &DigitalPinAccessBase::operator=(
 	dp = old.dp;
 	// clear the port pointer from the source
 	old.dp = nullptr;
+	// grab the port specific data
+	portdata = old.portdata;
 	return *this;
 }
 

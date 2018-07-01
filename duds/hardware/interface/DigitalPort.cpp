@@ -149,6 +149,14 @@ void DigitalPort::waitForAvailability(
 	}
 }
 
+void DigitalPort::madeAccess(DigitalPinAccess &acc) { }
+
+void DigitalPort::madeAccess(DigitalPinSetAccess &acc) { }
+
+void DigitalPort::retiredAccess(const DigitalPinAccess &acc) noexcept { }
+
+void DigitalPort::retiredAccess(const DigitalPinSetAccess &acc) noexcept { }
+
 void DigitalPort::access(
 	const unsigned int *reqpins,
 	const unsigned int len,
@@ -166,7 +174,7 @@ void DigitalPort::access(
 	// wait for pins
 	waitForAvailability(lock, reqpins, len);
 	// get the access objects for each pin
-	for (int i = len; i; i--, reqpins++, acc++) {
+	for (int i = len; i; --i, ++reqpins, ++acc) {
 		// skip -1's
 		if (*reqpins != -1) {
 			unsigned int lid = localId(*reqpins);
@@ -179,9 +187,20 @@ void DigitalPort::access(
 			}
 			// create the access object
 			*acc = std::unique_ptr<DigitalPinAccess>(
-				new DigitalPinAccess(this, *reqpins));
+				new DigitalPinAccess(this, *reqpins)
+			);
 			// record the access
 			pins[lid].access = acc->get();
+			try {
+				// notify implementation of the new access object
+				madeAccess(**acc);
+			} catch (...) {
+				// implementation rejected access, so revoke access
+				for (; i <= len; ++i, --acc) {
+					updateAccess(**acc, nullptr);
+				}
+				throw;
+			}
 		}
 	}
 }
@@ -245,7 +264,7 @@ void DigitalPort::access(
 	// wait for pins
 	waitForAvailability(lock, reqpins, len);
 	// get the access objects for each pin
-	for (int i = 0; i < len; i++, reqpins++) {
+	for (int i = 0; i < len; ++i, ++reqpins) {
 		// skip -1's
 		if (*reqpins != -1) {
 			unsigned int lid = localId(*reqpins);
@@ -260,6 +279,16 @@ void DigitalPort::access(
 			new (acc + i) DigitalPinAccess(this, *reqpins);
 			// record the access
 			pins[lid].access = &(acc[i]);
+			try {
+				// notify implementation of the new access
+				madeAccess(*(acc + i));
+			} catch (...) {
+				// implementation rejected access, so revoke access
+				for (; i >= 0; --i) {
+					updateAccess(*(acc + i), nullptr);
+				}
+				throw;
+			}
 		} else {
 			// make access object without a pin
 			new (acc + i) DigitalPinAccess();
@@ -319,6 +348,14 @@ void DigitalPort::access(
 			acc.pinvec.push_back(-1);
 		}
 	}
+	try {
+		// notify implementation of the new access
+		madeAccess(acc);
+	} catch (...) {
+		// implementation rejected access, so revoke access
+		updateAccess(acc, nullptr);
+		throw;
+	}
 }
 
 std::unique_ptr<DigitalPinSetAccess> DigitalPort::access(
@@ -346,6 +383,10 @@ void DigitalPort::updateAccess(
 		// recorded access object is identical to one passed in
 		(pins[oldAcc.localId()].access == &oldAcc)
 	);
+	// notifty implementation of a retirement
+	if (!newAcc) {
+		retiredAccess(oldAcc);
+	}
 	// transfer access
 	pins[oldAcc.localId()].access = newAcc;
 	// notify any threads waiting on access
@@ -362,6 +403,10 @@ void DigitalPort::updateAccess(
 	assert(oldAcc.port() == this);
 	// need exclusive access
 	std::lock_guard<std::mutex> lock(block);
+	// notifty implementation of a retirement
+	if (!newAcc) {
+		retiredAccess(oldAcc);
+	}
 	// iterate through the pins
 	std::vector<unsigned int>::const_iterator iter = oldAcc.pinvec.begin();
 	for (; iter != oldAcc.pinvec.end(); ++iter) {
@@ -575,7 +620,8 @@ bool DigitalPort::proposeFullConfig(
 
 DigitalPinConfig DigitalPort::modifyConfig(
 	unsigned int gid,
-	const DigitalPinConfig &cfg
+	const DigitalPinConfig &cfg,
+	DigitalPinAccessBase::PortData *pdata
 ) {
 	// assure no changes to the pins from other threads
 	std::lock_guard<std::mutex> lock(block);
@@ -609,7 +655,7 @@ DigitalPinConfig DigitalPort::modifyConfig(
 	// check for an independent configuration
 	if (independentConfig(gid, actcfg, iconf)) {
 		// make changes
-		configurePort(lid, actcfg);
+		configurePort(lid, actcfg, pdata);
 		// record the new config
 		pins[lid].conf = actcfg;
 	} else {
@@ -618,14 +664,15 @@ DigitalPinConfig DigitalPort::modifyConfig(
 		std::vector<DigitalPinConfig> propConf(initConf);
 		propConf[lid] = actcfg;
 		// do it -- implementation used by both modifyConfig functions
-		modifyFullConfig(propConf, initConf);
+		modifyFullConfig(propConf, initConf, pdata);
 	}
 	return actcfg;
 }
 
 void DigitalPort::modifyFullConfig(
 	std::vector<DigitalPinConfig> &propConf,
-	std::vector<DigitalPinConfig> &initConf
+	std::vector<DigitalPinConfig> &initConf,
+	DigitalPinAccessBase::PortData *pdata
 ) {
 	// prepare data for config check
 	std::vector<DigitalPinRejectedConfiguration::Reason> errs;
@@ -644,7 +691,7 @@ void DigitalPort::modifyFullConfig(
 		);
 	}
 	// apply config
-	configurePort(propConf);
+	configurePort(propConf, pdata);
 	// record new config
 	PinVector::iterator pin = pins.begin();
 	std::vector<DigitalPinConfig>::const_iterator conf = propConf.cbegin();
@@ -653,18 +700,22 @@ void DigitalPort::modifyFullConfig(
 	}
 }
 
-void DigitalPort::modifyConfig(std::vector<DigitalPinConfig> &cfgs) {
+void DigitalPort::modifyConfig(
+	std::vector<DigitalPinConfig> &cfgs,
+	DigitalPinAccessBase::PortData *pdata
+) {
 	// assure no changes to the pins from other threads
 	std::lock_guard<std::mutex> lock(block);
 	// prepare data for config check
 	std::vector<DigitalPinConfig> initConf = configurationImpl();
 	// do it -- implementation used by both modifyConfig functions
-	modifyFullConfig(cfgs, initConf);
+	modifyFullConfig(cfgs, initConf, pdata);
 }
 
 void DigitalPort::modifyConfig(
 	const std::vector<unsigned int> &pvec,
-	std::vector<DigitalPinConfig> &cfgs
+	std::vector<DigitalPinConfig> &cfgs,
+	DigitalPinAccessBase::PortData *pdata
 ) {
 	// inputs must match size and not be empty
 	if (cfgs.empty() || (cfgs.size() != pvec.size())) {
@@ -687,10 +738,10 @@ void DigitalPort::modifyConfig(
 		}
 	}
 	// do it -- implementation used by both modifyConfig functions
-	modifyFullConfig(propConf, initConf);
+	modifyFullConfig(propConf, initConf, pdata);
 }
 
-bool DigitalPort::input(unsigned int gid) {
+bool DigitalPort::input(unsigned int gid, DigitalPinAccessBase::PortData *pdata) {
 	unsigned int lid = localId(gid);
 	// assure no changes to the pins from other threads
 	std::lock_guard<std::mutex> lock(block);
@@ -708,10 +759,13 @@ bool DigitalPort::input(unsigned int gid) {
 		);
 	}
 	// passed error checks; do the output
-	return inputImpl(gid);
+	return inputImpl(gid, pdata);
 }
 
-std::vector<bool> DigitalPort::input(const std::vector<unsigned int> &pvec) {
+std::vector<bool> DigitalPort::input(
+	const std::vector<unsigned int> &pvec,
+	DigitalPinAccessBase::PortData *pdata
+) {
 	// assure no changes to the pins from other threads
 	std::lock_guard<std::mutex> lock(block);
 	// check all pins existence and input config
@@ -733,23 +787,30 @@ std::vector<bool> DigitalPort::input(const std::vector<unsigned int> &pvec) {
 		}
 	}
 	// passed error checks; do the input
-	return inputImpl(pvec);
+	return inputImpl(pvec, pdata);
 }
 
-std::vector<bool> DigitalPort::inputImpl(const std::vector<unsigned int> &pvec) {
+std::vector<bool> DigitalPort::inputImpl(
+	const std::vector<unsigned int> &pvec,
+	DigitalPinAccessBase::PortData *pdata
+) {
 	// using this implementation only makes sense if simultaneous operations
 	// are not supported
 	assert(!simultaneousOperations());
 	std::vector<bool> res;
 	res.reserve(pvec.size());
 	std::vector<unsigned int>::const_iterator iter = pvec.cbegin();
-	std::for_each(pvec.cbegin(), pvec.cend(), [&res, this](unsigned int p) {
-		res.push_back(inputImpl(globalId(p)));
-	});
+	for (auto pid : pvec) {
+		res.push_back(inputImpl(globalId(pid), pdata));
+	}
 	return res;
 }
 
-void DigitalPort::output(unsigned int gid, bool state) {
+void DigitalPort::output(
+	unsigned int gid,
+	bool state,
+	DigitalPinAccessBase::PortData *pdata
+) {
 	unsigned int lid = localId(gid);
 	// assure no changes to the pins from other threads
 	std::lock_guard<std::mutex> lock(block);
@@ -768,12 +829,13 @@ void DigitalPort::output(unsigned int gid, bool state) {
 		);
 	}
 	// passed error checks; do the output
-	outputImpl(lid, state);
+	outputImpl(lid, state, pdata);
 }
 
 void DigitalPort::output(
 	const std::vector<unsigned int> &pvec,
-	const std::vector<bool> &state
+	const std::vector<bool> &state,
+	DigitalPinAccessBase::PortData *pdata
 ) {
 	// the inputs must be the same size
 	if (pvec.size() != state.size()) {
@@ -801,12 +863,13 @@ void DigitalPort::output(
 		}
 	}
 	// passed error checks; do the output
-	outputImpl(pvec, state);
+	outputImpl(pvec, state, pdata);
 }
 
 void DigitalPort::outputImpl(
 	const std::vector<unsigned int> &pvec,
-	const std::vector<bool> &state
+	const std::vector<bool> &state,
+	DigitalPinAccessBase::PortData *pdata
 ) {
 	// using this implementation only makes sense if simultaneous operations
 	// are not supported
@@ -815,7 +878,7 @@ void DigitalPort::outputImpl(
 	std::vector<unsigned int>::const_iterator piter = pvec.cbegin();
 	std::vector<bool>::const_iterator biter = state.cbegin();
 	for (; piter != pvec.cend(); ++biter, ++piter) {
-		outputImpl(*piter, *biter);
+		outputImpl(*piter, *biter, pdata);
 	}
 }
 

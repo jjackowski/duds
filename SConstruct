@@ -274,6 +274,14 @@ else:
 	# 128-bit integer support
 	if conf.CheckType('__int128', language = 'C++'):
 		conf.Define('HAVE_INT128', 1, 'A 128-bit integer type is available.')
+	
+	# Linux support for GPIO control through a character device
+	if conf.CheckCHeader('linux/gpio.h'):
+		env['Use_GpioDevPort'] = True
+		dbgenv['Use_GpioDevPort'] = True
+	else:
+		env['Use_GpioDevPort'] = False
+		dbgenv['Use_GpioDevPort'] = False
 
 	dbgenv = conf.Finish()
 

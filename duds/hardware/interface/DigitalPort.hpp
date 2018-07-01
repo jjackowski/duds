@@ -11,14 +11,13 @@
 #define DIGITALPORT_HPP
 
 #include <duds/hardware/interface/DigitalPinCap.hpp>
-#include <boost/noncopyable.hpp>
+#include <duds/hardware/interface/DigitalPinAccessBase.hpp>
 #include <condition_variable>
 #include <memory>
 #include <mutex>
 
 namespace duds { namespace hardware { namespace interface {
 
-class DigitalPinAccessBase;
 class DigitalPinAccess;
 class DigitalPinSetAccess;
 
@@ -98,6 +97,13 @@ protected:
 		 */
 		operator bool () const {
 			return cap.exists();
+		}
+		/**
+		 * Modify the pin to be non-existent.
+		 */
+		void markNonexistent() {
+			cap = NonexistentDigitalPin;
+			conf = DigitalPinConfig(DigitalPinConfig::ClearAll());
 		}
 	};
 	typedef std::vector<PinEntry>  PinVector;
@@ -242,11 +248,14 @@ protected:
 	 * @param  globalPinId  The global pin ID; matches the index in the @a pins
 	 *                      and @a proposed vectors.
 	 * @param  cfg          The requested new configuration.
+	 * @param pdata         A pointer to the port specific data stored in the
+	 *                      corresponding access object for the pin.
 	 * @return              The actual new configuration.
 	 */
 	DigitalPinConfig modifyConfig(
 		unsigned int globalPinId,
-		const DigitalPinConfig &cfg
+		const DigitalPinConfig &cfg,
+		DigitalPinAccessBase::PortData *pdata
 	);
 	/**
 	 * Does the work of the modifyConfig() functions in the case that the whole
@@ -264,48 +273,65 @@ protected:
 	 *                  to fill the vector and use it as the starting point
 	 *                  for @a propConf while avoiding a second call to
 	 *                  configurationImpl() since a vector copy will be faster.
+	 * @param pdata     A pointer to the port specific data stored in the
+	 *                  corresponding access object for the pin.
 	 */
 	void modifyFullConfig(
 		std::vector<DigitalPinConfig> &propConf,
-		std::vector<DigitalPinConfig> &initConf
+		std::vector<DigitalPinConfig> &initConf,
+		DigitalPinAccessBase::PortData *pdata
 	);
 	/**
 	 * Modifies the configuration of multiple pins. This is used to support
 	 * changing multiple configurations without requiring the DigitalPort user
 	 * to make calls for each pin individually, and to handle dependent
 	 * configurations.
-	 * @param cfgs  The new configurations for each pin using local indexing
-	 *              (matches @a pins). Will be changed to match the size of
-	 *              @a pins and to hold the finialized configurations.
+	 * @param cfgs     The new configurations for each pin using local indexing
+	 *                 (matches @a pins). Will be changed to match the size of
+	 *                 @a pins and to hold the finialized configurations.
+	 * @param pdata    A pointer to the port specific data stored in the
+	 *                 corresponding access object for the pin.
 	 * @note   The implementation should lock @a block prior to accessing
 	 *         internal data, like @a pins.
 	 */
-	void modifyConfig(std::vector<DigitalPinConfig> &cfgs);
+	void modifyConfig(
+		std::vector<DigitalPinConfig> &cfgs,
+		DigitalPinAccessBase::PortData *pdata
+	);
 	void modifyConfig(
 		const std::vector<unsigned int> &pvec,
-		std::vector<DigitalPinConfig> &cfgs
+		std::vector<DigitalPinConfig> &cfgs,
+		DigitalPinAccessBase::PortData *pdata
 	);
 	/**
 	 * Changes the hardware configuration for a single pin.
 	 * If this function does not throw, its caller will record the configuration
 	 * change inside @a pins. It is only called after error checking is
 	 * performed on its parameters.
-	 * @param cfg         The new configuration.
-	 * @param localPinId  The local ID for the pin to modify.
+	 * @param cfg          The new configuration.
+	 * @param localPinId   The local ID for the pin to modify.
+	 * @param pdata        A pointer to the port specific data stored in the
+	 *                     corresponding access object for the pin.
 	 */
 	virtual void configurePort(
 		unsigned int localPinId,
-		const DigitalPinConfig &cfg
+		const DigitalPinConfig &cfg,
+		DigitalPinAccessBase::PortData *pdata
 	) = 0;
 	/**
 	 * Changes the hardware configuration for the whole port.
 	 * If this function does not throw, its caller will record the configuration
 	 * change inside @a pins. It is only called after error checking is
 	 * performed on its parameters.
-	 * @param cfgs   The new configuration. The indices are the local pin IDs.
-	 *               The size must match the size of @a pins.
+	 * @param cfgs    The new configuration. The indices are the local pin IDs.
+	 *                The size must match the size of @a pins.
+	 * @param pdata   A pointer to the port specific data stored in the
+	 *                corresponding access object for the pin.
 	 */
-	virtual void configurePort(const std::vector<DigitalPinConfig> &cfgs) = 0;
+	virtual void configurePort(
+		const std::vector<DigitalPinConfig> &cfgs,
+		DigitalPinAccessBase::PortData *pdata
+	) = 0;
 
 	std::vector<DigitalPinConfig> configuration(
 		const std::vector<unsigned int> &pvec, bool global
@@ -321,28 +347,40 @@ protected:
 	 * Does error checking in advance of calling
 	 * inputImpl(unsigned int) to read the input of the given pin.
 	 * @param gid    The global ID of the pin to read.
+	 * @param pdata  A pointer to the port specific data stored in the
+	 *               corresponding access object for the pin.
 	 * @throw PinDoesNotExist      The requested pin is not handled by
 	 *                             this port.
 	 * @throw PinWrongDirection    The pin is not configured as an input.
 	 */
-	bool input(unsigned int gid);
+	bool input(unsigned int gid, DigitalPinAccessBase::PortData *pdata);
 	/**
 	 * Does error checking in advance of calling
 	 * inputImpl(const std::vector<unsigned int> &) to read the input of a
 	 * set of pins.
 	 * @param pvec     The local IDs of the pins to read.
+	 * @param pdata  A pointer to the port specific data stored in the
+	 *               corresponding access object for the pins.
 	 * @throw PinDoesNotExist      A requested pin is not handled by
 	 *                             this port.
 	 * @throw PinWrongDirection    A pin is not configured as an input.
 	 * @return   The input from the pins.
 	 */
-	std::vector<bool> input(const std::vector<unsigned int> &pvec);
+	std::vector<bool> input(
+		const std::vector<unsigned int> &pvec,
+		DigitalPinAccessBase::PortData *pdata
+	);
 	/**
 	 * Reads input from the given pin.
 	 * @pre   The pin is configured as an input.
 	 * @param gid    The global ID of the pin to read.
+	 * @param pdata  A pointer to the port specific data stored in the
+	 *               corresponding access object for the pin.
 	 */
-	virtual bool inputImpl(unsigned int gid) = 0;
+	virtual bool inputImpl(
+		unsigned int gid,
+		DigitalPinAccessBase::PortData *pdata
+	) = 0;
 	/**
 	 * Reads input from the requested pins.
 	 *
@@ -352,26 +390,39 @@ protected:
 	 *
 	 * @pre   All the pins are configured as inputs.
 	 * @param pvec    The global IDs of the pins to read.
+	 * @param pdata  A pointer to the port specific data stored in the
+	 *               corresponding access object for the pins.
 	 * @return   The input from the pins.
 	 */
-	virtual std::vector<bool> inputImpl(const std::vector<unsigned int> &pvec);
+	virtual std::vector<bool> inputImpl(
+		const std::vector<unsigned int> &pvec,
+		DigitalPinAccessBase::PortData *pdata
+	);
 	/**
 	 * Does error checking in advance of calling
 	 * outputImpl(unsigned int, bool) to change the output of the given pin.
 	 * @param gid    The global ID of the pin to change.
 	 * @param state  The new output state.
+	 * @param pdata  A pointer to the port specific data stored in the
+	 *               corresponding access object for the pin.
 	 * @throw PinDoesNotExist              The requested pin is not handled by
 	 *                                     this port.
 	 * @throw DigitalPinCannotOutputError  The pin cannot be configured as an
 	 *                                     output.
 	 */
-	void output(unsigned int gid, bool state);
+	void output(
+		unsigned int gid,
+		bool state,
+		DigitalPinAccessBase::PortData *pdata
+	);
 	/**
 	 * Does error checking in advance of calling
 	 * outputImpl(const std::vector<unsigned int> &,const std::vector<bool> &)
 	 * to change the output of a set of pins.
 	 * @param pvec   The local IDs of the pins to change.
 	 * @param state  The new output state.
+	 * @param pdata  A pointer to the port specific data stored in the
+	 *               corresponding access object for the pins.
 	 * @throw DigitalPinConfigRangeError   The @a pvec and @a state vectors are
 	 *                                     different sizes.
 	 * @throw PinDoesNotExist              A requested pin is not handled by
@@ -381,7 +432,8 @@ protected:
 	 */
 	void output(
 		const std::vector<unsigned int> &pvec,
-		const std::vector<bool> &state
+		const std::vector<bool> &state,
+		DigitalPinAccessBase::PortData *pdata
 	);
 	/**
 	 * Changes the output state of the given pin. If the pin is not configured
@@ -390,8 +442,14 @@ protected:
 	 * @pre   The pin is capable of output.
 	 * @param lid    The local ID of the pin to change.
 	 * @param state  The new output state.
+	 * @param pdata  A pointer to the port specific data stored in the
+	 *               corresponding access object for the pin.
 	 */
-	virtual void outputImpl(unsigned int lid, bool state) = 0;
+	virtual void outputImpl(
+		unsigned int lid,
+		bool state,
+		DigitalPinAccessBase::PortData *pdata
+	) = 0;
 	/**
 	 * Changes the outputs of several pins. If any of the pins are not
 	 * configured as an output, thier configuration will not change. However,
@@ -408,11 +466,72 @@ protected:
 	 *        supported.
 	 * @param pvec   The local ID of the pins to alter.
 	 * @param state  The new output states.
+	 * @param pdata  A pointer to the port specific data stored in the
+	 *               corresponding access object for the pins.
 	 */
 	virtual void outputImpl(
 		const std::vector<unsigned int> &pvec,
-		const std::vector<bool> &state
+		const std::vector<bool> &state,
+		DigitalPinAccessBase::PortData *pdata
 	);
+	/**
+	 * Called after a new access object is made to allow a port implementation
+	 * to take further action. The call is made while there is a lock on
+	 * @a block. The default implementation does nothing.
+	 * @param acc  The newly made access object.
+	 * @throw exception  Any thrown exception will cause the access object to
+	 *                   be retired and then the exception will be rethrown.
+	 */
+	virtual void madeAccess(DigitalPinAccess &acc);
+	/**
+	 * Called after a new access object is made to allow a port implementation
+	 * to take further action. The call is made while there is a lock on
+	 * @a block. The default implementation does nothing.
+	 * @param acc  The newly made access object.
+	 * @throw exception  Any thrown exception will cause the access object to
+	 *                   be retired and then the exception will be rethrown.
+	 */
+	virtual void madeAccess(DigitalPinSetAccess &acc);
+	/**
+	 * Called just before an access object is retired to allow a port
+	 * implementation to take further action. The call is made while there is
+	 * a lock on @a block. The default implementation does nothing.
+	 * @param acc  The access object that will be retired.
+	 */
+	virtual void retiredAccess(const DigitalPinAccess &acc) noexcept;
+	/**
+	 * Called just before an access object is retired to allow a port
+	 * implementation to take further action. The call is made while there is
+	 * a lock on @a block. The default implementation does nothing.
+	 * @param acc  The access object that will be retired.
+	 */
+	virtual void retiredAccess(const DigitalPinSetAccess &acc) noexcept;
+	/**
+	 * Returns a reference to the port specific data in the given
+	 * DigitalPinAccessBase object. Allows classes derived from DigitalPort
+	 * access to the DigitalPinAccessBase::portdata member.
+	 * @param acc  The access object with the desired data.
+	 * @return     A reference to the port specific data. Modifications are
+	 *             allowed.
+	 */
+	static DigitalPinAccessBase::PortData &portData(
+		const DigitalPinAccessBase &acc
+	) {
+		return acc.portdata;
+	}
+	/**
+	 * Provides a pointer to type @a T stored in the port specific data of the
+	 * given DigitalPinAccessBase object. No type checking is performed.
+	 * @tparam T   The requested data type. This can normally be inferred from
+	 *             the @a ptr parameter.
+	 * @param acc  The access object with the desired data.
+	 * @param ptr  A pointer to the pointer that will be given a copy of the
+	 *             pointer stored in @a acc.
+	 */
+	template <typename T>
+	static void portDataPtr(const DigitalPinAccessBase &acc, T **ptr) {
+		*ptr = (T*)acc.portdata.pointer;
+	}
 
 public:
 	/**

@@ -130,14 +130,14 @@ public:
 	 * @return      The actual new configuration.
 	 */
 	DigitalPinConfig modifyConfig(const DigitalPinConfig &conf) const {
-		return port()->modifyConfig(gid, conf);
+		return port()->modifyConfig(gid, conf, &portdata);
 	}
 	/**
 	 * Samples the input state of the pin.
 	 * @throw PinWrongDirection    This pin is not configured as an input.
 	 */
 	bool input() const {
-		return port()->input(gid);
+		return port()->input(gid, &portdata);
 	}
 	/**
 	 * Changes the output state of the pin. If the pin is not currently
@@ -146,7 +146,7 @@ public:
 	 * @param state  The new output state.
 	 */
 	void output(bool state) const {
-		port()->output(gid, state);
+		port()->output(gid, state, &portdata);
 	}
 
 	// convenience functions -- may expand later

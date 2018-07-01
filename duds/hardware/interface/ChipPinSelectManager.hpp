@@ -70,7 +70,7 @@ public:
 	/**
 	 * Constructs a ChipPinSelectManager with a pin to use for selection.
 	 * @param dpa          The access object for the select pin.
-	 * @param selectState  The pin state that selects the pin.
+	 * @param selectState  The pin state that selects the device.
 	 * @throw ChipSelectInUse  A ChipAccess object provided by this manager
 	 *                         currently exists.
 	 * @throw PinUnsupportedOperation  The given pin does not support output.
@@ -89,7 +89,7 @@ public:
 	/**
 	 * Sets the DigitalPinAccess object to use for the chip select line.
 	 * @param dpa          The access object for the select pin.
-	 * @param selectState  The pin state that selects the pin.
+	 * @param selectState  The pin state that selects the device.
 	 * @throw ChipSelectInUse  A ChipAccess object provided by this manager
 	 *                         currently exists.
 	 * @throw PinUnsupportedOperation  The given pin does not support output.

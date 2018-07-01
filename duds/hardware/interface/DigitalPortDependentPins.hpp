@@ -7,6 +7,8 @@
  *
  * Copyright (C) 2017  Jeff Jackowski
  */
+#ifndef DIGITALPORTDEPENDENTPINS_HPP
+#define DIGITALPORTDEPENDENTPINS_HPP
 #include <duds/hardware/interface/DigitalPort.hpp>
 
 namespace duds { namespace hardware { namespace interface {
@@ -124,3 +126,5 @@ public:
 };
 
 } } }
+
+#endif        //  #ifndef DIGITALPORTDEPENDENTPINS_HPP

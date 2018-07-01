@@ -128,7 +128,7 @@ try {
 
 @subsection DUDStoolsPinConfTreeData  Property tree file data
 
-The above program will parse files like this one, which configures pins for use with a @ref duds::hardware::devices::displays::HD44780 "HD44780" display (long lines my wrap less than nicely):
+The above program will parse files like this one, which configures pins for use with a @ref duds::hardware::devices::displays::HD44780 "HD44780" display (long lines may wrap less than nicely):
 
 @code
 pins {

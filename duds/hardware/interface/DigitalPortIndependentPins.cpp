@@ -165,14 +165,12 @@ DigitalPortIndependentPins::proposeConfigImpl(
 }
 
 void DigitalPortIndependentPins::configurePort(
-	const std::vector<DigitalPinConfig> &cfgs
+	const std::vector<DigitalPinConfig> &cfgs,
+	DigitalPinAccessBase::PortData *pdata
 ) {
-	// using this implementation only makes sense if simultaneous operations
-	// are not supported
-	assert(!simultaneousOperations());
 	std::vector<DigitalPinConfig>::const_iterator iter = cfgs.cbegin();
 	for (unsigned int lid = 0; iter != cfgs.end(); ++lid, ++iter)  {
-		configurePort(lid, *iter);
+		configurePort(lid, *iter, pdata);
 	}
 }
 

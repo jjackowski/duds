@@ -22,11 +22,6 @@ class PinConfiguration;
 namespace linux {
 
 /**
- * Used to add the ID number assigned to a pin by the Linux filesystem.
- */
-typedef boost::error_info<struct Info_SysFsPinId, unsigned int>  SysFsPinErrorId;
-
-/**
  * A GPIO implementation using the Linux kernel's userspace interface in syfs.
  * This implementation expects that the pins to use have already been exported
  * and the process has adequate access rights to use the pins.
@@ -167,7 +162,10 @@ public:
 	/**
 	 * Make a SysFsPort object according to the given configuration, and attach
 	 * to the configuration.
-	 * @throw PortDoesNotExistError
+	 * @param pc    The object with the port configuration data.
+	 * @param name  The name of the port in the configuration.
+	 * @throw PortDoesNotExistError  There is no port called @a name in the
+	 *                               given configuration.
 	 */
 	static std::shared_ptr<SysFsPort> makeConfiguredPort(
 		PinConfiguration &pc,
@@ -189,10 +187,15 @@ public:
 protected:
 	virtual void configurePort(
 		unsigned int localPinId,
-		const DigitalPinConfig &cfg
+		const DigitalPinConfig &cfg,
+		DigitalPinAccessBase::PortData *
 	);
-	virtual bool inputImpl(unsigned int gid);
-	virtual void outputImpl(unsigned int lid, bool state);
+	virtual bool inputImpl(unsigned int gid, DigitalPinAccessBase::PortData *);
+	virtual void outputImpl(
+		unsigned int lid,
+		bool state,
+		DigitalPinAccessBase::PortData *
+	);
 public:
 	/**
 	 * The sysfs interface does not support simultaneous operations; returns

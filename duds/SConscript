@@ -8,10 +8,15 @@
 
 Import('*')
 
+LinuxSource = Glob('*/*/linux/[A-FH-Z]*cpp')
+if env['Use_GpioDevPort']:
+	LinuxSource += Glob('*/*/linux/G*cpp')
+
 targets = [
 	# include all source files in the DUDS library using a very simple method
 	env.SharedLibrary('duds', Glob('*.cpp') + Glob('*/*.cpp') +
-		Glob('*/*/*.cpp') + Glob('*/*/linux/*cpp') + Glob('*/devices/*/*cpp') ),
+		Glob('*/*/*.cpp') + LinuxSource + Glob('*/devices/*/*cpp') +
+		Glob('*/*/test/*.cpp')),
 	# changed to static temporarily to ease the use of eclipse programs and
 	# delay learning more about software istalls
 	#env.StaticLibrary('duds', Glob('*.cpp') + Glob('*/*.cpp') +

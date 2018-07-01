@@ -266,7 +266,7 @@ public:
 		unsigned int pos,
 		const DigitalPinConfig &conf
 	) const {
-		return port()->modifyConfig(globalId(pos), conf);
+		return port()->modifyConfig(globalId(pos), conf, &portdata);
 	}
 	/**
 	 * Sets the configuration for all the pins.
@@ -287,7 +287,7 @@ public:
 	 * @throw DigitalPinConfigError
 	 */
 	void modifyConfig(std::vector<DigitalPinConfig> &conf) const {
-		port()->modifyConfig(pinvec, conf);
+		port()->modifyConfig(pinvec, conf, &portdata);
 	}
 	/**
 	 * Sets the configuration for a subset of the pins.
@@ -305,7 +305,7 @@ public:
 		const std::vector<unsigned int> &pos,
 		std::vector<DigitalPinConfig> &conf
 	) const {
-		port()->modifyConfig(subset(pos), conf);
+		port()->modifyConfig(subset(pos), conf, &portdata);
 	}
 	/**
 	 * Samples the input state of a pin.
@@ -313,7 +313,7 @@ public:
 	 * @throw PinWrongDirection    This pin is not configured as an input.
 	 */
 	bool input(unsigned int pos) const {
-		return port()->input(globalId(pos));
+		return port()->input(globalId(pos), &portdata);
 	}
 	/**
 	 * Samples the input state of all the pins.
@@ -321,7 +321,7 @@ public:
 	 * @throw PinWrongDirection  Not all the pins are not configured as an input.
 	 */
 	std::vector<bool> input() const {
-		return port()->input(pinvec);
+		return port()->input(pinvec, &portdata);
 	}
 	/**
 	 * Samples the input state of a subset of the pins.
@@ -331,7 +331,7 @@ public:
 	 * @throw PinWrongDirection   A pin in @a pos is not configured as an input.
 	 */
 	std::vector<bool> input(const std::vector<unsigned int> &pos) const {
-		return port()->input(subset(pos));
+		return port()->input(subset(pos), &portdata);
 	}
 	/**
 	 * Changes the output state of a pin. If the pin is not currently
@@ -341,7 +341,7 @@ public:
 	 * @param state  The new output state.
 	 */
 	void output(unsigned int pos, bool state) const {
-		port()->output(globalId(pos), state);
+		port()->output(globalId(pos), state, &portdata);
 	}
 	/**
 	 * Changes the output state of all the pins. If a pin is not currently
@@ -352,7 +352,7 @@ public:
 	 *               (ID of -1) are not presently supported.
 	 */
 	void output(const std::vector<bool> &state) const {
-		port()->output(pinvec, state);
+		port()->output(pinvec, state, &portdata);
 	}
 	/**
 	 * Changes the output state of all the pins. If a pin is not currently
@@ -379,7 +379,7 @@ public:
 		const std::vector<unsigned int> &pos,
 		const std::vector<bool> &state
 	) const {
-		port()->output(subset(pos), state);
+		port()->output(subset(pos), state, &portdata);
 	}
 
 	// convenience functions -- may expand later
@@ -477,7 +477,7 @@ public:
 		// whole set?
 		if (out.size() == pinvec.size()) {
 			// write the value using all pins
-			port()->output(pinvec, out);
+			port()->output(pinvec, out, &portdata);
 		} else {
 			// produce a subset of the pins
 			std::vector<unsigned int> pins(
@@ -485,12 +485,12 @@ public:
 				pinvec.begin() + out.size()
 			);
 			// write out the number
-			port()->output(pins, out);
+			port()->output(pins, out, &portdata);
 		}
 	}
 	/**
 	 * Writes out a number in binary to the pins. The LSb is given to the pin
-	 * ay position 0, the next bit to position 1, and so on. All the pins in
+	 * at position 0, the next bit to position 1, and so on. All the pins in
 	 * this set will be used. As with the other output functions, the pin
 	 * configuration will not be changed.
 	 * @tparam Int   The integer type used to hold the number.

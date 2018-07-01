@@ -80,41 +80,6 @@ struct PinSetWrongPort : PinError { };
  */
 struct PinEmptyAccessRequest : PinError { };
 
-// Old stuff that may be useful again in the future after more refactoring
-/*
-
-/ **
- * The requested PinIndex does not exist. These typically come from a
- * PinDirectory.
- * /
-struct PinIndexDoesNotExist : PinError { };
-
-/ **
- * An operation that requires a PinStore was attempted before a PinStore was in
- * place.
- * /
-struct PinStoreRequired : PinError { };
-
-/ **
- * A PinIndex was directed to attach to a PinStore after it had already been
- * attached to a PinStore without first detaching.
- * /
-struct PinStoreAlreadyAttached : PinError { };
-
-/ **
- * An operation that requires a DigitalPin to be attached to a particular
- * PinStore was given a DigitalPin that is either unattached or attached to
- * another PinStore.
- * /
-struct PinStoreMismatch : PinError { };
-
-/ **
- * The name of a PinIndex; added by PinDirectory.
- * /
-typedef boost::error_info<struct Info_indexname, std::string>  PinErrorIndex;
-
-*/
-
 /**
  * A name or function associated with the pin(s).
  * @note  This is not an error description string. Error is used in the name
@@ -130,6 +95,16 @@ typedef boost::error_info<struct Info_PinName, std::string>  PinErrorName;
  *        distinguish this type from other types that do not deal with errors.
  */
 typedef boost::error_info<struct Info_PinId, unsigned int>  PinErrorId;
+
+/**
+ * The port (hardware) specific pin ID involved in the error. It may differ
+ * from both the global ID and a port object's local ID. This attribute may be
+ * omitted since it isn't always available, especially in the generic port
+ * code.
+ * @note  This is not an error code. Error is being used in the name to
+ *        distinguish this type from other types that do not deal with errors.
+ */
+typedef boost::error_info<struct Info_PinPortId, unsigned int>  PinErrorPortId;
 
 } } } // namespaces
 

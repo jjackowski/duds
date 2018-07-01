@@ -15,7 +15,11 @@
 #include <duds/hardware/devices/displays/HD44780.hpp>
 #include <duds/hardware/devices/displays/TextDisplayStream.hpp>
 #include <duds/hardware/devices/displays/BppImageArchive.hpp>
+#ifdef USE_SYSFS_PORT
 #include <duds/hardware/interface/linux/SysFsPort.hpp>
+#else
+#include <duds/hardware/interface/linux/GpioDevPort.hpp>
+#endif
 #include <duds/hardware/interface/ChipPinSelectManager.hpp>
 #include <duds/hardware/devices/clocks/LinuxClockDriver.hpp>
 #include <duds/time/planetary/Planetary.hpp>
@@ -114,7 +118,7 @@ constexpr std::uint32_t DigSeg(
  * that supports at least 4 definable characters.
  */
 const std::uint32_t DigitFont[2][10] = {
-	{ // shifted upward and to the left 
+	{ // shifted upward and to the left
 		// 0
 		DigSeg(0, 0, UpLeft)  | DigSeg(1, 0, BarUp)   | DigSeg(2, 0, BarLeft) |
 		DigSeg(0, 1, BarLeft) | DigSeg(1, 1, Clear)   | DigSeg(2, 1, BarLeft) |
@@ -157,7 +161,7 @@ const std::uint32_t DigitFont[2][10] = {
 		DigSeg(0, 2, BarUp)   | DigSeg(1, 2, BarUp)   | DigSeg(2, 2, BarCorn)
 		// could extend for hex
 	},
-	{ // shifted downward and to the left 
+	{ // shifted downward and to the left
 		// 0
 		DigSeg(0, 0, BarDown) | DigSeg(1, 0, BarDown) | DigSeg(2, 0, BarCorn) |
 		DigSeg(0, 1, BarLeft) | DigSeg(1, 1, Clear)   | DigSeg(2, 1, BarLeft) |
@@ -448,12 +452,18 @@ try {
 	duds::hardware::interface::PinConfiguration pc(pinconf);
 
 	// configure display
+	#ifdef USE_SYSFS_PORT
 	std::shared_ptr<duds::hardware::interface::linux::SysFsPort> port =
 		duds::hardware::interface::linux::SysFsPort::makeConfiguredPort(pc);
+	#else
+	std::shared_ptr<duds::hardware::interface::linux::GpioDevPort> port =
+		duds::hardware::interface::linux::GpioDevPort::makeConfiguredPort(pc);
+	#endif
+
 	duds::hardware::interface::DigitalPinSet lcdset;
 	duds::hardware::interface::ChipSelect lcdsel;
 	pc.getPinSetAndSelect(lcdset, lcdsel, "lcd");
-	
+
 	/* old
 	//                       LCD pins:  4  5   6   7  RS   E
 	std::vector<unsigned int> gpios = { 5, 6, 19, 26, 20, 21 };

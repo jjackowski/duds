@@ -11,26 +11,61 @@
 #define DIGITALPINACCESSBASE_HPP
 
 #include <boost/noncopyable.hpp>
+#include <cstdint>
 
 namespace duds { namespace hardware { namespace interface {
 
 class DigitalPort;
 
-// do not keep objects of this type
 /**
  * The base class for the digital pin access classes. This base class stores
  * a pointer to the DigitalPort handling the pins. A shared pointer is not used
- * to speed up the creation and destruction of the access objects. Outside of
- * DigitalPin, this class should not be used directly.
+ * to speed up the creation and destruction of the access objects.
+ * @note  Outside of DigitalPort, this class should not be used directly.
  * @author  Jeff Jackowski
  */
 class DigitalPinAccessBase : boost::noncopyable {
+public:
+	/**
+	 * A type for holding arbitrary port-specific data within a
+	 * DigitalPinAccess or DigitalPinSetAccess object.
+	 */
+	union PortData {
+		/**
+		 * A pointer available for use by DigitalPort implementations to manage
+		 * additional implementation specific data associated with a
+		 * DigitalPinAccess or DigitalPinSetAccess object.
+		 */
+		void *pointer;
+		/**
+		 * An integer available for use by DigitalPort implementations to manage
+		 * additional implementation specific data associated with a
+		 * DigitalPinAccess or DigitalPinSetAccess object.
+		 */
+		std::intptr_t integer;
+		/**
+		 * Two integers available for use by DigitalPort implementations to
+		 * manage additional implementation specific data associated with a
+		 * DigitalPinAccess or DigitalPinSetAccess object.
+		 */
+		std::int16_t int16[2];
+		/**
+		 * Default contructor ensures a null pointer.
+		 */
+		PortData() : pointer(nullptr) { }
+	};
+private:
 	/**
 	 * A pointer to the port object handling the pin(s).
 	 */
 	DigitalPort *dp;
 	friend DigitalPort;
 protected:
+	/**
+	 * Port specific information. This data is copied when a move constructor
+	 * or assignment is used.
+	 */
+	mutable PortData portdata;
 	/**
 	 * Cannot be constructed using this base class, but allows the construction
 	 * of a useless access object without a DigitalPort.
@@ -47,7 +82,8 @@ protected:
 	 */
 	~DigitalPinAccessBase() = default;
 	/**
-	 * Allows moving access objects.
+	 * Allows moving access objects. The port specific data and the DigitalPort
+	 * pointer is copied.
 	 */
 	DigitalPinAccessBase &operator=(DigitalPinAccessBase &&old) noexcept;
 	/**

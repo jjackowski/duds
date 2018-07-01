@@ -11,6 +11,7 @@
 #include <duds/hardware/devices/displays/ST7920.hpp>
 #include <duds/hardware/devices/displays/DisplayErrors.hpp>
 #include <duds/general/ReverseBits.hpp>
+#include <duds/general/YieldingWait.hpp>
 #include <thread>
 
 namespace duds { namespace hardware { namespace devices { namespace displays {
@@ -82,10 +83,11 @@ void ST7920::configure(
 	frmbuf.resize(w, h);
 }
 
+
 void ST7920::wait() const {
 	auto remain = soonestSend - std::chrono::high_resolution_clock::now();
 	if (remain.count() > 0) {
-		std::this_thread::sleep_for(remain);
+		duds::general::YieldingWait(remain);
 	}
 }
 
@@ -108,11 +110,11 @@ void ST7920::sendByte(ST7920::Access &acc, int val) {
 	// write out the text flag as the MSb along with the high-order nibble
 	acc.output.write((val & 0x1F0) >> 4);  // 5-bit output
 	// wait
-	std::this_thread::sleep_for(std::chrono::nanoseconds(600));
+	duds::general::YieldingWait(600);
 	// tell LCD to read
 	acc.enable.select();
 	// another wait
-	std::this_thread::sleep_for(std::chrono::nanoseconds(600));
+	duds::general::YieldingWait(600);
 	// LCD should be done reading
 	acc.enable.deselect();
 	// sending a whole byte?
@@ -120,11 +122,11 @@ void ST7920::sendByte(ST7920::Access &acc, int val) {
 		// write out the low-order nibble; leave command flag alone
 		acc.output.write(val & 0xF, 4);  // 4-bit output
 		// wait
-		std::this_thread::sleep_for(std::chrono::nanoseconds(600));
+		duds::general::YieldingWait(600);
 		// tell LCD to read
 		acc.enable.select();
 		// wait again
-		std::this_thread::sleep_for(std::chrono::nanoseconds(600));
+		duds::general::YieldingWait(600);
 		// LCD should be done reading
 		acc.enable.deselect();
 	}
@@ -146,7 +148,7 @@ void ST7920::initialize() {
 		0xC,             // turn on display w/o cursor
 		0x1,             // clear display
 		0x8,             // turn off display
-		0x20,            // 4 bit bus mode, 1 row
+		0x20,            // 4 bit bus mode
 		0x30,            // 8-bit bus mode; sync nibble reception
 		0x30,            // 8-bit bus mode; sync nibble reception
 		0x30             // 8-bit bus mode; sync nibble reception

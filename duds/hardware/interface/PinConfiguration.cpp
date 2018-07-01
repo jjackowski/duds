@@ -564,13 +564,13 @@ void PinConfiguration::attachPort(
 		// must not be present, but is?
 		if ((pin.pid == Pin::NoPin) && dp->exists(pin.gid)) {
 			DUDS_THROW_EXCEPTION(DigitalPortHasPinError() <<
-				PortName(name)
+				PortName(name) << PinErrorId(pin.gid)
 			);
 		}
 		// must be present, but isn't?
 		else if ((pin.pid != Pin::NoPin) && !dp->exists(pin.gid)) {
 			DUDS_THROW_EXCEPTION(DigitalPortLacksPinError() <<
-				PortName(name)
+				PortName(name) << PinErrorId(pin.gid)
 			);
 		}
 		// if running here, must be ok so far
@@ -690,9 +690,10 @@ void PinConfiguration::getPinSetAndSelect(
 ) const {
 	PinSetMap::const_iterator piter = pinSets.find(setName);
 	if (piter == pinSets.end()) {
-		DUDS_THROW_EXCEPTION(SetDoesNotExistError() <<
-			SetName(setName)
-		);
+		DUDS_THROW_EXCEPTION(SetDoesNotExistError() << SetName(setName));
+	}
+	if (!piter->second.dpSet.havePins()) {
+		DUDS_THROW_EXCEPTION(SetNotCreatedError() << SetName(setName));
 	}
 	dpset = piter->second.dpSet;
 	if (piter->second.selName.empty()) {
@@ -701,6 +702,11 @@ void PinConfiguration::getPinSetAndSelect(
 		ChipSelMap::const_iterator siter = chipSels.find(piter->second.selName);
 		if (siter == chipSels.end()) {
 			DUDS_THROW_EXCEPTION(SelectDoesNotExistError() <<
+				SelectName(piter->second.selName)
+			);
+		}
+		if (!siter->second.sel.haveManager()) {
+			DUDS_THROW_EXCEPTION(SelectManagerNotCreated() <<
 				SelectName(piter->second.selName)
 			);
 		}
@@ -713,9 +719,10 @@ const DigitalPinSet &PinConfiguration::getPinSet(
 ) const {
 	PinSetMap::const_iterator piter = pinSets.find(setName);
 	if (piter == pinSets.end()) {
-		DUDS_THROW_EXCEPTION(SetDoesNotExistError() <<
-			SetName(setName)
-		);
+		DUDS_THROW_EXCEPTION(SetDoesNotExistError() << SetName(setName));
+	}
+	if (!piter->second.dpSet.havePins()) {
+		DUDS_THROW_EXCEPTION(SetNotCreatedError() << SetName(setName));
 	}
 	return piter->second.dpSet;
 }
@@ -725,9 +732,10 @@ const ChipSelect &PinConfiguration::getSelect(
 ) const {
 	ChipSelMap::const_iterator siter = chipSels.find(selName);
 	if (siter == chipSels.end()) {
-		DUDS_THROW_EXCEPTION(SelectDoesNotExistError() <<
-			SelectName(selName)
-		);
+		DUDS_THROW_EXCEPTION(SelectDoesNotExistError() << SelectName(selName));
+	}
+	if (!siter->second.sel.haveManager()) {
+		DUDS_THROW_EXCEPTION(SelectManagerNotCreated() << SelectName(selName));
 	}
 	return siter->second.sel;
 }
