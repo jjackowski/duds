@@ -20,7 +20,7 @@
 #ifndef USE_SYSFS_PORT
 #include <duds/hardware/interface/linux/GpioDevPort.hpp>
 #endif
-#include <duds/hardware/interface/test/FakePort.hpp>
+#include <duds/hardware/interface/test/VirtualPort.hpp>
 #include <duds/hardware/interface/ChipPinSelectManager.hpp>
 #include <duds/hardware/interface/PinConfiguration.hpp>
 #include <boost/property_tree/info_parser.hpp>
@@ -228,7 +228,7 @@ try {
 			#endif
 			(
 				"fake,f",
-				"Use the FakePort interface for GPIO."
+				"Use the VirtualPort interface for GPIO."
 			)
 			( // don't read from cin; run everything on one thread
 				"noinput",
@@ -299,7 +299,7 @@ try {
 	// configure display
 	std::shared_ptr<duds::hardware::interface::DigitalPort> port;
 	if (fakeport) {
-		port = duds::hardware::interface::test::FakePort::makeConfiguredPort(pc);
+		port = duds::hardware::interface::test::VirtualPort::makeConfiguredPort(pc);
 	} else {
 		#ifdef USE_SYSFS_PORT
 		port = duds::hardware::interface::linux::SysFsPort::makeConfiguredPort(pc);
