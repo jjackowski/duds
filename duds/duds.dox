@@ -75,7 +75,7 @@ The documentation is generated with the help of [Doxygen](http://www.doxygen.org
 
 At present, DUDS only supports Linux, including kernel versions 3.6 through 4.9, and likely newer. The kernel's user-space interfaces for hardware may change and break support, but that doesn't happen on a regular basis. The hardware interface libraries are written to allow multiple implementations, but I have no other operating systems to test with, nor the inclination to make an implementation for another system.
 
-I plan on supporting data representations and network communications on Windows as well as Linux, and hopefully this will work on other systems, too. The intention is to allow front-ends on a variety of platforms. However, since my only Windows running computer is an old thing with XP and Visual Studio 2005, I'm not yet sure how I'm going to build DUDS on Windows. Also, I'm not giving up C++11 to build on Windows and I'm not sure if VS2015 supports all the C++11 features used in the source, but it should at least have almost all of the support needed. Earlier versions of Visual Studio all lack required C++11 features.
+I plan on supporting data representations and network communications on Windows as well as Linux, and hopefully this will work on other systems, too. The intention is to allow front-ends on a variety of platforms. However, since my only Windows running computer is an old thing with XP and Visual Studio 2005, I'm not yet sure how I'm going to build DUDS on Windows. Also, I'm not giving up C++14 to build on Windows and I'm not sure if VS2015 supports all the C++14 features used in the source, but it should at least have almost all of the support needed. Earlier versions of Visual Studio all lack required C++14 features.
 
 All development will be on Linux with gcc for a while longer, and I'm in no rush to change that.
 
@@ -110,7 +110,7 @@ Supported devices are listed on the @ref SupDev page.
     - Exception (header only)
     - Filesystem (optional)
     - Multiprecision (header only)
-    - Program options
+    - Program options (sample programs only)
     - Property tree (header only)
     - Serialization
     - Signals2 (header only)
@@ -129,10 +129,12 @@ Supported devices are listed on the @ref SupDev page.
     - Builds tested mostly on armv6 and amd64.
     - Time building with command "scons samples":
       - Raspberry Pi Zero: about 75 minutes
-      - Raspberry Pi 3 Model B: about 18 minutes; faster with -j2.
+      - Raspberry Pi 3 Model B:
+        - about 18 minutes with -j1 (default)
+        - about 10 minutes with -j2 and -j3 using external hard drive for swap
   - Windows
     - Not yet
-    - VS2015 might be lacking some C++11 support needed by DUDS, and older versions will be lacking.
+    - VS2015 might be lacking some C++14 support needed by DUDS, and older versions will be lacking.
 
 @subsection DUDSbuildWord More Words!
 
@@ -146,11 +148,13 @@ The Boost unit test framework is used by a test program. This program does not r
 
 @subsection DUDSbuildTrg Build targets
 
-The default build target is the DUDS library. Sample programs are built with the "samples" target, and the tests program (one program right now) with the "tests" target. All those targets make debug builds. There is support for optimized builds, but they are untested. Build from the root directory of DUDS by running scons. The binaries will be placed in a directory under bin named for the target and build. For example:
+The default build target is the DUDS library made for debugging. Sample programs are built with the "samples" target, and the tests program (one program right now) with the "tests" target. All those targets make debug builds. There are also targets with names that end in either "-dbg", or "-opt", for debug or optimized builds respectively. Build from the root directory of DUDS by running scons. The binaries will be placed in a directory under bin named for the target and build. For example:
 - duds
   - bin
     - linux-armv6l-dbg
+      - samples (built with target "samples" or "samples-dbg")
     - linux-armv6l-opt
+      - samples (built with target "samples-opt")
     - linux-x86_64-dbg
 
 There is currently no target for installation. Despite using Linux since 2001, I'm not really sure how software is typically installed.

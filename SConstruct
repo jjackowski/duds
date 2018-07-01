@@ -13,7 +13,6 @@ import subprocess
 #####
 # setup the build options
 buildopts = Variables('localbuildconfig.py')
-buildopts.Add(BoolVariable('debug', 'Produce a debugging build', True))
 buildopts.Add('CCDBGFLAGS',
 	'The flags to use with the compiler for debugging builds.',
 	'-g -fno-common -O0')
@@ -150,7 +149,6 @@ env = Environment(
 		#'libboost_serialization${BOOSTTOOLSET}${BOOSTTAG}${BOOSTABI}${BOOSTVER}',
 		#'libboost_wserialization${BOOSTTOOLSET}${BOOSTTAG}${BOOSTABI}${BOOSTVER}',
 		'libboost_system${BOOSTTOOLSET}${BOOSTTAG}${BOOSTABI}${BOOSTVER}',
-		'libboost_program_options${BOOSTTOOLSET}${BOOSTTAG}${BOOSTABI}${BOOSTVER}',
 		#'m',
 	]
 )
@@ -352,9 +350,12 @@ Help(buildopts.GenerateHelpText(env, cmp))
 if GetOption('help'):
 	print 'Build target aliases:'
 	print '  libs-dbg    - All libraries; debugging build. This is the default.'
+	print '  libs-opt    - All libraries; optimized build.'
 	print '  libs        - Same as libs-dbg'
 	print '  samples-dbg - All sample programs; debugging build.'
+	print '  samples-opt - All sample programs; optimized build.'
 	print '  samples     - Same as samples-dbg.'
 	if havetestlib:
 		print '  tests-dbg   - All unit test programs; debugging build.'
+		print '  tests-opt   - All unit test programs; optimized build.'
 		print '  tests       - Same as tests-dbg.'

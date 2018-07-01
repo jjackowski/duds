@@ -109,11 +109,11 @@ void HD44780::sendByte(HD44780::Access &acc, int val) {
 	// write out the text flag as the MSb along with the high-order nibble
 	acc.output.write((val & 0x1F0) >> 4);  // 5-bit output
 	// wait
-	duds::general::YieldingWait(250);
+	duds::general::YieldingWait(8000); // seems long; wiring issue?
 	// tell LCD to read
 	acc.enable.select();
 	// another wait
-	duds::general::YieldingWait(250);
+	duds::general::YieldingWait(8000);
 	// LCD should be done reading
 	acc.enable.deselect();
 	// sending a whole byte?
@@ -121,11 +121,11 @@ void HD44780::sendByte(HD44780::Access &acc, int val) {
 		// write out the low-order nibble; leave command flag alone
 		acc.output.write(val & 0xF, 4);  // 4-bit output
 		// wait
-		duds::general::YieldingWait(250);
+		duds::general::YieldingWait(8000);
 		// tell LCD to read
 		acc.enable.select();
 		// wait again
-		duds::general::YieldingWait(250);
+		duds::general::YieldingWait(8000);
 		// LCD should be done reading
 		acc.enable.deselect();
 	}

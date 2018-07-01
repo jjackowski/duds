@@ -34,17 +34,11 @@ The audience is not intended to include:
 - Developers making high performance applications
 - Developers who avoid error handling
 
-While it is not intentional to exclude people from using this library, the library isn't
-intended to be a perfect fit for everyone or every use. For instance, it isn't made with the
-goal of being super easy to use as a top priority, and the documentation assumes a familiarity
-with C++.
+While it is not intentional to exclude people from using this library, the library isn't intended to be a perfect fit for everyone or every use. For instance, it isn't made with the goal of being super easy to use as a top priority, and the documentation assumes a familiarity with C++.
 
 # Supported Platforms
 
-Right now, only Linux. Hardware access is only tested on Raspberry Pis, but the library does
-build on AMD64, and the test program works fine on both. The hardware access code is not
-specific to the Raspberry Pi. I've been using Gentoo on the Raspberry Pis and have not tested
-Raspbian.
+Right now, only Linux. Hardware access is only tested on Raspberry Pis, but the library does build on AMD64, and the test program works fine on both. The hardware access code is not specific to the Raspberry Pi. I've been using Gentoo on the Raspberry Pis and have not tested Raspbian.
 
 # Supported devices
 
@@ -92,7 +86,7 @@ Raspbian.
     - Exception (header only)
     - Filesystem (optional)
     - Multiprecision (header only)
-    - Program options
+    - Program options (sample programs only)
     - Property tree (header only)
     - Serialization
     - Signals2 (header only)
@@ -111,19 +105,19 @@ Raspbian.
     - Builds tested mostly on armv6 and amd64.
     - Time building with command "scons samples":
       - Raspberry Pi Zero: about 75 minutes
-      - Raspberry Pi 3 Model B: about 18 minutes; faster with -j2.
+      - Raspberry Pi 3 Model B:
+        - about 18 minutes with -j1 (default)
+        - about 10 minutes with -j2 and -j3 using external hard drive for swap
 
 # Build targets
 
-The default build target is the DUDS library. Sample programs are built with the "samples"
-target, and the tests program (one program right now) with the "tests" target. All those targets
-make debug builds. There is support for optimized builds, but they are untested. Build from the
-root directory of DUDS by running scons. The binaries will be placed in a directory under bin
-named for the target and build. For example:
+The default build target is the DUDS library made for debugging. Sample programs are built with the "samples" target, and the tests program (one program right now) with the "tests" target. All those targets make debug builds. There are also targets with names that end in either "-dbg", or "-opt", for debug or optimized builds respectively. Build from the root directory of DUDS by running scons. The binaries will be placed in a directory under bin named for the target and build. For example:
 - duds
   - bin
     - linux-armv6l-dbg
+      - samples (built with target "samples" or "samples-dbg")
     - linux-armv6l-opt
+      - samples (built with target "samples-opt")
     - linux-x86_64-dbg
 
 There is currently no target for installation. Despite using Linux since 2001, I'm not really

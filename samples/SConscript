@@ -6,12 +6,17 @@
 
 Import('*')
 
-envser = env.Clone()
+envsamp = env.Clone()
+envsamp.AppendUnique(
+	LIBS = 'libboost_program_options${BOOSTTOOLSET}${BOOSTTAG}${BOOSTABI}${BOOSTVER}'
+)
+
+envser = envsamp.Clone()
 envser.AppendUnique(
 	LIBS = 'libboost_serialization${BOOSTTOOLSET}${BOOSTTAG}${BOOSTABI}${BOOSTVER}'
 )
 
-envthread = env.Clone()
+envthread = envsamp.Clone()
 envthread.AppendUnique(
 	LIBS = 'pthread',
 	CPPPATH = '.' #'bin/${PSYS}-${PARCH}-${BUILDTYPE}/samples'
@@ -21,15 +26,15 @@ if not env['Use_GpioDevPort']:
 	envser.Append(CPPDEFINES = 'USE_SYSFS_PORT')
 	envthread.Append(CPPDEFINES = 'USE_SYSFS_PORT')
 
-imgarc = env.BppiArc('neticons.bppi')
-env.Depends(imgarc, tools['bppic'])
-imgarcN = env.BppiArc('numberparts.bppi')
-env.Depends(imgarcN, tools['bppic'])
+imgarc = envsamp.BppiArc('neticons.bppi')
+envsamp.Depends(imgarc, tools['bppic'])
+imgarcN = envsamp.BppiArc('numberparts.bppi')
+envsamp.Depends(imgarcN, tools['bppic'])
 
 # could loop through directories, but be lazy for now
 targets = [
 	#env.Program('ds1620', Glob('DS1620/*.cpp') + libs),  # broken
-	env.Program('time', ['time.cpp'] + libs),
+	envsamp.Program('time', ['time.cpp'] + libs),
 	envthread.Program('addressLCD', ['addressLCD.cpp'] + libs),
 	envthread.Program('clockLCD', ['clockLCD.cpp'] + libs),
 	envser.Program('units', ['units.cpp'] + libs),
@@ -47,9 +52,9 @@ targets = [
 
 # These are be needed if image archive files, instead of header files, are
 # generated. SCons seems to be catching the dependency from the includes.
-env.Depends(targets[1], imgarc)
-env.Depends(targets[2], imgarcN)
-env.Depends(targets[8], imgarcN)
+envsamp.Depends(targets[1], imgarc)
+envsamp.Depends(targets[2], imgarcN)
+envsamp.Depends(targets[8], imgarcN)
 
 if envthread['Use_Eigen']:
 	enveigen = envthread.Clone()
