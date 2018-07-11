@@ -68,6 +68,10 @@ class ST7920 : public BppGraphicDisplay {
 	 * to elapse while the thread does something else.
 	 */
 	std::chrono::high_resolution_clock::time_point soonestSend;
+	/**
+	 * The amount of time to allow the display to read data.
+	 */
+	std::chrono::nanoseconds nibblePeriod;
 	enum {
 		/**
 		 * General data mask for the display.
@@ -190,6 +194,12 @@ public:
 	 *                   256.
 	 * @param h          The height of the display in pixels. It must not exceed
 	 *                   64.
+	 * @param delay      The number of nanoseconds to delay while the display
+	 *                   reads in data. Delays as short as 1000ns should be
+	 *                   possible. Specific circuits, especially non-permanent
+	 *                   prototypes like ones on breadboards, may require longer
+	 *                   delays. The default value seems to work well for such
+	 *                   prototypes.
 	 * @throw DisplaySizeError   Either the width or height is beyond the
 	 *                           supported range.
 	 * @throw duds::hardware::interface::PinDoesNotExist
@@ -200,7 +210,8 @@ public:
 		duds::hardware::interface::DigitalPinSet &&outPins,
 		duds::hardware::interface::ChipSelect &&enablePin,
 		unsigned int w,
-		unsigned int h
+		unsigned int h,
+		std::chrono::nanoseconds delay = std::chrono::nanoseconds(8000)
 	);
 	/**
 	 * Calls off().
@@ -231,6 +242,12 @@ public:
 	 *                   256.
 	 * @param h          The height of the display in pixels. It must not exceed
 	 *                   64.
+	 * @param delay      The number of nanoseconds to delay while the display
+	 *                   reads in data. Delays as short as 1000ns should be
+	 *                   possible. Specific circuits, especially non-permanent
+	 *                   prototypes like ones on breadboards, may require longer
+	 *                   delays. The default value seems to work well for such
+	 *                   prototypes.
 	 * @throw DisplaySizeError   Either the width or height is beyond the
 	 *                           supported range.
 	 * @throw duds::hardware::interface::PinDoesNotExist
@@ -241,7 +258,8 @@ public:
 		duds::hardware::interface::DigitalPinSet &&outPins,
 		duds::hardware::interface::ChipSelect &&enablePin,
 		unsigned int w,
-		unsigned int h
+		unsigned int h,
+		std::chrono::nanoseconds delay = std::chrono::nanoseconds(8000)
 	);
 	/**
 	 * Initializes the display for use. This function must be called before
@@ -267,8 +285,9 @@ public:
 	void off();
 	/**
 	 * Commands the display to turn on. There is no need to use this with the
-	 * ST7920 LCD controller. The function exists for consistency with other
-	 * display classes.
+	 * ST7920 LCD controller; any display command will cause the display to
+	 * show the contents of its frame buffer. The function exists for
+	 * consistency with other display classes.
 	 * @pre  initialize() has been successfully called.
 	 * @bug  Name isn't technically correct; change it.
 	 */

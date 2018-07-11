@@ -586,7 +586,8 @@ public:
 	 * @pre         Configuration parsing has already been done successfully.
 	 *              PinSet::dpSet will only be valid after its required port
 	 *              has been attached.
-	 * @throw SetDoesNotExistError
+	 * @throw SetDoesNotExistError     The requested set is not defined in the
+	 *                                 configuration data.
 	 */
 	const PinSet &pinSet(const std::string &name) const;
 	/**
@@ -595,7 +596,8 @@ public:
 	 * @pre         Configuration parsing has already been done successfully.
 	 *              ChipSel::sel will only be valid after its required port
 	 *              has been attached.
-	 * @throw SelectDoesNotExistError
+	 * @throw SelectDoesNotExistError  The requested chip select is not defined
+	 *                                 in the configuration data.
 	 */
 	const ChipSel &chipSelect(const std::string &name) const;
 	/**
@@ -604,7 +606,9 @@ public:
 	 * @pre         Configuration parsing has already been done successfully.
 	 *              SelMgr::csm will only be valid after its required port
 	 *              has been attached.
-	 * @throw SelectManagerDoesNotExistError
+	 * @throw SelectManagerDoesNotExistError  The requested chip select manager
+	 *                                        is not defined in the
+	 *                                        configuration data.
 	 */
 	const SelMgr &selectManager(const std::string &name) const;
 	/**
@@ -619,10 +623,19 @@ public:
 	 *                 object's @ref ChipSelect::configured() "configured()"
 	 *                 function will return false.
 	 * @param setName  The name given to the pin set in the configuration.
-	 * @throw SetDoesNotExistError
-	 * @throw SelectDoesNotExistError
-	 * @throw SetNotCreatedError
-	 * @throw SelectManagerNotCreated
+	 * @throw SetDoesNotExistError     The requested set is not defined in the
+	 *                                 configuration data.
+	 * @throw SelectDoesNotExistError  The requested chip select is not defined
+	 *                                 in the configuration data.
+	 * @throw SetNotCreatedError       The requested set has not yet been
+	 *                                 created. This most likely means that the
+	 *                                 port providing its pins hasn't been
+	 *                                 attached by a call to attachPort().
+	 * @throw SelectManagerNotCreated  The requested manager for the chip select
+	 *                                 has not yet been created. This most
+	 *                                 likely means that the port providing its
+	 *                                 pins hasn't been attached by a call to
+	 *                                 attachPort().
 	 */
 	void getPinSetAndSelect(
 		DigitalPinSet &dpset,
@@ -634,8 +647,12 @@ public:
 	 * @pre  A configuration has been successfully parsed, and the DigitalPort
 	 *       object needed for the set has been attached.
 	 * @param setName  The name given to the pin set in the configuration.
-	 * @throw SetDoesNotExistError
-	 * @throw SetNotCreatedError
+	 * @throw SetDoesNotExistError     The requested set is not defined in the
+	 *                                 configuration data.
+	 * @throw SetNotCreatedError       The requested set has not yet been
+	 *                                 created. This most likely means that the
+	 *                                 port providing its pins hasn't been
+	 *                                 attached by a call to attachPort().
 	 */
 	const DigitalPinSet &getPinSet(const std::string &setName) const;
 	/**
@@ -643,8 +660,13 @@ public:
 	 * @pre  A configuration has been successfully parsed, and the DigitalPort
 	 *       object needed for the set has been attached.
 	 * @param selName  The name given to the chip select in the configuration.
-	 * @throw SelectDoesNotExistError
-	 * @throw SelectManagerNotCreated
+	 * @throw SelectDoesNotExistError  The requested chip select is not defined
+	 *                                 in the configuration data.
+	 * @throw SelectManagerNotCreated  The requested manager for the chip select
+	 *                                 has not yet been created. This most
+	 *                                 likely means that the port providing its
+	 *                                 pins hasn't been attached by a call to
+	 *                                 attachPort().
 	 */
 	const ChipSelect &getSelect(const std::string &selName) const;
 	/**

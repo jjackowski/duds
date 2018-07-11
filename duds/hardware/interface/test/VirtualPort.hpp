@@ -28,7 +28,7 @@ struct VirtualPortError : PinError { };
 
 /**
  * Partially implements a DigitalPort for use with testing without a port.
- *
+ * This will be expanded in the future.
  * @author  Jeff Jackowski
  */
 class VirtualPort : public DigitalPortIndependentPins {

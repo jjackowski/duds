@@ -67,6 +67,18 @@ struct ImageLocation {
 	 * Add in dimensions.
 	 */
 	constexpr ImageLocation operator + (const ImageDimensions &id) const;
+	/**
+	 * Swaps the location's axes.
+	 */
+	void swapAxes() {
+		std::swap(x, y);
+	}
+	/**
+	 * Returns a new location with swapped axes.
+	 */
+	constexpr ImageLocation swappedAxes() const {
+		return ImageLocation(y, x);
+	}
 };
 
 /**
@@ -120,6 +132,18 @@ struct ImageDimensions {
 	 * this object.
 	 */
 	bool withinBounds(const ImageLocation &loc) const;
+	/**
+	 * Swaps the dimensions's axes.
+	 */
+	void swapAxes() {
+		std::swap(w, h);
+	}
+	/**
+	 * Returns new dimensions with swapped axes.
+	 */
+	constexpr ImageDimensions swappedAxes() const {
+		return ImageDimensions(h, w);
+	}
 };
 
 /**
@@ -189,7 +213,7 @@ typedef boost::error_info<struct Info_ImageDimensions, ImageDimensions>
  * @author  Jeff Jackowski
  * @todo    Complete documentation.
  */
-class BppImage /*: public std::enable_shared_from_this<BppImage> */ {
+class BppImage {
 public:
 	typedef std::uintptr_t  PixelBlock;
 private:
@@ -245,9 +269,11 @@ public:
 	 * Controls the direction ConstPixel and Pixel objects will move across
 	 * the image when the object is incremented. The direction will be the
 	 * reverse when decremented. All options are HorizInc rotated by a multiple
-	 * of 90 degrees, and are given in clockwise order.
+	 * of 90 degrees. They are given in clockwise order by where the iterator
+	 * starts to iterate over the whole image. However, the order is
+	 * conuter-colockwise for the results of the write() functions.
 	 * @note  If the listing is in alphabetical order, it is not in
-	 *        clockwise order. The values increment in clockwise order.
+	 *        clockwise/counter-clockwise order.
 	 */
 	enum Direction {
 		/**
@@ -276,10 +302,10 @@ public:
 		 * the width limit, the position will instead be changed to (-1,-1).
 		 */
 		VertDec,
-		Rotate0DCW = HorizInc,
-		Rotate90DCW = VertInc,
-		Rotate180DCW = HorizDec,
-		Rotate270DCW = VertDec,
+		Rotate0DCCW = HorizInc,
+		Rotate90DCCW = VertInc,
+		Rotate180DCCW = HorizDec,
+		Rotate270DCCW = VertDec,
 	};
 
 	/**
@@ -607,7 +633,7 @@ public:
 		void dimensions(const ImageDimensions &d);
 		/**
 		 * Changes the origin, dimensions, and relative position of this object.
-		 * This will aslo change the absolute position. The new image subset
+		 * This will also change the absolute position. The new image subset
 		 * must fit within the bounds of the source image.
 		 * @param o    The origin (top left); used to limit the iteration to
 		 *             a subset of the image data. The top left location is not
@@ -1187,15 +1213,63 @@ public:
 	 */
 	void blankImage(bool state = false);
 
+	/**
+	 * Tells how to modify the destination pixel with the source pixel data.
+	 */
 	enum Operation {
+		/**
+		 * Assigns the pixels in the destination the same value as the pixels
+		 * in the source.
+		 */
 		OpSet,
+		/**
+		 * Assigns the pixels in the destination the opposing value of the
+		 * pixels in the source.
+		 */
+		OpNot,
+		/**
+		 * Performs a bitwise and operation with the destination and source
+		 * data, and places the result in the destination.
+		 */
 		OpAnd,
+		/**
+		 * Performs a bitwise or operation with the destination and source
+		 * data, and places the result in the destination.
+		 */
 		OpOr,
+		/**
+		 * Performs a bitwise exclusive-or operation with the destination and
+		 * source data, and places the result in the destination.
+		 */
 		OpXor,
+		/**
+		 * The total number of supported operations.
+		 */
 		OpTotal
 	};
+private:
 	typedef bool (*OpFunction)(bool dest, bool src);
+	/**
+	 * Functions implementing the operations listed in @a Operation.
+	 * These are intended to be used when there is no optimized implementation
+	 * of an operation since the functions operate on a single bit from the
+	 * destination and source.
+	 */
 	static const OpFunction OpFunctions[OpTotal];
+public:
+	/**
+	 * Writes the specified portion of the source into this image.
+	 * @param src      The source image.
+	 * @param destLoc  The top-left location on this image where the source
+	 *                 image will be placed.
+	 * @param srcLoc   The top-left location in the source image, not modified
+	 *                 by @a srcDir, that will be written into this image.
+	 * @param srcSize  The width and height of the source image that will be
+	 *                 used.
+	 * @param srcDir   The iteration direction on the source image. This allows
+	 *                 the source to be rotated by 0, 90, 180, or 270 degrees.
+	 * @param op       The operation used to modify this image.
+	 */
 	void write(
 		const BppImage * const src,
 		const ImageLocation &destLoc,
@@ -1204,22 +1278,55 @@ public:
 		Direction srcDir = HorizInc,
 		Operation op = OpSet
 	);
+	/**
+	 * Writes the specified portion of the source into this image.
+	 * @param src      The source image.
+	 * @param destLoc  The top-left location on this image where the source
+	 *                 image will be placed.
+	 * @param srcLoc   The top-left location in the source image, not modified
+	 *                 by @a srcDir, that will be written into this image.
+	 * @param srcSize  The width and height of the source image that will be
+	 *                 used.
+	 * @param srcDir   The iteration direction on the source image. This allows
+	 *                 the source to be rotated by 0, 90, 180, or 270 degrees.
+	 * @param op       The operation used to modify this image.
+	 */
 	void write(
 		const std::shared_ptr<const BppImage> &src,
 		const ImageLocation &destLoc,
 		const ImageLocation &srcLoc,
-		const ImageDimensions &size,
+		const ImageDimensions &srcSize,
 		Direction srcDir = HorizInc,
 		Operation op = OpSet
 	) {
-		write(src.get(), destLoc, srcLoc, size, srcDir, op);
+		write(src.get(), destLoc, srcLoc, srcSize, srcDir, op);
 	}
+	/**
+	 * Writes as much of the given source image as will fit into this image.
+	 * @param src      The source image.
+	 * @param dest     The top-left location on this image where the source
+	 *                 image will be placed. The source image will be clipped
+	 *                 to fit.
+	 * @param srcDir   The iteration direction on the source image. This allows
+	 *                 the source to be rotated by 0, 90, 180, or 270 degrees.
+	 * @param op       The operation used to modify this image.
+	 */
 	void write(
 		const BppImage * const src,
 		const ImageLocation &dest,
 		Direction srcDir = HorizInc,
 		Operation op = OpSet
 	);
+	/**
+	 * Writes as much of the given source image as will fit into this image.
+	 * @param src      The source image.
+	 * @param dest     The top-left location on this image where the source
+	 *                 image will be placed. The source image will be clipped
+	 *                 to fit.
+	 * @param srcDir   The iteration direction on the source image. This allows
+	 *                 the source to be rotated by 0, 90, 180, or 270 degrees.
+	 * @param op       The operation used to modify this image.
+	 */
 	void write(
 		const std::shared_ptr<const BppImage> &src,
 		const ImageLocation &dest,

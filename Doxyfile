@@ -195,7 +195,11 @@ TAB_SIZE               = 4
 # will result in a user-defined paragraph with heading "Side Effects:".
 # You can put \n's in the value part of an alias to insert newlines.
 
-ALIASES                = "license=\par License\n"
+# JWJ: A "\n" in an alias results in Doxygen 1.8.14 complaining about invalid
+# command n and no newline. This appears to be a bug since it differs from the
+# documented behavior. Use "^^" instead for a newline.
+
+ALIASES                = "license=\par License^^"
 
 # This tag can be used to specify a number of word-keyword mappings (TCL only).
 # A mapping has the form "name=value". For example adding

@@ -55,6 +55,7 @@ targets = [
 envsamp.Depends(targets[1], imgarc)
 envsamp.Depends(targets[2], imgarcN)
 envsamp.Depends(targets[8], imgarcN)
+envsamp.Depends(targets[13], imgarc)
 
 if envthread['Use_Eigen']:
 	enveigen = envthread.Clone()

@@ -22,13 +22,14 @@ ST7920::ST7920(
 	duds::hardware::interface::DigitalPinSet &&outPins,
 	duds::hardware::interface::ChipSelect &&enablePin,
 	unsigned int w,
-	unsigned int h
+	unsigned int h,
+	std::chrono::nanoseconds delay
 ) :
 	BppGraphicDisplay(ImageDimensions(w, h)),
 	outcfg(5),
 	soonestSend(std::chrono::high_resolution_clock::now())
 {
-	configure(std::move(outPins), std::move(enablePin), w, h);
+	configure(std::move(outPins), std::move(enablePin), w, h, delay);
 }
 
 ST7920::~ST7920() {
@@ -41,7 +42,8 @@ void ST7920::configure(
 	duds::hardware::interface::DigitalPinSet &&outPins,
 	duds::hardware::interface::ChipSelect &&enablePin,
 	unsigned int w,
-	unsigned int h
+	unsigned int h,
+	std::chrono::nanoseconds delay
 ) {
 	// range check on display size
 	if ((w > 256) || (w < 16) || (h > 64) || (h < 16)) {
@@ -81,6 +83,7 @@ void ST7920::configure(
 	outputs = std::move(outPins);
 	enable = std::move(enablePin);
 	frmbuf.resize(w, h);
+	nibblePeriod = delay;
 }
 
 
@@ -110,11 +113,11 @@ void ST7920::sendByte(ST7920::Access &acc, int val) {
 	// write out the text flag as the MSb along with the high-order nibble
 	acc.output.write((val & 0x1F0) >> 4);  // 5-bit output
 	// wait
-	duds::general::YieldingWait(600);
+	duds::general::YieldingWait(200);
 	// tell LCD to read
 	acc.enable.select();
 	// another wait
-	duds::general::YieldingWait(600);
+	duds::general::YieldingWait(nibblePeriod);
 	// LCD should be done reading
 	acc.enable.deselect();
 	// sending a whole byte?
@@ -122,11 +125,11 @@ void ST7920::sendByte(ST7920::Access &acc, int val) {
 		// write out the low-order nibble; leave command flag alone
 		acc.output.write(val & 0xF, 4);  // 4-bit output
 		// wait
-		duds::general::YieldingWait(600);
+		duds::general::YieldingWait(200);
 		// tell LCD to read
 		acc.enable.select();
 		// wait again
-		duds::general::YieldingWait(600);
+		duds::general::YieldingWait(nibblePeriod);
 		// LCD should be done reading
 		acc.enable.deselect();
 	}

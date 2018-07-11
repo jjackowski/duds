@@ -310,6 +310,10 @@ static bool opset(bool dest, bool src) {
 	return src;
 }
 
+static bool opnot(bool dest, bool src) {
+	return !src;
+}
+
 static bool opand(bool dest, bool src) {
 	return dest && src;
 }
@@ -324,6 +328,7 @@ static bool opxor(bool dest, bool src) {
 
 const BppImage::OpFunction BppImage::OpFunctions[OpTotal] = {
 	opset,
+	opnot,
 	opand,
 	opor,
 	opxor
@@ -333,7 +338,7 @@ void BppImage::write(
 	const BppImage * const src,
 	const ImageLocation &destLoc,
 	const ImageLocation &srcLoc,
-	const ImageDimensions &size,
+	const ImageDimensions &srcSize,
 	Direction srcDir,
 	Operation op
 ) {
@@ -342,9 +347,17 @@ void BppImage::write(
 		DUDS_THROW_EXCEPTION(ImageError());
 	}
 	// source iterator
-	ConstPixel siter = src->cbegin(srcLoc, size, srcDir);
+	ConstPixel siter = src->cbegin(srcLoc, srcSize, srcDir);
+	ImageDimensions destSize;
+	if ((srcDir == VertInc) || (srcDir == HorizDec)) {
+		// the iteration direction rotates the image 90 degrees; the dimensions
+		// are swapped for writing to the destination image
+		destSize = srcSize.swappedAxes();
+	} else {
+		destSize = srcSize;
+	}
 	// destination iterator
-	Pixel diter = begin(destLoc, size);
+	Pixel diter = begin(destLoc, destSize);
 	// iteratate over the images
 	for (; siter != EndPixel(); ++diter, ++siter) {
 		*diter = OpFunctions[op](*diter, *siter);
@@ -357,11 +370,23 @@ void BppImage::write(
 	Direction srcDir,
 	Operation op
 ) {
+	ImageDimensions s(src->dimensions());
+	bool swapped = false;
+	if ((srcDir == VertInc) || (srcDir == HorizDec)) {
+		// the iteration direction rotates the image 90 degrees; the dimensions
+		// are swapped for comaprisons to the destination image
+		s.swapAxes();
+		swapped = true;
+	}
 	// source dimensions clipped to available destination size
 	ImageDimensions d(
-		std::min(src->width(), dim.w - dest.x),
-		std::min(src->height(), dim.h - dest.y)
+		// (int16_t - int16_t) is type int
+		std::min((int)s.w, dim.w - dest.x),
+		std::min((int)s.h, dim.h - dest.y)
 	);
+	if (swapped) {
+		d.swapAxes();
+	}
 	// do the writing
 	write(src, dest, ImageLocation(0, 0), d, srcDir, op);
 }
@@ -545,13 +570,15 @@ void BppImage::ConstPixel::dimensions(const ImageDimensions &d) {
 	}
 }
 
+static constexpr ImageLocation OneByOne(1, 1);
+
 void BppImage::ConstPixel::origdimloc(
 	const ImageLocation &o,
 	const ImageDimensions &d,
 	const ImageLocation &p
 ) {
 	if (d.withinBounds(p) &&
-		src->dimensions().withinBounds(o + d)
+		src->dimensions().withinBounds(o - OneByOne + d)
 	) {
 		// store the new data
 		orig = o;
@@ -560,10 +587,17 @@ void BppImage::ConstPixel::origdimloc(
 		// set internal data to use new location
 		src->bufferSpot(blk, mask, orig + pos);
 	} else {
-		DUDS_THROW_EXCEPTION(ImageBoundsError() <<
-			ImageErrorDimensions(d) <<
-			ImageErrorLocation(p)
-		);
+		if (d.withinBounds(p)) {
+			DUDS_THROW_EXCEPTION(ImageBoundsError() <<
+				ImageErrorDimensions(src->dimensions()) <<
+				ImageErrorLocation(o + d)
+			);
+		} else {
+			DUDS_THROW_EXCEPTION(ImageBoundsError() <<
+				ImageErrorDimensions(d) <<
+				ImageErrorLocation(p)
+			);
+		}
 	}
 }
 

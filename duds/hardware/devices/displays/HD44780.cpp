@@ -21,13 +21,14 @@ HD44780::HD44780(
 	duds::hardware::interface::DigitalPinSet &&outPins,
 	duds::hardware::interface::ChipSelect &&enablePin,
 	unsigned int c,
-	unsigned int r
+	unsigned int r,
+	std::chrono::nanoseconds delay
 ) :
 	TextDisplay(c, r),
 	outcfg(5),
 	soonestSend(std::chrono::high_resolution_clock::now())
 {
-	configure(std::move(outPins), std::move(enablePin), c, r);
+	configure(std::move(outPins), std::move(enablePin), c, r, delay);
 }
 
 HD44780::~HD44780() {
@@ -40,7 +41,8 @@ void HD44780::configure(
 	duds::hardware::interface::DigitalPinSet &&outPins,
 	duds::hardware::interface::ChipSelect &&enablePin,
 	unsigned int c,
-	unsigned int r
+	unsigned int r,
+	std::chrono::nanoseconds delay
 ) {
 	// range check on display size
 	if ((c > 20) || (c < 1) || (r > 4) || (r < 1)) {
@@ -81,6 +83,7 @@ void HD44780::configure(
 	enable = std::move(enablePin);
 	columnsize = c;
 	rowsize = r;
+	nibblePeriod = delay;
 }
 
 void HD44780::wait() const {
@@ -109,11 +112,11 @@ void HD44780::sendByte(HD44780::Access &acc, int val) {
 	// write out the text flag as the MSb along with the high-order nibble
 	acc.output.write((val & 0x1F0) >> 4);  // 5-bit output
 	// wait
-	duds::general::YieldingWait(8000); // seems long; wiring issue?
+	duds::general::YieldingWait(nibblePeriod);
 	// tell LCD to read
 	acc.enable.select();
 	// another wait
-	duds::general::YieldingWait(8000);
+	duds::general::YieldingWait(nibblePeriod);
 	// LCD should be done reading
 	acc.enable.deselect();
 	// sending a whole byte?
@@ -121,11 +124,11 @@ void HD44780::sendByte(HD44780::Access &acc, int val) {
 		// write out the low-order nibble; leave command flag alone
 		acc.output.write(val & 0xF, 4);  // 4-bit output
 		// wait
-		duds::general::YieldingWait(8000);
+		duds::general::YieldingWait(nibblePeriod);
 		// tell LCD to read
 		acc.enable.select();
 		// wait again
-		duds::general::YieldingWait(8000);
+		duds::general::YieldingWait(nibblePeriod);
 		// LCD should be done reading
 		acc.enable.deselect();
 	}

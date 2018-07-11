@@ -66,6 +66,10 @@ class HD44780 : public TextDisplay {
 	 * to elapse while the thread does something else.
 	 */
 	std::chrono::high_resolution_clock::time_point soonestSend;
+	/**
+	 * The amount of time to allow the display to read data.
+	 */
+	std::chrono::nanoseconds nibblePeriod;
 	enum {
 		/**
 		 * General data mask for the display.
@@ -177,6 +181,13 @@ public:
 	 *                   16 or 20.
 	 * @param r          The number of rows on the display. The value must be
 	 *                   between 1 and 4.
+	 * @param delay      The number of nanoseconds to delay while the display
+	 *                   reads in data. Delays as short as 500ns should be
+	 *                   possible with HD44780 display controllers. Compatible
+	 *                   controllers may have different requirements. Specific
+	 *                   circuits, especially non-permanent prototypes like
+	 *                   ones on breadboards, may require longer delays. The
+	 *                   default value seems to work well for such prototypes.
 	 * @throw DisplayRangeError  Either the column or row size is
 	 *                           outside the supported range.
 	 * @throw duds::hardware::interface::PinDoesNotExist
@@ -187,7 +198,8 @@ public:
 		duds::hardware::interface::DigitalPinSet &&outPins,
 		duds::hardware::interface::ChipSelect &&enablePin,
 		unsigned int c,
-		unsigned int r
+		unsigned int r,
+		std::chrono::nanoseconds delay = std::chrono::nanoseconds(8000)
 	);
 	/**
 	 * Calls off().
@@ -219,6 +231,13 @@ public:
 	 *                   16 or 20.
 	 * @param r          The number of rows on the display. The value must be
 	 *                   between 1 and 4.
+	 * @param delay      The number of nanoseconds to delay while the display
+	 *                   reads in data. Delays as short as 500ns should be
+	 *                   possible with HD44780 display controllers. Compatible
+	 *                   controllers may have different requirements. Specific
+	 *                   circuits, especially non-permanent prototypes like
+	 *                   ones on breadboards, may require longer delays. The
+	 *                   default value seems to work well for such prototypes.
 	 * @throw DisplayRangeError  Either the column or row size is
 	 *                           outside the supported range.
 	 * @throw duds::hardware::interface::PinDoesNotExist
@@ -229,7 +248,8 @@ public:
 		duds::hardware::interface::DigitalPinSet &&outPins,
 		duds::hardware::interface::ChipSelect &&enablePin,
 		unsigned int c,
-		unsigned int r
+		unsigned int r,
+		std::chrono::nanoseconds delay = std::chrono::nanoseconds(8000)
 	);
 	/**
 	 * Initializes the display for use. This function must be called before

@@ -60,6 +60,7 @@ R PatternFill(P pattern) {
 
 void runtest(
 	const std::shared_ptr<displays::ST7920> &disp,
+	std::shared_ptr<displays::BppImage> lanIcon[3],
 	bool once
 ) try {
 	displays::BppImage img(disp->frame().dimensions());
@@ -98,8 +99,6 @@ void runtest(
 				break;
 			case 2:
 			case 3:
-			case 4:
-			case 5:
 				// on even pat, 0x55 on odd lines, 0xAA on even lines
 				// reverse for odd pat
 				for (int h = 0; h < img.height(); ++h) {
@@ -118,10 +117,8 @@ void runtest(
 					}
 				}
 				break;
-			case 7:
-			case 8:
-			case 9:
-			case 10:
+			case 4:
+			case 5:
 				// on even pat, 0x33 on odd lines, 0xCC on even lines
 				// reverse for odd pat
 				for (int h = 0; h < img.height(); ++h) {
@@ -140,10 +137,8 @@ void runtest(
 					}
 				}
 				break;
-			case 11:
-			case 12:
-			case 13:
-			case 14:
+			case 6:
+			case 7:
 				// on even pat, 0x33 on odd lines, 0xCC on even lines
 				// reverse for odd pat
 				for (int h = 0; h < img.height(); ++h) {
@@ -162,6 +157,60 @@ void runtest(
 					}
 				}
 				break;
+			case 8:
+				img.blankImage();
+			case 9:
+			case 10:
+			case 11:
+				{
+					displays::BppImage::Operation op;
+					if (pat & 2) {
+						op = displays::BppImage::OpXor;
+					}
+					for (int x = 0; x < 6; ++x) {
+						if (!(pat & 2)) {
+							if ((pat + x) & 1) {
+								op = displays::BppImage::OpNot;
+							} else {
+								op = displays::BppImage::OpSet;
+							}
+						}
+						img.write(
+							lanIcon[x/2],
+							displays::ImageLocation(x * 6, 0),
+							displays::BppImage::HorizInc,
+							op
+						);
+					}
+				}
+				break;
+			case 12:
+				img.blankImage();
+			case 13:
+			case 14:
+			case 15:
+				{
+					displays::BppImage::Operation op;
+					if (pat & 2) {
+						op = displays::BppImage::OpXor;
+					}
+					for (int x = 0; x < 6; ++x) {
+						if (!(pat & 2)) {
+							if ((pat + x) & 1) {
+								op = displays::BppImage::OpNot;
+							} else {
+								op = displays::BppImage::OpSet;
+							}
+						}
+						img.write(
+							lanIcon[x/2],
+							displays::ImageLocation(x * 9, 0),
+							displays::BppImage::Rotate90DCCW,
+							op
+						);
+					}
+				}
+				break;
 		}
 		disp->write(&img);
 		if (!once) {
@@ -169,7 +218,7 @@ void runtest(
 		}
 		if (++pat > 15) {
 			if (once) return;
-			pat = 0;
+			pat = 8;
 		}
 	} while (!quit);
 } catch (...) {
@@ -274,7 +323,6 @@ try {
 		}
 	}
 
-	/*
 	std::string binpath(argv[0]);
 	while (!binpath.empty() && (binpath.back() != '/')) {
 		binpath.pop_back();
@@ -282,14 +330,12 @@ try {
 	// load some icons before messing with hardware
 	displays::BppImageArchive imgArc;
 	imgArc.load(binpath + "neticons.bppia");
-	std::shared_ptr<displays::BppImage> wiredIcon = imgArc.get("WiredLAN");
-	std::shared_ptr<displays::BppImage> wirelessIcon[4] = {
-		imgArc.get("WirelessLAN_S0"),
+	std::shared_ptr<displays::BppImage> lanIcon[3] = {
+		imgArc.get("WiredLAN"),
 		imgArc.get("WirelessLAN_S1"),
-		imgArc.get("WirelessLAN_S2"),
-		imgArc.get("WirelessLAN_S3"),
+		imgArc.get("WirelessLAN_S2")
 	};
-	*/
+
 	// read in digital pin config
 	boost::property_tree::ptree tree;
 	boost::property_tree::read_info(confpath, tree);
@@ -326,9 +372,9 @@ try {
 
 	if (noinput) {
 		// will not return, unless once is true
-		runtest(disp, once);
+		runtest(disp, lanIcon, once);
 	} else {
-		std::thread doit(runtest, std::ref(disp), once);
+		std::thread doit(runtest, std::ref(disp), lanIcon, once);
 		std::cin.get();
 		quit = true;
 		doit.join();
