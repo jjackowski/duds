@@ -8,7 +8,7 @@
  * Copyright (C) 2017  Jeff Jackowski
  */
 #include <duds/hardware/devices/displays/HD44780.hpp>
-#include <duds/hardware/devices/displays/TextDisplayStream.hpp>
+#include <duds/hardware/display/TextDisplayStream.hpp>
 #include <duds/hardware/interface/linux/SysFsPort.hpp>
 #include <duds/hardware/interface/ChipPinSelectManager.hpp>
 #include <duds/hardware/devices/instruments/ISL29125.hpp>
@@ -23,18 +23,18 @@
 constexpr int valw = 8;
 bool quit = false;
 
-namespace displays = duds::hardware::devices::displays;
+namespace display = duds::hardware::display;
 
 void runtest(
-	const std::shared_ptr<displays::HD44780> &tmd,
+	const std::shared_ptr<duds::hardware::devices::displays::HD44780> &tmd,
 	duds::hardware::devices::instruments::ISL29125 &rgb
 ) try {
-	displays::TextDisplayStream tds(tmd);
+	display::TextDisplayStream tds(tmd);
 	do {
 		rgb.sample();
 		tds << "R:" << std::right << std::setw(5) << rgb.red() <<
 		" G:" << std::setw(5) << rgb.green() << "\nB:" << std::setw(5) <<
-		rgb.blue() << displays::move(0,0);
+		rgb.blue() << display::move(0,0);
 		std::cout << "Red: " << std::right << std::setw(5) << rgb.red() <<
 		"  Green: " << std::setw(5) << rgb.green() << " Blue: " << std::setw(5)
 		<< rgb.blue() << '\r';
@@ -69,8 +69,8 @@ try {
 	gpios.insert(gpios.begin(), uintIterator(0), uintIterator(5));
 	duds::hardware::interface::DigitalPinSet lcdset(port, gpios);
 	// LCD driver
-	std::shared_ptr<displays::HD44780> tmd =
-		std::make_shared<displays::HD44780>(
+	std::shared_ptr<duds::hardware::devices::displays::HD44780> tmd =
+		std::make_shared<duds::hardware::devices::displays::HD44780>(
 			std::move(lcdset), std::move(lcdsel), 16, 2
 		);
 	tmd->initialize();

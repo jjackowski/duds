@@ -9,7 +9,7 @@
  */
 #include <duds/hardware/interface/DigitalPinSet.hpp>
 #include <duds/hardware/interface/ChipSelect.hpp>
-#include <duds/hardware/devices/displays/BppGraphicDisplay.hpp>
+#include <duds/hardware/display/BppGraphicDisplay.hpp>
 #include <chrono>
 
 namespace duds { namespace hardware { namespace devices { namespace displays {
@@ -39,7 +39,7 @@ namespace duds { namespace hardware { namespace devices { namespace displays {
  *
  * @author  Jeff Jackowski
  */
-class ST7920 : public BppGraphicDisplay {
+class ST7920 : public duds::hardware::display::BppGraphicDisplay {
 	/**
 	 * Represents the 5 output lines, other than enable, that are needed to
 	 * communicate with the LCD. The pins are, in order:
@@ -163,7 +163,7 @@ class ST7920 : public BppGraphicDisplay {
 	 * updates the image in @a frmbuf to match.
 	 * @param img  The new image to show.
 	 */
-	virtual void outputFrame(const BppImage *img);
+	virtual void outputFrame(const duds::hardware::display::BppImage *img);
 public:
 	/**
 	 * Initializes the object with an invalid display size and no pins to use.

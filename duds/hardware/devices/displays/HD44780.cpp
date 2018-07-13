@@ -8,7 +8,7 @@
  * Copyright (C) 2017  Jeff Jackowski
  */
 #include <duds/hardware/devices/displays/HD44780.hpp>
-#include <duds/hardware/devices/displays/BppImage.hpp>
+#include <duds/hardware/display/BppImage.hpp>
 #include <duds/general/ReverseBits.hpp>
 #include <duds/general/YieldingWait.hpp>
 #include <thread>
@@ -46,8 +46,10 @@ void HD44780::configure(
 ) {
 	// range check on display size
 	if ((c > 20) || (c < 1) || (r > 4) || (r < 1)) {
-		DUDS_THROW_EXCEPTION(DisplaySizeError() <<
-			TextDisplaySizeInfo(Info_DisplayColRow(c, r))
+		DUDS_THROW_EXCEPTION(duds::hardware::display::DisplaySizeError() <<
+			duds::hardware::display::TextDisplaySizeInfo(
+				duds::hardware::display::Info_DisplayColRow(c, r)
+			)
 		);
 	}
 	if (!outPins.havePins() || !enablePin) {
@@ -95,7 +97,7 @@ void HD44780::wait() const {
 
 void HD44780::preparePins(HD44780::Access &acc) {
 	if (!outputs.havePins()) {
-		DUDS_THROW_EXCEPTION(DisplayUninitialized());
+		DUDS_THROW_EXCEPTION(duds::hardware::display::DisplayUninitialized());
 	}
 	// Wait until the display can take more data. Do this before getting
 	// hardware access so that the hadrware remains availble for other
@@ -258,19 +260,22 @@ void HD44780::clear() {
 	cpos = rpos = 0;
 }
 
-void HD44780::setGlyph(const std::shared_ptr<BppImage> &glyph, int idx) {
+void HD44780::setGlyph(
+	const std::shared_ptr<duds::hardware::display::BppImage> &glyph,
+	int idx
+) {
 	// displays ignore the 4th bit
 	idx &= ~8;
 	// check for out of range index
 	if ((idx < 0) || (idx > 7)) {
-		DUDS_THROW_EXCEPTION(DisplayGlyphIndexError() <<
-			DisplayGlyphIndex(idx)
+		DUDS_THROW_EXCEPTION(duds::hardware::display::DisplayGlyphIndexError() <<
+			duds::hardware::display::DisplayGlyphIndex(idx)
 		);
 	}
 	// check for bad image size
 	if ((glyph->width() > 5) || (glyph->height() > 8)) {
-		DUDS_THROW_EXCEPTION(DisplayGlyphSizeError() <<
-			ImageErrorDimensions(glyph->dimensions())
+		DUDS_THROW_EXCEPTION(duds::hardware::display::DisplayGlyphSizeError() <<
+			duds::hardware::display::ImageErrorDimensions(glyph->dimensions())
 		);
 	}
 	Access acc;

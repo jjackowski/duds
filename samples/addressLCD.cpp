@@ -15,8 +15,8 @@
  */
 
 #include <duds/hardware/devices/displays/HD44780.hpp>
-#include <duds/hardware/devices/displays/TextDisplayStream.hpp>
-#include <duds/hardware/devices/displays/BppImageArchive.hpp>
+#include <duds/hardware/display/TextDisplayStream.hpp>
+#include <duds/hardware/display/BppImageArchive.hpp>
 #ifdef USE_SYSFS_PORT
 #include <duds/hardware/interface/linux/SysFsPort.hpp>
 #else
@@ -44,6 +44,7 @@
 bool quit = false;
 
 namespace displays = duds::hardware::devices::displays;
+namespace display = duds::hardware::display;
 
 class NetInterface {
 	boost::asio::ip::address addr;
@@ -273,7 +274,7 @@ I  192.168.100.200
 void show(
 	const std::shared_ptr<displays::HD44780> &tmd
 ) try {
-	displays::TextDisplayStream tds(tmd);
+	display::TextDisplayStream tds(tmd);
 	int updates = 1;
 	Fillnetifs();
 	do {
@@ -296,7 +297,7 @@ void show(
 					if (len) {
 						tds << ' ';
 					}
-					tds << addr << displays::startLine;
+					tds << addr << display::startLine;
 					// console output
 					std::cout << nif.name() << ": " << addr << "\n\t";
 					if (nif.isWireless()) {
@@ -312,7 +313,7 @@ void show(
 					// when it is the only network
 					if (nif.isWireless() && ((tmd->rows() > 2) || (netifs.size() == 1))) {
 						tds << std::right << std::setw(tmd->columns()) << nif.essid() <<
-						displays::startLine << std::left;
+						display::startLine << std::left;
 						if (++cnt == tmd->rows()) {
 							// no more space
 							break;
@@ -392,10 +393,10 @@ try {
 		binpath.pop_back();
 	}
 	// load some icons before messing with hardware
-	displays::BppImageArchive imgArc;
+	display::BppImageArchive imgArc;
 	imgArc.load(binpath + "neticons.bppia");
-	std::shared_ptr<displays::BppImage> wiredIcon = imgArc.get("WiredLAN");
-	std::shared_ptr<displays::BppImage> wirelessIcon[4] = {
+	std::shared_ptr<display::BppImage> wiredIcon = imgArc.get("WiredLAN");
+	std::shared_ptr<display::BppImage> wirelessIcon[4] = {
 		imgArc.get("WirelessLAN_S0"),
 		imgArc.get("WirelessLAN_S1"),
 		imgArc.get("WirelessLAN_S2"),

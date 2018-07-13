@@ -15,7 +15,7 @@
  */
 
 #include <duds/hardware/devices/displays/HD44780.hpp>
-#include <duds/hardware/devices/displays/TextDisplayStream.hpp>
+#include <duds/hardware/display/TextDisplayStream.hpp>
 #include <duds/hardware/interface/linux/SysFsPort.hpp>
 #include <duds/hardware/interface/ChipPinSelectManager.hpp>
 #include <iostream>
@@ -28,18 +28,18 @@
 constexpr int valw = 8;
 bool quit = false;
 
-namespace displays = duds::hardware::devices::displays;
+namespace display = duds::hardware::display;
 
 void runtest(
-	const std::shared_ptr<displays::HD44780> &tmd
+	const std::shared_ptr<duds::hardware::devices::displays::HD44780> &tmd
 ) try {
 	std::cout << "Start test" << std::endl;
-	displays::TextDisplayStream tds(tmd);
-	tds << displays::move(13, 1) << "Run";
+	display::TextDisplayStream tds(tmd);
+	tds << display::move(13, 1) << "Run";
 	int loop = -1;
 	do {
 		if ((loop & 31) == 16) {
-			tds << displays::clear << "Still testing...";
+			tds << display::clear << "Still testing...";
 		}
 		tds << "Test " << std::hex << (++loop) << "  \n";
 		std::cout << "Wrote some." << std::endl;
@@ -76,8 +76,8 @@ try {
 	std::cout << "Construct" << std::endl;
 	
 	// LCD driver
-	std::shared_ptr<displays::HD44780> tmd =
-		std::make_shared<displays::HD44780>(
+	std::shared_ptr<duds::hardware::devices::displays::HD44780> tmd =
+		std::make_shared<duds::hardware::devices::displays::HD44780>(
 			std::move(lcdset), std::move(lcdsel), 16, 2
 		);
 	

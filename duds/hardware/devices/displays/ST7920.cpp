@@ -9,7 +9,7 @@
  */
 
 #include <duds/hardware/devices/displays/ST7920.hpp>
-#include <duds/hardware/devices/displays/DisplayErrors.hpp>
+#include <duds/hardware/display/DisplayErrors.hpp>
 #include <duds/general/ReverseBits.hpp>
 #include <duds/general/YieldingWait.hpp>
 #include <thread>
@@ -25,7 +25,9 @@ ST7920::ST7920(
 	unsigned int h,
 	std::chrono::nanoseconds delay
 ) :
-	BppGraphicDisplay(ImageDimensions(w, h)),
+	duds::hardware::display::BppGraphicDisplay(
+		duds::hardware::display::ImageDimensions(w, h)
+	),
 	outcfg(5),
 	soonestSend(std::chrono::high_resolution_clock::now())
 {
@@ -47,8 +49,10 @@ void ST7920::configure(
 ) {
 	// range check on display size
 	if ((w > 256) || (w < 16) || (h > 64) || (h < 16)) {
-		DUDS_THROW_EXCEPTION(DisplaySizeError() <<
-			ImageErrorFrameDimensions(ImageDimensions(w, h))
+		DUDS_THROW_EXCEPTION(duds::hardware::display::DisplaySizeError() <<
+			duds::hardware::display::ImageErrorFrameDimensions(
+				duds::hardware::display::ImageDimensions(w, h)
+			)
 		);
 	}
 	if (!outPins.havePins() || !enablePin) {
@@ -96,7 +100,7 @@ void ST7920::wait() const {
 
 void ST7920::preparePins(ST7920::Access &acc) {
 	if (!outputs.havePins()) {
-		DUDS_THROW_EXCEPTION(DisplayUninitialized());
+		DUDS_THROW_EXCEPTION(duds::hardware::display::DisplayUninitialized());
 	}
 	// Wait until the display can take more data. Do this before getting
 	// hardware access so that the hadrware remains availble for other
@@ -207,7 +211,7 @@ void ST7920::writeBlock(
 	} while (start++ != end);
 }
 
-void ST7920::outputFrame(const BppImage *img) {
+void ST7920::outputFrame(const duds::hardware::display::BppImage *img) {
 	Access acc;
 	preparePins(acc);
 	// width in 16-bit ints

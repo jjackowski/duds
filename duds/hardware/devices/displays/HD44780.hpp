@@ -9,12 +9,16 @@
  */
 #include <duds/hardware/interface/DigitalPinSet.hpp>
 #include <duds/hardware/interface/ChipSelect.hpp>
-#include <duds/hardware/devices/displays/TextDisplay.hpp>
+#include <duds/hardware/display/TextDisplay.hpp>
 #include <chrono>
 
-namespace duds { namespace hardware { namespace devices { namespace displays {
+namespace duds { namespace hardware {
 
-class BppImage;
+namespace display {
+	class BppImage;
+}
+
+namespace devices { namespace displays {
 
 /**
  * Implements text output to HD44780 and compatible display controllers,
@@ -37,7 +41,7 @@ class BppImage;
  *
  * @author  Jeff Jackowski
  */
-class HD44780 : public TextDisplay {
+class HD44780 : public duds::hardware::display::TextDisplay {
 	/**
 	 * Represents the 5 output lines, other than enable, that are needed to
 	 * communicate with the LCD. The pins are, in order:
@@ -331,7 +335,10 @@ public:
 	 *                                supported range of 0 to 15, inclusive.
 	 * @throw DisplayGlyphSizeError   The image is too large.
 	 */
-	void setGlyph(const std::shared_ptr<BppImage> &glyph, int idx);
+	void setGlyph(
+		const std::shared_ptr<duds::hardware::display::BppImage> &glyph,
+		int idx
+	);
 };
 
 } } } }

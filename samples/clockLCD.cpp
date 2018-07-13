@@ -13,8 +13,8 @@
  */
 
 #include <duds/hardware/devices/displays/HD44780.hpp>
-#include <duds/hardware/devices/displays/TextDisplayStream.hpp>
-#include <duds/hardware/devices/displays/BppImageArchive.hpp>
+#include <duds/hardware/display/TextDisplayStream.hpp>
+#include <duds/hardware/display/BppImageArchive.hpp>
 #ifdef USE_SYSFS_PORT
 #include <duds/hardware/interface/linux/SysFsPort.hpp>
 #else
@@ -35,13 +35,12 @@
 #include <boost/exception/diagnostic_information.hpp>
 #include <boost/program_options.hpp>
 
-duds::hardware::devices::displays::BppImageArchive imgArc;
+duds::hardware::display::BppImageArchive imgArc;
 
 /**
  * A character in the string for large output is not in the large font.
  */
-struct LargeCharUnsupported :
-duds::hardware::devices::displays::DisplayError { };
+struct LargeCharUnsupported : duds::hardware::display::DisplayError { };
 
 /**
  * Writes out a string with large 3x3 digits, spaces, and colons to a text
@@ -59,7 +58,7 @@ duds::hardware::devices::displays::DisplayError { };
  * @throw       TextDisplayRangeError    The string does not fit on the display.
  */
 void WriteLarge(
-	const std::shared_ptr<duds::hardware::devices::displays::TextDisplay> &disp,
+	const std::shared_ptr<duds::hardware::display::TextDisplay> &disp,
 	const std::string &str,
 	unsigned int c,
 	unsigned int r
@@ -244,9 +243,9 @@ void WriteLarge(
 	// must start on line 0 or 1
 	if (r > 1) {
 		DUDS_THROW_EXCEPTION(
-			duds::hardware::devices::displays::DisplayBoundsError() <<
-			duds::hardware::devices::displays::TextDisplayPositionInfo(
-				duds::hardware::devices::displays::Info_DisplayColRow(c, r)
+			duds::hardware::display::DisplayBoundsError() <<
+			duds::hardware::display::TextDisplayPositionInfo(
+				duds::hardware::display::Info_DisplayColRow(c, r)
 			)
 		);
 	}
@@ -270,9 +269,9 @@ void WriteLarge(
 	}
 	if ((c + width) > disp->columns()) {
 		DUDS_THROW_EXCEPTION(
-			duds::hardware::devices::displays::DisplayBoundsError() <<
-			duds::hardware::devices::displays::TextDisplayPositionInfo(
-				duds::hardware::devices::displays::Info_DisplayColRow(c, r)
+			duds::hardware::display::DisplayBoundsError() <<
+			duds::hardware::display::TextDisplayPositionInfo(
+				duds::hardware::display::Info_DisplayColRow(c, r)
 			)
 		);
 	}
@@ -313,6 +312,7 @@ void WriteLarge(
 
 
 namespace displays = duds::hardware::devices::displays;
+namespace display = duds::hardware::display;
 
 bool quit = false;
 
@@ -320,7 +320,7 @@ void runtest(const std::shared_ptr<displays::HD44780> &tmd)
 try {
 	duds::hardware::devices::clocks::LinuxClockDriver lcd;
 	duds::hardware::devices::clocks::LinuxClockDriver::Measurement::TimeSample ts;
-	displays::TextDisplayStream tds(tmd);
+	display::TextDisplayStream tds(tmd);
 	std::chrono::high_resolution_clock::time_point start;
 	float dispTime = 32768.0f;  // in microseconds
 	// examples never delete these
@@ -350,16 +350,16 @@ try {
 		localtime_r(&tt, &ltime);
 		// test for showing both sets of large digits
 		if (ltime.tm_min & 1) {
-			tds << displays::move(0,3);
+			tds << display::move(0,3);
 		} else {
-			tds << displays::move(0,0);
+			tds << display::move(0,0);
 		}
 		// Get the date of the local time; Boost is better with the dates than
 		// C++11, but lacks local timezone. Looks like much of the Boost
 		// date_time library will be in C++20.
 		boost::gregorian::date date = boost::gregorian::date_from_tm(ltime);
 		// write out the date and timezone
-		tds << date << ' ' << std::setw(3) << ltime.tm_zone << displays::startLine;
+		tds << date << ' ' << std::setw(3) << ltime.tm_zone << display::startLine;
 		// write out the time to a string stream
 		std::ostringstream oss;
 		char sep;
@@ -430,7 +430,7 @@ try {
 		);
 		boost::program_options::notify(vm);
 		if (vm.count("help")) {
-			std::cout << "Show network addresses on attached text LCD\n" <<
+			std::cout << "Show the time and date on the attached text LCD\n" <<
 			argv[0] << " [options]\n" << optdesc << std::endl;
 			return 0;
 		}
@@ -464,25 +464,6 @@ try {
 	duds::hardware::interface::ChipSelect lcdsel;
 	pc.getPinSetAndSelect(lcdset, lcdsel, "lcd");
 
-	/* old
-	//                       LCD pins:  4  5   6   7  RS   E
-	std::vector<unsigned int> gpios = { 5, 6, 19, 26, 20, 21 };
-	std::shared_ptr<duds::hardware::interface::linux::SysFsPort> port =
-		std::make_shared<duds::hardware::interface::linux::SysFsPort>(
-			gpios, 0
-		);
-	assert(!port->simultaneousOperations());  //  :-(
-	// select pin
-	std::shared_ptr<duds::hardware::interface::ChipPinSelectManager> selmgr =
-		std::make_shared<duds::hardware::interface::ChipPinSelectManager>(
-			port->access(5) // gpio 21
-		);
-	duds::hardware::interface::ChipSelect lcdsel(selmgr, 1);
-	// set for LCD data
-	gpios.clear();
-	gpios.insert(gpios.begin(), uintIterator(0), uintIterator(5));
-	duds::hardware::interface::DigitalPinSet lcdset(port, gpios);
-	*/
 	// LCD driver
 	std::shared_ptr<displays::HD44780> tmd =
 		std::make_shared<displays::HD44780>(

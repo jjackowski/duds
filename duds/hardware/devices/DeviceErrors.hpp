@@ -15,7 +15,8 @@
 namespace duds { namespace hardware {
 
 /**
- * The root for various device drivers, and the place for common support code.
+ * The root namespace for various device drivers to support specific hardware
+ * items. Code that is not device specific should go elsewhere.
  */
 namespace devices {
 

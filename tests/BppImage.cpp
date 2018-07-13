@@ -6,11 +6,11 @@
 #define BOOST_TEST_DYN_LINK
 #include <boost/exception/diagnostic_information.hpp>
 #include <boost/test/unit_test.hpp>
-#include <duds/hardware/devices/displays/BppImageArchive.hpp>
+#include <duds/hardware/display/BppImageArchive.hpp>
 
 #include <iostream>
 
-namespace BPPN = duds::hardware::devices::displays; // Bit Per Pixel Namespace
+namespace BPPN = duds::hardware::display; // Bit Per Pixel Namespace
 
 BOOST_AUTO_TEST_SUITE(BppImage)
 

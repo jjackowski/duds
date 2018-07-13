@@ -10,6 +10,13 @@
 namespace duds { namespace hardware { namespace devices {
 
 /**
+ * Support for specific display devices. Generalized code for diplays is in
+ * duds::hardware::display. The focus here is on displays other than RGB color
+ * graphic displays since many of those are widely supported elsewhere.
+ */
+namespace displays { }
+
+/**
  * The namespace with support for various instruments that sense properties of
  * the physical world.
  *

@@ -15,7 +15,7 @@
  */
 
 #include <duds/hardware/devices/displays/ST7920.hpp>
-#include <duds/hardware/devices/displays/BppImageArchive.hpp>
+#include <duds/hardware/display/BppImageArchive.hpp>
 #include <duds/hardware/interface/linux/SysFsPort.hpp>
 #ifndef USE_SYSFS_PORT
 #include <duds/hardware/interface/linux/GpioDevPort.hpp>
@@ -33,7 +33,7 @@
 
 bool quit = false;
 
-namespace displays = duds::hardware::devices::displays;
+namespace display = duds::hardware::display;
 
 template <std::size_t B>
 class PatternFiller {
@@ -59,13 +59,13 @@ R PatternFill(P pattern) {
 }
 
 void runtest(
-	const std::shared_ptr<displays::ST7920> &disp,
-	std::shared_ptr<displays::BppImage> lanIcon[3],
+	const std::shared_ptr<duds::hardware::devices::displays::ST7920> &disp,
+	std::shared_ptr<display::BppImage> lanIcon[3],
 	bool once
 ) try {
-	displays::BppImage img(disp->frame().dimensions());
-	displays::BppImage::PixelBlock pval;
-	displays::BppImage::PixelBlock *buf;
+	display::BppImage img(disp->frame().dimensions());
+	display::BppImage::PixelBlock pval;
+	display::BppImage::PixelBlock *buf;
 	std::size_t blkcnt;
 	int pat = 0;
 	do {
@@ -73,7 +73,7 @@ void runtest(
 		switch (pat) {
 			case 0:
 				// dark left
-				pval = PatternFill<displays::BppImage::PixelBlock>(
+				pval = PatternFill<display::BppImage::PixelBlock>(
 					(std::uint16_t)0xFF
 				);
 				for (
@@ -86,7 +86,7 @@ void runtest(
 				break;
 			case 1:
 				// dark right
-				pval = PatternFill<displays::BppImage::PixelBlock>(
+				pval = PatternFill<display::BppImage::PixelBlock>(
 					(std::uint16_t)0xFF00
 				);
 				for (
@@ -103,11 +103,11 @@ void runtest(
 				// reverse for odd pat
 				for (int h = 0; h < img.height(); ++h) {
 					if (h & 1) {
-						pval = PatternFill<displays::BppImage::PixelBlock>(
+						pval = PatternFill<display::BppImage::PixelBlock>(
 							(std::uint16_t)(0xAAAA >> (pat & 1))
 						);
 					} else {
-						pval = PatternFill<displays::BppImage::PixelBlock>(
+						pval = PatternFill<display::BppImage::PixelBlock>(
 							(std::uint16_t)(0x5555 << (pat & 1))
 						);
 					}
@@ -123,11 +123,11 @@ void runtest(
 				// reverse for odd pat
 				for (int h = 0; h < img.height(); ++h) {
 					if (h & 1) {
-						pval = PatternFill<displays::BppImage::PixelBlock>(
+						pval = PatternFill<display::BppImage::PixelBlock>(
 							(std::uint16_t)(0xCCCC >> (pat & 1))
 						);
 					} else {
-						pval = PatternFill<displays::BppImage::PixelBlock>(
+						pval = PatternFill<display::BppImage::PixelBlock>(
 							(std::uint16_t)(0x3333 << (pat & 1))
 						);
 					}
@@ -143,11 +143,11 @@ void runtest(
 				// reverse for odd pat
 				for (int h = 0; h < img.height(); ++h) {
 					if (h & 2) {
-						pval = PatternFill<displays::BppImage::PixelBlock>(
+						pval = PatternFill<display::BppImage::PixelBlock>(
 							(std::uint16_t)(0xCCCC >> (pat & 1))
 						);
 					} else {
-						pval = PatternFill<displays::BppImage::PixelBlock>(
+						pval = PatternFill<display::BppImage::PixelBlock>(
 							(std::uint16_t)(0x3333 << (pat & 1))
 						);
 					}
@@ -163,22 +163,22 @@ void runtest(
 			case 10:
 			case 11:
 				{
-					displays::BppImage::Operation op;
+					display::BppImage::Operation op;
 					if (pat & 2) {
-						op = displays::BppImage::OpXor;
+						op = display::BppImage::OpXor;
 					}
 					for (int x = 0; x < 6; ++x) {
 						if (!(pat & 2)) {
 							if ((pat + x) & 1) {
-								op = displays::BppImage::OpNot;
+								op = display::BppImage::OpNot;
 							} else {
-								op = displays::BppImage::OpSet;
+								op = display::BppImage::OpSet;
 							}
 						}
 						img.write(
 							lanIcon[x/2],
-							displays::ImageLocation(x * 6, 0),
-							displays::BppImage::HorizInc,
+							display::ImageLocation(x * 6, 0),
+							display::BppImage::HorizInc,
 							op
 						);
 					}
@@ -190,22 +190,22 @@ void runtest(
 			case 14:
 			case 15:
 				{
-					displays::BppImage::Operation op;
+					display::BppImage::Operation op;
 					if (pat & 2) {
-						op = displays::BppImage::OpXor;
+						op = display::BppImage::OpXor;
 					}
 					for (int x = 0; x < 6; ++x) {
 						if (!(pat & 2)) {
 							if ((pat + x) & 1) {
-								op = displays::BppImage::OpNot;
+								op = display::BppImage::OpNot;
 							} else {
-								op = displays::BppImage::OpSet;
+								op = display::BppImage::OpSet;
 							}
 						}
 						img.write(
 							lanIcon[x/2],
-							displays::ImageLocation(x * 9, 0),
-							displays::BppImage::Rotate90DCCW,
+							display::ImageLocation(x * 9, 0),
+							display::BppImage::Rotate90DCCW,
 							op
 						);
 					}
@@ -328,9 +328,9 @@ try {
 		binpath.pop_back();
 	}
 	// load some icons before messing with hardware
-	displays::BppImageArchive imgArc;
+	display::BppImageArchive imgArc;
 	imgArc.load(binpath + "neticons.bppia");
-	std::shared_ptr<displays::BppImage> lanIcon[3] = {
+	std::shared_ptr<display::BppImage> lanIcon[3] = {
 		imgArc.get("WiredLAN"),
 		imgArc.get("WirelessLAN_S1"),
 		imgArc.get("WirelessLAN_S2")
@@ -364,8 +364,8 @@ try {
 	duds::hardware::interface::ChipSelect lcdsel;
 	pc.getPinSetAndSelect(lcdset, lcdsel, "lcd");
 	// LCD driver
-	std::shared_ptr<displays::ST7920> disp =
-		std::make_shared<displays::ST7920>(
+	std::shared_ptr<duds::hardware::devices::displays::ST7920> disp =
+		std::make_shared<duds::hardware::devices::displays::ST7920>(
 			std::move(lcdset), std::move(lcdsel), dispW, dispH
 		);
 	disp->initialize();
