@@ -311,19 +311,21 @@ public:
 	 * @par
 	 * The characters '\\n' and '\\r' are 10 and 13, respectively, which puts
 	 * them into the 8 to 15 range for the glyphs. The
-	 * @ref TextDisplayBasicBuffer "TextDisplayBuffer" class, and thus
-	 * indirectly the @ref TextDisplayBasicStream "TextDisplayStream" class,
-	 * interpret these characters as a request to move the cursor rather than
-	 * a request to show a printable character. None of the TextDisplay::write()
-	 * functions do this; they handle all characters as printable. They can
-	 * also be used interchangeably with a
-	 * @ref TextDisplayBasicStream "TextDisplayStream".
+	 * @ref duds::hardware::display::TextDisplayBasicBuffer "TextDisplayBuffer"
+	 * class, and thus indirectly the
+	 * @ref duds::hardware::display::TextDisplayBasicStream "TextDisplayStream"
+	 * class, interpret these characters as a request to move the cursor rather
+	 * than a request to show a printable character. None of the
+	 * TextDisplay::write() functions do this; they handle all characters as
+	 * printable. They can also be used interchangeably with a
+	 * @ref duds::hardware::display::TextDisplayBasicStream "TextDisplayStream".
 	 * @par
 	 * The best solution may be to use character values 1 through 8 for the
 	 * custom glyphs. It avoids unintended null termination, and allows any
 	 * custom glyph to be used from a
-	 * @ref TextDisplayBasicStream "TextDisplayStream". To make this a little
-	 * easier, @a idx can be given values 1 through 8 to be consistent.
+	 * @ref duds::hardware::display::TextDisplayBasicStream "TextDisplayStream".
+	 * To make this a little easier, @a idx can be given values 1 through 8
+	 * to be consistent.
 	 * @param glyph  The image to load. It may be no larger than 5 by 8. If
 	 *               smaller, it will be placed in the upper right.
 	 * @param idx    The index for the glyph. It must be between 0 and 15. The

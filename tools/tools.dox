@@ -13,7 +13,7 @@
 
 @section DUDStoolsBppic  Bit-Per-Pixel Image Compiler
 
-The Bit-Per-Pixel Image Compiler (bppic) takes image data written in a text file and produces either C++ source code with data for use with the @ref duds::hardware::devices::displays::BppImage::BppImage(const char*) "BppImage" class, or an image archive file for use with  @ref duds::hardware::devices::displays::BppImageArchive "BppImageArchive". The compiler is itself a C++ program.
+The Bit-Per-Pixel Image Compiler (bppic) takes image data written in a text file and produces either C++ source code with data for use with the @ref duds::hardware::display::BppImage::BppImage(const char*) "BppImage" class, or an image archive file for use with  @ref duds::hardware::display::BppImageArchive "BppImageArchive". The compiler is itself a C++ program.
 
 @subsection DUDStoolsBppicSrc  Source file format
 
@@ -84,7 +84,7 @@ Except for the width and height, the numbers in the code segment will be ignored
 
 The C++ output is a const char array for each image with the same name as the image. It can be used as a header file, but must be included by only one source file. Changing the output to generate a source file and a header file could fix this. The output does not include any namespaces, which would be nice to support, but a namespace can be put around an include statement as a workaround.
 
-The image archive file has the advantage of not requiring a new build to try out a change to an image. A @ref duds::hardware::devices::displays::BppImageArchive "BppImageArchive" object can read in the file and provide shared pointers to the images. Lookups are done by the image name.
+The image archive file has the advantage of not requiring a new build to try out a change to an image. A @ref duds::hardware::display::BppImageArchive "BppImageArchive" object can read in the file and provide shared pointers to the images. Lookups are done by the image name.
 
 
 @section DUDStoolsPinConf  Digital Pin Configuration
