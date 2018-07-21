@@ -205,6 +205,8 @@ if GetOption('clean'):
 	] ))
 	env['Use_Eigen'] = False
 	dbgenv['Use_Eigen'] = False
+	env['Use_GpioDevPort'] = True
+	dbgenv['Use_GpioDevPort'] = True
 
 #####
 # configure the build

@@ -236,6 +236,7 @@ static const char *glyphNames[2][5] = {
 
 void WriteLarge(
 	const std::shared_ptr<duds::hardware::devices::displays::HD44780> &disp,
+	duds::hardware::display::TextDisplayBaseStream<> &tdbs,
 	const std::string &str,
 	unsigned int c,
 	unsigned int r
@@ -302,8 +303,8 @@ void WriteLarge(
 				}
 			}
 		}
-		// write whole line
-		disp->write(line, c, r + y);
+		// write the line
+		tdbs << duds::hardware::display::move(c, r + y) << line;
 	}
 }
 
@@ -320,7 +321,8 @@ void runtest(const std::shared_ptr<displays::HD44780> &tmd)
 try {
 	duds::hardware::devices::clocks::LinuxClockDriver lcd;
 	duds::hardware::devices::clocks::LinuxClockDriver::Measurement::TimeSample ts;
-	display::TextDisplayStream tds(tmd);
+	//display::TextDisplayStream tds(tmd);
+	display::TextDisplayBufferedStream tds(tmd);
 	std::chrono::high_resolution_clock::time_point start;
 	float dispTime = 32768.0f;  // in microseconds
 	// examples never delete these
@@ -374,10 +376,11 @@ try {
 		std::setw(2) << ltime.tm_sec;
 		// write out the time as 3x3 digits to the display
 		if (ltime.tm_min & 1) {  // test for showing both sets of large digits
-			WriteLarge(tmd, oss.str(), 0, 0);
+			WriteLarge(tmd, tds, oss.str(), 0, 0);
 		} else {
-			WriteLarge(tmd, oss.str(), 0, 1);
+			WriteLarge(tmd, tds, oss.str(), 0, 1);
 		}
+		tds.flush();
 		// update exponential moving average of how long it takes to display the
 		// thime
 		auto timeTaken = std::chrono::high_resolution_clock::now() - start;

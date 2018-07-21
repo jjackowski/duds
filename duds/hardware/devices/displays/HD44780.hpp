@@ -311,7 +311,7 @@ public:
 	 * @par
 	 * The characters '\\n' and '\\r' are 10 and 13, respectively, which puts
 	 * them into the 8 to 15 range for the glyphs. The
-	 * @ref duds::hardware::display::TextDisplayBasicBuffer "TextDisplayBuffer"
+	 * @ref duds::hardware::display::TextDisplayBasicStreambuf "TextDisplayStreambuf"
 	 * class, and thus indirectly the
 	 * @ref duds::hardware::display::TextDisplayBasicStream "TextDisplayStream"
 	 * class, interpret these characters as a request to move the cursor rather
