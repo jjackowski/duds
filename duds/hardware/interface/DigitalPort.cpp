@@ -297,7 +297,7 @@ void DigitalPort::access(
 }
 
 std::unique_ptr<DigitalPinAccess> DigitalPort::access(const unsigned int pin) {
-	std::unique_ptr<DigitalPinAccess> result;
+	std::unique_ptr<DigitalPinAccess> result(new DigitalPinAccess());
 	access(&pin, 1, &result);
 	return result;
 }
@@ -361,7 +361,7 @@ void DigitalPort::access(
 std::unique_ptr<DigitalPinSetAccess> DigitalPort::access(
 	const std::vector<unsigned int> &pins
 ) {
-	std::unique_ptr<DigitalPinSetAccess> result;
+	std::unique_ptr<DigitalPinSetAccess> result(new DigitalPinSetAccess());
 	access(&(pins[0]), pins.size(), *(result.get()));
 	return result;
 }

@@ -75,7 +75,8 @@ class ChipAccess : boost::noncopyable {
 	 * If it is different, the validity of the new ID is checked,
 	 * and if good, deselect() is called to deselect the current chip, then
 	 * the new ID is recorded.
-	 * @param chipId  The ID of the chip to use.
+	 * @post   The previous chip and new chip will be deselected.
+	 * @param  chipId  The ID of the chip to use.
 	 * @throw  ChipSelectInvalidChip   The given @a chipId is invalid. The
 	 *                                 exception will include the ChipSelectId
 	 *                                 attribute with the requested chip ID.

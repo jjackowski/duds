@@ -48,6 +48,7 @@ targets = [
 	envthread.Program('textdisplay', ['textdisplay.cpp'] + libs),
 	envthread.Program('pwmbacklight', ['pwmbacklight.cpp'] + libs),
 	envthread.Program('st7920', ['st7920.cpp'] + libs),
+	env.Program('pinconfig', ['pinconfig.cpp'] + libs),
 ]
 
 # These are be needed if image archive files, instead of header files, are

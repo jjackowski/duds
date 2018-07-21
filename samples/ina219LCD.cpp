@@ -472,7 +472,7 @@ try {
 	#endif
 	duds::hardware::interface::DigitalPinSet lcdset;
 	duds::hardware::interface::ChipSelect lcdsel;
-	pc.getPinSetAndSelect(lcdset, lcdsel, "lcd");
+	pc.getPinSetAndSelect(lcdset, lcdsel, "lcdText");
 
 	// LCD driver
 	std::shared_ptr<displays::HD44780> tmd =

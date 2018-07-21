@@ -16,8 +16,6 @@ namespace duds { namespace hardware { namespace interface {
  */
 struct ChipSelectError : virtual std::exception, virtual boost::exception { };
 
-//struct ChipSelectNoManagerError : ChipSelectError { };
-
 /**
  * Indicates an attempt to select a non-existant chip.
  */
@@ -46,6 +44,12 @@ struct ChipSelectBadManager : ChipSelectError { };
  * that is already providing access.
  */
 struct ChipSelectAccessInUse : ChipSelectError { };
+
+/**
+ * A ChipSelectManager was given more pins to use than the implementation
+ * supports.
+ */
+struct ChipSelectTooManyPins : ChipSelectError { };
 
 /**
  * The chip select ID relavent to the error.

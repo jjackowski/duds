@@ -428,7 +428,7 @@ try {
 	#endif
 	duds::hardware::interface::DigitalPinSet lcdset;
 	duds::hardware::interface::ChipSelect lcdsel;
-	pc.getPinSetAndSelect(lcdset, lcdsel, "lcd");
+	pc.getPinSetAndSelect(lcdset, lcdsel, "lcdText");
 
 	/* old
 	//                       LCD pins:  4  5   6   7  RS   E

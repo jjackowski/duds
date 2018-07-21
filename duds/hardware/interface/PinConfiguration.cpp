@@ -11,6 +11,7 @@
 #include <duds/hardware/interface/ChipBinarySelectManager.hpp>
 #include <duds/hardware/interface/ChipMultiplexerSelectManager.hpp>
 #include <duds/hardware/interface/ChipPinSelectManager.hpp>
+#include <duds/hardware/interface/ChipPinSetSelectManager.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <cstdlib>
 
@@ -59,8 +60,11 @@ std::ostream &operator << (std::ostream &os, const PinConfiguration::SelMgr &sm)
 		case PinConfiguration::SelMgr::Pin:
 			os << "Pin";
 			break;
+		case PinConfiguration::SelMgr::PinSet:
+			os << "PinSet";
+			break;
 		default:
-			os << "?@!??";
+			os << "???";
 	}
 	os << " chip select manager with " << sm.pins.size() << " pins and " <<
 	sm.selNames.size() << " selects.\n\tPins:\n";
@@ -264,7 +268,7 @@ const PinConfiguration::Pin &PinConfiguration::pin(
 }
 
 PinConfiguration::SelMgr::SelMgr() :
-usePort(nullptr), type(Unknown), initSelHigh(false) { }
+usePort(nullptr), type(Unknown), selStates(0) { }
 
 static bool ParseState(const std::string &val) {
 	if ((val == "0") || (val == "low")) {
@@ -279,7 +283,7 @@ static bool ParseState(const std::string &val) {
 PinConfiguration::SelMgr::SelMgr(
 	const boost::property_tree::ptree::value_type &item,
 	const PinConfiguration *pinconf
-) : usePort(nullptr) {
+) : usePort(nullptr), selStates(0) {
 	{ // parse type string
 		std::string typestr = item.second.get_value<std::string>();
 		if (typestr == "Binary") {
@@ -288,6 +292,8 @@ PinConfiguration::SelMgr::SelMgr(
 			type = Multiplexer;
 		} else if (typestr == "Pin") {
 			type = Pin;
+		} else if (typestr == "PinSet") {
+			type = PinSet;
 		} else {
 			// type affects parsing, so this must be an error
 			DUDS_THROW_EXCEPTION(SelectManagerUnknownTypeError() <<
@@ -405,6 +411,54 @@ PinConfiguration::SelMgr::SelMgr(
 			initSelHigh = ParseState(item.second.get<std::string>("select", "0"));
 		}
 		break;
+		case PinSet: {
+			// inspect the selections
+			int spot = 0;
+			for (auto const &selitem : item.second) {
+				// check for duplicates
+				if (selNames.count(selitem.first) ||
+					pinconf->haveChipSelect(selitem.first)
+				) {
+					DUDS_THROW_EXCEPTION(SelectDuplicateError() <<
+						SelectName(selitem.first)
+					);
+				}
+				// get the select name
+				//std::string sn = selitem.first;
+				// get the pin name to use
+				std::string pn = selitem.second.get_value<std::string>();
+				// may be in a subtree
+				if (pn.empty()) {
+					pn = selitem.second.get<std::string>("pin", selitem.first);
+					// can also specify a non-default select state
+					bool sstate = ParseState(
+						selitem.second.get<std::string>("select", "0")
+					);
+					if (sstate) {
+						selStates |= 1 << spot;
+					}
+				}
+				// find the pin
+				const PinConfiguration::Pin &p = pinconf->pin(pn);
+				// port check
+				if (!usePort) {
+					usePort = p.parent;
+				} else if (usePort != p.parent) {
+					DUDS_THROW_EXCEPTION(SelectMultiplePortsError() <<
+						PortPinId(p.gid) << PinBadId(pn) // << port name(s) ??
+					);
+				}
+				// store pin
+				pins.push_back(p.gid);
+				// store select
+				selNames[selitem.first] = spot;
+				++spot;
+			}
+			// must have pin(s)
+			if (pins.empty()) {
+				DUDS_THROW_EXCEPTION(SelectNoPinsError());
+			}
+		}
 	}
 }
 
@@ -583,7 +637,11 @@ void PinConfiguration::attachPort(
 		}
 		assert(!mgr.second.csm); // shouldn't already exist
 		assert(!mgr.second.pins.empty());
-		assert((mgr.second.type == SelMgr::Multiplexer) || (mgr.second.pins.size() == 1));
+		assert(
+			(mgr.second.type == SelMgr::Multiplexer) ||
+			(mgr.second.type == SelMgr::PinSet) ||
+			(mgr.second.pins.size() == 1)
+		);
 		// make the manager object and give it an access object from the port
 		switch (mgr.second.type) {
 			case SelMgr::Binary:
@@ -602,6 +660,12 @@ void PinConfiguration::attachPort(
 					mgr.second.initSelHigh ?
 						ChipPinSelectManager::SelectHigh :
 						ChipPinSelectManager::SelectLow
+				);
+			break;
+			case SelMgr::PinSet:
+				mgr.second.csm = std::make_shared<ChipPinSetSelectManager>(
+					dp->access(mgr.second.pins),
+					mgr.second.selStates
 				);
 			break;
 			default:

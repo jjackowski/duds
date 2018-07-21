@@ -21,16 +21,16 @@ class ChipAccess;
 
 /**
  * The base class for all chip selection managers, the classes that handle the
- * output state to select a chip. The managers can only select one chip at a
- * time. They must be thread-safe. They must either be able to select no chip,
- * or designate a default chip. When destructed, they must select the default
- * chip or deselect all chips. A chip identifier must be either invalid or
- * have a 1-to-1 relation with the valid chips. Valid chip identifiers must
- * have a value of zero or greater; negative values are reserved to signal
- * manager termination and other conditions. Any changes to the set of
- * valid chips or to which chip an identifier references must not happen while
- * an access object is active; see ChipPinSelectManager for an implementation
- * example.
+ * output state to select a chip. Each manager can select no more than one
+ * chip at a time. They must be thread-safe. They must either be able to
+ * select no chip, or designate a default chip. When destructed, they must
+ * select the default chip or deselect all chips. A chip identifier must be
+ * either invalid or have a 1-to-1 relation with the valid chips. Valid chip
+ * identifiers must have a value of zero or greater; negative values are
+ * reserved to signal manager termination and other conditions. Any changes
+ * to the set of valid chips or to which chip an identifier references must
+ * not happen while an access object is active; see ChipPinSelectManager for
+ * an implementation example.
  *
  * @warning  Any required DigitalPinAccess objects for an operation should be
  *           acquired before any ChipAccess objects are needed for a single

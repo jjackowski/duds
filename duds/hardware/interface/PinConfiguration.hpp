@@ -372,17 +372,27 @@ public:
 			/**
 			 * Use ChipPinSelectManager.
 			 */
-			Pin
+			Pin,
+			/**
+			 * Use ChipPinSetSelectManager.
+			 */
+			PinSet
 		};
 		/**
 		 * The type of chip select manager requested.
 		 */
 		MgrType type;
-		/**
-		 * True for high selection state with binary manager, or for initially
-		 * selected state with pin manager. No function otherwise.
-		 */
-		bool initSelHigh;
+		union {
+			/**
+			 * Selection state bitmap for pin set manager.
+			 */
+			std::uint32_t selStates;
+			/**
+			 * True for high selection state with binary manager, or for initially
+			 * selected state with pin manager. No function otherwise.
+			 */
+			bool initSelHigh;
+		};
 		SelMgr();
 		SelMgr(
 			const std::pair<const std::string, boost::property_tree::ptree> &item,

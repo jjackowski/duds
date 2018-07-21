@@ -362,7 +362,7 @@ try {
 
 	duds::hardware::interface::DigitalPinSet lcdset;
 	duds::hardware::interface::ChipSelect lcdsel;
-	pc.getPinSetAndSelect(lcdset, lcdsel, "lcd");
+	pc.getPinSetAndSelect(lcdset, lcdsel, "lcdGraphic");
 	// LCD driver
 	std::shared_ptr<duds::hardware::devices::displays::ST7920> disp =
 		std::make_shared<duds::hardware::devices::displays::ST7920>(

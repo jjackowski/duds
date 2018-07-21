@@ -242,7 +242,7 @@ A global ID may also be required to not have a pin. This is different from not m
 
 @subsubsection DUDStoolsPinConfTreeDataSel Selects
 
-The selects subtree is used to define @ref duds::hardware::interface::ChipSelectManager "ChipSelectManager" objects, along with @ref duds::hardware::interface::ChipSelect "ChipSelect" objects in a parent-child style relationship.
+The selects subtree is used to define @ref duds::hardware::interface::ChipSelectManager "ChipSelectManager" objects, along with @ref duds::hardware::interface::ChipSelect "ChipSelect" objects in a parent-child style relationship. These objects abstract the common task of selecting a device using a digital output so that several different selection schemes can be used and easily changed.
 
 @code
 selects {
@@ -256,11 +256,45 @@ selects {
 
 The above snippet describes a chip select manager and one chip select. It starts with a name for the manager. The name must be unique across all select managers in the configuration. It is followed by the type of the manager. Different types require different data in their sub-trees. The types are:
   - Pin: @ref duds::hardware::interface::ChipPinSelectManager "ChipPinSelectManager"
+  - PinSet: @ref duds::hardware::interface::ChipPinSetSelectManager "ChipPinSetSelectManager"
   - Multiplexer: @ref duds::hardware::interface::ChipMultiplexerSelectManager "ChipMultiplexerSelectManager"
   - Binary: @ref duds::hardware::interface::ChipBinarySelectManager "ChipBinarySelectManager"
 
 @par Pin manager
 This manager uses a single pin to select and deselect exactly one device. The example configuration sets the pin to use with the key "pin", and names the resulting ChipSelect object with the "name" key. The "select" key configures the logic state used to select the device. It can be given a value of 0 or "low", 1 or "high". The default is low.
+
+@par PinSet manager
+This manager uses multiple pins that each select and deselect exactly one device. Like all managers, one device at most can be selected at any given time. The manager is suitable for selecting devices that share resources, like pins connected to a shared data bus for communication.
+
+@code
+pins {
+	ports {
+		default {
+			0 {
+				lcd0SelectPin
+			}
+			1 {
+				lcd1SelectPin
+			}
+			2 {
+				tempSelectPin
+			}
+		}
+	}
+	selects {
+		lcdSelectManager PinSet {
+			lcd0Sel  lcd0SelectPin  ; short form; makes ChipSelect lcd0Sel
+			lcd1Sel {               ; makes ChipSelect lcd1Sel
+				pin lcd1SelectPin   ; uses this pin for the select line
+			}
+			tempSel {
+				pin tempSelectPin
+				select high         ; select state; default is low
+			}
+		}
+	}
+}
+@endcode
 
 @par Multiplexer manager
 This manager selects a chip by outputting a number in binary using several pins. The number zero is used for no selection. It takes a list of pins to use in order from the least to most significant bit in the "pins" key. All pins must come from the same port. The "selects" key has list of chip selects with the key as the unique name, and the value with the number to output to select the corresponding device
