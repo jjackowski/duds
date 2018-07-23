@@ -160,6 +160,8 @@ typedef boost::error_info<struct Info_SetName, std::string>
  * This will create all the other objects listed in the configuration.
  * Those objects can be found by querying for their name.
  *
+ * The configuration tree is documented in @ref DUDStoolsPinConfTreeData.
+ *
  * Intended usage follows this order:
  * -# Parse a configuration file with
  *    [boost::property_tree](https://www.boost.org/doc/libs/1_67_0/doc/html/property_tree.html).
@@ -320,6 +322,13 @@ public:
 		 */
 		const PinConfiguration::Pins::index<index_gid>::type &gidIndex() const {
 			return pins.get<index_gid>();
+		}
+		/**
+		 * Convenience function that provides the pin local ID index for the
+		 * port's pins.
+		 */
+		const PinConfiguration::Pins::index<index_pid>::type &pidIndex() const {
+			return pins.get<index_pid>();
 		}
 		/**
 		 * Convenience function that provides the sequential index for the
@@ -700,6 +709,54 @@ public:
 	 */
 	bool haveChipSelect(const std::string &name) const {
 		return chipSels.count(name) > 0;
+	}
+	/**
+	 * Begining iterator to inspect the ports in the configuration.
+	 */
+	PortMap::const_iterator portsBegin() const {
+		return ports.cbegin();
+	}
+	/**
+	 * Ending iterator to inspect the ports in the configuration.
+	 */
+	PortMap::const_iterator portsEnd() const {
+		return ports.cend();
+	}
+	/**
+	 * Begining iterator to inspect the select managers in the configuration.
+	 */
+	SelMgrMap::const_iterator selectManagersBegin() const {
+		return selMgrs.cbegin();
+	}
+	/**
+	 * Ending iterator to inspect the select managers in the configuration.
+	 */
+	SelMgrMap::const_iterator selectManagersEnd() const {
+		return selMgrs.cend();
+	}
+	/**
+	 * Begining iterator to inspect the chip selects in the configuration.
+	 */
+	ChipSelMap::const_iterator selectsBegin() const {
+		return chipSels.cbegin();
+	}
+	/**
+	 * Ending iterator to inspect the chip selects in the configuration.
+	 */
+	ChipSelMap::const_iterator selectsEnd() const {
+		return chipSels.cend();
+	}
+	/**
+	 * Begining iterator to inspect the pin sets in the configuration.
+	 */
+	PinSetMap::const_iterator pinSetsBegin() const {
+		return pinSets.cbegin();
+	}
+	/**
+	 * Ending iterator to inspect the pin sets in the configuration.
+	 */
+	PinSetMap::const_iterator pinSetsEnd() const {
+		return pinSets.cend();
 	}
 };
 

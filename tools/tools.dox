@@ -180,7 +180,7 @@ The semicolon character is used to mark the rest of the line as a comment.
 
 @subsubsection DUDStoolsPinConfTreeDataPort Ports
 
-The ports subtree describes the requirements for @ref duds::hardware::interface::DigitalPort "DigitalPort" objects. The section currently caters to @ref duds::hardware::interface::linux::SysFsPort "SysFsPort", so it may change in the future to better support other implementations. PinConfiguration does not instantiate DigitalPort objects to avoid limiting what implementations may be used, so this subtree may describe less than what is available, but only what is described may be used in the rest of the configuration tree.
+The ports subtree describes the requirements for @ref duds::hardware::interface::DigitalPort "DigitalPort" objects. PinConfiguration does not instantiate DigitalPort objects to avoid limiting what implementations may be used, so this subtree may describe less than what is available, but only what is described may be used in the rest of the configuration tree.
 
 The port description starts with a name, which is "default" in this example. Any string may be used; whitespace can be included if the string is quoted. The name of each port must be unique among all the ports in the configuration, but may be the same as a name used for something other than a port.
 
@@ -194,9 +194,7 @@ Following the port name and optional type value is an opening curly brace that s
 }
 @endcode
 
-The above form (same as the more complete example) starts with a port specific ID number for the pin. Which pin is selected is entirely dependent upon the DigitalPort implementation and the underlying hardware. The global pin ID, used by the software using the DUDS library, is not specified explicitly here. That ID will be assigned after completing parsing the port's configuration.
-
-The assigned global IDs will start at the port's ID offset, which will be zero if not specified. After that, the global ID will be the next unused ID that follows the last used global ID in the sequence order of the configuration.
+The above form (same as the more complete example) starts with a port specific ID number for the pin. Which pin is selected is entirely dependent upon the DigitalPort implementation and the underlying hardware. The global pin ID, used by the software using the DUDS library, is not specified explicitly here. It's default value is the sum of the pin's port ID and the port's ID offset. With an ID offset of zero, the port ID and global ID of the pin are the same.
 
 Inside the curly braces is an optional arbitrary name assigned to the pin for the purpose of making configuring the pins easier. A pin's names must be unique across all pins in the configuration. A PinConfiguration can be queried for DigitalPins and their configuration by name. Elsewhere in the configuration tree, a pin may be referenced by either its global ID, or by its name. Using a name makes it easier to rearrange the pin configuration, which can make it easier to support multiple hardware configurations or changing configurations during development.
 
@@ -215,29 +213,12 @@ default {
 
 Because other parts of the example use pin names, those parts would also need modification to make a valid configuration. Please don't. The pain of the additional typing is less than the pain of dealing with all the global pin IDs.
 
-There are cases when a global pin ID needs to be specified, such as a case when a global ID needs to be skipped. If skipped over, no requirement is made of whatever pin may or may not be assigned that global ID by the DigitalPort. The pins may be specified in any order in the configuration, including a random ordering of global IDs. If some pins lack an explicit global ID, they will be assigned the next unused ID that follows the last used global ID in the sequence order of the configuration.
+There may be cases when a global pin ID needs to be specified. It can optionally be given immediately following the port's pin ID. Port implementations do not have to support explicit global pin IDs. If an implementation does not, specifying a global ID other than the default should be an error condition when configuring the port object. Since it is port specific, the error condition can only be checked when attempting to use the port configuration.
 
-This snippet shows the first four pins from the above complete example defined in a different sequence order, but with the same IDs, by specifying the global ID:
-
-@code
-2 16 {        ; global pin ID followed by port specific pin ID
-	lcdData6  ; arbitrary pin name
-}
-0 5 {
-	lcdData4
-}
-6 {           ; assigned global ID 1
-	lcdData5
-}
-20 {          ; assigned global ID 3
-	lcdData7
-}
-@endcode
-
-A global ID may also be required to not have a pin. This is different from not mentioning a global ID in the configuration because the lack of a mention makes no requirement. If the pin's port specific ID is given as "none", then attempting to use a DigitalPort that supplies a pin at that ID will cause a @ref duds::hardware::interface::DigitalPortHasPinError "DigitalPortHasPinError" exception to be thrown.
+A specific pin ID may also be required to not have a pin. This is different from not mentioning a global ID in the configuration because the lack of a mention makes no requirement. If "none" is given immediately following the port specific ID, then attempting to use a DigitalPort that supplies a pin at that ID will cause a @ref duds::hardware::interface::DigitalPortHasPinError "DigitalPortHasPinError" exception to be thrown.
 
 @code
-6 none    ; global pin ID that must lack a usable pin
+6 none  ; port specific pin ID that must lack a usable pin
 @endcode
 
 @subsubsection DUDStoolsPinConfTreeDataSel Selects

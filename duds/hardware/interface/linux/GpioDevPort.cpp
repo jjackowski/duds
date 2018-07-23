@@ -518,17 +518,23 @@ std::shared_ptr<GpioDevPort> GpioDevPort::makeConfiguredPort(
 	}
 	// enumerate the pins
 	std::vector<unsigned int> gpios;
-	unsigned int next = port.idOffset;
+	unsigned int next = 0;
 	gpios.reserve(port.pins.size());
-	for (auto const &pin : port.gidIndex()) {
+	for (auto const &pin : port.pidIndex()) {
+		// pin IDs cannot be assigned arbitrary values
+		if ((pin.pid + port.idOffset) != pin.gid) {
+			DUDS_THROW_EXCEPTION(PortBadPinIdError() <<
+				PortPinId(pin.gid)
+			);
+		}
 		// need empty spots?
-		if (pin.gid > next) {
+		if (pin.pid > next) {
 			// add unavailable pins
-			gpios.insert(gpios.end(), pin.gid - next, -1);
+			gpios.insert(gpios.end(), pin.pid - next, -1);
 		}
 		// add available pin
 		gpios.push_back(pin.pid);
-		next = pin.gid + 1;
+		next = pin.pid + 1;
 	}
 	std::shared_ptr<GpioDevPort> sp = std::make_shared<GpioDevPort>(
 		gpios,
