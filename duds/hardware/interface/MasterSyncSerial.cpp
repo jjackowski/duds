@@ -148,11 +148,14 @@ void MasterSyncSerial::condStop() {
 	}
 }
 
-void MasterSyncSerial::transmit(const std::uint8_t *buff, int bits) {
+void MasterSyncSerial::transmit(
+	const std::uint8_t *buff,
+	duds::general::Bits bits
+) {
 	transfer(buff, nullptr, bits);
 }
 
-void MasterSyncSerial::receive(std::uint8_t *buff, int bits) {
+void MasterSyncSerial::receive(std::uint8_t *buff, duds::general::Bits bits) {
 	transfer(nullptr, buff, bits);
 }
 

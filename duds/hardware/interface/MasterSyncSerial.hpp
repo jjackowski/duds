@@ -14,6 +14,7 @@
 #include <memory>
 #include <boost/noncopyable.hpp>
 #include <duds/general/BitFlags.hpp>
+#include <duds/general/DataSize.hpp>
 #include <duds/hardware/interface/Conversationalist.hpp>
 
 namespace duds { namespace hardware { namespace interface {
@@ -322,7 +323,7 @@ protected:
 	virtual void transfer(
 		const std::uint8_t * __restrict__ out,
 		std::uint8_t * __restrict__ in,
-		int bits
+		duds::general::Bits bits
 	) = 0;
 	/**
 	 * Sends @a bits of data. If full duplex communication is used,
@@ -342,7 +343,7 @@ protected:
 	 *                                  happen if (@a bits % 8) is non-zero.
 	 * @throw  SyncSerialIoError        An error prevented the communication.
 	 */
-	virtual void transmit(const std::uint8_t *buff, int bits);
+	virtual void transmit(const std::uint8_t *buff, duds::general::Bits bits);
 	/**
 	 * Receives @a bits of data. If full duplex communication is used,
 	 * transmitted data is undefined unless an implementation cares to have a
@@ -362,7 +363,7 @@ protected:
 	 *                                  happen if (@a bits % 8) is non-zero.
 	 * @throw  SyncSerialIoError        An error prevented the communication.
 	 */
-	virtual void receive(std::uint8_t *buff, int bits);
+	virtual void receive(std::uint8_t *buff, duds::general::Bits bits);
 	/**
 	 * Has a half-duplex Conversation with the connected device. The
 	 * Conversation object defines all input and output parameters. On the

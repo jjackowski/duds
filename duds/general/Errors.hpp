@@ -33,6 +33,10 @@
  * DUDS_ERRORS_VERBOSE is defined. The build normally defines
  * DUDS_ERRORS_VERBOSE for debug builds unless the following bug makes
  * including boost/stacktrace.hpp fail with a compile-time error.
+ * @warning   This expression is seen as type void because of
+ *            boost::throw_exception(). It is @b not seen as a throw by the
+ *            compiler. This limits the macro's use within ternary operator
+ *            expressions. BOOST_THROW_EXCEPTION has the same issue.
  * @bug  Boost 1.65.0, and possibily earler versions, include push_options.pp
  *       and pop_options.pp, which are not part of the Boost install. The
  *       issue was resolved in Boost 1.65.1.
@@ -41,9 +45,9 @@
  *       implementation in BOOST_THROW_EXCEPTION will be used instead.
  */
 #define DUDS_THROW_EXCEPTION(x) \
-	::boost::throw_exception( ::boost::enable_error_info(x) << \
+	::boost::throw_exception(::boost::enable_error_info(x) << \
 	::boost::throw_function(BOOST_THROW_EXCEPTION_CURRENT_FUNCTION) << \
-	::boost::throw_file(__FILE__) <<	::boost::throw_line((int)__LINE__) << \
+	::boost::throw_file(__FILE__) << ::boost::throw_line((int)__LINE__) << \
 	duds::general::StackTrace(boost::stacktrace::stacktrace()))
 #else
 #define DUDS_THROW_EXCEPTION(x)  BOOST_THROW_EXCEPTION(x)

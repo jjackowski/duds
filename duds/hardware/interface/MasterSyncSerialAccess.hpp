@@ -101,7 +101,7 @@ public:
 	void transfer(
 		const std::uint8_t * __restrict__ out,
 		std::uint8_t * __restrict__ in,
-		int bits
+		duds::general::Bits bits
 	) {
 		mss->transfer(out, in, bits);
 	}
@@ -129,7 +129,7 @@ public:
 	void transfer(
 		const std::int8_t * __restrict__ out,
 		std::int8_t * __restrict__ in,
-		int bits
+		duds::general::Bits bits
 	) {
 		transfer((std::uint8_t*)out, (std::uint8_t*)in, bits);
 	}
@@ -156,7 +156,7 @@ public:
 	void transfer(
 		const ByteList &out,
 		std::uint8_t * __restrict__ in,
-		int bits
+		duds::general::Bits bits
 	) {
 		mss->transfer(out.begin(), in, bits);
 	}
@@ -175,7 +175,7 @@ public:
 	 *                                  happen if (@a bits % 8) is non-zero.
 	 * @throw  SyncSerialIoError        An error prevented the communication.
 	 */
-	void transmit(const std::uint8_t *buff, int bits) {
+	void transmit(const std::uint8_t *buff, duds::general::Bits bits) {
 		mss->transmit(buff, bits);
 	}
 	/**
@@ -193,7 +193,7 @@ public:
 	 *                                  happen if (@a bits % 8) is non-zero.
 	 * @throw  SyncSerialIoError        An error prevented the communication.
 	 */
-	void transmit(const std::int8_t *buff, int bits) {
+	void transmit(const std::int8_t *buff, duds::general::Bits bits) {
 		transmit((std::uint8_t*)buff, bits);
 	}
 	/**
@@ -210,7 +210,7 @@ public:
 	 * @throw  SyncSerialIoError        An error prevented the communication.
 	 */
 	void transmit(const ByteList &buff) {
-		mss->transmit(buff.begin(), buff.size() * 8);
+		mss->transmit(buff.begin(), duds::general::Bytes(buff.size()));
 	}
 	/**
 	 * Receives @a bits of data. If full duplex communication is used,
@@ -228,7 +228,7 @@ public:
 	 *                                  happen if (@a bits % 8) is non-zero.
 	 * @throw  SyncSerialIoError        An error prevented the communication.
 	 */
-	void receive(std::uint8_t *buff, int bits) {
+	void receive(std::uint8_t *buff, duds::general::Bits bits) {
 		mss->receive(buff, bits);
 	}
 	/**
@@ -248,7 +248,7 @@ public:
 	 *                                  happen if (@a bits % 8) is non-zero.
 	 * @throw  SyncSerialIoError        An error prevented the communication.
 	 */
-	void receive(std::int8_t *buff, int bits) {
+	void receive(std::int8_t *buff, duds::general::Bits bits) {
 		receive((std::uint8_t*)buff, bits);
 	}
 	/**

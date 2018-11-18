@@ -66,7 +66,7 @@ protected:
 	virtual void transfer(
 		const std::uint8_t * __restrict__ out,
 		std::uint8_t * __restrict__ in,
-		int bits
+		duds::general::Bits bits
 	);
 public:
 	/**

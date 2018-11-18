@@ -137,18 +137,18 @@ void SpiMasterSyncSerial::stop() { }
 void SpiMasterSyncSerial::transfer(
 	const std::uint8_t * __restrict__ out,
 	std::uint8_t * __restrict__ in,
-	int bits
+	duds::general::Bits bits
 ) {
 	if (~flags & MssCommunicating) {
 		DUDS_THROW_EXCEPTION(SyncSerialNotCommunicating());
 	}
 	// only full bytes may be transfered; no partial bytes
-	if (bits & 7) {
+	if (bits.blocks() & 7) {
 		DUDS_THROW_EXCEPTION(SyncSerialUnsupported());
 	}
 	xfer.tx_buf = (ptrdiff_t)out;
 	xfer.rx_buf = (ptrdiff_t)in;
-	xfer.len = bits >> 3;
+	xfer.len = duds::general::Bytes(bits).blocks();
 	if (ioctl(spifd, SPI_IOC_MESSAGE(1), &xfer) < 0) {
 		DUDS_THROW_EXCEPTION(SyncSerialIoError());
 	}
