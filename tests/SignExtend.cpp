@@ -28,4 +28,3 @@ BOOST_AUTO_TEST_CASE(SignExtend_Unsigned) {
 }
 
 BOOST_AUTO_TEST_SUITE_END()
-

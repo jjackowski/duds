@@ -4,7 +4,6 @@
  */
 
 #define BOOST_TEST_DYN_LINK
-#include <boost/exception/diagnostic_information.hpp>
 #include <boost/test/unit_test.hpp>
 #include <duds/hardware/display/BppImageArchive.hpp>
 
@@ -18,13 +17,6 @@ BOOST_AUTO_TEST_CASE(BppImage_Archive) {
 	BPPN::BppImageArchive arc;
 	BOOST_CHECK_THROW(arc.get("not_there"), BPPN::ImageNotFoundError);
 	BOOST_CHECK_THROW(arc.load("not_there"), BPPN::ImageArchiveStreamError);
-	/*
-	try {
-		arc.load(TEST_PATH "BppImageGood.bppia");
-	} catch (...) {
-		std::cout << boost::current_exception_diagnostic_information() << std::endl;
-	}
-	*/
 	BOOST_CHECK_NO_THROW(arc.load(TEST_PATH "BppImageGood.bppia"));
 	std::shared_ptr<BPPN::BppImage> img;
 
@@ -49,16 +41,16 @@ BOOST_AUTO_TEST_SUITE_END()
 
 
 
-struct ZebraImageFixure {
+struct ZebraImageFixture {
 	std::shared_ptr<BPPN::BppImage> img;
-	ZebraImageFixure() {
+	ZebraImageFixture() {
 		BPPN::BppImageArchive arc;
 		arc.load(TEST_PATH "BppImageGood.bppia");
 		img = arc.get("Zebra");
 	}
 };
 
-BOOST_FIXTURE_TEST_SUITE(BppImage_ZebraTests, ZebraImageFixure)
+BOOST_FIXTURE_TEST_SUITE(BppImage_ZebraTests, ZebraImageFixture)
 
 BOOST_AUTO_TEST_CASE(BppImage_ZebraBufferLine) {
 	for (int y = 0; y < 8; ++y) {
