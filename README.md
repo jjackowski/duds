@@ -77,9 +77,9 @@ Right now, only Linux. Hardware access is only tested on Raspberry Pis, but the 
 - Build configuration options: run "scons -h"
   - The configuration can be changed for one build by specifying an option as an argument to scons.
   - To keep a configuration saved, set variables with the same name of the configuration options in Python syntax in localbuildconfig.py in the same directory as SConstruct.
-- gcc 6.4.x, 5.4.x
-  - gcc 7.x.y and newer are untested
-  - Any output for ARM processors from gcc 7.1 and newer will not link correctly with any output from earlier versions of gcc. There are *huge* warnings about this with gcc 6.4.0.
+- gcc 7.3.x, 6.4.x
+  - Other versions are untested. Older ones will likely fail.
+  - Any output for ARM processors from gcc 7.1 and newer will not link correctly with any output from earlier versions of gcc. There are *huge* warnings about this with gcc 6.4.0 and 7.3.0.
 - [Boost](http://www.boost.org/) version 1.62 or newer
   - Boost libraries used:
     - Date_time
@@ -120,5 +120,4 @@ The default build target is the DUDS library made for debugging. Sample programs
       - samples (built with target "samples-opt")
     - linux-x86_64-dbg
 
-There is currently no target for installation. Despite using Linux since 2001, I'm not really
-sure how software is typically installed.
+There is currently no target for installation. Despite using Linux since 2001, I'm not really sure how software is typically installed.

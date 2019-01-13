@@ -1,0 +1,143 @@
+/*
+ * This file is part of the DUDS project. It is subject to the BSD-style
+ * license terms in the LICENSE file found in the top-level directory of this
+ * distribution and at https://github.com/jjackowski/duds/blob/master/LICENSE.
+ * No part of DUDS, including this file, may be copied, modified, propagated,
+ * or distributed except according to the terms contained in the LICENSE file.
+ *
+ * Copyright (C) 2019  Jeff Jackowski
+ */
+
+namespace duds {
+/**
+ * Holds user interface related code.
+ */
+namespace ui {
+
+/**
+
+@page DUDSui  User interface
+
+The DUDS library can be used to make various gizmos that require a user interface. Some of these gizmos are not well served by any of the user interfaces that are common on personal computers. This part of the DUDS library is intended to assist with creating such user interfaces. Interfaces common on personal computers are not ignored here, but are not the focus.
+
+@section DUDSuiMenu  Menu infrastructure
+
+The menu infrastructure defines a menu at a high level and does not include code to obtain user input or provide any output. This is intended to make it applicable to many different user interfaces, and to allow it to service multiple user interfaces simultaneously. The infrastructure is thread-safe, allows for multiple users working with the same menu data, and for multiple display outputs.
+
+@subsection DUDSmenuTerms  Terminology
+
+A Menu has a set of options: @ref MenuItem "MenuItems", or just items.
+
+A user may invoke an item by @ref MenuItem::chose() "choosing" it.
+
+Before an item can by chosen, it must first be selected. This is similar to the notion of input focus.
+
+Thus, for a user to pick/take/invoke an option from a menu, they must first select the corresponding item, and then chose it.
+
+@subsection DUDSmenuArch  Archetecture
+
+All menu objects, save for access objects, must be managed by std::shared_ptr. The non-abstract classes have a static function named make() that will construct an object and return the managing std::shared_ptr to make life a little easier.
+
+@subsubsection DUDSmenuArchGraph  Helpful graphs
+
+The following graphs illustrate the relationships between the classes and objects of the menu system, and will hopefully make the text following them easier to grasp. However, they aren't very helpful without the text after the graphs, and I don't see a good place to fit the graphs within that text.
+
+This graph shows ownership by std::shared_ptr objects using solid lines; the line direction is from the object with the shared_ptr. The dashed lines show locks on menu data used to make the system thread-safe.
+@dot
+digraph MenuParts {
+	graph [ bgcolor="transparent", rankdir="BT" ];
+	node [ fontname="Helvetica", shape=record, fontsize=10, height=0.2,
+		fillcolor="white", style="filled" ];
+	edge [ fontname="Helvetica", fontsize=10 ];
+	// nodes
+	MenuItem [ URL="\ref MenuItem" ];
+	Menu [ URL="\ref Menu" ];
+	MenuAccess [ URL="\ref MenuAccess" ];
+	MenuView [ URL="\ref MenuView" ];
+	MenuOutputView [ URL="\ref MenuOutputView" ];
+	MenuOutputViewAccess [ URL="\ref MenuOutputViewAccess" ];
+	// edges
+	Menu -> MenuItem [ label=" 1:n" ];
+	MenuAccess -> Menu [ label="exclusive\nrecursive\nlock", style="dashed" ];
+	MenuView -> Menu [ label="n:1" ];
+	MenuOutputView -> MenuView [ label=" n:1" ];
+	MenuOutputViewAccess -> MenuOutputView [ label="exclusive\nlock", style="dashed" ];
+	MenuOutputViewAccess -> Menu [ label="shared\nlock", style="dashed" ];
+	MenuOutputViewAccess -> Menu [ label="brief\nconditional\nexclusive\nlock", style="dashed" ];
+}
+@enddot
+
+This graph shows how data moves between the menu classes.
+@dot
+digraph MenuParts {
+	graph [ bgcolor="transparent" ];
+	node [ fontname="Helvetica", shape=record, fontsize=10, height=0.2,
+		fillcolor="white", style="filled" ];
+	edge [ fontname="Helvetica", fontsize=10 ];
+	// nodes
+	MenuItems [ URL="\ref MenuItem" ];
+	Menu [ URL="\ref Menu" ];
+	MenuAccess [ URL="\ref MenuAccess" ];
+	MenuViews [ URL="\ref MenuView" ];
+	UserInput [ label="User input" ];
+	MenuOutputViews [ URL="\ref MenuOutputView" ];
+	MenuOutputViewAccess [ URL="\ref MenuOutputViewAccess" ];
+	Display;
+	// edges
+	MenuItems -> Menu [ label="options" ];
+	MenuAccess -> Menu [ label=" modify menu" ];
+	Menu -> MenuViews;
+	UserInput -> MenuViews;
+	Menu -> MenuOutputViews [ label=" menu items" ];
+	MenuViews -> MenuOutputViews [ label=" selected item" ];
+	MenuOutputViews -> MenuOutputViewAccess [ label=" visible items" ];
+	MenuOutputViewAccess -> Display;
+}
+@enddot
+
+
+@subsubsection DUDSmenuArchItem  MenuItem
+
+Each option in the menu is represented by a MenuItem object. It holds a label (name) and a description string, and manages several attributes that affect the menu's operation. The MenuItem class is an abstract base class. Implementations must provide a  @ref MenuItem::chose() "chose()" function, and optionally @ref MenuItem::select() "select()" and @ref MenuItem::deselect() "deselect()" functions. Simple items can be created using GenericMenuItem, which uses Boost signals to invoke functions when @ref MenuItem::chose() "chose()" is called.
+
+Items have the following attributes:
+- Label: short text presented on the menu as the option.
+- Description: optional longer text, like a helpful description, that normally is only shown when the item is selected, if shown at all.
+- Disabled flag: prevents the item from being selected, but does not make it invisible.
+- Invisible flag: hides the item from view.
+- Toggle: items can have a toggle state.
+- Value: items can have a string value stored with them. This is intended as an arbitrary setting for the menu item that should be displayed to the user along with the menu.
+
+@subsubsection DUDSmenuArchMenu  Menu
+
+Menu objects hold MenuItems using std::shared_ptr<MenuItem>, or MenuItemSptr, objects. They are tasked with allowing thread-safe access to the items such that the items are not altered while in use for output. Modifications to the menu are done with the help of an exclusive and recursive lock on the menu data. The MenuAccess class provides this lock and has functions to make modifications. MenuItem objects can also modify themselves, but require the same lock after they have been added to a menu. They will automatically get and release that lock as needed. A shared lock is required during output and is acquired with a MenuOutputView object.
+
+Because of this, menus cannot be changed while being output. If an attempt is made, the thread attempting modification will be blocked until after all output has completed. If the modification is attempted while a MenuOutputView object is in scope and working on the same Menu, the offending thread will be deadlocked. This deadlock situation requires code outputting the menu to modify the same menu during the output, which is bad design.
+
+@subsubsection DUDSmenuArchView  MenuView
+
+The MenuView class is responsible for handling user input to select and chose menu items. There can be multiple MenuView objects for each Menu; each view will have its own selected item and handle input independently.
+
+Input may be provided to the view asynchronously of other menu operations. Because of this, the view will not provide any feedback if the input was useful. An attempt to select a non-existent or disabled menu item will not cause an error because the view will not have a lock on the menu's data. This allows the user input code to feed input to the MenuView in an almost brainless fashion.
+
+@subsubsection DUDSmenuArchOutView  MenuOutputView
+
+The MenuOutputView produces and provides the information needed to render a menu. The output view is attached to a MenuView, and multiple output views may be attached to the same MenuView.
+
+The functionality of the output view is used through a            MenuOutputViewAccess object. This access object should be created just before performing menu output, and it should be destroyed immediately afterwards. When the access object is created and no other access object is working on the same view, the view will update itself based on user input. This update requires an exclusive lock on the menu data. Following this, the access object effectively becomes a shared lock on the menu's data, and the view processes which menu items should currently be visible. The access object provides iterator access to the visible menu items, which will remain valid during the shared lock on menu data. The shared lock is relinquished with the destruction of the access object.
+
+Unlike the other parts of the menu system, the output view is not thread-safe. A MenuOutputViewAccess object will not prevent another thread from attempting to use another MenuOutputViewAccess object on the same output view. Such multi-threaded use only makes sense to output multiple identical views. This is of more limited use than a potentially differently rendered view, and it is easily achieved by using multiple output views. This makes the additional effort and resources for thread-safety on output views of questionable value.
+
+MenuOutputView is also a Page, which allows it to be tracked by a Path to implement forward/backward functionality much like in a web browser.
+
+@subsubsection DUDSmenuArchMenuAcc  MenuAccess
+
+The MenuAccess class provides an exclusive lock on a Menu object's data, and functions to modify the menu. The lock is recursive, so a thread may have multiple locks. This allows the MenuItem class to have functions to modify itself without awkward usage between the item and other menu modifications. It also makes it easier to have an implementation of MenuItem::chose() invoke other functions that modify the menu containing the item.
+
+@subsubsection DUDSmenuArchOutViewAcc  MenuOutputViewAccess
+
+The MenuOutputViewAccess provides the visible menu items in an iterable list. To do this requires a couple of locks on the menu data. It should be used as though it has an exclusive lock on the menu data to avoid deadlocks. The exclusive lock is only acquired if there is a change, and is only kept while updating the visible list stored within MenuOutputView. After that, a MenuOutputViewAccess object will keep a shared lock on the menu data to ensure the visible list remains valid. This scheme limits the amount of time that other threads using the menu will be blocked, and allows multiple threads to use MenuOutputViewAccess objects on the same view and the same menu. However, the same thread may not have on its stack two MenuOutputViewAccess objects from different views using the same menu. Avoiding this deadlock causing situation is easily done by not having more than one MenuOutputViewAccess object in scope at any given time.
+
+*/
+
+} }
