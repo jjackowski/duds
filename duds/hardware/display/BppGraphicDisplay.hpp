@@ -7,20 +7,9 @@
  *
  * Copyright (C) 2018  Jeff Jackowski
  */
-#include <duds/hardware/display/BppImage.hpp>
+#include <duds/ui/graphics/BppImage.hpp>
 
 namespace duds { namespace hardware { namespace display {
-
-/**
- * Base class for all errors specifically from a graphic display.
- */
-struct GraphicDisplayError : virtual std::exception, virtual boost::exception { };
-
-/**
- * Frame buffer dimensions. 
- */
-typedef boost::error_info<struct Info_FrameDimensions, ImageDimensions>
-	ImageErrorFrameDimensions;
 
 /**
  * Base class for bit-per-pixel graphic displays.
@@ -31,7 +20,7 @@ protected:
 	/**
 	 * The frame buffer.
 	 */
-	BppImage frmbuf;
+	duds::ui::graphics::BppImage frmbuf;
 	/**
 	 * Writes out the given image to the display and updates the image in
 	 * @a frmbuf to match.
@@ -41,7 +30,7 @@ protected:
 	 * @pre   The size of @a img and @a frmbuf are the same.
 	 * @post  The image in @a frmbuf matches the image in @a img.
 	 */
-	virtual void outputFrame(const BppImage *img) = 0;
+	virtual void outputFrame(const duds::ui::graphics::BppImage *img) = 0;
 	/**
 	 * Construct with an empty frame buffer.
 	 */
@@ -50,12 +39,13 @@ protected:
 	 * Construct with a frame buffer of the specified size.
 	 * @param dim  The size to make the frame buffer.
 	 */
-	BppGraphicDisplay(const ImageDimensions &dim) : frmbuf(dim) { }
+	BppGraphicDisplay(const duds::ui::graphics::ImageDimensions &dim) :
+	frmbuf(dim) { }
 public:
 	/**
 	 * Provides access to the image in the frame buffer.
 	 */
-	const BppImage &frame() const {
+	const duds::ui::graphics::BppImage &frame() const {
 		return frmbuf;
 	}
 	/**
@@ -73,7 +63,7 @@ public:
 	/**
 	 * Returns the dimensions of the frame buffer.
 	 */
-	const ImageDimensions &dimensions() const {
+	const duds::ui::graphics::ImageDimensions &dimensions() const {
 		return frmbuf.dimensions();
 	}
 	/**
@@ -84,7 +74,7 @@ public:
 	 * @throw DisplaySizeError  The dimensions of the supplied image do not
 	 *                          match the frame buffer's dimensions.
 	 */
-	void write(const BppImage *img);
+	void write(const duds::ui::graphics::BppImage *img);
 	/**
 	 * Writes the new image to the display.
 	 * @param img  The new image to show on the display.
@@ -93,7 +83,7 @@ public:
 	 * @throw DisplaySizeError  The dimensions of the supplied image do not
 	 *                          match the frame buffer's dimensions.
 	 */
-	void write(const std::shared_ptr<const BppImage> &img) {
+	void write(const std::shared_ptr<const duds::ui::graphics::BppImage> &img) {
 		write(img.get());
 	}
 };

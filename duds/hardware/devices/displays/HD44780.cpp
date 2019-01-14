@@ -8,7 +8,7 @@
  * Copyright (C) 2017  Jeff Jackowski
  */
 #include <duds/hardware/devices/displays/HD44780.hpp>
-#include <duds/hardware/display/BppImage.hpp>
+#include <duds/ui/graphics/BppImage.hpp>
 #include <duds/general/ReverseBits.hpp>
 #include <duds/general/YieldingWait.hpp>
 #include <thread>
@@ -260,10 +260,7 @@ void HD44780::clear() {
 	cpos = rpos = 0;
 }
 
-void HD44780::setGlyph(
-	const std::shared_ptr<duds::hardware::display::BppImage> &glyph,
-	int idx
-) {
+void HD44780::setGlyph(const duds::ui::graphics::BppImageSptr &glyph, int idx) {
 	// displays ignore the 4th bit
 	idx &= ~8;
 	// check for out of range index
@@ -275,7 +272,7 @@ void HD44780::setGlyph(
 	// check for bad image size
 	if ((glyph->width() > 5) || (glyph->height() > 8)) {
 		DUDS_THROW_EXCEPTION(duds::hardware::display::DisplayGlyphSizeError() <<
-			duds::hardware::display::ImageErrorDimensions(glyph->dimensions())
+			duds::ui::graphics::ImageErrorDimensions(glyph->dimensions())
 		);
 	}
 	Access acc;

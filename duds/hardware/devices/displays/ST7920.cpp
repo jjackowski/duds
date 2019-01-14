@@ -26,7 +26,7 @@ ST7920::ST7920(
 	std::chrono::nanoseconds delay
 ) :
 	duds::hardware::display::BppGraphicDisplay(
-		duds::hardware::display::ImageDimensions(w, h)
+		duds::ui::graphics::ImageDimensions(w, h)
 	),
 	outcfg(5),
 	soonestSend(std::chrono::high_resolution_clock::now())
@@ -50,8 +50,8 @@ void ST7920::configure(
 	// range check on display size
 	if ((w > 256) || (w < 16) || (h > 64) || (h < 16)) {
 		DUDS_THROW_EXCEPTION(duds::hardware::display::DisplaySizeError() <<
-			duds::hardware::display::ImageErrorFrameDimensions(
-				duds::hardware::display::ImageDimensions(w, h)
+			duds::ui::graphics::ImageErrorDimensions(
+				duds::ui::graphics::ImageDimensions(w, h)
 			)
 		);
 	}
@@ -211,7 +211,7 @@ void ST7920::writeBlock(
 	} while (start++ != end);
 }
 
-void ST7920::outputFrame(const duds::hardware::display::BppImage *img) {
+void ST7920::outputFrame(const duds::ui::graphics::BppImage *img) {
 	Access acc;
 	preparePins(acc);
 	// width in 16-bit ints

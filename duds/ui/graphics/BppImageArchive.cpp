@@ -7,14 +7,14 @@
  *
  * Copyright (C) 2018  Jeff Jackowski
  */
-#include <duds/hardware/display/BppImageArchive.hpp>
+#include <duds/ui/graphics/BppImageArchive.hpp>
 #include <duds/general/Errors.hpp>
 #include <fstream>
 #include <map>
 
-#include <iostream>
+//#include <iostream>
 
-namespace duds { namespace hardware { namespace display {
+namespace duds { namespace ui { namespace graphics {
 
 void BppImageArchive::load(const std::string &path) {
 	std::ifstream is(path);
@@ -97,23 +97,15 @@ void BppImageArchive::load(std::istream &is) {
 	}
 }
 
-void BppImageArchive::add(
-	const std::string &name,
-	const std::shared_ptr<BppImage> &img
-) {
+void BppImageArchive::add(const std::string &name, const BppImageSptr &img) {
 	arc[name] = img;
 }
 
-void BppImageArchive::add(
-	const std::string &name,
-	std::shared_ptr<BppImage> &&img
-) {
+void BppImageArchive::add(const std::string &name, BppImageSptr &&img) {
 	arc[name] = std::move(img);
 }
 
-const std::shared_ptr<BppImage> &BppImageArchive::get(
-	const std::string &name
-) const {
+const BppImageSptr &BppImageArchive::get(const std::string &name) const {
 	std::unordered_map< std::string, std::shared_ptr< BppImage > >::const_iterator
 		iter = arc.find(name);
 	if (iter != arc.end()) {
@@ -122,15 +114,13 @@ const std::shared_ptr<BppImage> &BppImageArchive::get(
 	DUDS_THROW_EXCEPTION(ImageNotFoundError() << ImageArchiveImageName(name));
 }
 
-std::shared_ptr<BppImage> BppImageArchive::tryGet(
-	const std::string &name
-) const {
+BppImageSptr BppImageArchive::tryGet(const std::string &name) const {
 	std::unordered_map< std::string, std::shared_ptr< BppImage > >::const_iterator
 		iter = arc.find(name);
 	if (iter != arc.end()) {
 		return iter->second;
 	}
-	return std::shared_ptr<BppImage>();
+	return BppImageSptr();
 }
 
 } } }

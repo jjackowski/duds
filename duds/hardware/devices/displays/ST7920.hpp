@@ -163,7 +163,7 @@ class ST7920 : public duds::hardware::display::BppGraphicDisplay {
 	 * updates the image in @a frmbuf to match.
 	 * @param img  The new image to show.
 	 */
-	virtual void outputFrame(const duds::hardware::display::BppImage *img);
+	virtual void outputFrame(const duds::ui::graphics::BppImage *img);
 public:
 	/**
 	 * Initializes the object with an invalid display size and no pins to use.

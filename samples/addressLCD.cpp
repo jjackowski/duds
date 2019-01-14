@@ -16,7 +16,7 @@
 
 #include <duds/hardware/devices/displays/HD44780.hpp>
 #include <duds/hardware/display/TextDisplayStream.hpp>
-#include <duds/hardware/display/BppImageArchive.hpp>
+#include <duds/ui/graphics/BppImageArchive.hpp>
 #ifdef USE_SYSFS_PORT
 #include <duds/hardware/interface/linux/SysFsPort.hpp>
 #else
@@ -393,10 +393,10 @@ try {
 		binpath.pop_back();
 	}
 	// load some icons before messing with hardware
-	display::BppImageArchive imgArc;
+	duds::ui::graphics::BppImageArchive imgArc;
 	imgArc.load(binpath + "neticons.bppia");
-	std::shared_ptr<display::BppImage> wiredIcon = imgArc.get("WiredLAN");
-	std::shared_ptr<display::BppImage> wirelessIcon[4] = {
+	duds::ui::graphics::BppImageSptr wiredIcon = imgArc.get("WiredLAN");
+	duds::ui::graphics::BppImageSptr wirelessIcon[4] = {
 		imgArc.get("WirelessLAN_S0"),
 		imgArc.get("WirelessLAN_S1"),
 		imgArc.get("WirelessLAN_S2"),

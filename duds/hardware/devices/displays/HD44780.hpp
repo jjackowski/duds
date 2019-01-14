@@ -12,13 +12,11 @@
 #include <duds/hardware/display/TextDisplay.hpp>
 #include <chrono>
 
-namespace duds { namespace hardware {
-
-namespace display {
+namespace duds { namespace ui { namespace graphics {
 	class BppImage;
-}
+} } }
 
-namespace devices { namespace displays {
+namespace duds { namespace hardware { namespace devices { namespace displays {
 
 /**
  * Implements text output to HD44780 and compatible display controllers,
@@ -338,7 +336,7 @@ public:
 	 * @throw DisplayGlyphSizeError   The image is too large.
 	 */
 	void setGlyph(
-		const std::shared_ptr<duds::hardware::display::BppImage> &glyph,
+		const std::shared_ptr<duds::ui::graphics::BppImage> &glyph,
 		int idx
 	);
 };

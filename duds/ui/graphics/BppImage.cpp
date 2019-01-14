@@ -8,10 +8,10 @@
  * Copyright (C) 2018  Jeff Jackowski
  */
 
-#include <duds/hardware/display/BppImage.hpp>
+#include <duds/ui/graphics/BppImage.hpp>
 #include <duds/general/Errors.hpp>
 
-namespace duds { namespace hardware { namespace display {
+namespace duds { namespace ui { namespace graphics {
 
 std::ostream &operator << (std::ostream &os, const ImageLocation &il) {
 	os << '(' << il.x << ',' << il.y << ')';

@@ -7,11 +7,11 @@
  *
  * Copyright (C) 2018  Jeff Jackowski
  */
-#include <duds/hardware/display/BppImage.hpp>
+#include <duds/ui/graphics/BppImage.hpp>
 #include <boost/noncopyable.hpp>
 #include <unordered_map>
 
-namespace duds { namespace hardware { namespace display {
+namespace duds { namespace ui { namespace graphics {
 
 /**
  * The base class for errors related to the use of image archives.
@@ -69,7 +69,7 @@ class BppImageArchive : boost::noncopyable {
 	/**
 	 * The images keyed by name.
 	 */
-	std::unordered_map< std::string, std::shared_ptr< BppImage > >  arc;
+	std::unordered_map<std::string, BppImageSptr>  arc;
 public:
 	/**
 	 * Loads images from an image archive in the specified file.
@@ -103,7 +103,7 @@ public:
 	 *              the image object will not be modified.
 	 * @param img   The image to store.
 	 */
-	void add(const std::string &name, const std::shared_ptr<BppImage> &img);
+	void add(const std::string &name, const BppImageSptr &img);
 	/**
 	 * Moves an image into the archive.
 	 * @param name  The name to give the image. If there is already an image
@@ -111,7 +111,7 @@ public:
 	 *              the image object will not be modified.
 	 * @param img   The image to store. The shared pointer will be moved.
 	 */
-	void add(const std::string &name, std::shared_ptr<BppImage> &&img);
+	void add(const std::string &name, BppImageSptr &&img);
 	/**
 	 * Returns the image with the given name.
 	 * If there is no image for the name, an exception will be thrown. The
@@ -122,7 +122,7 @@ public:
 	 * @return      A shared pointer to the requested image.
 	 * @throw       ImageNotFoundError  The image @a name is not in the archive.
 	 */
-	const std::shared_ptr<BppImage> &get(const std::string &name) const;
+	const BppImageSptr &get(const std::string &name) const;
 	/**
 	 * Returns the image with the given name.
 	 * If there is no image for the name, an empty shared pointer is returned.
@@ -132,7 +132,7 @@ public:
 	 * @param name  The name of the image to find.
 	 * @return      A shared pointer to the requested image.
 	 */
-	std::shared_ptr<BppImage> tryGet(const std::string &name) const;
+	BppImageSptr tryGet(const std::string &name) const;
 };
 
 } } }

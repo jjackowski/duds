@@ -99,7 +99,7 @@ public:
 	/**
 	 * Construct for fixed-length input without allocating space for the input.
 	 */
-	ConversationVector(Input) : ConversationPart(MpfInput | MpfExtract , 0) { };
+	ConversationVector(Input) : ConversationPart(MpfInput | MpfExtract, 0) { };
 	/**
 	 * Construct for output.
 	 */

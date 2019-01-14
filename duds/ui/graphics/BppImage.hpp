@@ -14,7 +14,14 @@
 #include <cstdint>
 #include <boost/exception/info.hpp>
 
-namespace duds { namespace hardware { namespace display {
+namespace duds { namespace ui {
+
+/**
+ * General graphics related code.
+ * The graphics support is in the user interface namespace because the purpose
+ * of the graphics is for use on user interfaces.
+ */
+namespace graphics {
 
 struct ImageDimensions;
 
@@ -198,6 +205,16 @@ typedef boost::error_info<struct Info_ImageLocation, ImageLocation>
  */
 typedef boost::error_info<struct Info_ImageDimensions, ImageDimensions>
 	ImageErrorDimensions;
+/**
+ * Image dimensions for a source image relevant to the error.
+ */
+typedef boost::error_info<struct Info_ImageDimensions, ImageDimensions>
+	ImageErrorSourceDimensions;
+/**
+ * Image dimensions for a target image relevant to the error.
+ */
+typedef boost::error_info<struct Info_FrameDimensions, ImageDimensions>
+	ImageErrorTargetDimensions;
 
 
 /**
@@ -302,12 +319,33 @@ public:
 		 * the width limit, the position will instead be changed to (-1,-1).
 		 */
 		VertDec,
+		/**
+		 * The X coordinate will be incremented until reaching the width
+		 * limit. When the limit is reached, X will be changed to zero and
+		 * Y will be incremented. If Y passes the height limit, the position
+		 * will be changed to (-1,-1), the end condition.
+		 */
 		Rotate0DCCW = HorizInc,
+		/**
+		 * The Y coordinate will be incremented. When the maximum height is
+		 * reached, Y will be set to zero and X decremented. If X would
+		 * go negative, the position will instead be changed to (-1,-1).
+		 */
 		Rotate90DCCW = VertInc,
+		/**
+		 * The X coordinate will be decremented until reaching zero. When
+		 * zero is reached, X will be changed to the maximum width and
+		 * Y will be decremented. If Y would go negative, the position
+		 * will instead be changed to (-1,-1).
+		 */
 		Rotate180DCCW = HorizDec,
+		/**
+		 * The Y coordinate will be decremented. When zero is reached, Y
+		 * will be set to the maximum height and X incremented. If X passes
+		 * the width limit, the position will instead be changed to (-1,-1).
+		 */
 		Rotate270DCCW = VertDec,
 	};
-
 	/**
 	 * Can be used as an end iterator to avoid making a whole iterator.
 	 * ConstPixel used to contain a std::shared_ptr<BppImage>, which made this
@@ -1072,8 +1110,22 @@ public:
 		const ImageDimensions &size,
 		Direction dir = HorizInc
 	);
-
+	/**
+	 * Returns a Pixel (iterator) to iterate across the image starting from the
+	 * given location. The whole image will be traversed, save for what came
+	 * before the given location.
+	 * @param il   The starting location.
+	 * @param dir  The direction of iteration.
+	 */
 	Pixel pixel(const ImageLocation &il, Direction dir = HorizInc);
+	/**
+	 * Returns a Pixel (iterator) to iterate across the image starting from the
+	 * given location. The whole image will be traversed, save for what came
+	 * before the given location.
+	 * @param x    The horizontal starting location.
+	 * @param y    The vertical starting location.
+	 * @param dir  The direction of iteration.
+	 */
 	Pixel pixel(int x, int y, Direction dir = HorizInc) {
 		return pixel(ImageLocation(x, y), dir);
 	}
@@ -1183,27 +1235,74 @@ public:
 	ConstPixel end() const {
 		return cend();
 	}
+	/**
+	 * Returns the state of the image pixel of the requested location.
+	 * @param il  The location to query.
+	 */
 	bool state(const ImageLocation &il) const;
+	/**
+	 * Returns the state of the image pixel of the requested location.
+	 * @param x  Horizontal coordinate to query.
+	 * @param y  Vertical coordinate to query.
+	 */
 	bool state(int x, int y) const {
 		return state(ImageLocation(x, y));
 	}
-	void state(const ImageLocation &il, bool state);
+	/**
+	 * Changes the state of a pixel.
+	 * @param il     The location to change.
+	 * @param s      The new state of the pixel.
+	 */
+	void state(const ImageLocation &il, bool s);
+	/**
+	 * Changes the state of a pixel.
+	 * @param x      Horizontal coordinate to change.
+	 * @param y      Vertical coordinate to change.
+	 * @param state  The new state of the pixel.
+	 */
 	void state(int x, int y, bool s) {
 		state(ImageLocation(x, y), s);
 	}
+	/**
+	 * Changes the state of a pixel to clear (false).
+	 * @param il     The location to change.
+	 */
 	void clearPixel(const ImageLocation &il) {
 		state(il, false);
 	}
+	/**
+	 * Changes the state of a pixel to clear (false).
+	 * @param x      Horizontal coordinate to change.
+	 * @param y      Vertical coordinate to change.
+	 */
 	void clearPixel(int x, int y) {
 		state(x, y, false);
 	}
+	/**
+	 * Changes the state of a pixel to set (true).
+	 * @param il     The location to change.
+	 */
 	void setPixel(const ImageLocation &il) {
 		state(il, true);
 	}
+	/**
+	 * Changes the state of a pixel to set (true).
+	 * @param x      Horizontal coordinate to change.
+	 * @param y      Vertical coordinate to change.
+	 */
 	void setPixel(int x, int y) {
 		state(x, y, true);
 	}
+	/**
+	 * Toggles the state of a pixel.
+	 * @param il     The location to toggle.
+	 */
 	bool togglePixel(const ImageLocation &il);
+	/**
+	 * Toggles the state of a pixel.
+	 * @param x      Horizontal coordinate to toggle.
+	 * @param y      Vertical coordinate to toggle.
+	 */
 	bool togglePixel(int x, int y) {
 		return togglePixel(ImageLocation(x, y));
 	}
@@ -1212,7 +1311,6 @@ public:
 	 * @post  All pixels will be set to @a state.
 	 */
 	void blankImage(bool state = false);
-
 	/**
 	 * Tells how to modify the destination pixel with the source pixel data.
 	 */
@@ -1340,6 +1438,9 @@ public:
 inline void swap(BppImage &bi0, BppImage &bi1) {
 	bi0.swap(bi1);
 }
+
+typedef std::shared_ptr<BppImage>  BppImageSptr;
+typedef std::weak_ptr<BppImage>  BppImageWptr;
 
 } } }
 

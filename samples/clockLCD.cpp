@@ -14,7 +14,7 @@
 
 #include <duds/hardware/devices/displays/HD44780.hpp>
 #include <duds/hardware/display/TextDisplayStream.hpp>
-#include <duds/hardware/display/BppImageArchive.hpp>
+#include <duds/ui/graphics/BppImageArchive.hpp>
 #ifdef USE_SYSFS_PORT
 #include <duds/hardware/interface/linux/SysFsPort.hpp>
 #else
@@ -35,7 +35,7 @@
 #include <boost/exception/diagnostic_information.hpp>
 #include <boost/program_options.hpp>
 
-duds::hardware::display::BppImageArchive imgArc;
+duds::ui::graphics::BppImageArchive imgArc;
 
 /**
  * A character in the string for large output is not in the large font.
@@ -470,7 +470,7 @@ try {
 	// LCD driver
 	std::shared_ptr<displays::HD44780> tmd =
 		std::make_shared<displays::HD44780>(
-			std::move(lcdset), std::move(lcdsel), 20, 4
+			std::move(lcdset), std::move(lcdsel), 20, 4, std::chrono::microseconds(12)
 		);
 	tmd->initialize();
 

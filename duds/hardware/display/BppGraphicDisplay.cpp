@@ -13,12 +13,12 @@
 
 namespace duds { namespace hardware { namespace display {
 
-void BppGraphicDisplay::write(const BppImage *img) {
+void BppGraphicDisplay::write(const duds::ui::graphics::BppImage *img) {
 	// supplied image must match the frame buffer's size
 	if (img->dimensions() != frmbuf.dimensions()) {
 		DUDS_THROW_EXCEPTION(DisplaySizeError() <<
-			ImageErrorFrameDimensions(frmbuf.dimensions()) <<
-			ImageErrorDimensions(img->dimensions())
+			duds::ui::graphics::ImageErrorSourceDimensions(img->dimensions()) <<
+			duds::ui::graphics::ImageErrorTargetDimensions(frmbuf.dimensions())
 		);
 	}
 	outputFrame(img);

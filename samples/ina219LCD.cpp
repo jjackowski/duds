@@ -11,7 +11,7 @@
 #include <duds/hardware/interface/linux/DevSmbus.hpp>
 #include <duds/hardware/devices/displays/HD44780.hpp>
 #include <duds/hardware/display/TextDisplayStream.hpp>
-#include <duds/hardware/display/BppImageArchive.hpp>
+#include <duds/ui/graphics/BppImageArchive.hpp>
 #ifdef USE_SYSFS_PORT
 #include <duds/hardware/interface/linux/SysFsPort.hpp>
 #else
@@ -29,7 +29,7 @@
 //#include <duds/general/IntegerBiDirIterator.hpp>
 #include <boost/program_options.hpp>
 
-duds::hardware::display::BppImageArchive imgArc;
+duds::ui::graphics::BppImageArchive imgArc;
 
 /**
  * A character in string for large output is not in the large font.
