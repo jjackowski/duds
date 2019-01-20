@@ -147,34 +147,42 @@ void ST7920::sendByte(ST7920::Access &acc, int val) {
 }
 
 void ST7920::initialize() {
-	// LCD intialization commands in reverse order they are sent
-	static const std::uint8_t initdata[10] = {
-		0x26,            // use graphic output
-		0x24,            // use extended commands
-		0x6,             // increment cursor, no display shift
-		0xC,             // turn on display w/o cursor
-		0x1,             // clear display
-		0x8,             // turn off display
-		0x20,            // 4 bit bus mode
-		0x30,            // 8-bit bus mode; sync nibble reception
-		0x30,            // 8-bit bus mode; sync nibble reception
-		0x30             // 8-bit bus mode; sync nibble reception
-	};
-	Access acc;
-	preparePins(acc);
-	acc.output.output(false);
-	acc.enable.select();
-	std::this_thread::sleep_for(std::chrono::milliseconds(4));
-	acc.enable.deselect();
-	int loop = 9;
-	for (; loop >= 6; --loop) {
-		sendByte(acc, nibbleFlag | initdata[loop]);
-		std::this_thread::sleep_for(std::chrono::milliseconds(2));
+	{
+		// LCD intialization commands in reverse order they are sent
+		static const std::uint8_t initdata[9] = {
+			0x26,            // use graphic output
+			0x24,            // use extended commands
+			0x6,             // increment cursor, no display shift
+			0xC,             // turn on display w/o cursor
+			0x8,             // turn off display
+			0x20,            // 4 bit bus mode
+			0x30,            // 8-bit bus mode; sync nibble reception
+			0x30,            // 8-bit bus mode; sync nibble reception
+			0x30             // 8-bit bus mode; sync nibble reception
+		};
+		Access acc;
+		preparePins(acc);
+		acc.output.output(false);
+		acc.enable.select();
+		std::this_thread::sleep_for(std::chrono::milliseconds(4));
+		acc.enable.deselect();
+		int loop = 9;
+		for (; loop >= 6; --loop) {
+			sendByte(acc, nibbleFlag | initdata[loop]);
+			std::this_thread::sleep_for(std::chrono::milliseconds(2));
+		}
+		for (; loop >= 0; --loop) {
+			sendByte(acc, initdata[loop]);
+			std::this_thread::sleep_for(std::chrono::milliseconds(2));
+		}
 	}
-	for (; loop >= 0; --loop) {
-		sendByte(acc, initdata[loop]);
-		std::this_thread::sleep_for(std::chrono::milliseconds(2));
-	}
+	// clear the display; the closest display command for this only clears the
+	// text output buffer
+	frmbuf.setImage();
+	duds::ui::graphics::BppImage img(frmbuf.dimensions());
+	// defeat image change logic
+	img.clearImage();
+	outputFrame(&img);
 }
 
 void ST7920::off() {

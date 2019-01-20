@@ -269,7 +269,7 @@ public:
 	 *        size has been set.
 	 * @post  The display is in the "on" state; on() has been called.
 	 * @post  Functions that send data to the display may be used.
-	 * @post  The display is blank.
+	 * @post  The display is clear (pixels changed to false).
 	 * @throw DisplayUninitialized  The display object has not been
 	 *                              given any pins to use.
 	 */

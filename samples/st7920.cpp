@@ -16,6 +16,7 @@
 
 #include <duds/hardware/devices/displays/ST7920.hpp>
 #include <duds/ui/graphics//BppImageArchive.hpp>
+#include <duds/ui/graphics//BppFont.hpp>
 #include <duds/hardware/interface/linux/SysFsPort.hpp>
 #ifndef USE_SYSFS_PORT
 #include <duds/hardware/interface/linux/GpioDevPort.hpp>
@@ -61,6 +62,7 @@ R PatternFill(P pattern) {
 void runtest(
 	const std::shared_ptr<duds::hardware::devices::displays::ST7920> &disp,
 	std::shared_ptr<duds::ui::graphics::BppImage> lanIcon[3],
+	duds::ui::graphics::BppFont &font,
 	bool once
 ) try {
 	duds::ui::graphics::BppImage img(disp->frame().dimensions());
@@ -158,7 +160,7 @@ void runtest(
 				}
 				break;
 			case 8:
-				img.blankImage();
+				img.clearImage();
 			case 9:
 			case 10:
 			case 11:
@@ -185,7 +187,7 @@ void runtest(
 				}
 				break;
 			case 12:
-				img.blankImage();
+				img.clearImage();
 			case 13:
 			case 14:
 			case 15:
@@ -212,6 +214,17 @@ void runtest(
 				}
 				break;
 		}
+		// render a string with the pattern number
+		try {
+			std::ostringstream oss;
+			oss << "Pat" << pat;
+			duds::ui::graphics::BppImageSptr label = font.render(oss.str());
+			duds::ui::graphics::ImageLocation lrc(
+				img.width() - label->width(),
+				img.height() - label->height()
+			);
+			img.write(label, lrc);
+		} catch (...) { }
 		disp->write(&img);
 		if (!once) {
 			std::this_thread::sleep_for(std::chrono::seconds(2));
@@ -229,7 +242,7 @@ void runtest(
 
 int main(int argc, char *argv[])
 try {
-	std::string confpath;
+	std::string confpath, fontpath;
 	int dispW, dispH;
 	bool noinput = false, once = false, fakeport = false;
 	bool usegpiodev =
@@ -238,6 +251,10 @@ try {
 		#else
 		true;
 		#endif
+	std::string binpath(argv[0]);
+	while (!binpath.empty() && (binpath.back() != '/')) {
+		binpath.pop_back();
+	}
 	{ // option parsing
 		boost::program_options::options_description optdesc(
 			"Options for ST7920 test"
@@ -290,6 +307,12 @@ try {
 				"Run once through all test patterns without a delay. Implies "
 				"noinput. Use this for profiling."
 			)
+			(
+				"font",
+				boost::program_options::value<std::string>(&fontpath)->
+					default_value(binpath + "font_8x16.bppia"),
+				"Font file"
+			)
 		;
 		boost::program_options::variables_map vm;
 		boost::program_options::store(
@@ -323,10 +346,6 @@ try {
 		}
 	}
 
-	std::string binpath(argv[0]);
-	while (!binpath.empty() && (binpath.back() != '/')) {
-		binpath.pop_back();
-	}
 	// load some icons before messing with hardware
 	duds::ui::graphics::BppImageArchive imgArc;
 	imgArc.load(binpath + "neticons.bppia");
@@ -335,6 +354,9 @@ try {
 		imgArc.get("WirelessLAN_S1"),
 		imgArc.get("WirelessLAN_S2")
 	};
+	// load font
+	duds::ui::graphics::BppFont font;
+	font.load(fontpath);
 
 	// read in digital pin config
 	boost::property_tree::ptree tree;
@@ -372,9 +394,9 @@ try {
 
 	if (noinput) {
 		// will not return, unless once is true
-		runtest(disp, lanIcon, once);
+		runtest(disp, lanIcon, font, once);
 	} else {
-		std::thread doit(runtest, std::ref(disp), lanIcon, once);
+		std::thread doit(runtest, std::ref(disp), lanIcon, std::ref(font), once);
 		std::cin.get();
 		quit = true;
 		doit.join();
