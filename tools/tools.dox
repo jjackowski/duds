@@ -13,7 +13,7 @@
 
 @section DUDStoolsBppic  Bit-Per-Pixel Image Compiler
 
-The Bit-Per-Pixel Image Compiler (bppic) takes image data written in a text file and produces either C++ source code with data for use with the @ref duds::hardware::display::BppImage::BppImage(const char*) "BppImage" class, or an image archive file for use with  @ref duds::hardware::display::BppImageArchive "BppImageArchive". The compiler is itself a C++ program.
+The Bit-Per-Pixel Image Compiler (bppic) takes image data written in a text file and produces either C++ source code with data for use with the @ref duds::ui::graphics::BppImage::BppImage(const char*) "BppImage" class, or an image archive file for use with  @ref duds::ui::graphics::BppImageArchive "BppImageArchive". The compiler is itself a C++ program.
 
 @subsection DUDStoolsBppicSrc  Source file format
 
@@ -21,13 +21,23 @@ The source file format is intended to make it easy to represent simple images, b
 
 @subsubsection DUDStoolsBppicSrcInBet  In-between areas
 
-These are the areas of the file that do not have any image data. They consist only of whitespace and comments. All comments begin with a slash ('/'). If the slash is followed by an asterisk ('*'), the comment will continue until the two characters are found in reverse. These comments will be added to the output file. Otherwise, the comment will end at the end of the line and will not be added to the output file. Comments are not nested.
+These are the areas of the file that do not have any image data. They consist only of whitespace and comments. All comments begin with a slash ('/'). If the slash is followed by an asterisk ('*'), the comment will continue until the two characters are found in reverse. These comments are added to C++ output files. Otherwise, the comment will end at the end of the line and will not be added to the output file. Comments are not nested.
 
 Comments may appear in the other two area types of the file as well.
 
 @subsubsection DUDStoolsBppicSrcImgHdr  Image headers
 
-These announce the start of an image. An image header starts in an in-between area with an alphabetic character. The character is the start of a valid C++ identifier that will name the image in the generated source code. It must be followed by any amount of any combination of whitespace and commas, then the width, followed by more whitespace and/or commas, and then the height. Following the height, all characters are ignored until an opening curly brace ('{'). That brace begins the image data.
+These announce the start of an image. An image header starts in an in-between area with a non-whitespace character that doesn't start a comment. The character is the start of the name of the image. If the compiler's output will be a C++ source file, the name must be a valid C++ identifier because it will be used in the generated source code.
+
+For archive file output, the name may have any non-whitespace character, but cannot start with a slash. Backslashes are used as the start of an escape sequence, but only a limited set of sequences are currently supported:
+- A decimal number, not starting with zero, represents the character with the given code. For example, "\32" will put a space in the name. The number stops at the first non-decimal digit, whitespace, or before the number becomes too large for any valid character.
+- Tab using "\t".
+- Backslash using "\\".
+
+Names are intended to be stored using UTF-8, but only the decimal number escape sequence code has any code specific to UTF-8. No testing has been done to ensure proper UTF-8 support, so it should be considered broken. However, the archive file format supports strings up to 255 bytes long and is character encoding agnostic, so UTF-8 support shouldn't require changing the compiler's archive output.
+
+The name must be followed by any amount of any combination of whitespace and commas, then the width, followed by more whitespace and/or commas, and then the height. Following the height, all characters are ignored until an opening curly brace ('{'). That brace begins the image data.
+
 
 @subsubsection DUDStoolsBppicSrcImgDat  Image data
 
@@ -84,7 +94,7 @@ Except for the width and height, the numbers in the code segment will be ignored
 
 The C++ output is a const char array for each image with the same name as the image. It can be used as a header file, but must be included by only one source file. Changing the output to generate a source file and a header file could fix this. The output does not include any namespaces, which would be nice to support, but a namespace can be put around an include statement as a workaround.
 
-The image archive file has the advantage of not requiring a new build to try out a change to an image. A @ref duds::hardware::display::BppImageArchive "BppImageArchive" object can read in the file and provide shared pointers to the images. Lookups are done by the image name.
+The image archive file has the advantage of not requiring a new build to try out a change to an image. A @ref duds::ui::graphics::BppImageArchive "BppImageArchive" object can read in the file and provide shared pointers to the images. Lookups are done by the image name.
 
 
 @section DUDStoolsPinConf  Digital Pin Configuration

@@ -8,68 +8,30 @@
  * Copyright (C) 2018  Jeff Jackowski
  */
 #include <duds/ui/graphics/BppImage.hpp>
-#include <boost/noncopyable.hpp>
+#include <duds/general/Spinlock.hpp>
 #include <unordered_map>
 
 namespace duds { namespace ui { namespace graphics {
 
 /**
- * The base class for errors related to the use of image archives.
- */
-struct ImageArchiveError : virtual std::exception, virtual boost::exception { };
-/**
- * An image was requested that the archive does not contain.
- */
-struct ImageNotFoundError : ImageArchiveError { };
-/**
- * The base class for errors resulting from the attempt to read an image
- * archive stream or file.
- */
-struct ImageArchiveStreamError : ImageArchiveError { };
-/**
- * The stream appears to not be an image archive.
- */
-struct ImageNotArchiveStreamError : ImageArchiveStreamError { };
-/**
- * The archive is in an unsupported version of the format.
- */
-struct ImageArchiveUnsupportedVersionError : ImageArchiveStreamError { };
-/**
- * The stream appears to end early.
- */
-struct ImageArchiveStreamTruncatedError : ImageArchiveStreamError { };
-
-/**
- * The name of the image involved in an ImageArchiveError.
- */
-typedef boost::error_info<struct Info_ArchiveImageName, std::string>
-	ImageArchiveImageName;
-/**
- * The name of the image archive file involved in an ImageArchiveStreamError.
- * This is only added if a file name is known; it is not added if a std::istream
- * is used.
- */
-typedef boost::error_info<struct Info_ImageArcFileName, std::string>
-	ImageArchiveFileName;
-/**
- * The name of the image involved in an ImageArchiveError.
- */
-typedef boost::error_info<struct Info_ImageArcName, std::uint32_t>
-	ImageArchiveVersion;
-
-
-/**
  * An archive of BppImage objects keyed by a string name.
  *
- * This class is not thread safe. That may change in the future.
+ * This class is thread safe.
  *
  * @author  Jeff Jackowski
  */
 class BppImageArchive : boost::noncopyable {
+public:
+	typedef std::unordered_map<std::string, BppImageSptr>  ImageMap;
+private:
 	/**
 	 * The images keyed by name.
 	 */
-	std::unordered_map<std::string, BppImageSptr>  arc;
+	ImageMap arc;
+	/**
+	 * Used for thread safety.
+	 */
+	mutable duds::general::Spinlock block;
 public:
 	/**
 	 * Loads images from an image archive in the specified file.
@@ -77,7 +39,16 @@ public:
 	 * inside this object, the already loaded image will be replaced by putting
 	 * a new BppImage object in a new shared pointer in the old one's place.
 	 * This does not modify the previously loaded image of the same name.
+	 * @param path  The path of the archive file to load.
 	 * @throw ImageArchiveStreamError  Failed to open the file.
+	 * @throw ImageNotArchiveStreamError
+	 *        The stream does not have an image archive stream.
+	 * @throw ImageArchiveStreamTruncatedError
+	 *        The stream appears to have an incomplete copy of the archive
+	 *        stream. Any images fully read prior to the error will be
+	 *        available.
+	 * @throw ImageArchiveUnsupportedVersionError
+	 *        The software does not support the claimed archive version.
 	 */
 	void load(const std::string &path);
 	/**
@@ -86,6 +57,7 @@ public:
 	 * inside this object, the already loaded image will be replaced by putting
 	 * a new BppImage object in a new shared pointer in the old one's place.
 	 * This does not modify the previously loaded image of the same name.
+	 * @param is  The input stream that will provide the image archive.
 	 * @throw ImageNotArchiveStreamError
 	 *        The stream does not have an image archive stream.
 	 * @throw ImageArchiveStreamTruncatedError
@@ -133,6 +105,20 @@ public:
 	 * @return      A shared pointer to the requested image.
 	 */
 	BppImageSptr tryGet(const std::string &name) const;
+	/**
+	 * Returns a begining iterator to inspect the images within the archive.
+	 * Using the iterator is not a thread-safe operation.
+	 */
+	ImageMap::const_iterator begin() const {
+		return arc.cbegin();
+	}
+	/**
+	 * Returns an end iterator to inspect the images within the archive.
+	 * Using the iterator is not a thread-safe operation.
+	 */
+	ImageMap::const_iterator end() const {
+		return arc.cend();
+	}
 };
 
 } } }

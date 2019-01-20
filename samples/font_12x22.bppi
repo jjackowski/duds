@@ -1,0 +1,6861 @@
+/**
+ * Sun 12x22 font from the Linux kernel. GPL 2.0.
+ */
+
+/* Character 1 */
+\1 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	   XXXXXXX   // 4
+5	  XX     XX  // 5
+6	 XX  X X  XX // 6
+7	 XX XX XX XX // 7
+8	 XX       XX // 8
+9	 XX   X   XX // 9
+0	 XX   X   XX // 10
+1	 XX       XX // 11
+2	 XX XXXXX XX // 12
+3	 XX  XXX  XX // 13
+4	  XX     XX  // 14
+5	   XXXXXXX   // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 2 */
+\2 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	   XXXXXXX   // 4
+5	  XXXXXXXXX  // 5
+6	 XXXX X XXXX // 6
+7	 XXX  X  XXX // 7
+8	 XXXXXXXXXXX // 8
+9	 XXXXX XXXXX // 9
+0	 XXXXX XXXXX // 10
+1	 XXXXXXXXXXX // 11
+2	 XXX     XXX // 12
+3	 XXXX   XXXX // 13
+4	  XXXXXXXXX  // 14
+5	   XXXXXXX   // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 3 */
+\3 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	   XX  XX    // 6
+7	  XXXXXXXX   // 7
+8	 XXXXXXXXXX  // 8
+9	  XXXXXXXX   // 9
+0	  XXXXXXXX   // 10
+1	   XXXXXX    // 11
+2	   XXXXXX    // 12
+3	    XXXX     // 13
+4	    XXXX     // 14
+5	     XX      // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 4 */
+\4 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	      X      // 3
+4	     XXX     // 4
+5	    XXXXX    // 5
+6	    XXXXX    // 6
+7	   XXXXXXX   // 7
+8	   XXXXXXX   // 8
+9	  XXXXXXXXX  // 9
+0	   XXXXXXX   // 10
+1	   XXXXXXX   // 11
+2	    XXXXX    // 12
+3	    XXXXX    // 13
+4	     XXX     // 14
+5	      X      // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 5 */
+\5 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	      X      // 4
+5	     XXX     // 5
+6	     XXX     // 6
+7	      X      // 7
+8	   XX   XX   // 8
+9	  XXXX XXXX  // 9
+0	  XXXX XXXX  // 10
+1	   XX X XX   // 11
+2	      X      // 12
+3	     XXX     // 13
+4	    XXXXX    // 14
+5	   XXXXXXX   // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 6 */
+\6 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	     XX      // 4
+5	    XXXX     // 5
+6	   XXXXXX    // 6
+7	   XXXXXX    // 7
+8	  XXXXXXXX   // 8
+9	 XXXXXXXXXX  // 9
+0	 XXXXXXXXXX  // 10
+1	  XX XX XX   // 11
+2	     XX      // 12
+3	     XX      // 13
+4	    XXXX     // 14
+5	   XXXXXX    // 15
+6	  XXXXXXXX   // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 7 */
+\7 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	     XX      // 4
+5	    XXXX     // 5
+6	    XXXX     // 6
+7	   XXXXXX    // 7
+8	   XXXXXX    // 8
+9	  XXXXXXXX   // 9
+0	  XXXXXXXX   // 10
+1	   XXXXXX    // 11
+2	   XXXXXX    // 12
+3	    XXXX     // 13
+4	    XXXX     // 14
+5	     XX      // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 8 */
+\8 12 22
+	012345678901 {
+0	XXXXXXXXXXXX // 0
+1	XXXXXXXXXXXX // 1
+2	XXXXXXXXXXXX // 2
+3	XXXXXXXXXXXX // 3
+4	XXXXX  XXXXX // 4
+5	XXXX    XXXX // 5
+6	XXXX    XXXX // 6
+7	XXX      XXX // 7
+8	XXX      XXX // 8
+9	XX        XX // 9
+0	XX        XX // 10
+1	XXX      XXX // 11
+2	XXX      XXX // 12
+3	XXXX    XXXX // 13
+4	XXXX    XXXX // 14
+5	XXXXX  XXXXX // 15
+6	XXXXXXXXXXXX // 16
+7	XXXXXXXXXXXX // 17
+8	XXXXXXXXXXXX // 18
+9	XXXXXXXXXXXX // 19
+0	XXXXXXXXXXXX // 20
+1	XXXXXXXXXXXX // 21
+	}
+
+/* Character 9 */
+\9 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	     XX      // 4
+5	    XXXX     // 5
+6	    XXXX     // 6
+7	   XX  XX    // 7
+8	   XX  XX    // 8
+9	  XX    XX   // 9
+0	  XX    XX   // 10
+1	   XX  XX    // 11
+2	   XX  XX    // 12
+3	    XXXX     // 13
+4	    XXXX     // 14
+5	     XX      // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 10 */
+\10 12 22
+	012345678901 {
+0	XXXXXXXXXXXX // 0
+1	XXXXXXXXXXXX // 1
+2	XXXXXXXXXXXX // 2
+3	XXXXXXXXXXXX // 3
+4	XXXXX  XXXXX // 4
+5	XXXX    XXXX // 5
+6	XXXX    XXXX // 6
+7	XXX  XX  XXX // 7
+8	XXX  XX  XXX // 8
+9	XX  XXXX  XX // 9
+0	XX  XXXX  XX // 10
+1	XXX  XX  XXX // 11
+2	XXX  XX  XXX // 12
+3	XXXX    XXXX // 13
+4	XXXX    XXXX // 14
+5	XXXXX  XXXXX // 15
+6	XXXXXXXXXXXX // 16
+7	XXXXXXXXXXXX // 17
+8	XXXXXXXXXXXX // 18
+9	XXXXXXXXXXXX // 19
+0	XXXXXXXXXXXX // 20
+1	XXXXXXXXXXXX // 21
+	}
+
+/* Character 11 */
+\11 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	    XXXXXXX  // 2
+3	    XXXXXXX  // 3
+4	       XXXX  // 4
+5	      XX XX  // 5
+6	     XX  XX  // 6
+7	   XXXX      // 7
+8	  XX  XX     // 8
+9	  XX  XX     // 9
+0	 XX    XX    // 10
+1	 XX    XX    // 11
+2	  XX  XX     // 12
+3	  XX  XX     // 13
+4	   XXXX      // 14
+5	    XX       // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 12 */
+\12 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	     XX      // 2
+3	    XXXX     // 3
+4	   XX  XX    // 4
+5	  XX    XX   // 5
+6	  XX    XX   // 6
+7	   XX  XX    // 7
+8	    XXXX     // 8
+9	     XX      // 9
+0	     XX      // 10
+1	     XX      // 11
+2	  XXXXXXXX   // 12
+3	  XXXXXXXX   // 13
+4	     XX      // 14
+5	     XX      // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 13 */
+\13 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	    XXXXXXX  // 2
+3	    XX   XX  // 3
+4	    XX   XX  // 4
+5	    XXXXXXX  // 5
+6	    XX       // 6
+7	    XX       // 7
+8	    XX       // 8
+9	    XX       // 9
+0	    XX       // 10
+1	    XX       // 11
+2	    XX       // 12
+3	    XX       // 13
+4	    XX       // 14
+5	  XXXX       // 15
+6	 XXXXX       // 16
+7	 XXXX        // 17
+8	  XX         // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 14 */
+\14 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	   XXXXXXXX  // 2
+3	   XX    XX  // 3
+4	   XX    XX  // 4
+5	   XXXXXXXX  // 5
+6	   XX    XX  // 6
+7	   XX    XX  // 7
+8	   XX    XX  // 8
+9	   XX    XX  // 9
+0	   XX    XX  // 10
+1	   XX    XX  // 11
+2	   XX  XXXX  // 12
+3	   XX XXXXX  // 13
+4	   XX XXXX   // 14
+5	 XXXX  XX    // 15
+6	XXXXX        // 16
+7	XXXX         // 17
+8	 XX          // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 15 */
+\15 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	             // 6
+7	   XX   XX   // 7
+8	    XX XX    // 8
+9	 XX XX XX XX // 9
+0	  XXXX XXXX  // 10
+1	             // 11
+2	  XXXX XXXX  // 12
+3	 XX XX XX XX // 13
+4	    XX XX    // 14
+5	   XX   XX   // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 16 */
+\16 12 22
+	012345678901 {
+0	             // 0
+1	          X  // 1
+2	         XX  // 2
+3	        XXX  // 3
+4	       XXXX  // 4
+5	      XXXXX  // 5
+6	     XXXXXX  // 6
+7	    XXXXXXX  // 7
+8	   XXXXXXXX  // 8
+9	  XXXXXXXXX  // 9
+0	 XXXXXXXXXX  // 10
+1	  XXXXXXXXX  // 11
+2	   XXXXXXXX  // 12
+3	    XXXXXXX  // 13
+4	     XXXXXX  // 14
+5	      XXXXX  // 15
+6	       XXXX  // 16
+7	        XXX  // 17
+8	         XX  // 18
+9	          X  // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 17 */
+\17 12 22
+	012345678901 {
+0	             // 0
+1	 X           // 1
+2	 XX          // 2
+3	 XXX         // 3
+4	 XXXX        // 4
+5	 XXXXX       // 5
+6	 XXXXXX      // 6
+7	 XXXXXXX     // 7
+8	 XXXXXXXX    // 8
+9	 XXXXXXXXX   // 9
+0	 XXXXXXXXXX  // 10
+1	 XXXXXXXXX   // 11
+2	 XXXXXXXX    // 12
+3	 XXXXXXX     // 13
+4	 XXXXXX      // 14
+5	 XXXXX       // 15
+6	 XXXX        // 16
+7	 XXX         // 17
+8	 XX          // 18
+9	 X           // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 18 */
+\18 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	     X       // 4
+5	    XXX      // 5
+6	   XXXXX     // 6
+7	  XXXXXXX    // 7
+8	 XXXXXXXXX   // 8
+9	    XXX      // 9
+0	    XXX      // 10
+1	 XXXXXXXXX   // 11
+2	  XXXXXXX    // 12
+3	   XXXXX     // 13
+4	    XXX      // 14
+5	     X       // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 19 */
+\19 12 22
+	012345678901 {
+0	             // 0
+1	  XX   XX    // 1
+2	  XX   XX    // 2
+3	  XX   XX    // 3
+4	  XX   XX    // 4
+5	  XX   XX    // 5
+6	  XX   XX    // 6
+7	  XX   XX    // 7
+8	  XX   XX    // 8
+9	  XX   XX    // 9
+0	  XX   XX    // 10
+1	  XX   XX    // 11
+2	             // 12
+3	             // 13
+4	  XX   XX    // 14
+5	  XX   XX    // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 20 */
+\20 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	   XXXXXXXXX // 2
+3	  XXXX  XX   // 3
+4	 XXXXX  XX   // 4
+5	 XXXXX  XX   // 5
+6	 XXXXX  XX   // 6
+7	  XXXX  XX   // 7
+8	   XXX  XX   // 8
+9	    XX  XX   // 9
+0	    XX  XX   // 10
+1	    XX  XX   // 11
+2	    XX  XX   // 12
+3	    XX  XX   // 13
+4	    XX  XX   // 14
+5	   XXX  XXX  // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 21 */
+\21 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	   XXXXX     // 2
+3	  XX   XX    // 3
+4	  XX   XX    // 4
+5	  XX         // 5
+6	  XX         // 6
+7	   XXXXX     // 7
+8	  XX   XX    // 8
+9	  XX   XX    // 9
+0	   XXXXX     // 10
+1	       XX    // 11
+2	       XX    // 12
+3	  XX   XX    // 13
+4	  XX   XX    // 14
+5	   XXXXX     // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 22 */
+\22 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	             // 6
+7	             // 7
+8	             // 8
+9	             // 9
+0	             // 10
+1	             // 11
+2	             // 12
+3	 XXXXXXXXXX  // 13
+4	 XXXXXXXXXX  // 14
+5	 XXXXXXXXXX  // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 23 */
+\23 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	     X       // 2
+3	    XXX      // 3
+4	   XXXXX     // 4
+5	  XXXXXXX    // 5
+6	 XXXXXXXXX   // 6
+7	    XXX      // 7
+8	    XXX      // 8
+9	 XXXXXXXXX   // 9
+0	  XXXXXXX    // 10
+1	   XXXXX     // 11
+2	    XXX      // 12
+3	     X       // 13
+4	             // 14
+5	 XXXXXXXXXX  // 15
+6	 XXXXXXXXXX  // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 24 */
+\24 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	     X       // 2
+3	    XXX      // 3
+4	   XXXXX     // 4
+5	  XXXXXXX    // 5
+6	 XXXXXXXXX   // 6
+7	    XXX      // 7
+8	    XXX      // 8
+9	    XXX      // 9
+0	    XXX      // 10
+1	    XXX      // 11
+2	    XXX      // 12
+3	    XXX      // 13
+4	    XXX      // 14
+5	    XXX      // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 25 */
+\25 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	    XXX      // 2
+3	    XXX      // 3
+4	    XXX      // 4
+5	    XXX      // 5
+6	    XXX      // 6
+7	    XXX      // 7
+8	    XXX      // 8
+9	    XXX      // 9
+0	    XXX      // 10
+1	    XXX      // 11
+2	 XXXXXXXXX   // 12
+3	  XXXXXXX    // 13
+4	   XXXXX     // 14
+5	    XXX      // 15
+6	     X       // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 26 */
+\26 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	    X        // 6
+7	   XX        // 7
+8	  XXX        // 8
+9	 XXXXXXXXXX  // 9
+0	XXXXXXXXXXX  // 10
+1	 XXXXXXXXXX  // 11
+2	  XXX        // 12
+3	   XX        // 13
+4	    X        // 14
+5	             // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 27 */
+\27 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	       X     // 6
+7	       XX    // 7
+8	       XXX   // 8
+9	 XXXXXXXXXX  // 9
+0	 XXXXXXXXXXX // 10
+1	 XXXXXXXXXX  // 11
+2	       XXX   // 12
+3	       XX    // 13
+4	       X     // 14
+5	             // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 28 */
+\28 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	             // 6
+7	             // 7
+8	             // 8
+9	             // 9
+0	             // 10
+1	             // 11
+2	             // 12
+3	  XX         // 13
+4	  XX         // 14
+5	  XXXXXXXXX  // 15
+6	  XXXXXXXXX  // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 29 */
+\29 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	    X  X     // 6
+7	   XX  XX    // 7
+8	  XXX  XXX   // 8
+9	 XXXXXXXXXX  // 9
+0	XXXXXXXXXXXX // 10
+1	 XXXXXXXXXX  // 11
+2	  XXX  XXX   // 12
+3	   XX  XX    // 13
+4	    X  X     // 14
+5	             // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 30 */
+\30 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	     X       // 6
+7	     X       // 7
+8	    XXX      // 8
+9	    XXX      // 9
+0	   XXXXX     // 10
+1	   XXXXX     // 11
+2	  XXXXXXX    // 12
+3	  XXXXXXX    // 13
+4	 XXXXXXXXX   // 14
+5	 XXXXXXXXX   // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 31 */
+\31 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	 XXXXXXXXX   // 6
+7	 XXXXXXXXX   // 7
+8	  XXXXXXX    // 8
+9	  XXXXXXX    // 9
+0	   XXXXX     // 10
+1	   XXXXX     // 11
+2	    XXX      // 12
+3	    XXX      // 13
+4	     X       // 14
+5	     X       // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 32, glyph   */
+\32 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	             // 6
+7	             // 7
+8	             // 8
+9	             // 9
+0	             // 10
+1	             // 11
+2	             // 12
+3	             // 13
+4	             // 14
+5	             // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 33, glyph ! */
+\33 12 22
+	012345678901 {
+0	             // 0
+1	     XX      // 1
+2	     XX      // 2
+3	     XX      // 3
+4	     XX      // 4
+5	     XX      // 5
+6	     XX      // 6
+7	     XX      // 7
+8	     XX      // 8
+9	     XX      // 9
+0	     XX      // 10
+1	     XX      // 11
+2	             // 12
+3	             // 13
+4	     XX      // 14
+5	     XX      // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 34, glyph " */
+\34 12 22
+	012345678901 {
+0	             // 0
+1	   XX  XX    // 1
+2	   XX  XX    // 2
+3	   XX  XX    // 3
+4	   XX  XX    // 4
+5	   XX  XX    // 5
+6	   XX  XX    // 6
+7	             // 7
+8	             // 8
+9	             // 9
+0	             // 10
+1	             // 11
+2	             // 12
+3	             // 13
+4	             // 14
+5	             // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 35, glyph # */
+\35 12 22
+	012345678901 {
+0	             // 0
+1	      XX  XX // 1
+2	      XX  XX // 2
+3	      XX  XX // 3
+4	     XX  XX  // 4
+5	   XXXXXXXXX // 5
+6	   XXXXXXXXX // 6
+7	    XX  XX   // 7
+8	    XX  XX   // 8
+9	   XX  XX    // 9
+0	   XX  XX    // 10
+1	 XXXXXXXXX   // 11
+2	 XXXXXXXXX   // 12
+3	  XX  XX     // 13
+4	 XX  XX      // 14
+5	 XX  XX      // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 36, glyph $ */
+\36 12 22
+	012345678901 {
+0	             // 0
+1	     XX      // 1
+2	   XXXXXX    // 2
+3	  XXXXXXXX   // 3
+4	 XX  XX XXX  // 4
+5	 XX  XX  XX  // 5
+6	 XX  XX      // 6
+7	  XXXXX      // 7
+8	   XXXXXX    // 8
+9	     XXXXX   // 9
+0	     XX  XX  // 10
+1	     XX  XX  // 11
+2	 XX  XX  XX  // 12
+3	 XXXXXXXXX   // 13
+4	  XXXXXXX    // 14
+5	     XX      // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 37, glyph % */
+\37 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	  XXX   XX   // 2
+3	 X  XX  XX   // 3
+4	 X   X XX    // 4
+5	 XX  X XX    // 5
+6	  XXX XX     // 6
+7	      XX     // 7
+8	     XX      // 8
+9	     XX      // 9
+0	    XX       // 10
+1	    XX XXX   // 11
+2	   XX X  XX  // 12
+3	   XX X   X  // 13
+4	  XX  XX  X  // 14
+5	  XX   XXX   // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 38, glyph & */
+\38 12 22
+	012345678901 {
+0	             // 0
+1	     XXX     // 1
+2	    XXXXX    // 2
+3	   XX   XX   // 3
+4	   XX   XX   // 4
+5	   XX   XX   // 5
+6	    XXXXX    // 6
+7	   XXXX      // 7
+8	  XXXXX      // 8
+9	 XXX XXX     // 9
+0	 XX   XX XX  // 10
+1	 XX    XXXX  // 11
+2	 XX    XXX   // 12
+3	 XX    XX    // 13
+4	  XXXXXXXXX  // 14
+5	   XXXX  XX  // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 39, glyph ' */
+\39 12 22
+	012345678901 {
+0	             // 0
+1	    XX       // 1
+2	   XXXX      // 2
+3	   XXXX      // 3
+4	     XX      // 4
+5	     XX      // 5
+6	    XX       // 6
+7	   XX        // 7
+8	   X         // 8
+9	             // 9
+0	             // 10
+1	             // 11
+2	             // 12
+3	             // 13
+4	             // 14
+5	             // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 40, glyph ( */
+\40 12 22
+	012345678901 {
+0	             // 0
+1	       XX    // 1
+2	      XX     // 2
+3	     XX      // 3
+4	     XX      // 4
+5	    XX       // 5
+6	    XX       // 6
+7	    XX       // 7
+8	    XX       // 8
+9	    XX       // 9
+0	    XX       // 10
+1	    XX       // 11
+2	     XX      // 12
+3	     XX      // 13
+4	      XX     // 14
+5	       XX    // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 41, glyph ) */
+\41 12 22
+	012345678901 {
+0	             // 0
+1	   XX        // 1
+2	    XX       // 2
+3	     XX      // 3
+4	     XX      // 4
+5	      XX     // 5
+6	      XX     // 6
+7	      XX     // 7
+8	      XX     // 8
+9	      XX     // 9
+0	      XX     // 10
+1	      XX     // 11
+2	     XX      // 12
+3	     XX      // 13
+4	    XX       // 14
+5	   XX        // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 42, glyph * */
+\42 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	    XXXX     // 5
+6	     XX      // 6
+7	 XX  XX  XX  // 7
+8	 XXX XX XXX  // 8
+9	   XX  XX    // 9
+0	             // 10
+1	   XX  XX    // 11
+2	 XXX XX XXX  // 12
+3	 XX  XX  XX  // 13
+4	     XX      // 14
+5	    XXXX     // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 43, glyph + */
+\43 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	     XX      // 6
+7	     XX      // 7
+8	     XX      // 8
+9	     XX      // 9
+0	 XXXXXXXXXX  // 10
+1	 XXXXXXXXXX  // 11
+2	     XX      // 12
+3	     XX      // 13
+4	     XX      // 14
+5	     XX      // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 44, glyph , */
+\44 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	             // 6
+7	             // 7
+8	             // 8
+9	             // 9
+0	             // 10
+1	             // 11
+2	             // 12
+3	    XX       // 13
+4	   XXXX      // 14
+5	   XXXX      // 15
+6	     XX      // 16
+7	     XX      // 17
+8	    XX       // 18
+9	   XX        // 19
+0	   X         // 20
+1	             // 21
+	}
+
+/* Character 45, glyph - */
+\45 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	             // 6
+7	             // 7
+8	             // 8
+9	             // 9
+0	 XXXXXXXXXX  // 10
+1	 XXXXXXXXXX  // 11
+2	             // 12
+3	             // 13
+4	             // 14
+5	             // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 46, glyph . */
+\46 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	             // 6
+7	             // 7
+8	             // 8
+9	             // 9
+0	             // 10
+1	             // 11
+2	    XX       // 12
+3	   XXXX      // 13
+4	   XXXX      // 14
+5	    XX       // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 47, glyph / */
+\47 12 22
+	012345678901 {
+0	             // 0
+1	         XX  // 1
+2	        XX   // 2
+3	        XX   // 3
+4	       XX    // 4
+5	       XX    // 5
+6	      XX     // 6
+7	      XX     // 7
+8	     XX      // 8
+9	     XX      // 9
+0	    XX       // 10
+1	    XX       // 11
+2	   XX        // 12
+3	   XX        // 13
+4	  XX         // 14
+5	  XX         // 15
+6	 XX          // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 48, glyph 0 */
+\48 12 22
+	012345678901 {
+0	             // 0
+1	     XXX     // 1
+2	    XXXXX    // 2
+3	   X   XX    // 3
+4	   X    XX   // 4
+5	  XX    XX   // 5
+6	  XX    XX   // 6
+7	  XX    XX   // 7
+8	  XX    XX   // 8
+9	  XX    XX   // 9
+0	  XX    XX   // 10
+1	  XX    XX   // 11
+2	  XX    X    // 12
+3	   XX   X    // 13
+4	   XXXXX     // 14
+5	    XXX      // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 49, glyph 1 */
+\49 12 22
+	012345678901 {
+0	             // 0
+1	      X      // 1
+2	     XX      // 2
+3	    XXX      // 3
+4	   XXXX      // 4
+5	  XX XX      // 5
+6	     XX      // 6
+7	     XX      // 7
+8	     XX      // 8
+9	     XX      // 9
+0	     XX      // 10
+1	     XX      // 11
+2	     XX      // 12
+3	     XX      // 13
+4	     XX      // 14
+5	  XXXXXXXX   // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 50, glyph 2 */
+\50 12 22
+	012345678901 {
+0	             // 0
+1	   XXXXX     // 1
+2	  XXXXXXX    // 2
+3	 XX    XXX   // 3
+4	 X      XX   // 4
+5	        XX   // 5
+6	        XX   // 6
+7	        XX   // 7
+8	       XX    // 8
+9	      XX     // 9
+0	     XX      // 10
+1	    XX       // 11
+2	   XX        // 12
+3	  XX      X  // 13
+4	 XXXXXXXXXX  // 14
+5	 XXXXXXXXXX  // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 51, glyph 3 */
+\51 12 22
+	012345678901 {
+0	             // 0
+1	    XXXXX    // 1
+2	   XXXXXXX   // 2
+3	  X     XXX  // 3
+4	 X       XX  // 4
+5	         XX  // 5
+6	        XXX  // 6
+7	     XXXXX   // 7
+8	    XXXXXX   // 8
+9	        XXX  // 9
+0	         XX  // 10
+1	         XX  // 11
+2	 X       XX  // 12
+3	 XX      X   // 13
+4	  XXXXXXX    // 14
+5	   XXXXX     // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 52, glyph 4 */
+\52 12 22
+	012345678901 {
+0	             // 0
+1	       XX    // 1
+2	      XXX    // 2
+3	      XXX    // 3
+4	     X XX    // 4
+5	     X XX    // 5
+6	    X  XX    // 6
+7	    X  XX    // 7
+8	   X   XX    // 8
+9	   X   XX    // 9
+0	  X    XX    // 10
+1	  XXXXXXXXX  // 11
+2	 XXXXXXXXXX  // 12
+3	       XX    // 13
+4	       XX    // 14
+5	       XX    // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 53, glyph 5 */
+\53 12 22
+	012345678901 {
+0	             // 0
+1	    XXXXXX   // 1
+2	    XXXXXX   // 2
+3	   X         // 3
+4	   X         // 4
+5	  X          // 5
+6	  XXXXXXX    // 6
+7	  XX   XXX   // 7
+8	        XXX  // 8
+9	         XX  // 9
+0	         XX  // 10
+1	         XX  // 11
+2	 X       XX  // 12
+3	 XX      XX  // 13
+4	  XX    XX   // 14
+5	   XXXXXX    // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 54, glyph 6 */
+\54 12 22
+	012345678901 {
+0	             // 0
+1	     XXX     // 1
+2	    XX       // 2
+3	   XX        // 3
+4	  XX         // 4
+5	  XX         // 5
+6	 XX          // 6
+7	 XX  XXXX    // 7
+8	 XX XXXXXX   // 8
+9	 XXX    XXX  // 9
+0	 XX      XX  // 10
+1	 XX      XX  // 11
+2	 XX      XX  // 12
+3	 XXX     X   // 13
+4	  XXXXXXX    // 14
+5	   XXXXX     // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 55, glyph 7 */
+\55 12 22
+	012345678901 {
+0	             // 0
+1	   XXXXXXXX  // 1
+2	  XXXXXXXXX  // 2
+3	 XX      X   // 3
+4	         X   // 4
+5	        XX   // 5
+6	        X    // 6
+7	        X    // 7
+8	       XX    // 8
+9	       X     // 9
+0	       X     // 10
+1	      XX     // 11
+2	      X      // 12
+3	      X      // 13
+4	     XX      // 14
+5	     X       // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 56, glyph 8 */
+\56 12 22
+	012345678901 {
+0	             // 0
+1	    XXXX     // 1
+2	   X   XX    // 2
+3	  XX    XX   // 3
+4	  XX    XX   // 4
+5	  XX    XX   // 5
+6	   XX   X    // 6
+7	    XX X     // 7
+8	     XX      // 8
+9	    X XX     // 9
+0	   X   XX    // 10
+1	  XX    XX   // 11
+2	  XX    XX   // 12
+3	  XX    XX   // 13
+4	   XX   X    // 14
+5	    XXXX     // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 57, glyph 9 */
+\57 12 22
+	012345678901 {
+0	             // 0
+1	    XXXXX    // 1
+2	   X   XXX   // 2
+3	  X     XXX  // 3
+4	 XX      XX  // 4
+5	 XX      XX  // 5
+6	 XX      XX  // 6
+7	 XXX    XXX  // 7
+8	  XXXXXX XX  // 8
+9	   XXXX  XX  // 9
+0	         XX  // 10
+1	        XX   // 11
+2	        XX   // 12
+3	       XX    // 13
+4	     XXX     // 14
+5	  XXXX       // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 58, glyph : */
+\58 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	    XX       // 6
+7	   XXXX      // 7
+8	   XXXX      // 8
+9	    XX       // 9
+0	             // 10
+1	             // 11
+2	    XX       // 12
+3	   XXXX      // 13
+4	   XXXX      // 14
+5	    XX       // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 59, glyph ; */
+\59 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	             // 6
+7	    XX       // 7
+8	   XXXX      // 8
+9	   XXXX      // 9
+0	    XX       // 10
+1	             // 11
+2	             // 12
+3	    XX       // 13
+4	   XXXX      // 14
+5	   XXXX      // 15
+6	     XX      // 16
+7	     XX      // 17
+8	    XX       // 18
+9	   XX        // 19
+0	   X         // 20
+1	             // 21
+	}
+
+/* Character 60, glyph < */
+\60 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	         XX  // 6
+7	       XXX   // 7
+8	     XXX     // 8
+9	   XXX       // 9
+0	 XXX         // 10
+1	 XXX         // 11
+2	   XXX       // 12
+3	     XXX     // 13
+4	       XXX   // 14
+5	         XX  // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 61, glyph = */
+\61 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	             // 6
+7	             // 7
+8	 XXXXXXXXXX  // 8
+9	 XXXXXXXXXX  // 9
+0	             // 10
+1	             // 11
+2	 XXXXXXXXXX  // 12
+3	 XXXXXXXXXX  // 13
+4	             // 14
+5	             // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 62, glyph > */
+\62 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	 XX          // 6
+7	  XXX        // 7
+8	    XXX      // 8
+9	      XXX    // 9
+0	        XXX  // 10
+1	        XXX  // 11
+2	      XXX    // 12
+3	    XXX      // 13
+4	  XXX        // 14
+5	 XX          // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 63, glyph ? */
+\63 12 22
+	012345678901 {
+0	             // 0
+1	    XXXX     // 1
+2	   XXXXXX    // 2
+3	  XXX  XXX   // 3
+4	  X     XX   // 4
+5	        XX   // 5
+6	        XX   // 6
+7	       XX    // 7
+8	      XX     // 8
+9	     XX      // 9
+0	    XX       // 10
+1	    XX       // 11
+2	             // 12
+3	             // 13
+4	    XX       // 14
+5	    XX       // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 64, glyph @ */
+\64 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	    XXXXX    // 4
+5	  XXXXXXXX   // 5
+6	  XX     XX  // 6
+7	 XX      XX  // 7
+8	 XX  XXX  X  // 8
+9	 XX XXXXX X  // 9
+0	 XX XX  X X  // 10
+1	 XX XX  X X  // 11
+2	 XX  XXXXXX  // 12
+3	 XX          // 13
+4	  XX         // 14
+5	  XXXXXXXXX  // 15
+6	    XXXXXXX  // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 65, glyph A */
+\65 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	     XX      // 2
+3	     XX      // 3
+4	    X XX     // 4
+5	    X XX     // 5
+6	    X  X     // 6
+7	   X   XX    // 7
+8	   X   XX    // 8
+9	   X    X    // 9
+0	  XXXXXXXX   // 10
+1	  X     XX   // 11
+2	  X      X   // 12
+3	 X       XX  // 13
+4	 X       XX  // 14
+5	XXX     XXXX // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 66, glyph B */
+\66 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	XXXXXXXX     // 2
+3	 XX     X    // 3
+4	 XX     XX   // 4
+5	 XX     XX   // 5
+6	 XX     XX   // 6
+7	 XX    XX    // 7
+8	 XXXXXXXX    // 8
+9	 XX     XX   // 9
+0	 XX      XX  // 10
+1	 XX      XX  // 11
+2	 XX      XX  // 12
+3	 XX      XX  // 13
+4	 XX     XX   // 14
+5	XXXXXXXXX    // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 67, glyph C */
+\67 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	    XXXXXX   // 2
+3	   X     XX  // 3
+4	  X       X  // 4
+5	  X          // 5
+6	 XX          // 6
+7	 XX          // 7
+8	 XX          // 8
+9	 XX          // 9
+0	 XX          // 10
+1	 XX          // 11
+2	  X          // 12
+3	  XX      X  // 13
+4	   XX    X   // 14
+5	    XXXXX    // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 68, glyph D */
+\68 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	XXXXXXXX     // 2
+3	 XX    XXX   // 3
+4	 XX     XX   // 4
+5	 XX      XX  // 5
+6	 XX      XX  // 6
+7	 XX      XX  // 7
+8	 XX      XX  // 8
+9	 XX      XX  // 9
+0	 XX      XX  // 10
+1	 XX      XX  // 11
+2	 XX      XX  // 12
+3	 XX      X   // 13
+4	 XX    XX    // 14
+5	XXXXXXX      // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 69, glyph E */
+\69 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	 XXXXXXXXX   // 2
+3	  XX     X   // 3
+4	  XX     X   // 4
+5	  XX         // 5
+6	  XX         // 6
+7	  XX    X    // 7
+8	  XXXXXXX    // 8
+9	  XX    X    // 9
+0	  XX         // 10
+1	  XX         // 11
+2	  XX         // 12
+3	  XX      X  // 13
+4	  XX      X  // 14
+5	 XXXXXXXXXX  // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 70, glyph F */
+\70 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	 XXXXXXXXX   // 2
+3	  XX     X   // 3
+4	  XX     X   // 4
+5	  XX         // 5
+6	  XX         // 6
+7	  XX    X    // 7
+8	  XXXXXXX    // 8
+9	  XX    X    // 9
+0	  XX         // 10
+1	  XX         // 11
+2	  XX         // 12
+3	  XX         // 13
+4	  XX         // 14
+5	 XXXX        // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 71, glyph G */
+\71 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	    XXXXXX   // 2
+3	   X     XX  // 3
+4	  X       X  // 4
+5	  X          // 5
+6	 XX          // 6
+7	 XX          // 7
+8	 XX          // 8
+9	 XX          // 9
+0	 XX    XXXXX // 10
+1	 XX      XX  // 11
+2	  X      XX  // 12
+3	  XX     XX  // 13
+4	   XX    XX  // 14
+5	    XXXXX    // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 72, glyph H */
+\72 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	XXXX    XXXX // 2
+3	 XX      XX  // 3
+4	 XX      XX  // 4
+5	 XX      XX  // 5
+6	 XX      XX  // 6
+7	 XX      XX  // 7
+8	 XXXXXXXXXX  // 8
+9	 XX      XX  // 9
+0	 XX      XX  // 10
+1	 XX      XX  // 11
+2	 XX      XX  // 12
+3	 XX      XX  // 13
+4	 XX      XX  // 14
+5	XXXX    XXXX // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 73, glyph I */
+\73 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	   XXXXXX    // 2
+3	     XX      // 3
+4	     XX      // 4
+5	     XX      // 5
+6	     XX      // 6
+7	     XX      // 7
+8	     XX      // 8
+9	     XX      // 9
+0	     XX      // 10
+1	     XX      // 11
+2	     XX      // 12
+3	     XX      // 13
+4	     XX      // 14
+5	   XXXXXX    // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 74, glyph J */
+\74 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	   XXXXXX    // 2
+3	     XX      // 3
+4	     XX      // 4
+5	     XX      // 5
+6	     XX      // 6
+7	     XX      // 7
+8	     XX      // 8
+9	     XX      // 9
+0	     XX      // 10
+1	     XX      // 11
+2	     XX      // 12
+3	     XX      // 13
+4	     XX      // 14
+5	     XX      // 15
+6	     XX      // 16
+7	     XX      // 17
+8	     X       // 18
+9	  XXX        // 19
+0	  XX         // 20
+1	             // 21
+	}
+
+/* Character 75, glyph K */
+\75 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	XXXX    XXX  // 2
+3	 XX    XX    // 3
+4	 XX   XX     // 4
+5	 XX  XX      // 5
+6	 XX XX       // 6
+7	 XXXX        // 7
+8	 XXXX        // 8
+9	 XXXXX       // 9
+0	 XX XXX      // 10
+1	 XX  XXX     // 11
+2	 XX   XXX    // 12
+3	 XX    XXX   // 13
+4	 XX     XXX  // 14
+5	XXXX     XXX // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 76, glyph L */
+\76 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	 XXXX        // 2
+3	  XX         // 3
+4	  XX         // 4
+5	  XX         // 5
+6	  XX         // 6
+7	  XX         // 7
+8	  XX         // 8
+9	  XX         // 9
+0	  XX         // 10
+1	  XX         // 11
+2	  XX         // 12
+3	  XX      X  // 13
+4	  XX      X  // 14
+5	 XXXXXXXXXX  // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 77, glyph M */
+\77 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	XXX      XXX // 2
+3	 XX     XXX  // 3
+4	 XXX    XXX  // 4
+5	 XXX    XXX  // 5
+6	 XXX    XXX  // 6
+7	 X XX  X XX  // 7
+8	 X XX  X XX  // 8
+9	 X XX  X XX  // 9
+0	 X  XX X XX  // 10
+1	 X  XXX  XX  // 11
+2	 X  XXX  XX  // 12
+3	 X   X   XX  // 13
+4	 X   X   XX  // 14
+5	XXX  X  XXXX // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 78, glyph N */
+\78 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	XX       XXX // 2
+3	 XX       X  // 3
+4	 XXX      X  // 4
+5	 XXXX     X  // 5
+6	 X XX     X  // 6
+7	 X  XX    X  // 7
+8	 X   XX   X  // 8
+9	 X   XXX  X  // 9
+0	 X    XX  X  // 10
+1	 X     XX X  // 11
+2	 X      XXX  // 12
+3	 X      XXX  // 13
+4	 X       XX  // 14
+5	XXX       XX // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 79, glyph O */
+\79 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	    XXXX     // 2
+3	   X   XXX   // 3
+4	  X     XX   // 4
+5	  X      XX  // 5
+6	 XX      XX  // 6
+7	 XX      XX  // 7
+8	 XX      XX  // 8
+9	 XX      XX  // 9
+0	 XX      XX  // 10
+1	 XX      XX  // 11
+2	  X      X   // 12
+3	  XX     X   // 13
+4	   XX   X    // 14
+5	    XXXX     // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 80, glyph P */
+\80 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	 XXXXXXXX    // 2
+3	  XX    XX   // 3
+4	  XX     XX  // 4
+5	  XX     XX  // 5
+6	  XX     XX  // 6
+7	  XX    XX   // 7
+8	  XX XXXX    // 8
+9	  XX         // 9
+0	  XX         // 10
+1	  XX         // 11
+2	  XX         // 12
+3	  XX         // 13
+4	  XX         // 14
+5	 XXXX        // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 81, glyph Q */
+\81 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	    XXXX     // 2
+3	   X   XXX   // 3
+4	  X     XX   // 4
+5	  X      XX  // 5
+6	 XX      XX  // 6
+7	 XX      XX  // 7
+8	 XX      XX  // 8
+9	 XX      XX  // 9
+0	 XX      XX  // 10
+1	 XX      XX  // 11
+2	  XX     X   // 12
+3	  XXX    X   // 13
+4	   XXXXXX    // 14
+5	    XXX      // 15
+6	   XXXXX     // 16
+7	  X   XXX  X // 17
+8	       XXXX  // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 82, glyph R */
+\82 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	XXXXXXXX     // 2
+3	 XX    XX    // 3
+4	 XX     XX   // 4
+5	 XX     XX   // 5
+6	 XX     XX   // 6
+7	 XX     X    // 7
+8	 XXXXXXX     // 8
+9	 XXXXX       // 9
+0	 XX XXX      // 10
+1	 XX  XXX     // 11
+2	 XX   XXX    // 12
+3	 XX    XXX   // 13
+4	 XX     XXX  // 14
+5	XXXX     XXX // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 83, glyph S */
+\83 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	   XXXXXXXX  // 2
+3	  XX     XX  // 3
+4	 XX       X  // 4
+5	 XX       X  // 5
+6	 XXX         // 6
+7	  XXXX       // 7
+8	   XXXX      // 8
+9	     XXXX    // 9
+0	       XXX   // 10
+1	        XXX  // 11
+2	 X       XX  // 12
+3	 X       XX  // 13
+4	 XX     XX   // 14
+5	 XXXXXXXX    // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 84, glyph T */
+\84 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	 XXXXXXXXXX  // 2
+3	 X   XX   X  // 3
+4	     XX      // 4
+5	     XX      // 5
+6	     XX      // 6
+7	     XX      // 7
+8	     XX      // 8
+9	     XX      // 9
+0	     XX      // 10
+1	     XX      // 11
+2	     XX      // 12
+3	     XX      // 13
+4	     XX      // 14
+5	   XXXXXX    // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 85, glyph U */
+\85 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	XXXX     XXX // 2
+3	 XX       X  // 3
+4	 XX       X  // 4
+5	 XX       X  // 5
+6	 XX       X  // 6
+7	 XX       X  // 7
+8	 XX       X  // 8
+9	 XX       X  // 9
+0	 XX       X  // 10
+1	 XX       X  // 11
+2	 XX       X  // 12
+3	 XXX     X   // 13
+4	  XXXXXXXX   // 14
+5	   XXXXXX    // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 86, glyph V */
+\86 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	XXX     XXX  // 2
+3	 XX      X   // 3
+4	  XX    X    // 4
+5	  XX    X    // 5
+6	  XX    X    // 6
+7	   XX  X     // 7
+8	   XX  X     // 8
+9	   XX  X     // 9
+0	    X X      // 10
+1	    XXX      // 11
+2	    XXX      // 12
+3	     X       // 13
+4	     X       // 14
+5	     X       // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 87, glyph W */
+\87 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	XXXXXXX XXXX // 2
+3	 XX  XX   X  // 3
+4	 XX  XX   X  // 4
+5	 XX  XX   X  // 5
+6	 XXX XX   X  // 6
+7	 XXX XXX X   // 7
+8	  XX  XX X   // 8
+9	  XX XXX X   // 9
+0	  XXX XXXX   // 10
+1	  XXX XXX    // 11
+2	   XX  XX    // 12
+3	   XX  XX    // 13
+4	   XX  XX    // 14
+5	   XX  XX    // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 88, glyph X */
+\88 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	XXXX     XXX // 2
+3	 XX       X  // 3
+4	  XX     X   // 4
+5	  XXX   X    // 5
+6	   XX   X    // 6
+7	    XX X     // 7
+8	     XX      // 8
+9	     XX      // 9
+0	    X XX     // 10
+1	   X   XX    // 11
+2	   X   XXX   // 12
+3	  X     XX   // 13
+4	 X       XX  // 14
+5	XXX     XXXX // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 89, glyph Y */
+\89 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	XXXX     XXX // 2
+3	 XX       X  // 3
+4	  XX     X   // 4
+5	   XX   X    // 5
+6	   XX   X    // 6
+7	    XX X     // 7
+8	     XX      // 8
+9	     XX      // 9
+0	     XX      // 10
+1	     XX      // 11
+2	     XX      // 12
+3	     XX      // 13
+4	     XX      // 14
+5	    XXXX     // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 90, glyph Z */
+\90 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	  XXXXXXXXX  // 2
+3	  X     XX   // 3
+4	        XX   // 4
+5	       XX    // 5
+6	       XX    // 6
+7	      XX     // 7
+8	      XX     // 8
+9	     XX      // 9
+0	     XX      // 10
+1	    XX       // 11
+2	    XX       // 12
+3	   XX        // 13
+4	   XX     X  // 14
+5	  XXXXXXXXX  // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 91, glyph [ */
+\91 12 22
+	012345678901 {
+0	             // 0
+1	    XXXXX    // 1
+2	    XXXXX    // 2
+3	    XX       // 3
+4	    XX       // 4
+5	    XX       // 5
+6	    XX       // 6
+7	    XX       // 7
+8	    XX       // 8
+9	    XX       // 9
+0	    XX       // 10
+1	    XX       // 11
+2	    XX       // 12
+3	    XX       // 13
+4	    XXXXX    // 14
+5	    XXXXX    // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 92, glyph \ */
+\92 12 22
+	012345678901 {
+0	             // 0
+1	 XX          // 1
+2	  XX         // 2
+3	  XX         // 3
+4	   XX        // 4
+5	   XX        // 5
+6	    XX       // 6
+7	    XX       // 7
+8	     XX      // 8
+9	     XX      // 9
+0	      XX     // 10
+1	      XX     // 11
+2	       XX    // 12
+3	       XX    // 13
+4	        XX   // 14
+5	        XX   // 15
+6	         XX  // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 93, glyph ] */
+\93 12 22
+	012345678901 {
+0	             // 0
+1	   XXXXX     // 1
+2	   XXXXX     // 2
+3	      XX     // 3
+4	      XX     // 4
+5	      XX     // 5
+6	      XX     // 6
+7	      XX     // 7
+8	      XX     // 8
+9	      XX     // 9
+0	      XX     // 10
+1	      XX     // 11
+2	      XX     // 12
+3	      XX     // 13
+4	   XXXXX     // 14
+5	   XXXXX     // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 94, glyph ^ */
+\94 12 22
+	012345678901 {
+0	             // 0
+1	     X       // 1
+2	    XXX      // 2
+3	   XX XX     // 3
+4	  XX   XX    // 4
+5	 XX     XX   // 5
+6	             // 6
+7	             // 7
+8	             // 8
+9	             // 9
+0	             // 10
+1	             // 11
+2	             // 12
+3	             // 13
+4	             // 14
+5	             // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 95, glyph _ */
+\95 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	             // 6
+7	             // 7
+8	             // 8
+9	             // 9
+0	             // 10
+1	             // 11
+2	             // 12
+3	             // 13
+4	             // 14
+5	             // 15
+6	             // 16
+7	XXXXXXXXXXXX // 17
+8	XXXXXXXXXXXX // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 96, glyph ` */
+\96 12 22
+	012345678901 {
+0	             // 0
+1	       X     // 1
+2	      XX     // 2
+3	     XX      // 3
+4	     XX      // 4
+5	     XXXX    // 5
+6	     XXXX    // 6
+7	      XX     // 7
+8	             // 8
+9	             // 9
+0	             // 10
+1	             // 11
+2	             // 12
+3	             // 13
+4	             // 14
+5	             // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 97, glyph a */
+\97 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	    XXXXX    // 6
+7	   XX   XX   // 7
+8	   X    XX   // 8
+9	      XXXX   // 9
+0	   XXX  XX   // 10
+1	  XX    XX   // 11
+2	  XX    XX   // 12
+3	  XX    XX   // 13
+4	  XXX  XXX   // 14
+5	   XXXX XXX  // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 98, glyph b */
+\98 12 22
+	012345678901 {
+0	             // 0
+1	  X          // 1
+2	 XX          // 2
+3	XXX          // 3
+4	 XX          // 4
+5	 XX          // 5
+6	 XX  XXXX    // 6
+7	 XX XXXXXX   // 7
+8	 XXX    XXX  // 8
+9	 XX      XX  // 9
+0	 XX      XX  // 10
+1	 XX      XX  // 11
+2	 XX      XX  // 12
+3	 XXX     XX  // 13
+4	 XXXX   XX   // 14
+5	 X  XXXXX    // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 99, glyph c */
+\99 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	   XXXXXX    // 6
+7	  XX   XXX   // 7
+8	  X     XX   // 8
+9	 XX          // 9
+0	 XX          // 10
+1	 XX          // 11
+2	 XX          // 12
+3	 XXX     X   // 13
+4	  XX    XX   // 14
+5	   XXXXXX    // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 100, glyph d */
+\100 12 22
+	012345678901 {
+0	             // 0
+1	         XX  // 1
+2	        XXX  // 2
+3	         XX  // 3
+4	         XX  // 4
+5	         XX  // 5
+6	    XXXX XX  // 6
+7	  XX   XXXX  // 7
+8	  X     XXX  // 8
+9	 XX      XX  // 9
+0	 XX      XX  // 10
+1	 XX      XX  // 11
+2	 XX      XX  // 12
+3	 XXX    XXX  // 13
+4	  XXX  X XX  // 14
+5	   XXXX  XXX // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 101, glyph e */
+\101 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	    XXXX     // 6
+7	  XX    XX   // 7
+8	 XX      XX  // 8
+9	 XX      XX  // 9
+0	 XXXXXXXXXX  // 10
+1	 XX          // 11
+2	 XX          // 12
+3	  XX         // 13
+4	   XX    XX  // 14
+5	    XXXXX    // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 102, glyph f */
+\102 12 22
+	012345678901 {
+0	             // 0
+1	      XXX    // 1
+2	     X  XX   // 2
+3	     X  XX   // 3
+4	    XX       // 4
+5	    XX       // 5
+6	    XX       // 6
+7	    XX       // 7
+8	  XXXXXXX    // 8
+9	    XX       // 9
+0	    XX       // 10
+1	    XX       // 11
+2	    XX       // 12
+3	    XX       // 13
+4	    XX       // 14
+5	   XXXX      // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 103, glyph g */
+\103 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	   XXXXX  X  // 6
+7	  XX   XXXX  // 7
+8	 XX     XX   // 8
+9	 XX     XX   // 9
+0	 XX     XX   // 10
+1	  XX   XX    // 11
+2	  XXXXXX     // 12
+3	 XX          // 13
+4	 XXXXXXXXX   // 14
+5	  XXXXXXXXX  // 15
+6	  X      XX  // 16
+7	 X        X  // 17
+8	 X        X  // 18
+9	 XXXXXXXXX   // 19
+0	  XXXXXXX    // 20
+1	             // 21
+	}
+
+/* Character 104, glyph h */
+\104 12 22
+	012345678901 {
+0	             // 0
+1	   X         // 1
+2	  XX         // 2
+3	 XXX         // 3
+4	  XX         // 4
+5	  XX         // 5
+6	  XX XXXX    // 6
+7	  XXX  XXX   // 7
+8	  XX    XX   // 8
+9	  XX    XX   // 9
+0	  XX    XX   // 10
+1	  XX    XX   // 11
+2	  XX    XX   // 12
+3	  XX    XX   // 13
+4	  XX    XX   // 14
+5	 XXXX  XXXX  // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 105, glyph i */
+\105 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	     XX      // 2
+3	     XX      // 3
+4	             // 4
+5	             // 5
+6	   XXXX      // 6
+7	     XX      // 7
+8	     XX      // 8
+9	     XX      // 9
+0	     XX      // 10
+1	     XX      // 11
+2	     XX      // 12
+3	     XX      // 13
+4	     XX      // 14
+5	   XXXXXX    // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 106, glyph j */
+\106 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	        XX   // 2
+3	        XX   // 3
+4	             // 4
+5	             // 5
+6	      XXXX   // 6
+7	        XX   // 7
+8	        XX   // 8
+9	        XX   // 9
+0	        XX   // 10
+1	        XX   // 11
+2	        XX   // 12
+3	        XX   // 13
+4	        XX   // 14
+5	        XX   // 15
+6	  X     XX   // 16
+7	  XX    XX   // 17
+8	  XXX   X    // 18
+9	   XXXXX     // 19
+0	    XXX      // 20
+1	             // 21
+	}
+
+/* Character 107, glyph k */
+\107 12 22
+	012345678901 {
+0	             // 0
+1	 XX          // 1
+2	XXX          // 2
+3	 XX          // 3
+4	 XX          // 4
+5	 XX          // 5
+6	 XX    XXX   // 6
+7	 XX   XX     // 7
+8	 XX  XX      // 8
+9	 XXXXX       // 9
+0	 XXXX        // 10
+1	 XXXXX       // 11
+2	 XX XXX      // 12
+3	 XX  XXX     // 13
+4	 XX   XXX    // 14
+5	XXXX   XXXX  // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 108, glyph l */
+\108 12 22
+	012345678901 {
+0	             // 0
+1	   XXXX      // 1
+2	     XX      // 2
+3	     XX      // 3
+4	     XX      // 4
+5	     XX      // 5
+6	     XX      // 6
+7	     XX      // 7
+8	     XX      // 8
+9	     XX      // 9
+0	     XX      // 10
+1	     XX      // 11
+2	     XX      // 12
+3	     XX      // 13
+4	     XX      // 14
+5	   XXXXXX    // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 109, glyph m */
+\109 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	XX XXX XXX   // 6
+7	 XX XXX XXX  // 7
+8	 XX  XX  XX  // 8
+9	 XX  XX  XX  // 9
+0	 XX  XX  XX  // 10
+1	 XX  XX  XX  // 11
+2	 XX  XX  XX  // 12
+3	 XX  XX  XX  // 13
+4	 XX  XX  XX  // 14
+5	XXX XXXX XXX // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 110, glyph n */
+\110 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	  X  XXXX    // 6
+7	 XXXX  XXX   // 7
+8	  XX    XX   // 8
+9	  XX    XX   // 9
+0	  XX    XX   // 10
+1	  XX    XX   // 11
+2	  XX    XX   // 12
+3	  XX    XX   // 13
+4	  XX    XX   // 14
+5	 XXXX  XXXX  // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 111, glyph o */
+\111 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	    XXXXX    // 6
+7	   X   XXX   // 7
+8	  X     XXX  // 8
+9	 XX      XX  // 9
+0	 XX      XX  // 10
+1	 XX      XX  // 11
+2	 XX      XX  // 12
+3	 XXX     X   // 13
+4	  XXX   X    // 14
+5	   XXXXX     // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 112, glyph p */
+\112 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	XXX XXXXX    // 6
+7	 XXX   XXX   // 7
+8	 XX     XXX  // 8
+9	 XX      XX  // 9
+0	 XX      XX  // 10
+1	 XX      XX  // 11
+2	 XX      XX  // 12
+3	 XX      X   // 13
+4	 XXX    X    // 14
+5	 XXXXXXX     // 15
+6	 XX          // 16
+7	 XX          // 17
+8	 XX          // 18
+9	 XX          // 19
+0	XXXX         // 20
+1	             // 21
+	}
+
+/* Character 113, glyph q */
+\113 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	    XXXX  X  // 6
+7	   X   XXXX  // 7
+8	  X     XXX  // 8
+9	 XX      XX  // 9
+0	 XX      XX  // 10
+1	 XX      XX  // 11
+2	 XX      XX  // 12
+3	 XXX     XX  // 13
+4	  XXX   XXX  // 14
+5	   XXXXXXXX  // 15
+6	         XX  // 16
+7	         XX  // 17
+8	         XX  // 18
+9	         XX  // 19
+0	        XXXX // 20
+1	             // 21
+	}
+
+/* Character 114, glyph r */
+\114 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	 XXX  XXX    // 6
+7	  XX X  XX   // 7
+8	  XXX   XX   // 8
+9	  XX         // 9
+0	  XX         // 10
+1	  XX         // 11
+2	  XX         // 12
+3	  XX         // 13
+4	  XX         // 14
+5	 XXXX        // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 115, glyph s */
+\115 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	   XXXXXXX   // 6
+7	  XX    XX   // 7
+8	  XX     X   // 8
+9	  XXX        // 9
+0	   XXXX      // 10
+1	     XXXX    // 11
+2	       XXX   // 12
+3	  X     XX   // 13
+4	  XX    XX   // 14
+5	  XXXXXXX    // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 116, glyph t */
+\116 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	     X       // 3
+4	     X       // 4
+5	    XX       // 5
+6	 XXXXXXXXX   // 6
+7	    XX       // 7
+8	    XX       // 8
+9	    XX       // 9
+0	    XX       // 10
+1	    XX       // 11
+2	    XX       // 12
+3	    XX    X  // 13
+4	    XXX  X   // 14
+5	     XXXX    // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 117, glyph u */
+\117 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	 XXXX  XXXX  // 6
+7	  XX    XX   // 7
+8	  XX    XX   // 8
+9	  XX    XX   // 9
+0	  XX    XX   // 10
+1	  XX    XX   // 11
+2	  XX    XX   // 12
+3	  XX    XX   // 13
+4	  XXX  XXX   // 14
+5	   XXXX  XX  // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 118, glyph v */
+\118 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	XXXX     XXX // 6
+7	 XX       X  // 7
+8	  XX     X   // 8
+9	  XX     X   // 9
+0	   XX   X    // 10
+1	   XX   X    // 11
+2	    XX X     // 12
+3	    XX X     // 13
+4	     XX      // 14
+5	     XX      // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 119, glyph w */
+\119 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	XXXXXXXX XXX // 6
+7	 XX  XX   X  // 7
+8	 XX  XX   X  // 8
+9	 XX  XX   X  // 9
+0	  XX XXX X   // 10
+1	  XXX XX X   // 11
+2	  XXX XX X   // 12
+3	   XX  XX    // 13
+4	   XX  XX    // 14
+5	   XX  XX    // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 120, glyph x */
+\120 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	XXXXX   XXXX // 6
+7	 XXX     X   // 7
+8	  XXX   X    // 8
+9	   XXX X     // 9
+0	    XXX      // 10
+1	     XXX     // 11
+2	    X XXX    // 12
+3	   X   XXX   // 13
+4	  X     XXX  // 14
+5	XXXX   XXXXX // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 121, glyph y */
+\121 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	XXXX    XXXX // 6
+7	 XX       X  // 7
+8	  XX     X   // 8
+9	  XX     X   // 9
+0	   XX   X    // 10
+1	   XX   X    // 11
+2	    XX X     // 12
+3	    XX X     // 13
+4	     XX      // 14
+5	     XX      // 15
+6	     X       // 16
+7	    XX       // 17
+8	    X        // 18
+9	 XXXX        // 19
+0	 XXX         // 20
+1	             // 21
+	}
+
+/* Character 122, glyph z */
+\122 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	 XXXXXXXXXX  // 6
+7	 XX     XXX  // 7
+8	 X     XXX   // 8
+9	      XXX    // 9
+0	     XXX     // 10
+1	    XXX      // 11
+2	   XXX       // 12
+3	  XXX     X  // 13
+4	 XXX     XX  // 14
+5	 XXXXXXXXXX  // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 123, glyph { */
+\123 12 22
+	012345678901 {
+0	             // 0
+1	      XXX    // 1
+2	     XX      // 2
+3	     XX      // 3
+4	     XX      // 4
+5	     XX      // 5
+6	     XX      // 6
+7	    XX       // 7
+8	  XXX        // 8
+9	    XX       // 9
+0	     XX      // 10
+1	     XX      // 11
+2	     XX      // 12
+3	     XX      // 13
+4	     XX      // 14
+5	      XXX    // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 124, glyph | */
+\124 12 22
+	012345678901 {
+0	             // 0
+1	     XX      // 1
+2	     XX      // 2
+3	     XX      // 3
+4	     XX      // 4
+5	     XX      // 5
+6	     XX      // 6
+7	     XX      // 7
+8	     XX      // 8
+9	     XX      // 9
+0	     XX      // 10
+1	     XX      // 11
+2	     XX      // 12
+3	     XX      // 13
+4	     XX      // 14
+5	     XX      // 15
+6	     XX      // 16
+7	     XX      // 17
+8	     XX      // 18
+9	     XX      // 19
+0	     XX      // 20
+1	             // 21
+	}
+
+/* Character 125, glyph } */
+\125 12 22
+	012345678901 {
+0	             // 0
+1	   XXX       // 1
+2	     XX      // 2
+3	     XX      // 3
+4	     XX      // 4
+5	     XX      // 5
+6	     XX      // 6
+7	      XX     // 7
+8	       XXX   // 8
+9	      XX     // 9
+0	     XX      // 10
+1	     XX      // 11
+2	     XX      // 12
+3	     XX      // 13
+4	     XX      // 14
+5	   XXX       // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 126, glyph ~ */
+\126 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	   XXX    X  // 3
+4	  XXXXX  XX  // 4
+5	 XX  XXXXX   // 5
+6	 X    XXX    // 6
+7	             // 7
+8	             // 8
+9	             // 9
+0	             // 10
+1	             // 11
+2	             // 12
+3	             // 13
+4	             // 14
+5	             // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 127, glyph  */
+\127 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	             // 6
+7	             // 7
+8	             // 8
+9	             // 9
+0	             // 10
+1	             // 11
+2	             // 12
+3	             // 13
+4	             // 14
+5	             // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	XXXXXXXXXXXX // 19
+0	XXXXXXXXXXXX // 20
+1	             // 21
+	}
+
+/* Character 128, glyph Ä */
+\128 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	    XXXXXX   // 2
+3	   X     XX  // 3
+4	  X       X  // 4
+5	  X          // 5
+6	 XX          // 6
+7	 XX          // 7
+8	 XX          // 8
+9	 XX          // 9
+0	 XX          // 10
+1	 XX          // 11
+2	  X          // 12
+3	  XX      X  // 13
+4	   XX    X   // 14
+5	    XXXXX    // 15
+6	     XX      // 16
+7	      XX     // 17
+8	       XX    // 18
+9	    XXXX     // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 129, glyph Å */
+\129 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	   XX  XX    // 2
+3	   XX  XX    // 3
+4	             // 4
+5	             // 5
+6	 XXXX  XXXX  // 6
+7	  XX    XX   // 7
+8	  XX    XX   // 8
+9	  XX    XX   // 9
+0	  XX    XX   // 10
+1	  XX    XX   // 11
+2	  XX    XX   // 12
+3	  XX    XX   // 13
+4	  XXX  XXX   // 14
+5	   XXXX  XX  // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 130, glyph Ç */
+\130 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	       XX    // 2
+3	      XX     // 3
+4	     XX      // 4
+5	             // 5
+6	    XXXX     // 6
+7	  XX    XX   // 7
+8	 XX      XX  // 8
+9	 XX      XX  // 9
+0	 XXXXXXXXXX  // 10
+1	 XX          // 11
+2	 XX          // 12
+3	  XX         // 13
+4	   XX    XX  // 14
+5	    XXXXX    // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 131, glyph É */
+\131 12 22
+	012345678901 {
+0	             // 0
+1	      X      // 1
+2	     XXX     // 2
+3	    XX XX    // 3
+4	   XX   XX   // 4
+5	             // 5
+6	    XXXXX    // 6
+7	   XX   XX   // 7
+8	   X    XX   // 8
+9	      XXXX   // 9
+0	   XXX  XX   // 10
+1	  XX    XX   // 11
+2	  XX    XX   // 12
+3	  XX    XX   // 13
+4	  XXX  XXX   // 14
+5	   XXXX XXX  // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 132, glyph Ñ */
+\132 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	   XX  XX    // 2
+3	   XX  XX    // 3
+4	             // 4
+5	             // 5
+6	    XXXXX    // 6
+7	   XX   XX   // 7
+8	   X    XX   // 8
+9	      XXXX   // 9
+0	   XXX  XX   // 10
+1	  XX    XX   // 11
+2	  XX    XX   // 12
+3	  XX    XX   // 13
+4	  XXX  XXX   // 14
+5	   XXXX XXX  // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 133, glyph Ö */
+\133 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	    XX       // 2
+3	     XX      // 3
+4	      XX     // 4
+5	             // 5
+6	    XXXXX    // 6
+7	   XX   XX   // 7
+8	   X    XX   // 8
+9	      XXXX   // 9
+0	   XXX  XX   // 10
+1	  XX    XX   // 11
+2	  XX    XX   // 12
+3	  XX    XX   // 13
+4	  XXX  XXX   // 14
+5	   XXXX XXX  // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 134, glyph Ü */
+\134 12 22
+	012345678901 {
+0	             // 0
+1	     XXX     // 1
+2	    XX XX    // 2
+3	    XX XX    // 3
+4	     XXX     // 4
+5	             // 5
+6	    XXXXX    // 6
+7	   XX   XX   // 7
+8	   X    XX   // 8
+9	      XXXX   // 9
+0	   XXX  XX   // 10
+1	  XX    XX   // 11
+2	  XX    XX   // 12
+3	  XX    XX   // 13
+4	  XXX  XXX   // 14
+5	   XXXX XXX  // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 135, glyph á */
+\135 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	   XXXXXX    // 6
+7	  XX   XXX   // 7
+8	  X     XX   // 8
+9	 XX          // 9
+0	 XX          // 10
+1	 XX          // 11
+2	 XX          // 12
+3	 XXX     X   // 13
+4	  XX    XX   // 14
+5	   XXXXXX    // 15
+6	     XX      // 16
+7	      XX     // 17
+8	       XX    // 18
+9	    XXXX     // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 136, glyph à */
+\136 12 22
+	012345678901 {
+0	             // 0
+1	      X      // 1
+2	     XXX     // 2
+3	    XX XX    // 3
+4	   XX   XX   // 4
+5	             // 5
+6	    XXXX     // 6
+7	  XX    XX   // 7
+8	 XX      XX  // 8
+9	 XX      XX  // 9
+0	 XXXXXXXXXX  // 10
+1	 XX          // 11
+2	 XX          // 12
+3	  XX         // 13
+4	   XX    XX  // 14
+5	    XXXXX    // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 137, glyph â */
+\137 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	   XX  XX    // 2
+3	   XX  XX    // 3
+4	             // 4
+5	             // 5
+6	    XXXX     // 6
+7	  XX    XX   // 7
+8	 XX      XX  // 8
+9	 XX      XX  // 9
+0	 XXXXXXXXXX  // 10
+1	 XX          // 11
+2	 XX          // 12
+3	  XX         // 13
+4	   XX    XX  // 14
+5	    XXXXX    // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 138, glyph ä */
+\138 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	    XX       // 2
+3	     XX      // 3
+4	      XX     // 4
+5	             // 5
+6	    XXXX     // 6
+7	  XX    XX   // 7
+8	 XX      XX  // 8
+9	 XX      XX  // 9
+0	 XXXXXXXXXX  // 10
+1	 XX          // 11
+2	 XX          // 12
+3	  XX         // 13
+4	   XX    XX  // 14
+5	    XXXXX    // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 139, glyph ã */
+\139 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	   XX  XX    // 2
+3	   XX  XX    // 3
+4	             // 4
+5	             // 5
+6	   XXXX      // 6
+7	     XX      // 7
+8	     XX      // 8
+9	     XX      // 9
+0	     XX      // 10
+1	     XX      // 11
+2	     XX      // 12
+3	     XX      // 13
+4	     XX      // 14
+5	   XXXXXX    // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 140, glyph å */
+\140 12 22
+	012345678901 {
+0	             // 0
+1	     X       // 1
+2	    XXX      // 2
+3	   XX XX     // 3
+4	  XX   XX    // 4
+5	             // 5
+6	   XXXX      // 6
+7	     XX      // 7
+8	     XX      // 8
+9	     XX      // 9
+0	     XX      // 10
+1	     XX      // 11
+2	     XX      // 12
+3	     XX      // 13
+4	     XX      // 14
+5	   XXXXXX    // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 141, glyph ç */
+\141 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	   XX        // 2
+3	    XX       // 3
+4	     XX      // 4
+5	             // 5
+6	   XXXX      // 6
+7	     XX      // 7
+8	     XX      // 8
+9	     XX      // 9
+0	     XX      // 10
+1	     XX      // 11
+2	     XX      // 12
+3	     XX      // 13
+4	     XX      // 14
+5	   XXXXXX    // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 142, glyph é */
+\142 12 22
+	012345678901 {
+0	             // 0
+1	   XX  XX    // 1
+2	   XX  XX    // 2
+3	             // 3
+4	     X       // 4
+5	     XX      // 5
+6	     XX      // 6
+7	    X XX     // 7
+8	    X XX     // 8
+9	   XX  XX    // 9
+0	   X   XX    // 10
+1	  XXXXXXXX   // 11
+2	  X     XX   // 12
+3	 XX      XX  // 13
+4	 X       XX  // 14
+5	XXX     XXXX // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 143, glyph è */
+\143 12 22
+	012345678901 {
+0	             // 0
+1	    XXXX     // 1
+2	   XX  XX    // 2
+3	    XXXX     // 3
+4	     X       // 4
+5	     XX      // 5
+6	     XX      // 6
+7	    X XX     // 7
+8	    X XX     // 8
+9	   XX  XX    // 9
+0	   X   XX    // 10
+1	  XXXXXXXX   // 11
+2	  X     XX   // 12
+3	 XX      XX  // 13
+4	 X       XX  // 14
+5	XXX     XXXX // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 144, glyph ê */
+\144 12 22
+	012345678901 {
+0	             // 0
+1	      XX     // 1
+2	     XX      // 2
+3	    X        // 3
+4	 XXXXXXXXXX  // 4
+5	  XX      X  // 5
+6	  XX         // 6
+7	  XX         // 7
+8	  XX    X    // 8
+9	  XXXXXXX    // 9
+0	  XX    X    // 10
+1	  XX         // 11
+2	  XX         // 12
+3	  XX      X  // 13
+4	  XX      X  // 14
+5	 XXXXXXXXXX  // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 145, glyph ë */
+\145 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	  XXXX XXXX  // 6
+7	 XX  XX   XX // 7
+8	 X   XX   XX // 8
+9	     XX   XX // 9
+0	  XXXXXXXXXX // 10
+1	 XX  XX      // 11
+2	XX   XX      // 12
+3	XX   XX      // 13
+4	XXX  XXX  XX // 14
+5	 XXXXX XXXX  // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 146, glyph í */
+\146 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	      XXXXXX // 2
+3	     XXX   X // 3
+4	     XXX   X // 4
+5	    X XX     // 5
+6	    X XX     // 6
+7	    X XX  X  // 7
+8	   X  XXXXX  // 8
+9	   X  XX  X  // 9
+0	  XXXXXX     // 10
+1	  X   XX     // 11
+2	  X   XX     // 12
+3	 X    XX   X // 13
+4	 X    XX   X // 14
+5	XXX  XXXXXXX // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 147, glyph ì */
+\147 12 22
+	012345678901 {
+0	             // 0
+1	      X      // 1
+2	     XXX     // 2
+3	    XX XX    // 3
+4	   XX   XX   // 4
+5	             // 5
+6	    XXXXX    // 6
+7	   X   XXX   // 7
+8	  X     XXX  // 8
+9	 XX      XX  // 9
+0	 XX      XX  // 10
+1	 XX      XX  // 11
+2	 XX      XX  // 12
+3	 XXX     X   // 13
+4	  XXX   X    // 14
+5	   XXXXX     // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 148, glyph î */
+\148 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	   XX  XX    // 2
+3	   XX  XX    // 3
+4	             // 4
+5	             // 5
+6	    XXXXX    // 6
+7	   X   XXX   // 7
+8	  X     XXX  // 8
+9	 XX      XX  // 9
+0	 XX      XX  // 10
+1	 XX      XX  // 11
+2	 XX      XX  // 12
+3	 XXX     X   // 13
+4	  XXX   X    // 14
+5	   XXXXX     // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 149, glyph ï */
+\149 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	    XX       // 2
+3	     XX      // 3
+4	      XX     // 4
+5	             // 5
+6	    XXXXX    // 6
+7	   X   XXX   // 7
+8	  X     XXX  // 8
+9	 XX      XX  // 9
+0	 XX      XX  // 10
+1	 XX      XX  // 11
+2	 XX      XX  // 12
+3	 XXX     X   // 13
+4	  XXX   X    // 14
+5	   XXXXX     // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 150, glyph ñ */
+\150 12 22
+	012345678901 {
+0	             // 0
+1	      X      // 1
+2	     XXX     // 2
+3	    XX XX    // 3
+4	   XX   XX   // 4
+5	             // 5
+6	 XXXX  XXXX  // 6
+7	  XX    XX   // 7
+8	  XX    XX   // 8
+9	  XX    XX   // 9
+0	  XX    XX   // 10
+1	  XX    XX   // 11
+2	  XX    XX   // 12
+3	  XX    XX   // 13
+4	  XXX  XXX   // 14
+5	   XXXX  XX  // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 151, glyph ó */
+\151 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	   XX        // 2
+3	    XX       // 3
+4	     XX      // 4
+5	             // 5
+6	 XXXX  XXXX  // 6
+7	  XX    XX   // 7
+8	  XX    XX   // 8
+9	  XX    XX   // 9
+0	  XX    XX   // 10
+1	  XX    XX   // 11
+2	  XX    XX   // 12
+3	  XX    XX   // 13
+4	  XXX  XXX   // 14
+5	   XXXX  XX  // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 152, glyph ò */
+\152 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	   XX  XX    // 2
+3	   XX  XX    // 3
+4	             // 4
+5	             // 5
+6	XXXX    XXXX // 6
+7	 XX       X  // 7
+8	  XX     X   // 8
+9	  XX     X   // 9
+0	   XX   X    // 10
+1	   XX   X    // 11
+2	    XX X     // 12
+3	    XX X     // 13
+4	     XX      // 14
+5	     XX      // 15
+6	     X       // 16
+7	    XX       // 17
+8	    X        // 18
+9	 XXXX        // 19
+0	 XXX         // 20
+1	             // 21
+	}
+
+/* Character 153, glyph ô */
+\153 12 22
+	012345678901 {
+0	             // 0
+1	   XX  XX    // 1
+2	   XX  XX    // 2
+3	             // 3
+4	    XXXXX    // 4
+5	   X   XXX   // 5
+6	  X     XX   // 6
+7	  X      XX  // 7
+8	 XX      XX  // 8
+9	 XX      XX  // 9
+0	 XX      XX  // 10
+1	 XX      XX  // 11
+2	  X      X   // 12
+3	  XX     X   // 13
+4	   XX   X    // 14
+5	    XXXX     // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 154, glyph ö */
+\154 12 22
+	012345678901 {
+0	             // 0
+1	   XX  XX    // 1
+2	   XX  XX    // 2
+3	XXX       XX // 3
+4	 XX       X  // 4
+5	 XX       X  // 5
+6	 XX       X  // 6
+7	 XX       X  // 7
+8	 XX       X  // 8
+9	 XX       X  // 9
+0	 XX       X  // 10
+1	 XX       X  // 11
+2	 XX       X  // 12
+3	 XXX     X   // 13
+4	  XXXXXXXX   // 14
+5	   XXXXXX    // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 155, glyph õ */
+\155 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	     XX      // 4
+5	     XX      // 5
+6	   XXXXXX    // 6
+7	  XX XX XX   // 7
+8	  X  XX XX   // 8
+9	 XX  XX      // 9
+0	 XX  XX      // 10
+1	 XX  XX      // 11
+2	 XX  XX      // 12
+3	 XXX XX  X   // 13
+4	  XX XX XX   // 14
+5	   XXXXXX    // 15
+6	     XX      // 16
+7	     XX      // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 156, glyph ú */
+\156 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	    XXXXX    // 2
+3	   XXX  XX   // 3
+4	   XX   XX   // 4
+5	   XX        // 5
+6	   XX        // 6
+7	   XX        // 7
+8	 XXXXXX      // 8
+9	 XXXXXX      // 9
+0	   XX        // 10
+1	   XX        // 11
+2	   XX        // 12
+3	   XX        // 13
+4	  XXXXX   X  // 14
+5	 XXXXXXXXXX  // 15
+6	 XX    XXX   // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 157, glyph ù */
+\157 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	 XX      XX  // 2
+3	 XX      XX  // 3
+4	  XX    XX   // 4
+5	   XX  XX    // 5
+6	   XX  XX    // 6
+7	    XXXX     // 7
+8	     XX      // 8
+9	   XXXXXX    // 9
+0	     XX      // 10
+1	   XXXXXX    // 11
+2	     XX      // 12
+3	     XX      // 13
+4	     XX      // 14
+5	     XX      // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 158, glyph û */
+\158 12 22
+	012345678901 {
+0	             // 0
+1	 XXXXXXXX    // 1
+2	  XX    XX   // 2
+3	  XX     XX  // 3
+4	  XX     XX  // 4
+5	  XX     XX  // 5
+6	  XX    XX   // 6
+7	  XX XXXX    // 7
+8	  XX         // 8
+9	  XX  XX     // 9
+0	  XX XXXX    // 10
+1	  XX  XX     // 11
+2	  XX  XX     // 12
+3	  XX  XX  XX // 13
+4	  XX   XXXX  // 14
+5	 XXXX   XX   // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 159, glyph ü */
+\159 12 22
+	012345678901 {
+0	             // 0
+1	        XX   // 1
+2	       XXXX  // 2
+3	      XX  XX // 3
+4	     XX      // 4
+5	     XX      // 5
+6	     XX      // 6
+7	     XX      // 7
+8	     XX      // 8
+9	     XX      // 9
+0	  XXXXXXXXX  // 10
+1	 XXXXXXXXX   // 11
+2	     XX      // 12
+3	     XX      // 13
+4	     XX      // 14
+5	     XX      // 15
+6	     XX      // 16
+7	     XX      // 17
+8	XX  XX       // 18
+9	 XXXX        // 19
+0	  XX         // 20
+1	             // 21
+	}
+
+/* Character 160, glyph † */
+\160 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	       XX    // 2
+3	      XX     // 3
+4	     XX      // 4
+5	             // 5
+6	    XXXXX    // 6
+7	   XX   XX   // 7
+8	   X    XX   // 8
+9	      XXXX   // 9
+0	   XXX  XX   // 10
+1	  XX    XX   // 11
+2	  XX    XX   // 12
+3	  XX    XX   // 13
+4	  XXX  XXX   // 14
+5	   XXXX XXX  // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 161, glyph ° */
+\161 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	       XX    // 2
+3	      XX     // 3
+4	     XX      // 4
+5	             // 5
+6	   XXXX      // 6
+7	     XX      // 7
+8	     XX      // 8
+9	     XX      // 9
+0	     XX      // 10
+1	     XX      // 11
+2	     XX      // 12
+3	     XX      // 13
+4	     XX      // 14
+5	   XXXXXX    // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 162, glyph ¢ */
+\162 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	       XX    // 2
+3	      XX     // 3
+4	     XX      // 4
+5	             // 5
+6	    XXXXX    // 6
+7	   X   XXX   // 7
+8	  X     XXX  // 8
+9	 XX      XX  // 9
+0	 XX      XX  // 10
+1	 XX      XX  // 11
+2	 XX      XX  // 12
+3	 XXX     X   // 13
+4	  XXX   X    // 14
+5	   XXXXX     // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 163, glyph £ */
+\163 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	       XX    // 2
+3	      XX     // 3
+4	     XX      // 4
+5	             // 5
+6	 XXXX  XXXX  // 6
+7	  XX    XX   // 7
+8	  XX    XX   // 8
+9	  XX    XX   // 9
+0	  XX    XX   // 10
+1	  XX    XX   // 11
+2	  XX    XX   // 12
+3	  XX    XX   // 13
+4	  XXX  XXX   // 14
+5	   XXXX  XX  // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 164, glyph § */
+\164 12 22
+	012345678901 {
+0	             // 0
+1	   XXX   X   // 1
+2	  XXXXXXXX   // 2
+3	  X   XXX    // 3
+4	             // 4
+5	             // 5
+6	  X  XXXX    // 6
+7	 XXXX  XXX   // 7
+8	  XX    XX   // 8
+9	  XX    XX   // 9
+0	  XX    XX   // 10
+1	  XX    XX   // 11
+2	  XX    XX   // 12
+3	  XX    XX   // 13
+4	  XX    XX   // 14
+5	 XXXX  XXXX  // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 165, glyph • */
+\165 12 22
+	012345678901 {
+0	             // 0
+1	   XXX   X   // 1
+2	  XXXXXXXX   // 2
+3	  X   XXX    // 3
+4	XX       XXX // 4
+5	 XX       X  // 5
+6	 XXX      X  // 6
+7	 XXXX     X  // 7
+8	 X XXX    X  // 8
+9	 X  XXX   X  // 9
+0	 X   XXX  X  // 10
+1	 X    XXX X  // 11
+2	 X     XXXX  // 12
+3	 X      XXX  // 13
+4	 X       XX  // 14
+5	XXX       XX // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 166, glyph ¶ */
+\166 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	   XXXXX     // 2
+3	  XX   XX    // 3
+4	       XX    // 4
+5	     XXXX    // 5
+6	   XX  XX    // 6
+7	  XX   XX    // 7
+8	  XX   XX    // 8
+9	  XX  XXX    // 9
+0	   XXX XXX   // 10
+1	             // 11
+2	  XXXXXXXX   // 12
+3	             // 13
+4	             // 14
+5	             // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 167, glyph ß */
+\167 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	     XXX     // 2
+3	   XX  XX    // 3
+4	   X    XX   // 4
+5	  XX    XX   // 5
+6	  XX    XX   // 6
+7	  XX    XX   // 7
+8	  XX    X    // 8
+9	   XX  XX    // 9
+0	    XXX      // 10
+1	             // 11
+2	  XXXXXXXX   // 12
+3	             // 13
+4	             // 14
+5	             // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 168, glyph ® */
+\168 12 22
+	012345678901 {
+0	             // 0
+1	      XX     // 1
+2	      XX     // 2
+3	             // 3
+4	             // 4
+5	      XX     // 5
+6	      XX     // 6
+7	     XX      // 7
+8	    XX       // 8
+9	   XX        // 9
+0	  XX         // 10
+1	  XX         // 11
+2	  XX     X   // 12
+3	  XXX  XXX   // 13
+4	   XXXXXX    // 14
+5	    XXXX     // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 169, glyph © */
+\169 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	  XXXXXXXX   // 4
+5	  XXXXXXXX   // 5
+6	  XX         // 6
+7	  XX         // 7
+8	  XX         // 8
+9	             // 9
+0	             // 10
+1	             // 11
+2	             // 12
+3	             // 13
+4	             // 14
+5	             // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 170, glyph ™ */
+\170 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	  XXXXXXXX   // 4
+5	  XXXXXXXX   // 5
+6	        XX   // 6
+7	        XX   // 7
+8	        XX   // 8
+9	             // 9
+0	             // 10
+1	             // 11
+2	             // 12
+3	             // 13
+4	             // 14
+5	             // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 171, glyph ´ */
+\171 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	   X         // 2
+3	  XX         // 3
+4	   X         // 4
+5	   X     X   // 5
+6	   X    X    // 6
+7	   X   X     // 7
+8	  XXX X      // 8
+9	     X XXX   // 9
+0	    X X   X  // 10
+1	   X      X  // 11
+2	  X     XX   // 12
+3	 X     X     // 13
+4	      X      // 14
+5	      XXXXX  // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 172, glyph ¨ */
+\172 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	   X         // 2
+3	  XX         // 3
+4	   X         // 4
+5	   X     X   // 5
+6	   X    X    // 6
+7	   X   X     // 7
+8	  XXX X  X   // 8
+9	     X  XX   // 9
+0	    X  X X   // 10
+1	   X  X  X   // 11
+2	  X  X   X   // 12
+3	 X   XXXXXX  // 13
+4	         X   // 14
+5	         X   // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 173, glyph ≠ */
+\173 12 22
+	012345678901 {
+0	             // 0
+1	     XX      // 1
+2	     XX      // 2
+3	             // 3
+4	             // 4
+5	     XX      // 5
+6	     XX      // 6
+7	     XX      // 7
+8	     XX      // 8
+9	     XX      // 9
+0	     XX      // 10
+1	     XX      // 11
+2	     XX      // 12
+3	     XX      // 13
+4	     XX      // 14
+5	     XX      // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 174, glyph Æ */
+\174 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	             // 6
+7	     XX  XX  // 7
+8	    XX  XX   // 8
+9	   XX  XX    // 9
+0	  XX  XX     // 10
+1	 XX  XX      // 11
+2	  XX  XX     // 12
+3	   XX  XX    // 13
+4	    XX  XX   // 14
+5	     XX  XX  // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 175, glyph Ø */
+\175 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	             // 6
+7	 XX  XX      // 7
+8	  XX  XX     // 8
+9	   XX  XX    // 9
+0	    XX  XX   // 10
+1	     XX  XX  // 11
+2	    XX  XX   // 12
+3	   XX  XX    // 13
+4	  XX  XX     // 14
+5	 XX  XX      // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 176, glyph ∞ */
+\176 12 22
+	012345678901 {
+0	    XX    XX // 0
+1	    X     X  // 1
+2	 XX    XX    // 2
+3	  X     X    // 3
+4	    XX    XX // 4
+5	    X     X  // 5
+6	 XX    XX    // 6
+7	  X     X    // 7
+8	    XX    XX // 8
+9	    X     X  // 9
+0	 XX    XX    // 10
+1	  X     X    // 11
+2	    XX    XX // 12
+3	    X     X  // 13
+4	 XX    XX    // 14
+5	  X     X    // 15
+6	    XX    XX // 16
+7	    X     X  // 17
+8	 XX    XX    // 18
+9	  X     X    // 19
+0	    XX    XX // 20
+1	    X     X  // 21
+	}
+
+/* Character 177, glyph ± */
+\177 12 22
+	012345678901 {
+0	 XXX XXX XXX // 0
+1	  X   X   X  // 1
+2	X   X   X    // 2
+3	XX XXX XXX X // 3
+4	X   X   X    // 4
+5	  X   X   X  // 5
+6	 XXX XXX XXX // 6
+7	  X   X   X  // 7
+8	X   X   X    // 8
+9	XX XXX XXX X // 9
+0	X   X   X    // 10
+1	  X   X   X  // 11
+2	 XXX XXX XXX // 12
+3	  X   X   X  // 13
+4	X   X   X    // 14
+5	XX XXX XXX X // 15
+6	X   X   X    // 16
+7	  X   X   X  // 17
+8	 XXX XXX XXX // 18
+9	  X   X   X  // 19
+0	X   X   X    // 20
+1	XX XXX XXX X // 21
+	}
+
+/* Character 178, glyph ≤ */
+\178 12 22
+	012345678901 {
+0	XXXX  XXXX   // 0
+1	XXXX XXXXX X // 1
+2	X  XXXX  XXX // 2
+3	XX XXXXX XXX // 3
+4	XXXX  XXXX   // 4
+5	XXXX XXXXX X // 5
+6	X  XXXX  XXX // 6
+7	XX XXXXX XXX // 7
+8	XXXX  XXXX   // 8
+9	XXXX XXXXX X // 9
+0	X  XXXX  XXX // 10
+1	XX XXXXX XXX // 11
+2	XXXX  XXXX   // 12
+3	XXXX XXXXX X // 13
+4	X  XXXX  XXX // 14
+5	XX XXXXX XXX // 15
+6	XXXX  XXXX   // 16
+7	XXXX XXXXX X // 17
+8	X  XXXX  XXX // 18
+9	XX XXXXX XXX // 19
+0	XXXX  XXXX   // 20
+1	XXXX XXXXX X // 21
+	}
+
+/* Character 179, glyph ≥ */
+\179 12 22
+	012345678901 {
+0	     XX      // 0
+1	     XX      // 1
+2	     XX      // 2
+3	     XX      // 3
+4	     XX      // 4
+5	     XX      // 5
+6	     XX      // 6
+7	     XX      // 7
+8	     XX      // 8
+9	     XX      // 9
+0	     XX      // 10
+1	     XX      // 11
+2	     XX      // 12
+3	     XX      // 13
+4	     XX      // 14
+5	     XX      // 15
+6	     XX      // 16
+7	     XX      // 17
+8	     XX      // 18
+9	     XX      // 19
+0	     XX      // 20
+1	     XX      // 21
+	}
+
+/* Character 180, glyph ¥ */
+\180 12 22
+	012345678901 {
+0	     XX      // 0
+1	     XX      // 1
+2	     XX      // 2
+3	     XX      // 3
+4	     XX      // 4
+5	     XX      // 5
+6	     XX      // 6
+7	     XX      // 7
+8	     XX      // 8
+9	     XX      // 9
+0	XXXXXXX      // 10
+1	XXXXXXX      // 11
+2	     XX      // 12
+3	     XX      // 13
+4	     XX      // 14
+5	     XX      // 15
+6	     XX      // 16
+7	     XX      // 17
+8	     XX      // 18
+9	     XX      // 19
+0	     XX      // 20
+1	     XX      // 21
+	}
+
+/* Character 181, glyph µ */
+\181 12 22
+	012345678901 {
+0	     XX      // 0
+1	     XX      // 1
+2	     XX      // 2
+3	     XX      // 3
+4	     XX      // 4
+5	     XX      // 5
+6	     XX      // 6
+7	XXXXXXX      // 7
+8	XXXXXXX      // 8
+9	     XX      // 9
+0	XXXXXXX      // 10
+1	XXXXXXX      // 11
+2	     XX      // 12
+3	     XX      // 13
+4	     XX      // 14
+5	     XX      // 15
+6	     XX      // 16
+7	     XX      // 17
+8	     XX      // 18
+9	     XX      // 19
+0	     XX      // 20
+1	     XX      // 21
+	}
+
+/* Character 182, glyph ∂ */
+\182 12 22
+	012345678901 {
+0	    XX XX    // 0
+1	    XX XX    // 1
+2	    XX XX    // 2
+3	    XX XX    // 3
+4	    XX XX    // 4
+5	    XX XX    // 5
+6	    XX XX    // 6
+7	    XX XX    // 7
+8	    XX XX    // 8
+9	    XX XX    // 9
+0	XXXXXX XX    // 10
+1	XXXXXX XX    // 11
+2	    XX XX    // 12
+3	    XX XX    // 13
+4	    XX XX    // 14
+5	    XX XX    // 15
+6	    XX XX    // 16
+7	    XX XX    // 17
+8	    XX XX    // 18
+9	    XX XX    // 19
+0	    XX XX    // 20
+1	    XX XX    // 21
+	}
+
+/* Character 183, glyph ∑ */
+\183 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	             // 6
+7	             // 7
+8	             // 8
+9	             // 9
+0	XXXXXXXXX    // 10
+1	XXXXXXXXX    // 11
+2	    XX XX    // 12
+3	    XX XX    // 13
+4	    XX XX    // 14
+5	    XX XX    // 15
+6	    XX XX    // 16
+7	    XX XX    // 17
+8	    XX XX    // 18
+9	    XX XX    // 19
+0	    XX XX    // 20
+1	    XX XX    // 21
+	}
+
+/* Character 184, glyph ∏ */
+\184 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	             // 6
+7	XXXXXXX      // 7
+8	XXXXXXX      // 8
+9	     XX      // 9
+0	XXXXXXX      // 10
+1	XXXXXXX      // 11
+2	     XX      // 12
+3	     XX      // 13
+4	     XX      // 14
+5	     XX      // 15
+6	     XX      // 16
+7	     XX      // 17
+8	     XX      // 18
+9	     XX      // 19
+0	     XX      // 20
+1	     XX      // 21
+	}
+
+/* Character 185, glyph π */
+\185 12 22
+	012345678901 {
+0	    XX XX    // 0
+1	    XX XX    // 1
+2	    XX XX    // 2
+3	    XX XX    // 3
+4	    XX XX    // 4
+5	    XX XX    // 5
+6	    XX XX    // 6
+7	XXXXXX XX    // 7
+8	XXXXXX XX    // 8
+9	       XX    // 9
+0	XXXXXX XX    // 10
+1	XXXXXX XX    // 11
+2	    XX XX    // 12
+3	    XX XX    // 13
+4	    XX XX    // 14
+5	    XX XX    // 15
+6	    XX XX    // 16
+7	    XX XX    // 17
+8	    XX XX    // 18
+9	    XX XX    // 19
+0	    XX XX    // 20
+1	    XX XX    // 21
+	}
+
+/* Character 186, glyph ∫ */
+\186 12 22
+	012345678901 {
+0	    XX XX    // 0
+1	    XX XX    // 1
+2	    XX XX    // 2
+3	    XX XX    // 3
+4	    XX XX    // 4
+5	    XX XX    // 5
+6	    XX XX    // 6
+7	    XX XX    // 7
+8	    XX XX    // 8
+9	    XX XX    // 9
+0	    XX XX    // 10
+1	    XX XX    // 11
+2	    XX XX    // 12
+3	    XX XX    // 13
+4	    XX XX    // 14
+5	    XX XX    // 15
+6	    XX XX    // 16
+7	    XX XX    // 17
+8	    XX XX    // 18
+9	    XX XX    // 19
+0	    XX XX    // 20
+1	    XX XX    // 21
+	}
+
+/* Character 187, glyph ª */
+\187 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	             // 6
+7	XXXXXXXXX    // 7
+8	XXXXXXXXX    // 8
+9	       XX    // 9
+0	XXXXXX XX    // 10
+1	XXXXXX XX    // 11
+2	    XX XX    // 12
+3	    XX XX    // 13
+4	    XX XX    // 14
+5	    XX XX    // 15
+6	    XX XX    // 16
+7	    XX XX    // 17
+8	    XX XX    // 18
+9	    XX XX    // 19
+0	    XX XX    // 20
+1	    XX XX    // 21
+	}
+
+/* Character 188, glyph º */
+\188 12 22
+	012345678901 {
+0	    XX XX    // 0
+1	    XX XX    // 1
+2	    XX XX    // 2
+3	    XX XX    // 3
+4	    XX XX    // 4
+5	    XX XX    // 5
+6	    XX XX    // 6
+7	XXXXXX XX    // 7
+8	XXXXXX XX    // 8
+9	       XX    // 9
+0	XXXXXXXXX    // 10
+1	XXXXXXXXX    // 11
+2	             // 12
+3	             // 13
+4	             // 14
+5	             // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 189, glyph Ω */
+\189 12 22
+	012345678901 {
+0	    XX XX    // 0
+1	    XX XX    // 1
+2	    XX XX    // 2
+3	    XX XX    // 3
+4	    XX XX    // 4
+5	    XX XX    // 5
+6	    XX XX    // 6
+7	    XX XX    // 7
+8	    XX XX    // 8
+9	    XX XX    // 9
+0	XXXXXXXXX    // 10
+1	XXXXXXXXX    // 11
+2	             // 12
+3	             // 13
+4	             // 14
+5	             // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 190, glyph æ */
+\190 12 22
+	012345678901 {
+0	     XX      // 0
+1	     XX      // 1
+2	     XX      // 2
+3	     XX      // 3
+4	     XX      // 4
+5	     XX      // 5
+6	     XX      // 6
+7	XXXXXXX      // 7
+8	XXXXXXX      // 8
+9	     XX      // 9
+0	XXXXXXX      // 10
+1	XXXXXXX      // 11
+2	             // 12
+3	             // 13
+4	             // 14
+5	             // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 191, glyph ø */
+\191 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	             // 6
+7	             // 7
+8	             // 8
+9	             // 9
+0	XXXXXXX      // 10
+1	XXXXXXX      // 11
+2	     XX      // 12
+3	     XX      // 13
+4	     XX      // 14
+5	     XX      // 15
+6	     XX      // 16
+7	     XX      // 17
+8	     XX      // 18
+9	     XX      // 19
+0	     XX      // 20
+1	     XX      // 21
+	}
+
+/* Character 192, glyph ¿ */
+\192 12 22
+	012345678901 {
+0	     XX      // 0
+1	     XX      // 1
+2	     XX      // 2
+3	     XX      // 3
+4	     XX      // 4
+5	     XX      // 5
+6	     XX      // 6
+7	     XX      // 7
+8	     XX      // 8
+9	     XX      // 9
+0	     XXXXXXX // 10
+1	     XXXXXXX // 11
+2	             // 12
+3	             // 13
+4	             // 14
+5	             // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 193, glyph ¡ */
+\193 12 22
+	012345678901 {
+0	     XX      // 0
+1	     XX      // 1
+2	     XX      // 2
+3	     XX      // 3
+4	     XX      // 4
+5	     XX      // 5
+6	     XX      // 6
+7	     XX      // 7
+8	     XX      // 8
+9	     XX      // 9
+0	XXXXXXXXXXXX // 10
+1	XXXXXXXXXXXX // 11
+2	             // 12
+3	             // 13
+4	             // 14
+5	             // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 194, glyph ¬ */
+\194 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	             // 6
+7	             // 7
+8	             // 8
+9	             // 9
+0	XXXXXXXXXXXX // 10
+1	XXXXXXXXXXXX // 11
+2	     XX      // 12
+3	     XX      // 13
+4	     XX      // 14
+5	     XX      // 15
+6	     XX      // 16
+7	     XX      // 17
+8	     XX      // 18
+9	     XX      // 19
+0	     XX      // 20
+1	     XX      // 21
+	}
+
+/* Character 195, glyph √ */
+\195 12 22
+	012345678901 {
+0	     XX      // 0
+1	     XX      // 1
+2	     XX      // 2
+3	     XX      // 3
+4	     XX      // 4
+5	     XX      // 5
+6	     XX      // 6
+7	     XX      // 7
+8	     XX      // 8
+9	     XX      // 9
+0	     XXXXXXX // 10
+1	     XXXXXXX // 11
+2	     XX      // 12
+3	     XX      // 13
+4	     XX      // 14
+5	     XX      // 15
+6	     XX      // 16
+7	     XX      // 17
+8	     XX      // 18
+9	     XX      // 19
+0	     XX      // 20
+1	     XX      // 21
+	}
+
+/* Character 196, glyph ƒ */
+\196 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	             // 6
+7	             // 7
+8	             // 8
+9	             // 9
+0	XXXXXXXXXXXX // 10
+1	XXXXXXXXXXXX // 11
+2	             // 12
+3	             // 13
+4	             // 14
+5	             // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 197, glyph ≈ */
+\197 12 22
+	012345678901 {
+0	     XX      // 0
+1	     XX      // 1
+2	     XX      // 2
+3	     XX      // 3
+4	     XX      // 4
+5	     XX      // 5
+6	     XX      // 6
+7	     XX      // 7
+8	     XX      // 8
+9	     XX      // 9
+0	XXXXXXXXXXXX // 10
+1	XXXXXXXXXXXX // 11
+2	     XX      // 12
+3	     XX      // 13
+4	     XX      // 14
+5	     XX      // 15
+6	     XX      // 16
+7	     XX      // 17
+8	     XX      // 18
+9	     XX      // 19
+0	     XX      // 20
+1	     XX      // 21
+	}
+
+/* Character 198, glyph ∆ */
+\198 12 22
+	012345678901 {
+0	     XX      // 0
+1	     XX      // 1
+2	     XX      // 2
+3	     XX      // 3
+4	     XX      // 4
+5	     XX      // 5
+6	     XX      // 6
+7	     XXXXXXX // 7
+8	     XXXXXXX // 8
+9	     XX      // 9
+0	     XXXXXXX // 10
+1	     XXXXXXX // 11
+2	     XX      // 12
+3	     XX      // 13
+4	     XX      // 14
+5	     XX      // 15
+6	     XX      // 16
+7	     XX      // 17
+8	     XX      // 18
+9	     XX      // 19
+0	     XX      // 20
+1	     XX      // 21
+	}
+
+/* Character 199, glyph « */
+\199 12 22
+	012345678901 {
+0	    XX XX    // 0
+1	    XX XX    // 1
+2	    XX XX    // 2
+3	    XX XX    // 3
+4	    XX XX    // 4
+5	    XX XX    // 5
+6	    XX XX    // 6
+7	    XX XX    // 7
+8	    XX XX    // 8
+9	    XX XX    // 9
+0	    XX XXXXX // 10
+1	    XX XXXXX // 11
+2	    XX XX    // 12
+3	    XX XX    // 13
+4	    XX XX    // 14
+5	    XX XX    // 15
+6	    XX XX    // 16
+7	    XX XX    // 17
+8	    XX XX    // 18
+9	    XX XX    // 19
+0	    XX XX    // 20
+1	    XX XX    // 21
+	}
+
+/* Character 200, glyph » */
+\200 12 22
+	012345678901 {
+0	    XX XX    // 0
+1	    XX XX    // 1
+2	    XX XX    // 2
+3	    XX XX    // 3
+4	    XX XX    // 4
+5	    XX XX    // 5
+6	    XX XX    // 6
+7	    XX XXXXX // 7
+8	    XX XXXXX // 8
+9	    XX       // 9
+0	    XXXXXXXX // 10
+1	    XXXXXXXX // 11
+2	             // 12
+3	             // 13
+4	             // 14
+5	             // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 201, glyph … */
+\201 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	             // 6
+7	    XXXXXXXX // 7
+8	    XXXXXXXX // 8
+9	    XX       // 9
+0	    XX XXXXX // 10
+1	    XX XXXXX // 11
+2	    XX XX    // 12
+3	    XX XX    // 13
+4	    XX XX    // 14
+5	    XX XX    // 15
+6	    XX XX    // 16
+7	    XX XX    // 17
+8	    XX XX    // 18
+9	    XX XX    // 19
+0	    XX XX    // 20
+1	    XX XX    // 21
+	}
+
+/* Character 202, glyph   */
+\202 12 22
+	012345678901 {
+0	    XX XX    // 0
+1	    XX XX    // 1
+2	    XX XX    // 2
+3	    XX XX    // 3
+4	    XX XX    // 4
+5	    XX XX    // 5
+6	    XX XX    // 6
+7	XXXXXX XXXXX // 7
+8	XXXXXX XXXXX // 8
+9	             // 9
+0	XXXXXXXXXXXX // 10
+1	XXXXXXXXXXXX // 11
+2	             // 12
+3	             // 13
+4	             // 14
+5	             // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 203, glyph À */
+\203 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	             // 6
+7	XXXXXXXXXXXX // 7
+8	XXXXXXXXXXXX // 8
+9	             // 9
+0	XXXXXX XXXXX // 10
+1	XXXXXX XXXXX // 11
+2	    XX XX    // 12
+3	    XX XX    // 13
+4	    XX XX    // 14
+5	    XX XX    // 15
+6	    XX XX    // 16
+7	    XX XX    // 17
+8	    XX XX    // 18
+9	    XX XX    // 19
+0	    XX XX    // 20
+1	    XX XX    // 21
+	}
+
+/* Character 204, glyph Ã */
+\204 12 22
+	012345678901 {
+0	    XX XX    // 0
+1	    XX XX    // 1
+2	    XX XX    // 2
+3	    XX XX    // 3
+4	    XX XX    // 4
+5	    XX XX    // 5
+6	    XX XX    // 6
+7	    XX XXXXX // 7
+8	    XX XXXXX // 8
+9	    XX       // 9
+0	    XX XXXXX // 10
+1	    XX XXXXX // 11
+2	    XX XX    // 12
+3	    XX XX    // 13
+4	    XX XX    // 14
+5	    XX XX    // 15
+6	    XX XX    // 16
+7	    XX XX    // 17
+8	    XX XX    // 18
+9	    XX XX    // 19
+0	    XX XX    // 20
+1	    XX XX    // 21
+	}
+
+/* Character 205, glyph Õ */
+\205 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	             // 6
+7	XXXXXXXXXXXX // 7
+8	XXXXXXXXXXXX // 8
+9	             // 9
+0	XXXXXXXXXXXX // 10
+1	XXXXXXXXXXXX // 11
+2	             // 12
+3	             // 13
+4	             // 14
+5	             // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 206, glyph Œ */
+\206 12 22
+	012345678901 {
+0	    XX XX    // 0
+1	    XX XX    // 1
+2	    XX XX    // 2
+3	    XX XX    // 3
+4	    XX XX    // 4
+5	    XX XX    // 5
+6	    XX XX    // 6
+7	XXXXXX XXXXX // 7
+8	XXXXXX XXXXX // 8
+9	             // 9
+0	XXXXXX XXXXX // 10
+1	XXXXXX XXXXX // 11
+2	    XX XX    // 12
+3	    XX XX    // 13
+4	    XX XX    // 14
+5	    XX XX    // 15
+6	    XX XX    // 16
+7	    XX XX    // 17
+8	    XX XX    // 18
+9	    XX XX    // 19
+0	    XX XX    // 20
+1	    XX XX    // 21
+	}
+
+/* Character 207, glyph œ */
+\207 12 22
+	012345678901 {
+0	     XX      // 0
+1	     XX      // 1
+2	     XX      // 2
+3	     XX      // 3
+4	     XX      // 4
+5	     XX      // 5
+6	     XX      // 6
+7	XXXXXXXXXXXX // 7
+8	XXXXXXXXXXXX // 8
+9	             // 9
+0	XXXXXXXXXXXX // 10
+1	XXXXXXXXXXXX // 11
+2	             // 12
+3	             // 13
+4	             // 14
+5	             // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 208, glyph – */
+\208 12 22
+	012345678901 {
+0	    XX XX    // 0
+1	    XX XX    // 1
+2	    XX XX    // 2
+3	    XX XX    // 3
+4	    XX XX    // 4
+5	    XX XX    // 5
+6	    XX XX    // 6
+7	    XX XX    // 7
+8	    XX XX    // 8
+9	    XX XX    // 9
+0	XXXXXXXXXXXX // 10
+1	XXXXXXXXXXXX // 11
+2	             // 12
+3	             // 13
+4	             // 14
+5	             // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 209, glyph — */
+\209 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	             // 6
+7	XXXXXXXXXXXX // 7
+8	XXXXXXXXXXXX // 8
+9	             // 9
+0	XXXXXXXXXXXX // 10
+1	XXXXXXXXXXXX // 11
+2	     XX      // 12
+3	     XX      // 13
+4	     XX      // 14
+5	     XX      // 15
+6	     XX      // 16
+7	     XX      // 17
+8	     XX      // 18
+9	     XX      // 19
+0	     XX      // 20
+1	     XX      // 21
+	}
+
+/* Character 210, glyph “ */
+\210 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	             // 6
+7	             // 7
+8	             // 8
+9	             // 9
+0	XXXXXXXXXXXX // 10
+1	XXXXXXXXXXXX // 11
+2	    XX XX    // 12
+3	    XX XX    // 13
+4	    XX XX    // 14
+5	    XX XX    // 15
+6	    XX XX    // 16
+7	    XX XX    // 17
+8	    XX XX    // 18
+9	    XX XX    // 19
+0	    XX XX    // 20
+1	    XX XX    // 21
+	}
+
+/* Character 211, glyph ” */
+\211 12 22
+	012345678901 {
+0	    XX XX    // 0
+1	    XX XX    // 1
+2	    XX XX    // 2
+3	    XX XX    // 3
+4	    XX XX    // 4
+5	    XX XX    // 5
+6	    XX XX    // 6
+7	    XX XX    // 7
+8	    XX XX    // 8
+9	    XX XX    // 9
+0	    XXXXXXXX // 10
+1	    XXXXXXXX // 11
+2	             // 12
+3	             // 13
+4	             // 14
+5	             // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 212, glyph ‘ */
+\212 12 22
+	012345678901 {
+0	     XX      // 0
+1	     XX      // 1
+2	     XX      // 2
+3	     XX      // 3
+4	     XX      // 4
+5	     XX      // 5
+6	     XX      // 6
+7	     XXXXXXX // 7
+8	     XXXXXXX // 8
+9	     XX      // 9
+0	     XXXXXXX // 10
+1	     XXXXXXX // 11
+2	             // 12
+3	             // 13
+4	             // 14
+5	             // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 213, glyph ’ */
+\213 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	             // 6
+7	     XXXXXXX // 7
+8	     XXXXXXX // 8
+9	     XX      // 9
+0	     XXXXXXX // 10
+1	     XXXXXXX // 11
+2	     XX      // 12
+3	     XX      // 13
+4	     XX      // 14
+5	     XX      // 15
+6	     XX      // 16
+7	     XX      // 17
+8	     XX      // 18
+9	     XX      // 19
+0	     XX      // 20
+1	     XX      // 21
+	}
+
+/* Character 214, glyph ÷ */
+\214 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	             // 6
+7	             // 7
+8	             // 8
+9	             // 9
+0	    XXXXXXXX // 10
+1	    XXXXXXXX // 11
+2	    XX XX    // 12
+3	    XX XX    // 13
+4	    XX XX    // 14
+5	    XX XX    // 15
+6	    XX XX    // 16
+7	    XX XX    // 17
+8	    XX XX    // 18
+9	    XX XX    // 19
+0	    XX XX    // 20
+1	    XX XX    // 21
+	}
+
+/* Character 215, glyph ◊ */
+\215 12 22
+	012345678901 {
+0	    XX XX    // 0
+1	    XX XX    // 1
+2	    XX XX    // 2
+3	    XX XX    // 3
+4	    XX XX    // 4
+5	    XX XX    // 5
+6	    XX XX    // 6
+7	    XX XX    // 7
+8	    XX XX    // 8
+9	    XX XX    // 9
+0	XXXXXXXXXXXX // 10
+1	XXXXXXXXXXXX // 11
+2	    XX XX    // 12
+3	    XX XX    // 13
+4	    XX XX    // 14
+5	    XX XX    // 15
+6	    XX XX    // 16
+7	    XX XX    // 17
+8	    XX XX    // 18
+9	    XX XX    // 19
+0	    XX XX    // 20
+1	    XX XX    // 21
+	}
+
+/* Character 216, glyph ÿ */
+\216 12 22
+	012345678901 {
+0	     XX      // 0
+1	     XX      // 1
+2	     XX      // 2
+3	     XX      // 3
+4	     XX      // 4
+5	     XX      // 5
+6	     XX      // 6
+7	XXXXXXXXXXXX // 7
+8	XXXXXXXXXXXX // 8
+9	     XX      // 9
+0	XXXXXXXXXXXX // 10
+1	XXXXXXXXXXXX // 11
+2	     XX      // 12
+3	     XX      // 13
+4	     XX      // 14
+5	     XX      // 15
+6	     XX      // 16
+7	     XX      // 17
+8	     XX      // 18
+9	     XX      // 19
+0	     XX      // 20
+1	     XX      // 21
+	}
+
+/* Character 217, glyph Ÿ */
+\217 12 22
+	012345678901 {
+0	     XX      // 0
+1	     XX      // 1
+2	     XX      // 2
+3	     XX      // 3
+4	     XX      // 4
+5	     XX      // 5
+6	     XX      // 6
+7	     XX      // 7
+8	     XX      // 8
+9	     XX      // 9
+0	XXXXXXX      // 10
+1	XXXXXXX      // 11
+2	             // 12
+3	             // 13
+4	             // 14
+5	             // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 218, glyph ⁄ */
+\218 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	             // 6
+7	             // 7
+8	             // 8
+9	             // 9
+0	     XXXXXXX // 10
+1	     XXXXXXX // 11
+2	     XX      // 12
+3	     XX      // 13
+4	     XX      // 14
+5	     XX      // 15
+6	     XX      // 16
+7	     XX      // 17
+8	     XX      // 18
+9	     XX      // 19
+0	     XX      // 20
+1	     XX      // 21
+	}
+
+/* Character 219, glyph € */
+\219 12 22
+	012345678901 {
+0	XXXXXXXXXXXX // 0
+1	XXXXXXXXXXXX // 1
+2	XXXXXXXXXXXX // 2
+3	XXXXXXXXXXXX // 3
+4	XXXXXXXXXXXX // 4
+5	XXXXXXXXXXXX // 5
+6	XXXXXXXXXXXX // 6
+7	XXXXXXXXXXXX // 7
+8	XXXXXXXXXXXX // 8
+9	XXXXXXXXXXXX // 9
+0	XXXXXXXXXXXX // 10
+1	XXXXXXXXXXXX // 11
+2	XXXXXXXXXXXX // 12
+3	XXXXXXXXXXXX // 13
+4	XXXXXXXXXXXX // 14
+5	XXXXXXXXXXXX // 15
+6	XXXXXXXXXXXX // 16
+7	XXXXXXXXXXXX // 17
+8	XXXXXXXXXXXX // 18
+9	XXXXXXXXXXXX // 19
+0	XXXXXXXXXXXX // 20
+1	XXXXXXXXXXXX // 21
+	}
+
+/* Character 220, glyph ‹ */
+\220 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	             // 6
+7	             // 7
+8	             // 8
+9	             // 9
+0	XXXXXXXXXXXX // 10
+1	XXXXXXXXXXXX // 11
+2	XXXXXXXXXXXX // 12
+3	XXXXXXXXXXXX // 13
+4	XXXXXXXXXXXX // 14
+5	XXXXXXXXXXXX // 15
+6	XXXXXXXXXXXX // 16
+7	XXXXXXXXXXXX // 17
+8	XXXXXXXXXXXX // 18
+9	XXXXXXXXXXXX // 19
+0	XXXXXXXXXXXX // 20
+1	XXXXXXXXXXXX // 21
+	}
+
+/* Character 221, glyph › */
+\221 12 22
+	012345678901 {
+0	XXXXXX       // 0
+1	XXXXXX       // 1
+2	XXXXXX       // 2
+3	XXXXXX       // 3
+4	XXXXXX       // 4
+5	XXXXXX       // 5
+6	XXXXXX       // 6
+7	XXXXXX       // 7
+8	XXXXXX       // 8
+9	XXXXXX       // 9
+0	XXXXXX       // 10
+1	XXXXXX       // 11
+2	XXXXXX       // 12
+3	XXXXXX       // 13
+4	XXXXXX       // 14
+5	XXXXXX       // 15
+6	XXXXXX       // 16
+7	XXXXXX       // 17
+8	XXXXXX       // 18
+9	XXXXXX       // 19
+0	XXXXXX       // 20
+1	XXXXXX       // 21
+	}
+
+/* Character 222, glyph ﬁ */
+\222 12 22
+	012345678901 {
+0	      XXXXXX // 0
+1	      XXXXXX // 1
+2	      XXXXXX // 2
+3	      XXXXXX // 3
+4	      XXXXXX // 4
+5	      XXXXXX // 5
+6	      XXXXXX // 6
+7	      XXXXXX // 7
+8	      XXXXXX // 8
+9	      XXXXXX // 9
+0	      XXXXXX // 10
+1	      XXXXXX // 11
+2	      XXXXXX // 12
+3	      XXXXXX // 13
+4	      XXXXXX // 14
+5	      XXXXXX // 15
+6	      XXXXXX // 16
+7	      XXXXXX // 17
+8	      XXXXXX // 18
+9	      XXXXXX // 19
+0	      XXXXXX // 20
+1	      XXXXXX // 21
+	}
+
+/* Character 223, glyph ﬂ */
+\223 12 22
+	012345678901 {
+0	XXXXXXXXXXXX // 0
+1	XXXXXXXXXXXX // 1
+2	XXXXXXXXXXXX // 2
+3	XXXXXXXXXXXX // 3
+4	XXXXXXXXXXXX // 4
+5	XXXXXXXXXXXX // 5
+6	XXXXXXXXXXXX // 6
+7	XXXXXXXXXXXX // 7
+8	XXXXXXXXXXXX // 8
+9	XXXXXXXXXXXX // 9
+0	             // 10
+1	             // 11
+2	             // 12
+3	             // 13
+4	             // 14
+5	             // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 224, glyph ‡ */
+\224 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	    XXXX XX  // 6
+7	   X  XXXXX  // 7
+8	  X    XXX   // 8
+9	 XX     XX   // 9
+0	 XX     XX   // 10
+1	 XX     XX   // 11
+2	 XX     XX   // 12
+3	 XXX    X    // 13
+4	  XXX  XXX   // 14
+5	   XXXXX XX  // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 225, glyph · */
+\225 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	    XXXX     // 2
+3	   XX  XX    // 3
+4	  XX    XX   // 4
+5	  XX    XX   // 5
+6	  XX    XX   // 6
+7	  XX   XX    // 7
+8	  XX XXXX    // 8
+9	  XX   XX    // 9
+0	  XX    XX   // 10
+1	  XX    XX   // 11
+2	  XX    XX   // 12
+3	  XX    XX   // 13
+4	  XX   XX    // 14
+5	 XXX XXX     // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 226, glyph ‚ */
+\226 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	  XXXXXXXXX  // 2
+3	  XXXXXXXXX  // 3
+4	  XX     XX  // 4
+5	  XX     XX  // 5
+6	  XX         // 6
+7	  XX         // 7
+8	  XX         // 8
+9	  XX         // 9
+0	  XX         // 10
+1	  XX         // 11
+2	  XX         // 12
+3	  XX         // 13
+4	  XX         // 14
+5	  XX         // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 227, glyph „ */
+\227 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	 XXXXXXXXXX  // 6
+7	 XXXXXXXXXX  // 7
+8	   XX  XX    // 8
+9	   XX  XX    // 9
+0	   XX  XX    // 10
+1	   XX  XX    // 11
+2	   XX  XX    // 12
+3	   XX  XX    // 13
+4	   XX  XX    // 14
+5	   XX  XX    // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 228, glyph ‰ */
+\228 12 22
+	012345678901 {
+0	             // 0
+1	 XXXXXXXXXX  // 1
+2	 XXXXXXXXXX  // 2
+3	 XX      XX  // 3
+4	  XX     XX  // 4
+5	  XX         // 5
+6	   XX        // 6
+7	   XX        // 7
+8	    XX       // 8
+9	   XX        // 9
+0	   XX        // 10
+1	  XX         // 11
+2	  XX     XX  // 12
+3	 XX      XX  // 13
+4	 XXXXXXXXXX  // 14
+5	 XXXXXXXXXX  // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 229, glyph Â */
+\229 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	     XXXXXX  // 5
+6	    XXXXXXX  // 6
+7	   X  XXX    // 7
+8	  X    XXX   // 8
+9	 XX     XX   // 9
+0	 XX     XX   // 10
+1	 XX     XX   // 11
+2	 XX     XX   // 12
+3	 XXX    X    // 13
+4	  XXX  X     // 14
+5	   XXXX      // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 230, glyph Ê */
+\230 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	  XX    XX   // 6
+7	  XX    XX   // 7
+8	  XX    XX   // 8
+9	  XX    XX   // 9
+0	  XX    XX   // 10
+1	  XX    XX   // 11
+2	  XX    XX   // 12
+3	  XX    XX   // 13
+4	  XXX  XXX   // 14
+5	  XX XX XXX  // 15
+6	  XX         // 16
+7	  XX         // 17
+8	 XX          // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 231, glyph Á */
+\231 12 22
+	012345678901 {
+0	             // 0
+1	   XX  XX    // 1
+2	  XXXXXXXX   // 2
+3	 XX  XX  XX  // 3
+4	 XX  XX  XX  // 4
+5	     XX      // 5
+6	     XX      // 6
+7	     XX      // 7
+8	     XX      // 8
+9	     XX      // 9
+0	     XX      // 10
+1	     XX      // 11
+2	     XX      // 12
+3	     XX      // 13
+4	     XX      // 14
+5	     XX      // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 232, glyph Ë */
+\232 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	 XXXXXXXXXX  // 2
+3	 XXXXXXXXXX  // 3
+4	     XX      // 4
+5	     XX      // 5
+6	    XXXX     // 6
+7	   XX  XX    // 7
+8	  XX    XX   // 8
+9	  XX    XX   // 9
+0	   XX  XX    // 10
+1	    XXXX     // 11
+2	     XX      // 12
+3	     XX      // 13
+4	 XXXXXXXXXX  // 14
+5	 XXXXXXXXXX  // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 233, glyph È */
+\233 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	    XXXX     // 4
+5	   XXXXXX    // 5
+6	  XX    XX   // 6
+7	 XX      XX  // 7
+8	 XX      XX  // 8
+9	 XXXXXXXXXX  // 9
+0	 XXXXXXXXXX  // 10
+1	 XX      XX  // 11
+2	 XX      XX  // 12
+3	  XX    XX   // 13
+4	   XXXXXX    // 14
+5	    XXXX     // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 234, glyph Í */
+\234 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	   XXXXX     // 4
+5	  XX   XX    // 5
+6	  XX    XX   // 6
+7	  XX    XX   // 7
+8	 XX      XX  // 8
+9	 XX      XX  // 9
+0	  XX    XX   // 10
+1	  XX    XX   // 11
+2	   XX  XX    // 12
+3	   XX  XX    // 13
+4	XX XX  XX XX // 14
+5	 XXXX  XXXX  // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 235, glyph Î */
+\235 12 22
+	012345678901 {
+0	             // 0
+1	     XXXX    // 1
+2	    XX  XX   // 2
+3	   XX    XX  // 3
+4	   XX        // 4
+5	    XX       // 5
+6	     XX      // 6
+7	      XX     // 7
+8	    XXXXX    // 8
+9	   X   XXX   // 9
+0	  X     XXX  // 10
+1	 XX      XX  // 11
+2	 XX      XX  // 12
+3	 XXX     X   // 13
+4	  XXX   X    // 14
+5	   XXXXX     // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 236, glyph Ï */
+\236 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	             // 6
+7	             // 7
+8	  XXX  XXX   // 8
+9	 XX XXXX XX  // 9
+0	 XX  XX  XX  // 10
+1	XX   XX   XX // 11
+2	XX   XX   XX // 12
+3	 XX  XX  XX  // 13
+4	 XX XXXX XX  // 14
+5	  XXX  XXX   // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 237, glyph Ì */
+\237 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	        XX   // 4
+5	        XX   // 5
+6	       XX    // 6
+7	       XX    // 7
+8	  XXX XXXX   // 8
+9	 XX XXXX XX  // 9
+0	 XX  XX  XX  // 10
+1	XX   XX   XX // 11
+2	XX   XX   XX // 12
+3	 XX  XX  XX  // 13
+4	 XX XXXX XX  // 14
+5	  XXXX XXX   // 15
+6	   XX        // 16
+7	   XX        // 17
+8	  XX         // 18
+9	  XX         // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 238, glyph Ó */
+\238 12 22
+	012345678901 {
+0	             // 0
+1	       XXX   // 1
+2	      XX     // 2
+3	     XX      // 3
+4	     XX      // 4
+5	    XX       // 5
+6	    XX       // 6
+7	   XX        // 7
+8	   XXXXXXX   // 8
+9	   XX        // 9
+0	    XX       // 10
+1	    XX       // 11
+2	     XX      // 12
+3	     XX      // 13
+4	      XX     // 14
+5	       XXX   // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 239, glyph Ô */
+\239 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	    XXXX     // 5
+6	   XXXXXX    // 6
+7	  XXX  XXX   // 7
+8	  XX    XX   // 8
+9	  XX    XX   // 9
+0	  XX    XX   // 10
+1	  XX    XX   // 11
+2	  XX    XX   // 12
+3	  XX    XX   // 13
+4	  XX    XX   // 14
+5	  XX    XX   // 15
+6	  XX    XX   // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 240, glyph  */
+\240 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	 XXXXXXXXXX  // 5
+6	 XXXXXXXXXX  // 6
+7	             // 7
+8	             // 8
+9	             // 9
+0	 XXXXXXXXXX  // 10
+1	 XXXXXXXXXX  // 11
+2	             // 12
+3	             // 13
+4	             // 14
+5	 XXXXXXXXXX  // 15
+6	 XXXXXXXXXX  // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 241, glyph Ò */
+\241 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	     XX      // 4
+5	     XX      // 5
+6	     XX      // 6
+7	     XX      // 7
+8	 XXXXXXXXXX  // 8
+9	 XXXXXXXXXX  // 9
+0	     XX      // 10
+1	     XX      // 11
+2	     XX      // 12
+3	     XX      // 13
+4	             // 14
+5	 XXXXXXXXXX  // 15
+6	 XXXXXXXXXX  // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 242, glyph Ú */
+\242 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	 XX          // 4
+5	  XXX        // 5
+6	    XXX      // 6
+7	      XXX    // 7
+8	        XXX  // 8
+9	        XXX  // 9
+0	      XXX    // 10
+1	    XXX      // 11
+2	  XXX        // 12
+3	 XX          // 13
+4	             // 14
+5	 XXXXXXXXXX  // 15
+6	 XXXXXXXXXX  // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 243, glyph Û */
+\243 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	         XX  // 3
+4	       XXX   // 4
+5	     XXX     // 5
+6	   XXX       // 6
+7	 XXX         // 7
+8	 XXX         // 8
+9	   XXX       // 9
+0	     XXX     // 10
+1	       XXX   // 11
+2	         XX  // 12
+3	             // 13
+4	 XXXXXXXXXX  // 14
+5	 XXXXXXXXXX  // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 244, glyph Ù */
+\244 12 22
+	012345678901 {
+0	             // 0
+1	      XXX    // 1
+2	     XXXXX   // 2
+3	    XX   XX  // 3
+4	    XX   XX  // 4
+5	    XX       // 5
+6	    XX       // 6
+7	    XX       // 7
+8	    XX       // 8
+9	    XX       // 9
+0	    XX       // 10
+1	    XX       // 11
+2	    XX       // 12
+3	    XX       // 13
+4	    XX       // 14
+5	    XX       // 15
+6	    XX       // 16
+7	    XX       // 17
+8	    XX       // 18
+9	    XX       // 19
+0	    XX       // 20
+1	    XX       // 21
+	}
+
+/* Character 245, glyph ı */
+\245 12 22
+	012345678901 {
+0	             // 0
+1	   XXX       // 1
+2	  XXXXX      // 2
+3	 XX   XX     // 3
+4	 XX   XX     // 4
+5	      XX     // 5
+6	      XX     // 6
+7	      XX     // 7
+8	      XX     // 8
+9	      XX     // 9
+0	      XX     // 10
+1	      XX     // 11
+2	      XX     // 12
+3	      XX     // 13
+4	      XX     // 14
+5	      XX     // 15
+6	      XX     // 16
+7	      XX     // 17
+8	      XX     // 18
+9	      XX     // 19
+0	      XX     // 20
+1	      XX     // 21
+	}
+
+/* Character 246, glyph ˆ */
+\246 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	     XX      // 6
+7	     XX      // 7
+8	             // 8
+9	             // 9
+0	 XXXXXXXXXX  // 10
+1	 XXXXXXXXXX  // 11
+2	             // 12
+3	             // 13
+4	     XX      // 14
+5	     XX      // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 247, glyph ˜ */
+\247 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	             // 6
+7	  XXX        // 7
+8	 XX XX       // 8
+9	     XX   XX // 9
+0	      XX XX  // 10
+1	  XXX  XXX   // 11
+2	 XX XX       // 12
+3	     XX   XX // 13
+4	      XX XX  // 14
+5	       XXX   // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 248, glyph ¯ */
+\248 12 22
+	012345678901 {
+0	             // 0
+1	    XXXX     // 1
+2	   XX  XX    // 2
+3	   XX  XX    // 3
+4	   XX  XX    // 4
+5	    XXXX     // 5
+6	             // 6
+7	             // 7
+8	             // 8
+9	             // 9
+0	             // 10
+1	             // 11
+2	             // 12
+3	             // 13
+4	             // 14
+5	             // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 249, glyph ˘ */
+\249 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	             // 6
+7	             // 7
+8	             // 8
+9	             // 9
+0	             // 10
+1	   XXX       // 11
+2	  XXXXX      // 12
+3	  XXXXX      // 13
+4	  XXXXX      // 14
+5	   XXX       // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 250, glyph ˙ */
+\250 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	             // 5
+6	             // 6
+7	             // 7
+8	             // 8
+9	             // 9
+0	             // 10
+1	             // 11
+2	   XX        // 12
+3	  XXXX       // 13
+4	  XXXX       // 14
+5	   XX        // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 251, glyph ˚ */
+\251 12 22
+	012345678901 {
+0	             // 0
+1	     XXXXXX  // 1
+2	     XX      // 2
+3	     XX      // 3
+4	     XX      // 4
+5	     XX      // 5
+6	     XX      // 6
+7	     XX      // 7
+8	     XX      // 8
+9	     XX      // 9
+0	     XX      // 10
+1	     XX      // 11
+2	     XX      // 12
+3	     XX      // 13
+4	XX   XX      // 14
+5	 XX  XX      // 15
+6	  XX XX      // 16
+7	   XXXX      // 17
+8	    XXX      // 18
+9	     XX      // 19
+0	      X      // 20
+1	             // 21
+	}
+
+/* Character 252, glyph ¸ */
+\252 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	   X  XXX    // 2
+3	  XXXX XXX   // 3
+4	   XX   XX   // 4
+5	   XX   XX   // 5
+6	   XX   XX   // 6
+7	   XX   XX   // 7
+8	  XXXX XXXX  // 8
+9	             // 9
+0	             // 10
+1	             // 11
+2	             // 12
+3	             // 13
+4	             // 14
+5	             // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 253, glyph ˝ */
+\253 12 22
+	012345678901 {
+0	             // 0
+1	    XXXX     // 1
+2	   XXXXXX    // 2
+3	  XX   XX    // 3
+4	  X    XX    // 4
+5	      XX     // 5
+6	     XX      // 6
+7	    XX       // 7
+8	   XX    X   // 8
+9	  XXXXXXXX   // 9
+0	  XXXXXXXX   // 10
+1	             // 11
+2	             // 12
+3	             // 13
+4	             // 14
+5	             // 15
+6	             // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}
+
+/* Character 254, glyph ˛ */
+\254 12 22
+	012345678901 {
+0	             // 0
+1	             // 1
+2	             // 2
+3	             // 3
+4	             // 4
+5	  XXXXXXXX   // 5
+6	  XXXXXXXX   // 6
+7	  XXXXXXXX   // 7
+8	  XXXXXXXX   // 8
+9	  XXXXXXXX   // 9
+0	  XXXXXXXX   // 10
+1	  XXXXXXXX   // 11
+2	  XXXXXXXX   // 12
+3	  XXXXXXXX   // 13
+4	  XXXXXXXX   // 14
+5	  XXXXXXXX   // 15
+6	  XXXXXXXX   // 16
+7	             // 17
+8	             // 18
+9	             // 19
+0	             // 20
+1	             // 21
+	}

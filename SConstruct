@@ -274,7 +274,7 @@ else:
 	# 128-bit integer support
 	if conf.CheckType('__int128', language = 'C++'):
 		conf.Define('HAVE_INT128', 1, 'A 128-bit integer type is available.')
-	
+
 	# Linux support for GPIO control through a character device
 	if conf.CheckCHeader('linux/gpio.h'):
 		env['Use_GpioDevPort'] = True
@@ -282,6 +282,8 @@ else:
 	else:
 		env['Use_GpioDevPort'] = False
 		dbgenv['Use_GpioDevPort'] = False
+
+	#env.ParseConfig('pkg-config --cflags --libs ')  # error case?
 
 	dbgenv = conf.Finish()
 
@@ -317,7 +319,7 @@ optenv.AppendUnique(
 if not GetOption('help'):
 	envs = [ dbgenv, optenv ]
 	#trgs = [ [ ], [ ] ]
-	
+
 	for env in envs:
 		# add in optional libraries
 		for mac, lib in optionalLibs.iteritems():
@@ -339,7 +341,7 @@ if not GetOption('help'):
 			tests = SConscript('tests/SConscript', exports = 'env libs tools', duplicate=0,
 				variant_dir = env.subst('bin/${PSYS}-${PARCH}-${BUILDTYPE}/tests'))
 			Alias('tests-' + env['BUILDTYPE'], tests)
-	
+
 	Alias('libs', 'libs-dbg')
 	Alias('samples', 'samples-dbg')
 	if havetestlib:

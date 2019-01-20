@@ -192,7 +192,9 @@ All std::string objects are presumed to contain UTF-8 strings, but nothing actua
 /**
 @page DUDSLic License
 
-The license for all but duds/general/SignExtend.hpp is the two-clause simplified BSD license.
+The license for all code but duds/general/SignExtend.hpp and duds/general/ReverseBits.hpp is the two-clause simplified BSD license.
+
+All fonts, save for the 4x6 font, are licensed under GPL 2.0. The 4x6 font is public domain.
 
 -------------------------------------------------------------------------------
 

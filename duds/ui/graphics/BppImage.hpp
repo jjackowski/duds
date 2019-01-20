@@ -75,6 +75,10 @@ struct ImageLocation {
 	 */
 	constexpr ImageLocation operator + (const ImageDimensions &id) const;
 	/**
+	 * Subtract dimensions.
+	 */
+	constexpr ImageLocation operator - (const ImageDimensions &id) const;
+	/**
 	 * Swaps the location's axes.
 	 */
 	void swapAxes() {
@@ -166,6 +170,10 @@ inline void swap(ImageDimensions &d0, ImageDimensions &d1) {
 	std::swap(d0.h, d1.h);
 }
 
+/**
+ * Adds the width and height of an ImageDimensions to the x and y coordinates
+ * of a ImageLocation.
+ */
 constexpr ImageLocation ImageLocation::operator + (
 	const ImageDimensions &id
 ) const {
@@ -173,27 +181,14 @@ constexpr ImageLocation ImageLocation::operator + (
 }
 
 /**
- * The base class for errors related to the use of images.
+ * Subtracts the width and height of an ImageDimensions from the x and y
+ * coordinates of a ImageLocation.
  */
-struct ImageError : virtual std::exception, virtual boost::exception { };
-/**
- * Data with an image to parse was too short to hold the image.
- */
-struct ImageTooSmallError : ImageError { };
-/**
- * A problem with image bounds, such as the use of a location beyond the
- * image's dimensions.
- */
-struct ImageBoundsError : ImageError { };
-/**
- * Indicates the image has zero size when an operation requires some image
- * data.
- */
-struct ImageZeroSizeError : ImageBoundsError { };
-/**
- * The Pixel or ConstPixel iterator object was dereferenced when in at the end.
- */
-struct ImageIteratorEndError : ImageBoundsError { };
+constexpr ImageLocation ImageLocation::operator - (
+	const ImageDimensions &id
+) const {
+	return ImageLocation(x - id.w, y - id.h);
+}
 
 /**
  * An image location relevant to the error.
@@ -919,22 +914,40 @@ public:
 	 *              not evenly divisible by 8, the last byte of each line will
 	 *              contain unused bits. Each line of the image will start on
 	 *              a new byte.
-	 * @throw ImageTooSmallError  The provided data was too small. Either there
-	 *                            isn't enough data for the smallest possible
-	 *                            image, or the indicated dimensions require
-	 *                            more data.
+	 * @throw ImageTruncatedError  The provided data was too short. Either there
+	 *                             isn't enough data for the smallest possible
+	 *                             image, or the indicated dimensions require
+	 *                             more data.
 	 */
 	BppImage(const std::vector<char> &data);
 	/**
 	 * Convenience function to make a shared pointer to an image using the
-	 * BppImage(const char *) constructor.
+	 * BppImage(const ImageDimensions &) constructor.
 	 */
-	static std::shared_ptr<BppImage> make(const char *data);
+	static std::shared_ptr<BppImage> make(const ImageDimensions &id) {
+		return std::make_shared<BppImage>(id);
+	}
+	/**
+	 * Convenience function to make a shared pointer to an image using the
+	 * BppImage(int, int) constructor.
+	 */
+	static std::shared_ptr<BppImage> make(int width, int height) {
+		return std::make_shared<BppImage>(width, height);
+	}
 	/**
 	 * Convenience function to make a shared pointer to an image using the
 	 * BppImage(const char *) constructor.
 	 */
-	static std::shared_ptr<BppImage> make(const std::vector<char> &data);
+	static std::shared_ptr<BppImage> make(const char *data) {
+		return std::make_shared<BppImage>(data);
+	}
+	/**
+	 * Convenience function to make a shared pointer to an image using the
+	 * BppImage(const std::vector<char> &) constructor.
+	 */
+	static std::shared_ptr<BppImage> make(const std::vector<char> &data) {
+		return std::make_shared<BppImage>(data);
+	}
 	/**
 	 * Move assignment.
 	 */
@@ -1307,10 +1320,22 @@ public:
 		return togglePixel(ImageLocation(x, y));
 	}
 	/**
-	 * Blanks the image using the given state.
+	 * Changes the state of every pixel in the image to the given state.
 	 * @post  All pixels will be set to @a state.
 	 */
-	void blankImage(bool state = false);
+	void blankImage(bool state);
+	/**
+	 * Clears every pixel (change to false) in the image.
+	 */
+	void clearImage() {
+		blankImage(false);
+	}
+	/**
+	 * Sets every pixel (set to true) in the image.
+	 */
+	void setImage() {
+		blankImage(true);
+	}
 	/**
 	 * Tells how to modify the destination pixel with the source pixel data.
 	 */

@@ -24,3 +24,30 @@ Bars 5 5
 3	X X X
 4	X X X
 	}
+
+\32 4 6 {
+	
+}
+
+// mini font by Kenneth Albanowski, public domain
+
+\48 4 6 {
+	 * 
+	* *
+	* *
+	* *
+	 *
+}
+
+\49 4 6 {
+ * 
+** 
+ * 
+ * 
+***
+}
+
+// name parsing test; the name is "2Gs"
+\50Gs 4 6 {
+
+}

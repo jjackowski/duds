@@ -60,6 +60,11 @@ class Parser {
 	 */
 	int line = 1;
 	/**
+	 * Set to the line number of the first bad C++ identifier. This will
+	 * prevent source code output, but a binary archive file is still ok.
+	 */
+	int badIdent = -1;
+	/**
 	 * Reads from the stream and extracts any character that is whitespace or
 	 * that is part of a comment. When it returns, @a is should either be
 	 * positioned to read the next non-whitespace character, or is !good(),
@@ -237,23 +242,106 @@ class Parser {
 		}
 		std::string name;
 		is >> name;
-		// assure a good name
-		if (!((name.front() >= 'A') && (name.front() <= 'Z')) &&
-			!((name.front() >= 'a') && (name.front() <= 'z'))
-		) {
-			BOOST_THROW_EXCEPTION(BadIdentifierError() <<
-				LineNumber(line) << ImageName(name)
-			);
-		}
-		for (char c : name) {
-			if (!((c >= 'A') && (c <= 'Z')) &&
-				!((c >= 'a') && (c <= 'z')) &&
-				!((c >= '0') && (c <= '9')) &&
-				(c != '_')
+		// good identifier?
+		if (badIdent < 0) {
+			// assure a good name
+			if (!((name.front() >= 'A') && (name.front() <= 'Z')) &&
+				!((name.front() >= 'a') && (name.front() <= 'z'))
 			) {
-				BOOST_THROW_EXCEPTION(BadIdentifierError() <<
-					LineNumber(line) << ImageName(name)
-				);
+				badIdent = line;
+			}
+			for (char c : name) {
+				if (!((c >= 'A') && (c <= 'Z')) &&
+					!((c >= 'a') && (c <= 'z')) &&
+					!((c >= '0') && (c <= '9')) &&
+					(c != '_')
+				) {
+					badIdent = line;
+				}
+			}
+		}
+		// bad identifier?
+		if (badIdent > 0) {
+			// look for backspace
+			std::string::size_type pos = name.find('\\');
+			if (pos != std::string::npos) {
+				// process basic escape sequences
+				std::string res(name, 0, pos);
+				for (; pos < name.size(); ++pos) {
+					// will recheck first time, but easier loop logic
+					if (name[pos] == '\\') {
+						// advance past the backspace
+						++pos;
+						// another backspace?
+						if (name[pos] == '\\') {
+							// add one backspace
+							res.push_back('\\');
+							continue;
+						}
+						// tab?
+						if (name[pos] == 't') {
+							// add a tab
+							res.push_back('\t');
+							continue;
+						}
+						// decimal digit?
+						if ((name[pos] > '0') && (name[pos] <= '9')) {
+							char32_t val = name[pos] - '0';
+							for (++pos;
+								(pos < name.size()) &&
+								((name[pos] >= '0') && (name[pos] <= '9'));
+								++pos
+							) {
+								char32_t nval = 10 * val + name[pos] - '0';
+								// too large a value for any valid character?
+								if (nval > 0x10FFFF) {
+									// reject digit
+									break;
+								}
+								// incorporate digit
+								val = nval;
+							}
+							--pos;
+							// store character
+							/*  c32rtomb fails here for character values >= 128
+							std::mbstate_t mbs {0};
+							char out[MB_LEN_MAX];
+							std::size_t s = std::c32rtomb(out, val, &mbs);
+							// add UTF-8
+							res.insert(res.end(), out, out + s);
+							*/
+							if (val < 128) {
+								res.push_back(val);
+							} else if (val < 0x800) {
+								char out[2] = {
+									(char)(((val >> 6) & 0x1F) | 0xC0),
+									(char)((val & 0x3F) | 0x80)
+								};
+								res.insert(res.end(), out, out + 2);
+							} else if (val < 0x10000) {
+								char out[3] = {
+									(char)(((val >> 12) & 0xF) | 0xE0),
+									(char)(((val >> 6) & 0x3F) | 0x80),
+									(char)((val & 0x3F) | 0x80)
+								};
+								res.insert(res.end(), out, out + 3);
+							} else {
+								char out[4] = {
+									(char)(((val >> 18) & 0x7) | 0xF0),
+									(char)(((val >> 12) & 0x3F) | 0x80),
+									(char)(((val >> 6) & 0x3F) | 0x80),
+									(char)((val & 0x3F) | 0x80)
+								};
+								res.insert(res.end(), out, out + 4);
+							}
+						}
+						// todo: octal, hex
+					} else {
+						// copy the character
+						res.push_back(name[pos]);
+					}
+				}
+				name = std::move(res);
 			}
 		}
 		// read in dimensions
@@ -399,6 +487,9 @@ public:
 		} while (is.good());
 	}
 	void writeCpp(std::ostream &out) const {
+		if (badIdent >= 0) {
+			BOOST_THROW_EXCEPTION(BadIdentifierError() << LineNumber(line));
+		}
 		out.fill('0');
 		for (auto const &p : images) {
 			if (p.first.empty()) {
@@ -417,7 +508,7 @@ public:
 			//std::cout << "Outputing " << p.first << std::endl;
 			std::vector<unsigned char> dest = makeData(p.second);
 			// write out the image data to the file
-			out << p.first << ' ';
+			out << (unsigned char)p.first.size() << p.first;
 			out.write((char*)&(dest[0]), dest.size());
 		}
 	}

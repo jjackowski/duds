@@ -14,6 +14,21 @@ WiredLAN
 }
 
 /**
+ * Another wired LAN icon that is also not great.
+ */
+WiredLANbot
+5, 8
+	01234 {
+0	 XXX
+1	 XXX
+2	  X
+3	XXXXX
+4	 X X
+5	XX XX
+6	XX XX
+}
+
+/**
  * Wireless LAN icon; not that great.
  */
 WirelessLAN_S3

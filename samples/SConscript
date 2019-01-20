@@ -49,14 +49,19 @@ targets = [
 	envthread.Program('pwmbacklight', ['pwmbacklight.cpp'] + libs),
 	envthread.Program('st7920', ['st7920.cpp'] + libs),
 	env.Program('pinconfig', ['pinconfig.cpp'] + libs),
+	envsamp.BppiArc('font_4x6.bppi'),  # public domain
+	envsamp.BppiArc('font_8x16.bppi'), # GPL 2.0
 ]
 
 # These are be needed if image archive files, instead of header files, are
 # generated. SCons seems to be catching the dependency from the includes.
-envsamp.Depends(targets[1], imgarc)
-envsamp.Depends(targets[2], imgarcN)
-envsamp.Depends(targets[8], imgarcN)
-envsamp.Depends(targets[13], imgarc)
+envsamp.Depends(targets[1], imgarc)   # addressLCD
+envsamp.Depends(targets[2], imgarcN)  # clockLCD
+envsamp.Depends(targets[8], imgarcN)  # ina219LCD
+envsamp.Depends(targets[13], imgarc)  # st7920
+
+# fonts
+#targets += envsamp.BppiArc('font_*.bppi')  # not so easy; lazy
 
 if envthread['Use_Eigen']:
 	enveigen = envthread.Clone()

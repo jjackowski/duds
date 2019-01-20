@@ -9,6 +9,7 @@
  */
 
 #include <duds/ui/graphics/BppImage.hpp>
+#include <duds/ui/graphics/BppImageErrors.hpp>
 #include <duds/general/Errors.hpp>
 
 namespace duds { namespace ui { namespace graphics {
@@ -68,7 +69,7 @@ BppImage::BppImage(
 ) {
 	// assure a size large enough to hold the smallest image
 	if (data.size() < 5) {
-		DUDS_THROW_EXCEPTION(ImageTooSmallError());
+		DUDS_THROW_EXCEPTION(ImageTruncatedError());
 	}
 	// data starts with width, then height, both as little endian shorts
 	dim.w = data[0] | (data[1] << 8);
@@ -76,7 +77,7 @@ BppImage::BppImage(
 	// check input for adequate length
 	if (data.size() < ((dim.w / 8 + ((dim.w % 8) ? 1 : 0)) * dim.h + 4)) {
 		// too short
-		DUDS_THROW_EXCEPTION(ImageTooSmallError() <<
+		DUDS_THROW_EXCEPTION(ImageTruncatedError() <<
 			ImageErrorDimensions(dim)
 		);
 	}
@@ -93,14 +94,6 @@ BppImage::BppImage(
 			*dest = *citer;
 		}
 	}
-}
-
-std::shared_ptr<BppImage> BppImage::make(const char *data) {
-	return std::make_shared<BppImage>(data);
-}
-
-std::shared_ptr<BppImage> BppImage::make(const std::vector<char> &data) {
-	return std::make_shared<BppImage>(data);
 }
 
 BppImage BppImage::operator = (BppImage &&mv) {

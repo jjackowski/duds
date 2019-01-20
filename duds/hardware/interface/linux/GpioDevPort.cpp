@@ -385,6 +385,7 @@ public:
 	}
 	virtual void outputOffset(int chipFd, std::uint32_t offset, bool state) {
 		bool rem = RemoveOffset(inReq, offset);
+		// saw a transient error on this line, but don't know the cause
 		assert(rem);
 		CloseIfOpen(inReq);
 		AddOffset(outReq, offset);

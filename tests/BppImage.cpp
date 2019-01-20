@@ -6,8 +6,9 @@
 #define BOOST_TEST_DYN_LINK
 #include <boost/test/unit_test.hpp>
 #include <duds/ui/graphics/BppImageArchive.hpp>
-
-//#include <iostream>
+#include <duds/ui/graphics/BppImageErrors.hpp>
+#include <set>
+#include <iostream>
 
 namespace BPPN = duds::ui::graphics; // Bit Per Pixel Namespace
 
@@ -35,6 +36,31 @@ BOOST_AUTO_TEST_CASE(BppImage_Archive) {
 	BOOST_CHECK_EQUAL(img->width(), 5);
 	BOOST_CHECK_EQUAL(img->height(), 5);
 	BOOST_CHECK_EQUAL(img->blocksPerLine(), 1);
+
+	// test all items in the archive
+	std::set<std::string> names = { "Zebra", "Bars", " ", "0", "1", "2Gs" };
+	/*
+	BPPN::BppImageArchive::ImageMap::const_iterator iter = arc.cbegin();
+	for (; iter != arc.cend(); ++iter) {
+		std::set<std::string>::iterator siter = names.find(iter->first);
+		BOOST_CHECK(siter != names.end());
+		if (siter != names.end()) {
+			names.erase(siter);
+		} else {
+			std::cout << "Missing image: \"" <<  iter->first << '"' << std::endl;
+		}
+	}
+	*/
+	for (auto iter : arc) {
+		std::set<std::string>::iterator siter = names.find(iter.first);
+		BOOST_CHECK(siter != names.end());
+		if (siter != names.end()) {
+			names.erase(siter);
+		} else {
+			std::cout << "Missing image: \"" <<  iter.first << '"' << std::endl;
+		}
+	}
+	BOOST_CHECK_EQUAL(names.size(), 0);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
