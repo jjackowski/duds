@@ -145,7 +145,7 @@ void HD44780::sendByte(HD44780::Access &acc, int val) {
 
 void HD44780::initialize() {
 	// LCD intialization commands in reverse order they are sent
-	static const std::uint8_t initdata[8] = {
+	static const std::uint8_t initdata[] {
 		0x6,             // increment cursor, no display shift
 		0xC,             // turn on display w/o cursor
 		0x1,             // clear display
@@ -161,8 +161,8 @@ void HD44780::initialize() {
 	acc.enable.select();
 	std::this_thread::sleep_for(std::chrono::milliseconds(4));
 	acc.enable.deselect();
-	int loop = 7;
-	for (; loop >= 4; --loop) {
+	int loop = sizeof(initdata) - 1;
+	for (; loop >= sizeof(initdata) - 4; --loop) {
 		sendByte(acc, nibbleFlag | initdata[loop]);
 		std::this_thread::sleep_for(std::chrono::milliseconds(2));
 	}

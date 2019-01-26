@@ -13,7 +13,7 @@
 #include <duds/general/BitFlags.hpp>
 #include <memory>
 
-namespace duds { namespace ui {
+namespace duds { namespace ui { namespace menu {
 
 class Menu;
 class MenuView;
@@ -59,8 +59,7 @@ public:
 	/**
 	 * A set of option and state flags for menu items.
 	 */
-	typedef duds::general::BitFlags<struct MenuItemFlags, std::uint8_t>
-		Flags;
+	typedef duds::general::BitFlags<struct MenuItemFlags>  Flags;
 	/**
 	 * Indicates that the item may not be chosen by the user. Items that are
 	 * disabled and visible should be rendered in a way that tells the user they
@@ -395,6 +394,6 @@ typedef std::shared_ptr<MenuItem>  MenuItemSptr;
  */
 typedef std::weak_ptr<MenuItem>  MenuItemWptr;
 
-} }
+} } }
 
 #endif        //  #ifndef MENUITEM_HPP

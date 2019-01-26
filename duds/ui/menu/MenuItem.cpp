@@ -7,11 +7,11 @@
  *
  * Copyright (C) 2019  Jeff Jackowski
  */
-#include <duds/ui/GenericMenuItem.hpp>
-#include <duds/ui/Menu.hpp>
+#include <duds/ui/menu/GenericMenuItem.hpp>
+#include <duds/ui/menu/Menu.hpp>
 #include <duds/general/Errors.hpp>
 
-namespace duds { namespace ui {
+namespace duds { namespace ui { namespace menu {
 
 constexpr MenuItem::Flags MenuItem::Disabled;
 constexpr MenuItem::Flags MenuItem::Invisible;
@@ -157,4 +157,4 @@ void MenuItem::select(MenuView &invokingView, const MenuAccess &access) { }
 
 void MenuItem::deselect(MenuView &invokingView, const MenuAccess &access) { }
 
-} }
+} } }

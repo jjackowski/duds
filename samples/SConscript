@@ -18,8 +18,7 @@ envser.AppendUnique(
 
 envthread = envsamp.Clone()
 envthread.AppendUnique(
-	LIBS = 'pthread',
-	CPPPATH = '.' #'bin/${PSYS}-${PARCH}-${BUILDTYPE}/samples'
+	LIBS = 'pthread'
 )
 
 if not env['Use_GpioDevPort']:
@@ -34,7 +33,7 @@ envsamp.Depends(imgarcN, tools['bppic'])
 # could loop through directories, but be lazy for now
 targets = [
 	#env.Program('ds1620', Glob('DS1620/*.cpp') + libs),  # broken
-	envsamp.Program('time', ['time.cpp'] + libs),
+	envthread.Program('time', ['time.cpp'] + libs),
 	envthread.Program('addressLCD', ['addressLCD.cpp'] + libs),
 	envthread.Program('clockLCD', ['clockLCD.cpp'] + libs),
 	envser.Program('units', ['units.cpp'] + libs),
@@ -48,7 +47,7 @@ targets = [
 	envthread.Program('textdisplay', ['textdisplay.cpp'] + libs),
 	envthread.Program('pwmbacklight', ['pwmbacklight.cpp'] + libs),
 	envthread.Program('st7920', ['st7920.cpp'] + libs),
-	env.Program('pinconfig', ['pinconfig.cpp'] + libs),
+	envthread.Program('pinconfig', ['pinconfig.cpp'] + libs),
 	envsamp.BppiArc('font_4x6.bppi'),  # public domain
 	envsamp.BppiArc('font_8x16.bppi'), # GPL 2.0
 ]

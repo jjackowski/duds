@@ -121,3 +121,9 @@ The default build target is the DUDS library made for debugging. Sample programs
     - linux-x86_64-dbg
 
 There is currently no target for installation. Despite using Linux since 2001, I'm not really sure how software is typically installed.
+
+# License
+
+The license for almost all the code is the two-clause simplified BSD license. The exceptions are duds/general/SignExtend.hpp and duds/general/ReverseBits.hpp, which are in the public domain.
+
+All fonts, save for the 4x6 font, are licensed under GPL 2.0. The 4x6 font is public domain.

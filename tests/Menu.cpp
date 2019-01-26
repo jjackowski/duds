@@ -15,11 +15,13 @@
 #define BOOST_TEST_DYN_LINK
 #include <boost/test/unit_test.hpp>
 #include <boost/test/data/test_case.hpp>
-#include <duds/ui/MenuAccess.hpp>
-#include <duds/ui/MenuOutputViewAccess.hpp>
-#include <duds/ui/GenericMenuItem.hpp>
+#include <duds/ui/menu/MenuAccess.hpp>
+#include <duds/ui/menu/MenuOutputViewAccess.hpp>
+#include <duds/ui/menu/GenericMenuItem.hpp>
 
 #include <iostream>
+
+namespace DM = duds::ui::menu;
 
 void inc(int &i) {
 	++i;
@@ -30,18 +32,18 @@ BOOST_AUTO_TEST_SUITE(Menu)
 // if something here isn't working, the tests that follow will likely fail to
 // initialize their data and may produce useless results
 BOOST_AUTO_TEST_CASE(MenuBasics) {
-	duds::ui::MenuSptr menu(duds::ui::Menu::make("Hi"));
+	DM::MenuSptr menu(DM::Menu::make("Hi"));
 	BOOST_CHECK_EQUAL(menu->title(), "Hi");
 	BOOST_CHECK_EQUAL(menu->size(), 0);
 	BOOST_CHECK_EQUAL(menu->haveToggles(), false);
-	duds::ui::GenericMenuItemSptr item(duds::ui::GenericMenuItem::make("Item"));
+	DM::GenericMenuItemSptr item(DM::GenericMenuItem::make("Item"));
 	BOOST_CHECK_EQUAL(item->menu(), nullptr);
 	int val = 0;
 	item->choseConnect(std::bind(inc, std::ref(val)));
 	{
-		duds::ui::MenuAccess ma(menu);
+		DM::MenuAccess ma(menu);
 		// lock is recursive, so this must not fail
-		duds::ui::MenuAccess ma0(menu);
+		DM::MenuAccess ma0(menu);
 		BOOST_CHECK_EQUAL(ma.size(), 0);
 		BOOST_CHECK_EQUAL(ma0.size(), 0);
 		ma.append(item);
@@ -50,19 +52,19 @@ BOOST_AUTO_TEST_CASE(MenuBasics) {
 		BOOST_CHECK_EQUAL(ma.item(0), item);
 		BOOST_CHECK_EQUAL(ma.item(0)->label(), "Item");
 		BOOST_CHECK_EQUAL(ma.item(0)->menu(), menu.get());
-		BOOST_CHECK_THROW(ma.item(1), duds::ui::MenuBoundsError);
+		BOOST_CHECK_THROW(ma.item(1), DM::MenuBoundsError);
 	}
 	BOOST_REQUIRE_EQUAL(menu->size(), 1);
-	duds::ui::MenuViewSptr view = duds::ui::MenuView::make(menu);
+	DM::MenuViewSptr view = DM::MenuView::make(menu);
 	BOOST_CHECK_EQUAL(view->selectedIndex(), 0);
 	// chose the menu item
 	view->chose();
 	// chose function has not yet been called
 	BOOST_CHECK_EQUAL(val, 0);
-	duds::ui::MenuOutputViewSptr outv = duds::ui::MenuOutputView::make(view, 4);
+	DM::MenuOutputViewSptr outv = DM::MenuOutputView::make(view, 4);
 	// visible list
 	{
-		duds::ui::MenuOutputViewAccess acc(outv);
+		DM::MenuOutputViewAccess acc(outv);
 		// view was changed above
 		BOOST_CHECK_EQUAL(acc.changed(), true);
 		// item should have been chosen
@@ -73,7 +75,7 @@ BOOST_AUTO_TEST_CASE(MenuBasics) {
 		BOOST_CHECK_EQUAL(acc.selected(), 0);
 		// item is not a toggle
 		BOOST_CHECK_EQUAL(acc.haveToggles(), false);
-		duds::ui::MenuVisibleList::const_iterator iter = acc.begin();
+		DM::MenuVisibleList::const_iterator iter = acc.begin();
 		BOOST_CHECK_EQUAL(*iter, item.get());
 		BOOST_CHECK_EQUAL(*acc.selectedIter(), item.get());
 		++iter;
@@ -81,7 +83,7 @@ BOOST_AUTO_TEST_CASE(MenuBasics) {
 	}
 	// no change
 	{
-		duds::ui::MenuOutputViewAccess acc(outv);
+		DM::MenuOutputViewAccess acc(outv);
 		// view was not changed
 		BOOST_CHECK_EQUAL(acc.changed(), false);
 	}
@@ -92,13 +94,13 @@ BOOST_AUTO_TEST_SUITE_END()
 // Holds an index number used for checking the order of menu items. Order
 // checks are needed for tests of inserting and removing items, as well as
 // checks for which items a MenuSunview lists as currently visible.
-class IndexedItem : public duds::ui::GenericMenuItem {
+class IndexedItem : public DM::GenericMenuItem {
 	int idx;
 public:
 	IndexedItem(const std::string &label, int i) :
-		duds::ui::GenericMenuItem(label), idx(i) { }
+		DM::GenericMenuItem(label), idx(i) { }
 	IndexedItem(const std::string &label, Flags flags, int i) :
-		duds::ui::GenericMenuItem(label, flags), idx(i) { }
+		DM::GenericMenuItem(label, flags), idx(i) { }
 	int index() const {
 		return idx;
 	}
@@ -108,24 +110,24 @@ typedef std::shared_ptr<IndexedItem>  IndexedItemSptr;
 
 // A complex menu setup to support a variety of tests.
 struct MenuFixture {
-	duds::ui::MenuSptr menu;
-	duds::ui::MenuViewSptr viewA, viewB;
+	DM::MenuSptr menu;
+	DM::MenuViewSptr viewA, viewB;
 	// outvAA and outvAB will use viewA, while outvB will use viewB
-	duds::ui::MenuOutputViewSptr outvAA, outvAB, outvB;
+	DM::MenuOutputViewSptr outvAA, outvAB, outvB;
 	// All counts start at zero and increment when the corresponding menu item
 	// is chosen. Array is larger than needed to support tests that add more
 	// menu items.
 	int counts[24];
 	MenuFixture() :
-		menu(duds::ui::Menu::make("Fixture menu")),
-		viewA(duds::ui::MenuView::make(menu)),
-		viewB(duds::ui::MenuView::make(menu)),
-		outvAA(duds::ui::MenuOutputView::make(viewA, 4)),
-		outvAB(duds::ui::MenuOutputView::make(viewA, 6)),
-		outvB(duds::ui::MenuOutputView::make(viewB, 8)),
+		menu(DM::Menu::make("Fixture menu")),
+		viewA(DM::MenuView::make(menu)),
+		viewB(DM::MenuView::make(menu)),
+		outvAA(DM::MenuOutputView::make(viewA, 4)),
+		outvAB(DM::MenuOutputView::make(viewA, 6)),
+		outvB(DM::MenuOutputView::make(viewB, 8)),
 		counts { 0 }
 	{
-		duds::ui::MenuAccess acc(menu);
+		DM::MenuAccess acc(menu);
 		// add some menu items
 		std::ostringstream oss;
 		oss << "Item ";
@@ -137,19 +139,19 @@ struct MenuFixture {
 					(
 						// all even items will be toggles
 						!(loop & 1) ?
-							duds::ui::MenuItem::Toggle :
-							duds::ui::MenuItem::Flags(0)
+							DM::MenuItem::Toggle :
+							DM::MenuItem::Flags(0)
 					) | (
 						// ever other even item, starting with 0, will be
 						// be toggled on; others will be toggled off
 						!(loop & 3) ?
-							duds::ui::MenuItem::ToggledOn :
-							duds::ui::MenuItem::Flags(0)
+							DM::MenuItem::ToggledOn :
+							DM::MenuItem::Flags(0)
 					) | (
 						// every third item, starting with 0, will have a value
 						!(loop % 3) ?
-							duds::ui::MenuItem::HasValue :
-							duds::ui::MenuItem::Flags(0)
+							DM::MenuItem::HasValue :
+							DM::MenuItem::Flags(0)
 					),
 					// put loop index into the item for later item ordering checks
 					loop
@@ -167,7 +169,7 @@ BOOST_FIXTURE_TEST_SUITE(Menu_FixtureTests, MenuFixture)
 // test the results of MenuFixture::MenuFixture()
 BOOST_AUTO_TEST_CASE(FixtureInit) {
 	{
-		duds::ui::MenuAccess acc(menu);
+		DM::MenuAccess acc(menu);
 		BOOST_CHECK_EQUAL(menu->size(), 16);
 		int ui = menu->updateIndex();
 		std::istringstream iss;
@@ -187,7 +189,7 @@ BOOST_AUTO_TEST_CASE(FixtureInit) {
 				BOOST_CHECK_EQUAL(item->isToggle(), false);
 				BOOST_CHECK_THROW(
 					item->setToggle(),
-					duds::ui::MenuItemNotAToggle
+					DM::MenuItemNotAToggle
 				);
 			} else {
 				BOOST_CHECK_EQUAL(item->isToggle(), true);
@@ -210,7 +212,7 @@ BOOST_AUTO_TEST_CASE(FixtureInit) {
 		BOOST_CHECK_EQUAL(menu->updateIndex(), ui);
 	}
 	{
-		duds::ui::MenuOutputViewAccess acc(outvAA);
+		DM::MenuOutputViewAccess acc(outvAA);
 		BOOST_CHECK_EQUAL(acc.selected(), 0);
 		BOOST_CHECK(acc.begin() == acc.selectedIter());
 		BOOST_CHECK_EQUAL((*acc.selectedIter())->label(), "Item 0");
@@ -223,7 +225,7 @@ BOOST_AUTO_TEST_CASE(Toggles) {
 	int ui = menu->updateIndex();
 	// change all toggle states to clear
 	{
-		duds::ui::MenuAccess acc(menu);
+		DM::MenuAccess acc(menu);
 		for (int loop = 0; loop < 16; loop += 2) {
 			BOOST_CHECK_NO_THROW(acc.clearToggle(loop));
 		}
@@ -232,9 +234,9 @@ BOOST_AUTO_TEST_CASE(Toggles) {
 	BOOST_CHECK_EQUAL(menu->updateIndex(), ui + 4);
 	// change all toggle states to set
 	{
-		duds::ui::MenuAccess acc(menu);
+		DM::MenuAccess acc(menu);
 		for (int loop = 0; loop < 16; loop += 2) {
-			duds::ui::MenuItemSptr item = acc.item(loop);
+			DM::MenuItemSptr item = acc.item(loop);
 			BOOST_CHECK_EQUAL(item->isToggledOn(), false);
 			BOOST_CHECK_NO_THROW(item->setToggle());
 			BOOST_CHECK_EQUAL(item->isToggledOn(), true);
@@ -248,7 +250,7 @@ BOOST_AUTO_TEST_CASE(Values) {
 	int ui = menu->updateIndex();
 	// change all values to a count
 	{
-		duds::ui::MenuAccess acc(menu);
+		DM::MenuAccess acc(menu);
 		std::ostringstream oss;
 		for (int loop = 0; loop < 16; loop += 3) {
 			oss << loop;
@@ -260,10 +262,10 @@ BOOST_AUTO_TEST_CASE(Values) {
 	BOOST_CHECK_EQUAL(menu->updateIndex(), ui + 6);
 	// check values
 	{
-		duds::ui::MenuAccess acc(menu);
+		DM::MenuAccess acc(menu);
 		std::istringstream iss;
 		for (int loop = 0; loop < 16; loop += 3) {
-			duds::ui::MenuItemSptr item = acc.item(loop);
+			DM::MenuItemSptr item = acc.item(loop);
 			iss.str(item->value());
 			int v;
 			iss >> v;
@@ -275,9 +277,9 @@ BOOST_AUTO_TEST_CASE(Values) {
 
 BOOST_AUTO_TEST_CASE(Visibility) {
 	{
-		duds::ui::MenuOutputViewAccess acc(outvAA);
+		DM::MenuOutputViewAccess acc(outvAA);
 		BOOST_CHECK_EQUAL(acc.size(), 4);
-		duds::ui::MenuVisibleList::const_iterator iter = acc.begin();
+		DM::MenuVisibleList::const_iterator iter = acc.begin();
 		int cnt = 0;
 		while (iter != acc.end()) {
 			IndexedItem *item = dynamic_cast<IndexedItem*>(*iter);
@@ -291,9 +293,9 @@ BOOST_AUTO_TEST_CASE(Visibility) {
 	// adjust the selection
 	viewA->jump(10);
 	{
-		duds::ui::MenuOutputViewAccess acc(outvAA);
+		DM::MenuOutputViewAccess acc(outvAA);
 		BOOST_CHECK_EQUAL(acc.size(), 4);
-		duds::ui::MenuVisibleList::const_iterator iter = acc.selectedIter();
+		DM::MenuVisibleList::const_iterator iter = acc.selectedIter();
 		IndexedItem *item = dynamic_cast<IndexedItem*>(*iter);
 		BOOST_CHECK_EQUAL(item->index(), 10);
 		iter = acc.begin();
@@ -309,12 +311,12 @@ BOOST_AUTO_TEST_CASE(Visibility) {
 	}
 	// selection change should not have altered viewB or outvB
 	{
-		duds::ui::MenuOutputViewAccess acc(outvB);
+		DM::MenuOutputViewAccess acc(outvB);
 		BOOST_CHECK_EQUAL(acc.size(), 8);
 		// move selection
 		viewB->backward(1);
 		// selection should still be on zero until acc is destructed
-		duds::ui::MenuVisibleList::const_iterator iter = acc.selectedIter();
+		DM::MenuVisibleList::const_iterator iter = acc.selectedIter();
 		IndexedItem *item = dynamic_cast<IndexedItem*>(*iter);
 		BOOST_CHECK_EQUAL(item->index(), 0);
 		iter = acc.begin();
@@ -330,18 +332,18 @@ BOOST_AUTO_TEST_CASE(Visibility) {
 	}
 	// check moved selection on view B
 	{
-		duds::ui::MenuOutputViewAccess acc(outvB);
+		DM::MenuOutputViewAccess acc(outvB);
 		BOOST_CHECK_EQUAL(acc.size(), 8);
-		duds::ui::MenuVisibleList::const_iterator iter = acc.selectedIter();
+		DM::MenuVisibleList::const_iterator iter = acc.selectedIter();
 		IndexedItem *item = dynamic_cast<IndexedItem*>(*iter);
 		BOOST_CHECK_EQUAL(item->index(), 1);
 	}
 	// adjust the selection to the end
 	viewA->backward(5);
 	{
-		duds::ui::MenuOutputViewAccess acc(outvAA);
+		DM::MenuOutputViewAccess acc(outvAA);
 		BOOST_CHECK_EQUAL(acc.size(), 4);
-		duds::ui::MenuVisibleList::const_iterator iter = acc.selectedIter();
+		DM::MenuVisibleList::const_iterator iter = acc.selectedIter();
 		IndexedItem *item = dynamic_cast<IndexedItem*>(*iter);
 		BOOST_CHECK_EQUAL(item->index(), 15);
 		iter = acc.begin();
@@ -358,27 +360,27 @@ BOOST_AUTO_TEST_CASE(Visibility) {
 	// adjust the selection past the end; should wrap to start
 	viewA->backward(5);
 	{
-		duds::ui::MenuOutputViewAccess acc(outvAA);
+		DM::MenuOutputViewAccess acc(outvAA);
 		BOOST_CHECK_EQUAL(acc.size(), 4);
-		duds::ui::MenuVisibleList::const_iterator iter = acc.selectedIter();
+		DM::MenuVisibleList::const_iterator iter = acc.selectedIter();
 		IndexedItem *item = dynamic_cast<IndexedItem*>(*iter);
 		BOOST_CHECK_EQUAL(item->index(), 0);
 	}
 	// adjust the selection past the start; should wrap to end
 	viewA->forward(10);
 	{
-		duds::ui::MenuOutputViewAccess acc(outvAA);
+		DM::MenuOutputViewAccess acc(outvAA);
 		BOOST_CHECK_EQUAL(acc.size(), 4);
-		duds::ui::MenuVisibleList::const_iterator iter = acc.selectedIter();
+		DM::MenuVisibleList::const_iterator iter = acc.selectedIter();
 		IndexedItem *item = dynamic_cast<IndexedItem*>(*iter);
 		BOOST_CHECK_EQUAL(item->index(), 15);
 	}
 	// adjust the selection near the start
 	viewA->forward(10);
 	{
-		duds::ui::MenuOutputViewAccess acc(outvAA);
+		DM::MenuOutputViewAccess acc(outvAA);
 		BOOST_CHECK_EQUAL(acc.size(), 4);
-		duds::ui::MenuVisibleList::const_iterator iter = acc.selectedIter();
+		DM::MenuVisibleList::const_iterator iter = acc.selectedIter();
 		IndexedItem *item = dynamic_cast<IndexedItem*>(*iter);
 		BOOST_CHECK_EQUAL(item->index(), 5);
 		iter = acc.begin();
@@ -398,16 +400,16 @@ BOOST_AUTO_TEST_CASE(Visibility) {
 BOOST_AUTO_TEST_CASE(Visibility_Change) {
 	// change several items to be disabled
 	{
-		duds::ui::MenuAccess acc(menu);
+		DM::MenuAccess acc(menu);
 		for (int loop = 0; loop < 2; ++loop) {
 			BOOST_CHECK_NO_THROW(acc.disable(loop));
 		}
 	}
 	// the disabled change should not alter what is visible
 	{
-		duds::ui::MenuOutputViewAccess acc(outvAA);
+		DM::MenuOutputViewAccess acc(outvAA);
 		BOOST_CHECK_EQUAL(acc.size(), 4);
-		duds::ui::MenuVisibleList::const_iterator iter = acc.selectedIter();
+		DM::MenuVisibleList::const_iterator iter = acc.selectedIter();
 		IndexedItem *item = dynamic_cast<IndexedItem*>(*iter);
 		// first enabled item is selected
 		BOOST_CHECK_EQUAL(item->index(), 2);
@@ -435,16 +437,16 @@ BOOST_AUTO_TEST_CASE(Visibility_Change) {
 	}
 	// change several items to be invisible
 	{
-		duds::ui::MenuAccess acc(menu);
+		DM::MenuAccess acc(menu);
 		for (int loop = 3; loop < 5; ++loop) {
 			BOOST_CHECK_NO_THROW(acc.hide(loop));
 		}
 	}
 	// the above change should make items 3 & 4 invisible
 	{
-		duds::ui::MenuOutputViewAccess acc(outvAA);
+		DM::MenuOutputViewAccess acc(outvAA);
 		BOOST_CHECK_EQUAL(acc.size(), 4);
-		duds::ui::MenuVisibleList::const_iterator iter = acc.selectedIter();
+		DM::MenuVisibleList::const_iterator iter = acc.selectedIter();
 		IndexedItem *item = dynamic_cast<IndexedItem*>(*iter);
 		BOOST_CHECK_EQUAL(item->index(), 2);
 		iter = acc.begin();
@@ -480,11 +482,11 @@ BOOST_AUTO_TEST_CASE(Visibility_Change) {
 	viewA->backward(1);
 	// should have moved selection from 2 to 5 since 3 & 4 are still invisible
 	{
-		duds::ui::MenuOutputViewAccess acc(outvAA);
+		DM::MenuOutputViewAccess acc(outvAA);
 		// chose action occured
 		BOOST_CHECK_EQUAL(counts[5], 1);
 		BOOST_CHECK_EQUAL(acc.size(), 4);
-		duds::ui::MenuVisibleList::const_iterator iter = acc.selectedIter();
+		DM::MenuVisibleList::const_iterator iter = acc.selectedIter();
 		IndexedItem *item = dynamic_cast<IndexedItem*>(*iter);
 		BOOST_CHECK_EQUAL(item->index(), 5);
 		iter = acc.begin();
@@ -512,14 +514,14 @@ BOOST_AUTO_TEST_CASE(Visibility_Change) {
 	}
 	// change item 4 to be visible
 	{
-		duds::ui::MenuAccess acc(menu);
+		DM::MenuAccess acc(menu);
 		BOOST_CHECK_NO_THROW(acc.show(4));
 	}
 	// first visible item should now be 4
 	{
-		duds::ui::MenuOutputViewAccess acc(outvAA);
+		DM::MenuOutputViewAccess acc(outvAA);
 		BOOST_CHECK_EQUAL(acc.size(), 4);
-		duds::ui::MenuVisibleList::const_iterator iter = acc.selectedIter();
+		DM::MenuVisibleList::const_iterator iter = acc.selectedIter();
 		IndexedItem *item = dynamic_cast<IndexedItem*>(*iter);
 		BOOST_CHECK_EQUAL(item->index(), 5);
 		iter = acc.begin();
@@ -541,29 +543,29 @@ BOOST_AUTO_TEST_CASE(Visibility_Change) {
 BOOST_AUTO_TEST_CASE(Visibility_Errors) {
 	// add a visible item & check error reporting
 	{
-		duds::ui::MenuAccess acc(menu);
+		DM::MenuAccess acc(menu);
 		// append no item
 		BOOST_CHECK_THROW(
-			acc.append(duds::ui::MenuItemSptr()),
-			duds::ui::MenuNoItemError
+			acc.append(DM::MenuItemSptr()),
+			DM::MenuNoItemError
 		);
 		// insert no item
 		BOOST_CHECK_THROW(
-			acc.insert(8, duds::ui::MenuItemSptr()),
-			duds::ui::MenuNoItemError
+			acc.insert(8, DM::MenuItemSptr()),
+			DM::MenuNoItemError
 		);
 		// make a new item
 		IndexedItemSptr item(std::make_shared<IndexedItem>("Appended 16", 16));
 		// insert past end
-		BOOST_CHECK_THROW(acc.insert(18, item), duds::ui::MenuBoundsError);
+		BOOST_CHECK_THROW(acc.insert(18, item), DM::MenuBoundsError);
 		// really append
 		BOOST_CHECK_NO_THROW(acc.append(item));
 	}
 	// the end of the menu is not visible, so no visibility change
 	{
-		duds::ui::MenuOutputViewAccess acc(outvAA);
+		DM::MenuOutputViewAccess acc(outvAA);
 		BOOST_CHECK_EQUAL(acc.size(), 4);
-		duds::ui::MenuVisibleList::const_iterator iter = acc.selectedIter();
+		DM::MenuVisibleList::const_iterator iter = acc.selectedIter();
 		IndexedItem *item = dynamic_cast<IndexedItem*>(*iter);
 		// first enabled item is selected
 		BOOST_CHECK_EQUAL(item->index(), 0);
@@ -582,9 +584,9 @@ BOOST_AUTO_TEST_CASE(Visibility_Errors) {
 	viewA->jump(16);
 	// the end of the menu is visible, including the appended item
 	{
-		duds::ui::MenuOutputViewAccess acc(outvAA);
+		DM::MenuOutputViewAccess acc(outvAA);
 		BOOST_CHECK_EQUAL(acc.size(), 4);
-		duds::ui::MenuVisibleList::const_iterator iter = acc.selectedIter();
+		DM::MenuVisibleList::const_iterator iter = acc.selectedIter();
 		IndexedItem *item = dynamic_cast<IndexedItem*>(*iter);
 		// appended item is selected
 		BOOST_CHECK_EQUAL(item->index(), 16);
@@ -600,23 +602,23 @@ BOOST_AUTO_TEST_CASE(Visibility_Errors) {
 	}
 	// remove an item that was visible in the last check
 	{
-		duds::ui::MenuAccess acc(menu);
+		DM::MenuAccess acc(menu);
 		// remove no item
 		BOOST_CHECK_THROW(
-			acc.remove(duds::ui::MenuItemSptr()),
-			duds::ui::MenuNoItemError
+			acc.remove(DM::MenuItemSptr()),
+			DM::MenuNoItemError
 		);
 		// make a new item
 		IndexedItemSptr item(std::make_shared<IndexedItem>("Bogus", -1));
 		// remove an item not in the menu
 		BOOST_CHECK_THROW(
 			acc.remove(item),
-			duds::ui::MenuItemDoesNotExist
+			DM::MenuItemDoesNotExist
 		);
 		// remove item from beyond the end
 		BOOST_CHECK_THROW(
 			acc.remove(18),
-			duds::ui::MenuBoundsError
+			DM::MenuBoundsError
 		);
 		// remove item 13; first one previously visible
 		BOOST_CHECK_NO_THROW(acc.remove(13));
@@ -624,9 +626,9 @@ BOOST_AUTO_TEST_CASE(Visibility_Errors) {
 	// item 12 is now visible, item 16 at different position, but still
 	// selected
 	{
-		duds::ui::MenuOutputViewAccess acc(outvAA);
+		DM::MenuOutputViewAccess acc(outvAA);
 		BOOST_CHECK_EQUAL(acc.size(), 4);
-		duds::ui::MenuVisibleList::const_iterator iter = acc.selectedIter();
+		DM::MenuVisibleList::const_iterator iter = acc.selectedIter();
 		IndexedItem *item = dynamic_cast<IndexedItem*>(*iter);
 		// appended item is selected
 		BOOST_CHECK_EQUAL(item->index(), 16);
@@ -708,37 +710,37 @@ BOOST_DATA_TEST_CASE_F(
 ) {
 	// after init; before more changes
 	{
-		duds::ui::MenuOutputViewAccess accAA(outvAA);
+		DM::MenuOutputViewAccess accAA(outvAA);
 		BOOST_CHECK_EQUAL(accAA.changed(), true);
 		// Normally having a second MenuOutputViewAccess in scope on the stack
 		// doesn't make sense. It is done here to check that a deadlock does not
 		// occur.
-		duds::ui::MenuOutputViewAccess accAB(outvAB);
+		DM::MenuOutputViewAccess accAB(outvAB);
 		BOOST_CHECK_EQUAL(accAB.changed(), true);
 	}
 	{
 		// this cannot be part of the scope above; it will cause a deadlock
-		duds::ui::MenuOutputViewAccess accB(outvB);
+		DM::MenuOutputViewAccess accB(outvB);
 		BOOST_CHECK_EQUAL(accB.changed(), true);
 	}
 	// select an item on view A
 	viewA->jump(sample.pselidx);
 	{
-		duds::ui::MenuOutputViewAccess accAA(outvAA);
+		DM::MenuOutputViewAccess accAA(outvAA);
 		// will change if the selection is different than the default of zero
 		BOOST_CHECK_EQUAL(accAA.changed(), sample.pselidx != 0);
-		duds::ui::MenuOutputViewAccess accAB(outvAB);
+		DM::MenuOutputViewAccess accAB(outvAB);
 		// same as above
 		BOOST_CHECK_EQUAL(accAB.changed(), sample.pselidx != 0);
 	}
 	// view B hasn't changed
 	{
-		duds::ui::MenuOutputViewAccess acc(outvB);
+		DM::MenuOutputViewAccess acc(outvB);
 		BOOST_CHECK_EQUAL(acc.changed(), false);
 	}
 	// modify the menu
 	{
-		duds::ui::MenuAccess acc(menu);
+		DM::MenuAccess acc(menu);
 		// insert?
 		if (sample.op == TestAction::Insert) {
 			// make a new item
@@ -752,10 +754,10 @@ BOOST_DATA_TEST_CASE_F(
 	}
 	// checks on output view AA
 	{
-		duds::ui::MenuOutputViewAccess acc(outvAA);
+		DM::MenuOutputViewAccess acc(outvAA);
 		BOOST_CHECK_EQUAL(acc.changed(), true);
 		BOOST_CHECK_EQUAL(acc.size(), 4);
-		duds::ui::MenuVisibleList::const_iterator iter = acc.selectedIter();
+		DM::MenuVisibleList::const_iterator iter = acc.selectedIter();
 		IndexedItem *item = dynamic_cast<IndexedItem*>(*iter);
 		BOOST_CHECK_EQUAL(item->index(), sample.aselidx);
 		iter = acc.begin();
@@ -770,10 +772,10 @@ BOOST_DATA_TEST_CASE_F(
 	}
 	// checks on output view B
 	{
-		duds::ui::MenuOutputViewAccess acc(outvB);
+		DM::MenuOutputViewAccess acc(outvB);
 		BOOST_CHECK_EQUAL(acc.changed(), true);
 		BOOST_CHECK_EQUAL(acc.size(), 8);
-		duds::ui::MenuVisibleList::const_iterator iter = acc.selectedIter();
+		DM::MenuVisibleList::const_iterator iter = acc.selectedIter();
 		IndexedItem *item = dynamic_cast<IndexedItem*>(*iter);
 		// first item removed?
 		if ((sample.op == TestAction::Remove) && (sample.opidx == 0)) {
@@ -811,7 +813,7 @@ BOOST_DATA_TEST_CASE_F(
 		BOOST_CHECK_EQUAL(cnt, 8);
 	}
 	{
-		duds::ui::MenuOutputViewAccess acc(outvAA);
+		DM::MenuOutputViewAccess acc(outvAA);
 		BOOST_CHECK_EQUAL(acc.changed(), false);
 	}
 }

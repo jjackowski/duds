@@ -39,18 +39,6 @@ BOOST_AUTO_TEST_CASE(BppImage_Archive) {
 
 	// test all items in the archive
 	std::set<std::string> names = { "Zebra", "Bars", " ", "0", "1", "2Gs" };
-	/*
-	BPPN::BppImageArchive::ImageMap::const_iterator iter = arc.cbegin();
-	for (; iter != arc.cend(); ++iter) {
-		std::set<std::string>::iterator siter = names.find(iter->first);
-		BOOST_CHECK(siter != names.end());
-		if (siter != names.end()) {
-			names.erase(siter);
-		} else {
-			std::cout << "Missing image: \"" <<  iter->first << '"' << std::endl;
-		}
-	}
-	*/
 	for (auto iter : arc) {
 		std::set<std::string>::iterator siter = names.find(iter.first);
 		BOOST_CHECK(siter != names.end());

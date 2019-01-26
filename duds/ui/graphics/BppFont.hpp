@@ -160,7 +160,7 @@ public:
 	 * @param text   The text to render.
 	 * @param flags  The option flags. The default is to render varying width,
 	 *               fixed height text with each line aligned to the left.
-	 *
+	 * @return       A new image with the rendered text.
 	 * @bug          Only tested for rendering a single line of text.
 	 * @throw        GlyphNotFoundError  A glyph in @a text is not provided
 	 *                                   by the font.

@@ -7,9 +7,9 @@
  *
  * Copyright (C) 2019  Jeff Jackowski
  */
-#include <duds/ui/GenericMenuItem.hpp>
+#include <duds/ui/menu/GenericMenuItem.hpp>
 
-namespace duds { namespace ui {
+namespace duds { namespace ui { namespace menu {
 
 void GenericMenuItem::chose(MenuView &invokingView, const MenuAccess &access) {
 	choseSig(invokingView, access, *this);
@@ -23,4 +23,4 @@ void GenericMenuItem::deselect(MenuView &invokingView, const MenuAccess &access)
 	deselSig(invokingView, access, *this);
 }
 
-} }
+} } }

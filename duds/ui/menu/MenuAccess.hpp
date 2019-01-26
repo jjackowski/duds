@@ -10,10 +10,10 @@
 #ifndef MENUACCESS_HPP
 #define MENUACCESS_HPP
 
-#include <duds/ui/Menu.hpp>
-#include <duds/ui/MenuItem.hpp>
+#include <duds/ui/menu/Menu.hpp>
+#include <duds/ui/menu/MenuItem.hpp>
 
-namespace duds { namespace ui {
+namespace duds { namespace ui { namespace menu {
 
 /**
  * Provides an exclusive lock on a Menu to allow the menu to be changed.
@@ -281,6 +281,6 @@ public:
 	}
 };
 
-} }
+} } }
 
 #endif        //  #ifndef MENUACCESS_HPP

@@ -7,11 +7,11 @@
  *
  * Copyright (C) 2019  Jeff Jackowski
  */
-#include <duds/ui/MenuView.hpp>
-#include <duds/ui/MenuAccess.hpp>
+#include <duds/ui/menu/MenuView.hpp>
+#include <duds/ui/menu/MenuAccess.hpp>
 #include <duds/general/Errors.hpp>
 
-namespace duds { namespace ui {
+namespace duds { namespace ui { namespace menu {
 
 MenuView::MenuView() :
 currSel(0), nextSel(0), nextSelOff(0), updateIdx(-1), outvUsers(0),
@@ -256,4 +256,4 @@ void MenuView::chose() {
 	choseItem = true;
 }
 
-} }
+} } }

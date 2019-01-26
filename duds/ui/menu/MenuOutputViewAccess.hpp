@@ -7,9 +7,9 @@
  *
  * Copyright (C) 2019  Jeff Jackowski
  */
-#include <duds/ui/MenuOutputView.hpp>
+#include <duds/ui/menu/MenuOutputView.hpp>
 
-namespace duds { namespace ui {
+namespace duds { namespace ui { namespace menu {
 
 /**
  * Provides access to a MenuOutputView for rendering.
@@ -169,4 +169,4 @@ public:
 	}
 };
 
-} }
+} } }

@@ -13,7 +13,7 @@
 #include <duds/general/Spinlock.hpp>
 #include <list>
 
-namespace duds { namespace ui {
+namespace duds { namespace ui { namespace menu {
 
 class Menu;
 class MenuItem;
@@ -322,6 +322,6 @@ typedef std::shared_ptr<MenuView>  MenuViewSptr;
  */
 typedef std::weak_ptr<MenuView>  MenuViewWptr;
 
-} }
+} } }
 
 #endif        //  #ifndef MENUVIEW_HPP

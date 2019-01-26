@@ -7,10 +7,10 @@
  *
  * Copyright (C) 2019  Jeff Jackowski
  */
-#include <duds/ui/MenuOutputView.hpp>
-#include <duds/ui/MenuItem.hpp>
+#include <duds/ui/menu/MenuOutputView.hpp>
+#include <duds/ui/menu/MenuItem.hpp>
 
-namespace duds { namespace ui {
+namespace duds { namespace ui { namespace menu {
 
 MenuOutputView::MenuOutputView(const std::shared_ptr<MenuView> &view, int vis) :
 Page(view->menu()->title()), mview(view), range(vis), selected(0),
@@ -119,4 +119,4 @@ void MenuOutputView::updateVisible() {
 	}
 }
 
-} }
+} } }

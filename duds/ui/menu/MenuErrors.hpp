@@ -12,7 +12,7 @@
 #include <exception>
 #include <memory>
 
-namespace duds { namespace ui {
+namespace duds { namespace ui { namespace menu {
 
 class Menu;
 class MenuItem;
@@ -87,4 +87,4 @@ typedef boost::error_info< struct Info_MenuItem, std::shared_ptr<const MenuItem>
 typedef boost::error_info< struct Info_Menu, std::shared_ptr<const Menu> >
 	MenuObject;
 
-} }
+} } }

@@ -1458,6 +1458,7 @@ public:
 	) {
 		write(src.get(), dest, srcDir, op);
 	}
+	// https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
 };
 
 inline void swap(BppImage &bi0, BppImage &bi1) {

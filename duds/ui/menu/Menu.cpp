@@ -7,12 +7,12 @@
  *
  * Copyright (C) 2019  Jeff Jackowski
  */
-#include <duds/ui/Menu.hpp>
-#include <duds/ui/MenuItem.hpp>
-#include <duds/ui/MenuView.hpp>
+#include <duds/ui/menu/Menu.hpp>
+#include <duds/ui/menu/MenuItem.hpp>
+#include <duds/ui/menu/MenuView.hpp>
 #include <duds/general/Errors.hpp>
 
-namespace duds { namespace ui {
+namespace duds { namespace ui { namespace menu {
 
 Menu::Menu(std::size_t reserve) :
 lockCnt(0), updateIdx(0), invis(0), toggles(0) {
@@ -227,4 +227,4 @@ void Menu::remove(std::size_t index) {
 	informViews(&MenuView::removal, index);
 }
 
-} }
+} } }

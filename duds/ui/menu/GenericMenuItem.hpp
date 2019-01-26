@@ -10,10 +10,10 @@
 #ifndef GENERICMENUITEM_HPP
 #define GENERICMENUITEM_HPP
 
-#include <duds/ui/MenuItem.hpp>
+#include <duds/ui/menu/MenuItem.hpp>
 #include <boost/signals2/signal.hpp>
 
-namespace duds { namespace ui {
+namespace duds { namespace ui { namespace menu {
 
 /**
  * A generic take on MenuItem that invokes a Boost signal when the item is
@@ -384,6 +384,6 @@ typedef std::shared_ptr<GenericMenuItem>  GenericMenuItemSptr;
  */
 typedef std::weak_ptr<GenericMenuItem>  GenericMenuItemWptr;
 
-} }
+} } }
 
 #endif        //  #ifndef GENERICMENUITEM_HPP

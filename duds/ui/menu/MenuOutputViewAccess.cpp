@@ -7,9 +7,9 @@
  *
  * Copyright (C) 2019  Jeff Jackowski
  */
-#include <duds/ui/MenuOutputViewAccess.hpp>
+#include <duds/ui/menu/MenuOutputViewAccess.hpp>
 
-namespace duds { namespace ui {
+namespace duds { namespace ui { namespace menu {
 
 MenuOutputViewAccess::MenuOutputViewAccess(MenuOutputView *mov) : outview(mov) {
 	if (outview) {
@@ -33,4 +33,4 @@ void MenuOutputViewAccess::retire() noexcept {
 	}
 }
 
-} }
+} } }

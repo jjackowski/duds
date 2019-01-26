@@ -7,11 +7,11 @@
  *
  * Copyright (C) 2019  Jeff Jackowski
  */
-#include <duds/ui/Menu.hpp>
-#include <duds/ui/MenuView.hpp>
+#include <duds/ui/menu/Menu.hpp>
+#include <duds/ui/menu/MenuView.hpp>
 #include <duds/ui/Page.hpp>
 
-namespace duds { namespace ui {
+namespace duds { namespace ui { namespace menu {
 
 class MenuOutputViewAccess;
 
@@ -196,4 +196,4 @@ typedef std::shared_ptr<MenuOutputView>  MenuOutputViewSptr;
  */
 typedef std::weak_ptr<MenuOutputView>  MenuOutputViewWptr;
 
-} }
+} } }

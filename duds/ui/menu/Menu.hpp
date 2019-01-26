@@ -10,14 +10,14 @@
 #ifndef MENU_HPP
 #define MENU_HPP
 
-#include <duds/ui/MenuErrors.hpp>
+#include <duds/ui/menu/MenuErrors.hpp>
 #include <boost/noncopyable.hpp>
 #include <thread>
 #include <shared_mutex>
 #include <vector>
 #include <map>
 
-namespace duds { namespace ui {
+namespace duds { namespace ui { namespace menu {
 
 class MenuAccess;
 class MenuItem;
@@ -274,6 +274,6 @@ typedef std::shared_ptr<Menu>  MenuSptr;
  */
 typedef std::weak_ptr<Menu>  MenuWptr;
 
-} }
+} } }
 
 #endif        //  #ifndef MENU_HPP
