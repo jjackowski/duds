@@ -32,10 +32,8 @@ struct AM2320CrcError : virtual AM2320Error, virtual duds::general::CrcError { }
  * successfully reading data from a AM2320. This doesn't happen with other I2C
  * connected instruments on the same system. Not sure how to fix this.
  *
- * This part may fail with a read error on about 1.2% of sample attempts in
- * some circuits. In other similar circuits, it may work without errors. I
- * suspect the part is more susceptible to failure with lower pull-up
- * resistance than other I2C parts.
+ * This part occasionally fails during reads. To mitigate the problem, sample()
+ * will make multiple read attempts after it sends the wake message.
  *
  * @bug   The CRC value is not checked because the calculated value never
  *        matches what the device sends. Even using the code from the
@@ -78,6 +76,11 @@ public:
 	 * results are always a sample behind the most current data.
 	 * Sampling takes two seconds to complete, so calling this function more
 	 * often is not helpful.
+	 *
+	 * These devices can fail on read for no clear reason. To mitigate the
+	 * issue, up to three attempst are made at reading in the sample. Each
+	 * attempt takes a little more than 10ms.
+	 *
 	 * @note  Sampling is documented to cause some internal heating in the
 	 *        device that skews the sampled values. This does seem to occur at
 	 *        the maximum sampling rate (0.5Hz). It seems that the data is
@@ -86,8 +89,11 @@ public:
 	 *        two seconds to deal with the fact that the first sample in the
 	 *        pair will be old.
 	 *
-	 * @throw duds::hardware::interface::I2cError  This seems to occur on about
-	 *                                             1.2% of the calls to sample().
+	 * @throw duds::hardware::interface::I2cError  This occurs too often on
+	 *                                             parts that should be good.
+	 *                                             The first two such errors on
+	 *                                             read attempts are ignored;
+	 *                                             the next is thrown.
 	 * @throw DeviceMisidentified  The device's response did not properly echo
 	 *                             the command byte and requested data length.
 	 *                             This likely means the device is not an

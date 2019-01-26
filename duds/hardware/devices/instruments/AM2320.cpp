@@ -43,16 +43,22 @@ void AM2320::sample() {
 	try {
 		// normal to fail with I2C nack
 		com->converse(wake);
-	} catch (duds::hardware::interface::I2cErrorNoDevice &) {
+	} catch (duds::hardware::interface::I2cError &) {
 		// bother; ignore it
-	} catch (...) {
-		// could be a real issue
-		throw;
 	}
-	// short wait
-	std::this_thread::sleep_for(std::chrono::milliseconds(10));
-	// get sample; do not catch errors
-	com->converse(read);
+	// multiple failures followed by a success is a possibility
+	for (int attempts = 2; attempts >= 0; --attempts) {
+		// short wait
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+		// get sample
+		try {
+			com->converse(read);
+		} catch (duds::hardware::interface::I2cError &) {
+			if (!attempts) {
+				throw;
+			}
+		}
+	}
 	// parse input
 	duds::hardware::interface::ConversationExtractor ex(read);
 	std::uint16_t data[4];
