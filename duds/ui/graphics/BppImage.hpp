@@ -139,6 +139,12 @@ struct ImageDimensions {
 		return (w != id.w) || (h != id.h);
 	}
 	/**
+	 * True if the dimensions indicate zero area.
+	 */
+	constexpr bool empty() const {
+		return !w || !h;
+	}
+	/**
 	 * Returns true if the given location is within the bounds specified by
 	 * this object.
 	 */
@@ -738,7 +744,7 @@ public:
 		 */
 		Pixel(
 			BppImage *img,
-			const ImageLocation &il = ImageLocation(0, 0),
+			const ImageLocation &il = { 0, 0 },
 			Direction d = HorizInc
 		) : ConstPixel(img, il, d) { }
 		/**
@@ -780,7 +786,7 @@ public:
 			BppImage *img,
 			const ImageLocation &o,
 			const ImageDimensions &s,
-			const ImageLocation &p = ImageLocation(0, 0),
+			const ImageLocation &p = { 0, 0 },
 			Direction d = HorizInc
 		) : ConstPixel(img, o, s, p, d) { }
 		/**
@@ -1142,10 +1148,32 @@ public:
 	Pixel pixel(int x, int y, Direction dir = HorizInc) {
 		return pixel(ImageLocation(x, y), dir);
 	}
+	/**
+	 * Returns a ConstPixel (iterator) to iterate across the image starting
+	 * from the given location. The whole image will be traversed, save for
+	 * what came before the given location.
+	 * @param il   The starting location.
+	 * @param dir  The direction of iteration.
+	 */
 	ConstPixel cpixel(const ImageLocation &il, Direction dir = HorizInc) const;
+	/**
+	 * Returns a ConstPixel (iterator) to iterate across the image starting
+	 * from the given location. The whole image will be traversed, save for
+	 * what came before the given location.
+	 * @param x    The horizontal starting location.
+	 * @param y    The vertical starting location.
+	 * @param dir  The direction of iteration.
+	 */
 	ConstPixel cpixel(int x, int y, Direction dir = HorizInc) const {
 		return cpixel(ImageLocation(x, y), dir);
 	}
+	/**
+	 * Returns a ConstPixel (iterator) to inspect the given pixel and to
+	 * iterate across the image starting from the given location. The whole
+	 * image will be traversed, save for what came before the given location.
+	 * @param x    The horizontal starting location.
+	 * @param y    The vertical starting location.
+	 */
 	ConstPixel operator () (int x, int y) const {
 		return cpixel(x, y);
 	}
@@ -1271,7 +1299,7 @@ public:
 	 * Changes the state of a pixel.
 	 * @param x      Horizontal coordinate to change.
 	 * @param y      Vertical coordinate to change.
-	 * @param state  The new state of the pixel.
+	 * @param s      The new state of the pixel.
 	 */
 	void state(int x, int y, bool s) {
 		state(ImageLocation(x, y), s);
@@ -1371,12 +1399,18 @@ public:
 		OpTotal
 	};
 private:
-	typedef bool (*OpFunction)(bool dest, bool src);
+	typedef bool (*OpBitFunction)(bool dest, bool src);
 	/**
-	 * Functions implementing the operations listed in @a Operation.
-	 * These are intended to be used when there is no optimized implementation
-	 * of an operation since the functions operate on a single bit from the
-	 * destination and source.
+	 * Functions implementing the operations listed in @a Operation one bit
+	 * at a time. These are intended to be used when there is no optimized
+	 * implementation of an operation.
+	 */
+	static const OpBitFunction OpBitFunctions[OpTotal];
+	typedef void (*OpFunction)(PixelBlock *dest, const PixelBlock &src, const PixelBlock &mask);
+	/**
+	 * Functions implementing the operations listed in @a Operation one
+	 * PixelBlock at a time. These are intended to be used by more optimized
+	 * implementations of an operation than OpBitFunctions.
 	 */
 	static const OpFunction OpFunctions[OpTotal];
 public:
@@ -1458,7 +1492,51 @@ public:
 	) {
 		write(src.get(), dest, srcDir, op);
 	}
-	// https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
+	/**
+	 * Draws a box into this image.
+	 * @note      This function exists partly as a test of how to write data
+	 *            into an image one PixelBlock at a time. The overhead may not
+	 *            make this function worthwhile unless a PixelBlock is large
+	 *            enough, and 32-bits might not be large enough. The algorithm
+	 *            could be adapted for use in the write() functions. 
+	 * @param ul  The upper-left location of the box.
+	 * @param id  The dimensions of the box.
+	 * @param op  The bit-wise operation to perform to draw the box. One
+	 *            operand will be the image data, and the other will always be
+	 *            set bit(s). This means that OpSet will change pixels to true
+	 *            (set), OpNot will change pixels to false (clear), and OpXor
+	 *            will toggle (invert) pixels.
+	 * @throw     ImageBoundsError  The box extends beyond the bounds of the
+	 *                              image.
+	 */
+	void drawBox(
+		ImageLocation ul,
+		ImageDimensions id,
+		Operation op = OpSet
+	);
+	/**
+	 * Draws a box into this image.
+	 * @param x   The upper-left horizontal coordinate of the box.
+	 * @param y   The upper-left vertical coordinate of the box.
+	 * @param w   The width of the box.
+	 * @param h   The height of the box.
+	 * @param op  The bit-wise operation to perform to draw the box. One
+	 *            operand will be the image data, and the other will always be
+	 *            set bit(s). This means that OpSet will change pixels to true
+	 *            (set), OpNot will change pixels to false (clear), and OpXor
+	 *            will toggle (invert) pixels.
+	 * @throw     ImageBoundsError  The box extends beyond the bounds of the
+	 *                              image.
+	 */
+	void drawBox(
+		int x,
+		int y,
+		int w,
+		int h = 1,
+		Operation op = OpSet
+	) {
+		drawBox(ImageLocation(x, y), ImageDimensions(w, h), op);
+	}
 };
 
 inline void swap(BppImage &bi0, BppImage &bi1) {

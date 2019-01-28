@@ -299,24 +299,73 @@ void BppImage::blankImage(bool s) {
 	}
 }
 
-static bool opset(bool dest, bool src) {
+
+static bool opsetbit(bool dest, bool src) {
 	return src;
 }
 
-static bool opnot(bool dest, bool src) {
+static bool opnotbit(bool dest, bool src) {
 	return !src;
 }
 
-static bool opand(bool dest, bool src) {
+static bool opandbit(bool dest, bool src) {
 	return dest && src;
 }
 
-static bool opor(bool dest, bool src) {
+static bool oporbit(bool dest, bool src) {
 	return dest || src;
 }
 
-static bool opxor(bool dest, bool src) {
+static bool opxorbit(bool dest, bool src) {
 	return dest ^ src;
+}
+
+const BppImage::OpBitFunction BppImage::OpBitFunctions[OpTotal] = {
+	opsetbit,
+	opnotbit,
+	opandbit,
+	oporbit,
+	opxorbit
+};
+
+static void opset(
+	BppImage::PixelBlock *dest,
+	const BppImage::PixelBlock &src,
+	const BppImage::PixelBlock &mask
+) {
+	*dest |= src & mask;
+}
+
+static void opnot(
+	BppImage::PixelBlock *dest,
+	const BppImage::PixelBlock &src,
+	const BppImage::PixelBlock &mask
+) {
+	*dest |= ~src & mask;
+}
+
+static void opand(
+	BppImage::PixelBlock *dest,
+	const BppImage::PixelBlock &src,
+	const BppImage::PixelBlock &mask
+) {
+	*dest |= (src & *dest) & mask;
+}
+
+static void opor(
+	BppImage::PixelBlock *dest,
+	const BppImage::PixelBlock &src,
+	const BppImage::PixelBlock &mask
+) {
+	*dest |= (src | *dest) & mask;
+}
+
+static void opxor(
+	BppImage::PixelBlock *dest,
+	const BppImage::PixelBlock &src,
+	const BppImage::PixelBlock &mask
+) {
+	*dest |= (src ^ *dest) & mask;
 }
 
 const BppImage::OpFunction BppImage::OpFunctions[OpTotal] = {
@@ -326,6 +375,7 @@ const BppImage::OpFunction BppImage::OpFunctions[OpTotal] = {
 	opor,
 	opxor
 };
+
 
 void BppImage::write(
 	const BppImage * const src,
@@ -353,7 +403,7 @@ void BppImage::write(
 	Pixel diter = begin(destLoc, destSize);
 	// iteratate over the images
 	for (; siter != EndPixel(); ++diter, ++siter) {
-		*diter = OpFunctions[op](*diter, *siter);
+		*diter = OpBitFunctions[op](*diter, *siter);
 	}
 }
 
@@ -384,13 +434,85 @@ void BppImage::write(
 	write(src, dest, ImageLocation(0, 0), d, srcDir, op);
 }
 
+void BppImage::drawBox(
+	ImageLocation ul,
+	ImageDimensions id,
+	Operation op
+) {
+	// check for nothing to draw
+	if (id.empty()) {
+		return;
+	}
+	// bounds check
+	if (!dim.withinBounds(ul)) {
+		DUDS_THROW_EXCEPTION(ImageBoundsError() <<
+			ImageErrorDimensions(dim) <<
+			ImageErrorLocation(ul)
+		);
+	}
+	if (!dim.withinBounds(ul - ImageLocation(1,1) + id)) {
+		DUDS_THROW_EXCEPTION(ImageBoundsError() <<
+			ImageErrorDimensions(dim) <<
+			ImageErrorLocation(ul - ImageLocation(1,1) + id)
+		);
+	}
+	// compute start and end addresses ingoring line height
+	PixelBlock *next = &(img[blkPerLine * ul.y + (ul.x / (sizeof(PixelBlock) * 8))]);
+	static const PixelBlock ones = -1;
+	PixelBlock mask, modmask, offset = 0;
+	std::int16_t stop = ul.x + id.w;
+	// compute start mask
+	if (!(ul.x % (sizeof(PixelBlock) * 8)) && ((stop - ul.x) >= (sizeof(PixelBlock) * 8))) {
+		// a whole block will be used
+		ul.x += sizeof(PixelBlock) * 8;
+		mask = -1;
+	} else {
+		// first bit
+		mask = 1 << (ul.x % (sizeof(PixelBlock) * 8));
+		modmask = mask << 1;
+		// is there a way to optimize out the loop?
+		for (++ul.x; modmask && (ul.x < stop); ++ul.x) {
+			mask |= modmask;
+			modmask <<= 1;
+		}
+	}
+	// write first block changes
+	for (int loop = 0; loop < id.h; offset += blocksPerLine(), ++loop
+	) {
+		OpFunctions[op](next + offset, ones, mask);
+	}
+	// loop until the end
+	while (ul.x < stop) {
+		assert(!(ul.x % (sizeof(PixelBlock) * 8)));
+		// advance the address
+		++next;
+		// compute the next mask
+		if ((stop - ul.x) >= (sizeof(PixelBlock) * 8)) {
+			// a whole block will be used
+			ul.x += sizeof(PixelBlock) * 8;
+			mask = -1;
+		} else {
+			// is there a way to optimize out the loop?
+			for (mask = 1, modmask = 2, ++ul.x; modmask && (ul.x < stop); ++ul.x) {
+				mask |= modmask;
+				modmask <<= 1;
+			}
+		}
+		// write next block changes
+		offset = 0;
+		for (int loop = 0; loop < id.h; offset += blocksPerLine(), ++loop) {
+			OpFunctions[op](next + offset, ones, mask);
+		}
+	}
+}
+
 // -------------------------------------------------------------------
 
 BppImage::ConstPixel::ConstPixel(
 	const BppImage *img,
 	const End
 ) : pos(-1, -1), blk(nullptr),
-// ConstPixel stores a pointer to a non-const BppImage, even though  it will
+// ConstPixel stores a pointer to a non-const BppImage, even though it will
 // not modify the image, because it is the base class for Pixel
 src(const_cast<BppImage*>(img))
 { }
@@ -400,7 +522,7 @@ BppImage::ConstPixel::ConstPixel(
 	const ImageLocation &il,
 	Direction d
 ) : dir(d), orig(0, 0), dim(img->dimensions()),
-// ConstPixel stores a pointer to a non-const BppImage, even though  it will
+// ConstPixel stores a pointer to a non-const BppImage, even though it will
 // not modify the image, because it is the base class for Pixel
 src(const_cast<BppImage*>(img)) {
 	// set the location; throw if out of bounds
@@ -418,7 +540,7 @@ BppImage::ConstPixel::ConstPixel(
 	const ImageLocation &p,
 	Direction d
 ) : dir(d),
-// ConstPixel stores a pointer to a non-const BppImage, even though  it will
+// ConstPixel stores a pointer to a non-const BppImage, even though it will
 // not modify the image, because it is the base class for Pixel
 src(const_cast<BppImage*>(img)) {
 	// set the location, origin, and dimensions; throw if out of bounds

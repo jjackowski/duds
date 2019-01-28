@@ -26,9 +26,9 @@ The menu infrastructure defines a menu at a high level and does not include code
 
 @subsection DUDSmenuTerms  Terminology
 
-A Menu has a set of options: @ref MenuItem "MenuItems", or just items.
+A Menu has a set of options, or items: @ref duds::ui::menu::MenuItem "MenuItems".
 
-A user may invoke an item by @ref MenuItem::chose() "choosing" it.
+A user may invoke an item by @ref duds::ui::menu::MenuItem::chose() "choosing" it.
 
 Before an item can by chosen, it must first be selected. This is similar to the notion of input focus.
 
@@ -50,12 +50,12 @@ digraph MenuParts {
 		fillcolor="white", style="filled" ];
 	edge [ fontname="Helvetica", fontsize=10 ];
 	// nodes
-	MenuItem [ URL="\ref MenuItem" ];
-	Menu [ URL="\ref Menu" ];
-	MenuAccess [ URL="\ref MenuAccess" ];
-	MenuView [ URL="\ref MenuView" ];
-	MenuOutputView [ URL="\ref MenuOutputView" ];
-	MenuOutputViewAccess [ URL="\ref MenuOutputViewAccess" ];
+	MenuItem [ URL="\ref duds::ui::menu::MenuItem" ];
+	Menu [ URL="\ref duds::ui::menu::Menu" ];
+	MenuAccess [ URL="\ref duds::ui::menu::MenuAccess" ];
+	MenuView [ URL="\ref duds::ui::menu::MenuView" ];
+	MenuOutputView [ URL="\ref duds::ui::menu::MenuOutputView" ];
+	MenuOutputViewAccess [ URL="\ref duds::ui::menu::MenuOutputViewAccess" ];
 	// edges
 	Menu -> MenuItem [ label=" 1:n" ];
 	MenuAccess -> Menu [ label="exclusive\nrecursive\nlock", style="dashed" ];
@@ -75,13 +75,13 @@ digraph MenuParts {
 		fillcolor="white", style="filled" ];
 	edge [ fontname="Helvetica", fontsize=10 ];
 	// nodes
-	MenuItems [ URL="\ref MenuItem" ];
-	Menu [ URL="\ref Menu" ];
-	MenuAccess [ URL="\ref MenuAccess" ];
-	MenuViews [ URL="\ref MenuView" ];
+	MenuItems [ URL="\ref duds::ui::menu::MenuItem" ];
+	Menu [ URL="\ref duds::ui::menu::Menu" ];
+	MenuAccess [ URL="\ref duds::ui::menu::MenuAccess" ];
+	MenuViews [ URL="\ref duds::ui::menu::MenuView" ];
 	UserInput [ label="User input" ];
-	MenuOutputViews [ URL="\ref MenuOutputView" ];
-	MenuOutputViewAccess [ URL="\ref MenuOutputViewAccess" ];
+	MenuOutputViews [ URL="\ref duds::ui::menu::MenuOutputView" ];
+	MenuOutputViewAccess [ URL="\ref duds::ui::menu::MenuOutputViewAccess" ];
 	Display;
 	// edges
 	MenuItems -> Menu [ label="options" ];
@@ -98,7 +98,7 @@ digraph MenuParts {
 
 @subsubsection DUDSmenuArchItem  MenuItem
 
-Each option in the menu is represented by a MenuItem object. It holds a label (name) and a description string, and manages several attributes that affect the menu's operation. The MenuItem class is an abstract base class. Implementations must provide a  @ref MenuItem::chose() "chose()" function, and optionally @ref MenuItem::select() "select()" and @ref MenuItem::deselect() "deselect()" functions. Simple items can be created using GenericMenuItem, which uses Boost signals to invoke functions when @ref MenuItem::chose() "chose()" is called.
+Each option in the menu is represented by a @ref duds::ui::menu::MenuItem "MenuItem" object. It holds a label (name) and a description string, and manages several attributes that affect the menu's operation. The MenuItem class is an abstract base class. Implementations must provide a  @ref duds::ui::menu::MenuItem::chose() "chose()" function, and optionally @ref duds::ui::menu::MenuItem::select() "select()" and @ref duds::ui::menu::MenuItem::deselect() "deselect()" functions. Simple items can be created using GenericMenuItem, which uses Boost signals to invoke functions when @ref duds::ui::menu::MenuItem::chose() "chose()" is called.
 
 Items have the following attributes:
 - Label: short text presented on the menu as the option.

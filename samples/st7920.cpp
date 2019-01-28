@@ -161,6 +161,9 @@ void runtest(
 				break;
 			case 8:
 				img.clearImage();
+				for (int y = 30; y > 10; --y) {
+					img.drawBox(0, y, (y-10)*5-4);
+				}
 			case 9:
 			case 10:
 			case 11:
@@ -188,6 +191,9 @@ void runtest(
 				break;
 			case 12:
 				img.clearImage();
+				for (int y = 30; y > 8; y -= 2) {
+					img.drawBox(y - 8, y, (y-8)*4-3, 2);
+				}
 			case 13:
 			case 14:
 			case 15:
@@ -217,7 +223,7 @@ void runtest(
 		// render a string with the pattern number
 		try {
 			std::ostringstream oss;
-			oss << "Pat" << pat;
+			oss << "Pattern " << pat;
 			duds::ui::graphics::BppImageSptr label = font.render(oss.str());
 			duds::ui::graphics::ImageLocation lrc(
 				img.width() - label->width(),
