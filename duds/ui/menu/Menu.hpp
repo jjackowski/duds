@@ -17,7 +17,12 @@
 #include <vector>
 #include <map>
 
-namespace duds { namespace ui { namespace menu {
+namespace duds { namespace ui {
+
+/**
+ * Holds the generalized menu infrastructure code.
+ */
+namespace menu {
 
 class MenuAccess;
 class MenuItem;

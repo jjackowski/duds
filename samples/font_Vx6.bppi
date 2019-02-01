@@ -1,0 +1,1061 @@
+/**
+ * Very small 4x6 font made by Kenneth Albanowski, then modified with a
+ * variable width to be more readable by Jeff Jackowski. The data is in
+ * the public domain.
+ */
+
+/* Character 32, glyph   */
+\32 4 6
+	0123 {
+0	     // 0
+1	     // 1
+2	     // 2
+3	     // 3
+4	     // 4
+5	     // 5
+	}
+
+/* Character 33, glyph ! */
+\33 2 6
+	0123 {
+0	X   // 0
+1	X   // 1
+2	X   // 2
+3	    // 3
+4	X   // 4
+5	    // 5
+	}
+
+/* Character 34, glyph " */
+\34 4 6
+	0123 {
+0	X X  // 0
+1	X X  // 1
+2	     // 2
+3	     // 3
+4	     // 4
+5	     // 5
+	}
+
+/* Character 35, glyph # */
+\35 6 6
+	0123 {
+0	 X X  // 0
+1	XXXXX // 1
+2	 X X  // 2
+3	XXXXX // 3
+4	 X X  // 4
+5	      // 5
+	}
+
+/* Character 36, glyph $ */
+\36 4 6
+	0123 {
+0	 XX  // 0
+1	XX   // 1
+2	 X   // 2
+3	 XX  // 3
+4	XX   // 4
+5	     // 5
+	}
+
+/* Character 37, glyph % */
+\37 6 6
+	0123 {
+0	XX  X  // 0
+1	XX X   // 1
+2	  X    // 2
+3	 X XX  // 3
+4	X  XX  // 4
+5	     // 5
+	}
+
+/* Character 38, glyph & */
+\38 5 6
+	0123 {
+0	 XX  // 0
+1	X  X // 1
+2	 XX  // 2
+3	X X  // 3
+4	XX X // 4
+5	     // 5
+	}
+
+/* Character 39, glyph ' */
+\39 3 6
+	0123 {
+0	 X  // 0
+1	X   // 1
+2	    // 2
+3	    // 3
+4	    // 4
+5	    // 5
+	}
+
+/* Character 40, glyph ( */
+\40 3 6
+	0123 {
+0	 X  // 0
+1	X   // 1
+2	X   // 2
+3	X   // 3
+4	 X  // 4
+5	    // 5
+	}
+
+/* Character 41, glyph ) */
+\41 3 6
+	0123 {
+0	X   // 0
+1	 X  // 1
+2	 X  // 2
+3	 X  // 3
+4	X   // 4
+5	    // 5
+	}
+
+/* Character 42, glyph * */
+\42 6 6
+	0123 {
+0	X X X // 0
+1	 XXX  // 1
+2	XXXXX // 2
+3	 XXX  // 3
+4	X X X // 4
+5	      // 5
+	}
+
+/* Character 43, glyph + */
+\43 4 6
+	0123 {
+0	     // 0
+1	 X   // 1
+2	XXX  // 2
+3	 X   // 3
+4	     // 4
+5	     // 5
+	}
+
+/* Character 44, glyph , */
+\44 3 6
+	0123 {
+0	     // 0
+1	     // 1
+2	     // 2
+3	 X   // 3
+4	X    // 4
+5	     // 5
+	}
+
+/* Character 45, glyph - */
+\45 4 6
+	0123 {
+0	     // 0
+1	     // 1
+2	XXX  // 2
+3	     // 3
+4	     // 4
+5	     // 5
+	}
+
+/* Character 46, glyph . */
+\46 2 6
+	0123 {
+0	     // 0
+1	     // 1
+2	     // 2
+3	     // 3
+4	X    // 4
+5	     // 5
+	}
+
+/* Character 47, glyph / */
+\47 4 6
+	0123 {
+0	     // 0
+1	  X  // 1
+2	 X   // 2
+3	X    // 3
+4	     // 4
+5	     // 5
+	}
+
+/* Character 48, glyph 0 */
+\48 4 6
+	0123 {
+0	 X   // 0
+1	X X  // 1
+2	X X  // 2
+3	X X  // 3
+4	 X   // 4
+5	     // 5
+	}
+
+/* Character 49, glyph 1 */
+\49 4 6
+	0123 {
+0	 X   // 0
+1	XX   // 1
+2	 X   // 2
+3	 X   // 3
+4	XXX  // 4
+5	     // 5
+	}
+
+/* Character 50, glyph 2 */
+\50 4 6
+	0123 {
+0	XX   // 0
+1	  X  // 1
+2	 X   // 2
+3	X    // 3
+4	XXX  // 4
+5	     // 5
+	}
+
+/* Character 51, glyph 3 */
+\51 4 6
+	0123 {
+0	XXX  // 0
+1	  X  // 1
+2	 XX  // 2
+3	  X  // 3
+4	XXX  // 4
+5	     // 5
+	}
+
+/* Character 52, glyph 4 */
+\52 4 6
+	0123 {
+0	X X  // 0
+1	X X  // 1
+2	XXX  // 2
+3	  X  // 3
+4	  X  // 4
+5	     // 5
+	}
+
+/* Character 53, glyph 5 */
+\53 4 6
+	0123 {
+0	XXX  // 0
+1	X    // 1
+2	XXX  // 2
+3	  X  // 3
+4	XXX  // 4
+5	     // 5
+	}
+
+/* Character 54, glyph 6 */
+\54 4 6
+	0123 {
+0	XXX  // 0
+1	X    // 1
+2	XXX  // 2
+3	X X  // 3
+4	XXX  // 4
+5	     // 5
+	}
+
+/* Character 55, glyph 7 */
+\55 4 6
+	0123 {
+0	XXX  // 0
+1	  X  // 1
+2	  X  // 2
+3	 X   // 3
+4	 X   // 4
+5	     // 5
+	}
+
+/* Character 56, glyph 8 */
+\56 4 6
+	0123 {
+0	XXX  // 0
+1	X X  // 1
+2	XXX  // 2
+3	X X  // 3
+4	XXX  // 4
+5	     // 5
+	}
+
+/* Character 57, glyph 9 */
+\57 4 6
+	0123 {
+0	XXX  // 0
+1	X X  // 1
+2	XXX  // 2
+3	  X  // 3
+4	XXX  // 4
+5	     // 5
+	}
+
+/* Character 58, glyph : */
+\58 2 6
+	0123 {
+0	    // 0
+1	    // 1
+2	X   // 2
+3	    // 3
+4	X   // 4
+5	    // 5
+	}
+
+/* Character 59, glyph ; */
+\59 3 6
+	0123 {
+0	     // 0
+1	     // 1
+2	 X   // 2
+3	     // 3
+4	 X   // 4
+5	X    // 5
+	}
+
+/* Character 60, glyph < */
+\60 4 6
+	0123 {
+0	  X  // 0
+1	 X   // 1
+2	X    // 2
+3	 X   // 3
+4	  X  // 4
+5	     // 5
+	}
+
+/* Character 61, glyph = */
+\61 4 6
+	0123 {
+0	     // 0
+1	XXX  // 1
+2	     // 2
+3	XXX  // 3
+4	     // 4
+5	     // 5
+	}
+
+/* Character 62, glyph > */
+\62 4 6
+	0123 {
+0	X    // 0
+1	 X   // 1
+2	  X  // 2
+3	 X   // 3
+4	X    // 4
+5	     // 5
+	}
+
+/* Character 63, glyph ? */
+\63 4 6
+	0123 {
+0	XXX  // 0
+1	  X  // 1
+2	 XX  // 2
+3	     // 3
+4	 X   // 4
+5	     // 5
+	}
+
+/* Character 64, glyph @ */
+\64 4 6
+	0123 {
+0	 XX   // 0
+1	X XX  // 1
+2	X XX  // 2
+3	X     // 3
+4	 XX   // 4
+5	      // 5
+	}
+
+/* Character 65, glyph A */
+\65 4 6
+	0123 {
+0	 X   // 0
+1	X X  // 1
+2	XXX  // 2
+3	X X  // 3
+4	X X  // 4
+5	     // 5
+	}
+
+/* Character 66, glyph B */
+\66 4 6
+	0123 {
+0	XX   // 0
+1	X X  // 1
+2	XX   // 2
+3	X X  // 3
+4	XX   // 4
+5	     // 5
+	}
+
+/* Character 67, glyph C */
+\67 4 6
+	0123 {
+0	 XX  // 0
+1	X    // 1
+2	X    // 2
+3	X    // 3
+4	 XX  // 4
+5	     // 5
+	}
+
+/* Character 68, glyph D */
+\68 4 6
+	0123 {
+0	XX   // 0
+1	X X  // 1
+2	X X  // 2
+3	X X  // 3
+4	XX   // 4
+5	     // 5
+	}
+
+/* Character 69, glyph E */
+\69 4 6
+	0123 {
+0	XXX  // 0
+1	X    // 1
+2	XX   // 2
+3	X    // 3
+4	XXX  // 4
+5	     // 5
+	}
+
+/* Character 70, glyph F */
+\70 4 6
+	0123 {
+0	XXX  // 0
+1	X    // 1
+2	XXX  // 2
+3	X    // 3
+4	X    // 4
+5	     // 5
+	}
+
+/* Character 71, glyph G */
+\71 5 6
+	0123 {
+0	 XX  // 0
+1	X    // 1
+2	X XX  // 2
+3	X  X  // 3
+4	 XX  // 4
+5	     // 5
+	}
+
+/* Character 72, glyph H */
+\72 4 6
+	0123 {
+0	X X  // 0
+1	X X  // 1
+2	XXX  // 2
+3	X X  // 3
+4	X X  // 4
+5	     // 5
+	}
+
+/* Character 73, glyph I */
+\73 4 6
+	0123 {
+0	XXX  // 0
+1	 X   // 1
+2	 X   // 2
+3	 X   // 3
+4	XXX  // 4
+5	     // 5
+	}
+
+/* Character 74, glyph J */
+\74 4 6
+	0123 {
+0	  X  // 0
+1	  X  // 1
+2	  X  // 2
+3	X X  // 3
+4	 X   // 4
+5	     // 5
+	}
+
+/* Character 75, glyph K */
+\75 4 6
+	0123 {
+0	X X  // 0
+1	X X  // 1
+2	XX   // 2
+3	X X  // 3
+4	X X  // 4
+5	     // 5
+	}
+
+/* Character 76, glyph L */
+\76 4 6
+	0123 {
+0	X    // 0
+1	X    // 1
+2	X    // 2
+3	X    // 3
+4	XXX  // 4
+5	     // 5
+	}
+
+/* Character 77, glyph M */
+\77 6 6
+	0123 {
+0	X   X  // 0
+1	XX XX  // 1
+2	X X X  // 2
+3	X   X  // 3
+4	X   X  // 4
+5	     // 5
+	}
+
+/* Character 78, glyph N */
+\78 5 6
+	0123 {
+0	X  X  // 0
+1	XX X  // 1
+2	X XX  // 2
+3	X  X  // 3
+4	X  X  // 4
+5	     // 5
+	}
+
+/* Character 79, glyph O */
+\79 5 6
+	0123 { // distinct from zero
+0	 XX   // 0
+1	X  X  // 1
+2	X  X  // 2
+3	X  X  // 3
+4	 XX   // 4
+5	      // 5
+	}
+
+/* Character 80, glyph P */
+\80 4 6
+	0123 {
+0	XX   // 0
+1	X X  // 1
+2	XX   // 2
+3	X    // 3
+4	X    // 4
+5	     // 5
+	}
+
+/* Character 81, glyph Q */
+\81 5 6
+	0123 {
+0	 XX   // 0
+1	X  X  // 1
+2	XX X  // 2
+3	X XX  // 3
+4	 XXX  // 4
+5	      // 5
+	}
+
+/* Character 82, glyph R */
+\82 4 6
+	0123 {
+0	XX   // 0
+1	X X  // 1
+2	XXX  // 2
+3	XX   // 3
+4	X X  // 4
+5	     // 5
+	}
+
+/* Character 83, glyph S */
+\83 4 6
+	0123 {
+0	 XX  // 0
+1	X    // 1
+2	 X   // 2
+3	  X  // 3
+4	XX   // 4
+5	     // 5
+	}
+
+/* Character 84, glyph T */
+\84 4 6
+	0123 {
+0	XXX  // 0
+1	 X   // 1
+2	 X   // 2
+3	 X   // 3
+4	 X   // 4
+5	     // 5
+	}
+
+/* Character 85, glyph U */
+\85 4 6
+	0123 {
+0	X X  // 0
+1	X X  // 1
+2	X X  // 2
+3	X X  // 3
+4	XXX  // 4
+5	     // 5
+	}
+
+/* Character 86, glyph V */
+\86 4 6
+	0123 {
+0	X X  // 0
+1	X X  // 1
+2	X X  // 2
+3	 X   // 3
+4	 X   // 4
+5	     // 5
+	}
+
+/* Character 87, glyph W */
+\87 6 6
+	0123 {
+0	X   X  // 0
+1	X   X  // 1
+2	X X X  // 2
+3	XX XX  // 3
+4	X   X  // 4
+5	       // 5
+	}
+
+/* Character 88, glyph X */
+\88 4 6
+	0123 {
+0	X X  // 0
+1	X X  // 1
+2	 X   // 2
+3	X X  // 3
+4	X X  // 4
+5	     // 5
+	}
+
+/* Character 89, glyph Y */
+\89 4 6
+	0123 {
+0	X X  // 0
+1	X X  // 1
+2	 X   // 2
+3	 X   // 3
+4	 X   // 4
+5	     // 5
+	}
+
+/* Character 90, glyph Z */
+\90 4 6
+	0123 {
+0	XXX  // 0
+1	  X  // 1
+2	 X   // 2
+3	X    // 3
+4	XXX  // 4
+5	     // 5
+	}
+
+/* Character 91, glyph [ */
+\91 3 6
+	0123 {
+0	XX  // 0
+1	X   // 1
+2	X   // 2
+3	X   // 3
+4	XX  // 4
+5	    // 5
+	}
+
+/* Character 92, glyph \ */
+\92 4 6
+	0123 {
+0	     // 0
+1	X    // 1
+2	 X   // 2
+3	  X  // 3
+4	     // 4
+5	     // 5
+	}
+
+/* Character 93, glyph ] */
+\93 3 6
+	0123 {
+0	XX  // 0
+1	 X  // 1
+2	 X  // 2
+3	 X  // 3
+4	XX  // 4
+5	    // 5
+	}
+
+/* Character 94, glyph ^ */
+\94 4 6
+	0123 {
+0	 X   // 0
+1	X X  // 1
+2	     // 2
+3	     // 3
+4	     // 4
+5	     // 5
+	}
+
+/* Character 95, glyph _ */
+\95 4 6
+	0123 {
+0	     // 0
+1	     // 1
+2	     // 2
+3	     // 3
+4	     // 4
+5	XXXX // 5
+	}
+
+/* Character 96, glyph ` */
+\96 3 6
+	0123 {
+0	X    // 0
+1	 X   // 1
+2	     // 2
+3	     // 3
+4	     // 4
+5	     // 5
+	}
+
+/* Character 97, glyph a */
+\97 5 6
+	0123 {
+0	     // 0
+1	     // 1
+2	 XXX  // 2
+3	X XX  // 3
+4	XX X // 4
+5	     // 5
+	}
+
+/* Character 98, glyph b */
+\98 4 6
+	0123 {
+0	X    // 0
+1	X    // 1
+2	XX   // 2
+3	X X  // 3
+4	XX   // 4
+5	     // 5
+	}
+
+/* Character 99, glyph c */
+\99 4 6
+	0123 {
+0	     // 0
+1	     // 1
+2	 XX  // 2
+3	X    // 3
+4	 XX  // 4
+5	     // 5
+	}
+
+/* Character 100, glyph d */
+\100 4 6
+	0123 {
+0	  X  // 0
+1	  X  // 1
+2	 XX  // 2
+3	X X  // 3
+4	 XX  // 4
+5	     // 5
+	}
+
+/* Character 101, glyph e */
+\101 4 6
+	0123 {
+0	 X   // 0
+1	X X  // 1
+2	XXX  // 2
+3	X    // 3
+4	 XX  // 4
+5	     // 5
+	}
+
+/* Character 102, glyph f */
+\102 4 6
+	0123 {
+0	  X  // 0
+1	 X   // 1
+2	XXX  // 2
+3	 X   // 3
+4	 X   // 4
+5	     // 5
+	}
+
+/* Character 103, glyph g */
+\103 4 6
+	0123 {
+0	     // 0
+1	 XX  // 1
+2	X X  // 2
+3	 XX  // 3
+4	  X  // 4
+5	XX    // 5
+	}
+
+/* Character 104, glyph h */
+\104 4 6
+	0123 {
+0	X    // 0
+1	X    // 1
+2	XX   // 2
+3	X X  // 3
+4	X X  // 4
+5	     // 5
+	}
+
+/* Character 105, glyph i */
+\105 2 6
+	0123 {
+0	X   // 0
+1	    // 1
+2	X   // 2
+3	X   // 3
+4	X   // 4
+5	    // 5
+	}
+
+/* Character 106, glyph j */
+\106 3 6
+	0123 {
+0	 X   // 0
+1	     // 1
+2	 X   // 2
+3	 X   // 3
+4	 X   // 4
+5	X     // 5
+	}
+
+/* Character 107, glyph k */
+\107 4 6
+	0123 {
+0	     // 0
+1	X    // 1
+2	X X  // 2
+3	XX   // 3
+4	X X  // 4
+5	     // 5
+	}
+
+/* Character 108, glyph l */
+\108 4 6
+	0123 {
+0	     // 0
+1	XX   // 1
+2	 X   // 2
+3	 X   // 3
+4	XXX  // 4
+5	     // 5
+	}
+
+/* Character 109, glyph m */
+\109 6 6
+	0123 {
+0	       // 0
+1	       // 1
+2	XX XX  // 2
+3	X X X  // 3
+4	X   X  // 4
+5	       // 5
+	}
+
+/* Character 110, glyph n */
+\110 4 6
+	0123 {
+0	     // 0
+1	     // 1
+2	XX   // 2
+3	X X  // 3
+4	X X  // 4
+5	     // 5
+	}
+
+/* Character 111, glyph o */
+\111 4 6
+	0123 {
+0	     // 0
+1	 X   // 1
+2	X X  // 2
+3	X X  // 3
+4	 X   // 4
+5	     // 5
+	}
+
+/* Character 112, glyph p */
+\112 4 6
+	0123 {
+0	     // 0
+1	     // 1
+2	XX   // 2
+3	X X  // 3
+4	XX   // 4
+5	X    // 5
+	}
+
+/* Character 113, glyph q */
+\113 4 6
+	0123 {
+0	     // 0
+1	     // 1
+2	 XX  // 2
+3	X X  // 3
+4	 XX  // 4
+5	  X  // 5
+	}
+
+/* Character 114, glyph r */
+\114 4 6
+	0123 {
+0	     // 0
+1	XX   // 1
+2	X X  // 2
+3	X    // 3
+4	X    // 4
+5	     // 5
+	}
+
+/* Character 115, glyph s */
+\115 4 6
+	0123 {
+0	     // 0
+1	 XX  // 1
+2	XX   // 2
+3	  X  // 3
+4	XX   // 4
+5	     // 5
+	}
+
+/* Character 116, glyph t */
+\116 4 6
+	0123 {
+0	     // 0
+1	 X   // 1
+2	XXX  // 2
+3	 X   // 3
+4	 X   // 4
+5	     // 5
+	}
+
+/* Character 117, glyph u */
+\117 4 6
+	0123 {
+0	     // 0
+1	     // 1
+2	X X  // 2
+3	X X  // 3
+4	 XX  // 4
+5	     // 5
+	}
+
+/* Character 118, glyph v */
+\118 4 6
+	0123 {
+0	     // 0
+1	     // 1
+2	X X  // 2
+3	X X  // 3
+4	 X   // 4
+5	     // 5
+	}
+
+/* Character 119, glyph w */
+\119 6 6
+	0123 {
+0	       // 0
+1	       // 1
+2	X   X  // 2
+3	X X X  // 3
+4	XX XX  // 4
+5	       // 5
+	}
+
+/* Character 120, glyph x */
+\120 4 6
+	0123 {
+0	     // 0
+1	     // 1
+2	X X  // 2
+3	 X   // 3
+4	X X  // 4
+5	     // 5
+	}
+
+/* Character 121, glyph y */
+\121 4 6
+	0123 {
+0	     // 0
+1	     // 1
+2	X X  // 2
+3	 XX  // 3
+4	  X  // 4
+5	XX   // 5
+	}
+
+/* Character 122, glyph z */
+\122 4 6
+	0123 {
+0	     // 0
+1	XXX  // 1
+2	  X  // 2
+3	 X   // 3
+4	XXX  // 4
+5	     // 5
+	}
+
+/* Character 123, glyph { */
+\123 4 6
+	0123 {
+0	  X  // 0
+1	 X   // 1
+2	XX   // 2
+3	 X   // 3
+4	  X  // 4
+5	     // 5
+	}
+
+/* Character 124, glyph | */
+\124 2 6
+	0123 {
+0	X   // 0
+1	X   // 1
+2	X   // 2
+3	X   // 3
+4	X   // 4
+5	    // 5
+	}
+
+/* Character 125, glyph } */
+\125 4 6
+	0123 {
+0	X    // 0
+1	 X   // 1
+2	 XX  // 2
+3	 X   // 3
+4	X    // 4
+5	     // 5
+	}
+
+/* Character 126, glyph ~ */
+\126 4 6
+	0123 {
+0	 X X // 0
+1	X X  // 1
+2	     // 2
+3	     // 3
+4	     // 4
+5	     // 5
+	}
+
+/* Character 176, glyph ° */
+\176 4 6
+	0123 {
+0	XXX  // 0
+1	X X  // 1
+2	XXX  // 2
+3	     // 3
+4	     // 4
+5	     // 5
+	}

@@ -228,11 +228,16 @@ typedef boost::error_info<struct Info_FrameDimensions, ImageDimensions>
  * to the right. PixelBlocks do not span rows, so unused space will fill the
  * higher value bits of the right-most PixelBlock at the end of each row.
  *
+ * @note  Operations that modify images are not thread-safe.
+ *
  * @author  Jeff Jackowski
  * @todo    Complete documentation.
  */
 class BppImage {
 public:
+	/**
+	 * The type used to hold pixel values, one bit per pixel.
+	 */
 	typedef std::uintptr_t  PixelBlock;
 private:
 	/**
@@ -1537,6 +1542,7 @@ public:
 	) {
 		drawBox(ImageLocation(x, y), ImageDimensions(w, h), op);
 	}
+	// https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
 };
 
 inline void swap(BppImage &bi0, BppImage &bi1) {
@@ -1544,7 +1550,9 @@ inline void swap(BppImage &bi0, BppImage &bi1) {
 }
 
 typedef std::shared_ptr<BppImage>  BppImageSptr;
+typedef std::shared_ptr<const BppImage>  ConstBppImageSptr;
 typedef std::weak_ptr<BppImage>  BppImageWptr;
+typedef std::weak_ptr<const BppImage>  ConstBppImageWptr;
 
 } } }
 
