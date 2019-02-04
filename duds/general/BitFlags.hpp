@@ -10,6 +10,8 @@
 #ifndef BITFLAGS_HPP
 #define BITFLAGS_HPP
 
+#include <functional>
+
 namespace duds { namespace general {
 
 /**
@@ -302,5 +304,34 @@ class BitFlags {
 };
 
 } } // namespaces
+
+namespace std {
+
+/**
+ * Generates a hash value for duds::general::BitFlags types that can be used
+ * by the standard C++ library.
+ */
+template <class T, class B>
+struct hash< duds::general::BitFlags<T, B> > {
+	std::size_t operator()(const duds::general::BitFlags<T, B> &bf) const {
+		return hash<B>()(bf.flags());
+	}
+};
+
+}
+
+namespace duds { namespace general {
+
+/**
+ * Generates a hash value for use with Boost containers, like
+ * boost::multi_index::multi_index_container templates. These refuse to use
+ * std::hash as of Boost 1.65, so this implementation is required.
+ */
+template <class T, class B>
+inline std::size_t hash_value(const duds::general::BitFlags<T, B> &bf) {
+	return std::hash< duds::general::BitFlags<T, B> >()(bf);
+}
+
+} }
 
 #endif        //  #ifndef BITFLAGS_HPP
