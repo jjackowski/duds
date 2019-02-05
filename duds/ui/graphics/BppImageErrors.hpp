@@ -112,4 +112,10 @@ typedef boost::error_info<struct Info_String, std::string> String;
  */
 typedef boost::error_info<struct Info_Character, wchar_t> Character;
 
+/**
+ * The maximum size of a BppStringCache is zero. If allowed, rendered text
+ * would be destroyed before it could be used.
+ */
+struct StringCacheZeroSize : ImageError { };
+
 } } }

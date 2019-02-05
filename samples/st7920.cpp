@@ -16,7 +16,7 @@
 
 #include <duds/hardware/devices/displays/ST7920.hpp>
 #include <duds/ui/graphics//BppImageArchive.hpp>
-#include <duds/ui/graphics//BppFont.hpp>
+#include <duds/ui/graphics//BppStringCache.hpp>
 #include <duds/hardware/interface/linux/SysFsPort.hpp>
 #ifndef USE_SYSFS_PORT
 #include <duds/hardware/interface/linux/GpioDevPort.hpp>
@@ -62,9 +62,10 @@ R PatternFill(P pattern) {
 void runtest(
 	const std::shared_ptr<duds::hardware::devices::displays::ST7920> &disp,
 	std::shared_ptr<duds::ui::graphics::BppImage> lanIcon[3],
-	duds::ui::graphics::BppFont &font,
+	duds::ui::graphics::BppFontSptr &font,
 	bool once
 ) try {
+	duds::ui::graphics::BppStringCache bsc(font);
 	duds::ui::graphics::BppImage img(disp->frame().dimensions());
 	duds::ui::graphics::BppImage::PixelBlock pval;
 	duds::ui::graphics::BppImage::PixelBlock *buf;
@@ -224,7 +225,7 @@ void runtest(
 		try {
 			std::ostringstream oss;
 			oss << "Pattern " << pat;
-			duds::ui::graphics::BppImageSptr label = font.render(oss.str());
+			const duds::ui::graphics::BppImageSptr &label = bsc.text(oss.str());
 			duds::ui::graphics::ImageLocation lrc(
 				img.width() - label->width(),
 				img.height() - label->height()
@@ -240,6 +241,8 @@ void runtest(
 			pat = 8;
 		}
 	} while (!quit);
+	std::cout << "Font cache image size: " << bsc.bytes() << " bytes"
+	<< std::endl;
 } catch (...) {
 	std::cerr << "Test failed in runtest():\n" <<
 	boost::current_exception_diagnostic_information()
@@ -361,8 +364,9 @@ try {
 		imgArc.get("WirelessLAN_S2")
 	};
 	// load font
-	duds::ui::graphics::BppFont font;
-	font.load(fontpath);
+	duds::ui::graphics::BppFontSptr font =
+		std::make_shared<duds::ui::graphics::BppFont>();
+	font->load(fontpath);
 
 	// read in digital pin config
 	boost::property_tree::ptree tree;

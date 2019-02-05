@@ -11,9 +11,6 @@
 #include <duds/ui/graphics/BppImageErrors.hpp>
 #include <duds/ui/graphics/BppImageArchiveSequence.hpp>
 #include <duds/general/Errors.hpp>
-#include <vector>
-
-//#include <iostream>
 
 namespace duds { namespace ui { namespace graphics {
 
