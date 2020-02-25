@@ -96,18 +96,20 @@ BppImage::BppImage(
 	}
 }
 
-BppImage BppImage::operator = (BppImage &&mv) {
+BppImage &BppImage::operator = (BppImage &&mv) {
 	img = std::move(mv.img);
 	dim = mv.dim;
 	blkPerLine = mv.blkPerLine;
 	mv.blkPerLine = 0;
 	mv.dim.w = mv.dim.h = 0;
+	return *this;
 }
 
-BppImage BppImage::operator = (const BppImage &src) {
+BppImage &BppImage::operator = (const BppImage &src) {
 	img = src.img;
 	dim = src.dim;
 	blkPerLine = src.blkPerLine;
+	return *this;
 }
 
 void BppImage::swap(BppImage &other) {
@@ -280,11 +282,17 @@ void BppImage::state(const ImageLocation &il, bool s) {
 	*a = (*a & ~m) | (s ? m : 0);
 }
 
-bool BppImage::togglePixel(const ImageLocation &il) {
+bool BppImage::invertPixel(const ImageLocation &il) {
 	PixelBlock *a;
 	PixelBlock m;
 	bufferSpot(a, m, il);
 	return ((*a = (*a & ~m) ^ m) & m) != 0;
+}
+
+void BppImage::invert() {
+	for (PixelBlock &b : img) {
+		b = ~b;
+	}
 }
 
 void BppImage::blankImage(bool s) {
@@ -401,7 +409,9 @@ void BppImage::write(
 	}
 	// destination iterator
 	Pixel diter = begin(destLoc, destSize);
-	// iteratate over the images
+	// iteratate over the image's pixels
+	/** @todo  Redo, at least for non-rotated images, using drawBox()
+	 *         implementation to operate on more than one pixel at a time. */
 	for (; siter != EndPixel(); ++diter, ++siter) {
 		*diter = OpBitFunctions[op](*diter, *siter);
 	}

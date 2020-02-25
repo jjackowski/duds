@@ -16,13 +16,20 @@ MenuOutputView::MenuOutputView(const std::shared_ptr<MenuView> &view, int vis) :
 Page(view->menu()->title()), mview(view), range(vis), selected(0),
 updateIdx(-1) { }
 
-void MenuOutputView::lock() {
+void MenuOutputView::lock(std::size_t newRange) {
 	// potentially update the menu; requires exclusive menu lock for
 	// an actual update, so must be done prior to getting a shared lock
 	mview->update();
 	// get a shared lock on the menu to allow multiple threads to render the
 	// menu simultaneously
 	menu()->block.lock_shared();
+	// different range?
+	if ((newRange != -1) && (newRange != range)) {
+		// change the range
+		range = newRange;
+		// ensure the visble items are updated
+		updateIdx = -1;
+	}
 	// figure out which menu items should be shown to the user
 	updateVisible();
 }
@@ -50,7 +57,6 @@ bool MenuOutputView::fore(Menu::ItemVec::const_iterator &iter) {
 			--iter;
 		}
 		if (!(*iter)->isInvisible()) {
-			items.push_front(iter->get());
 			return true;
 		}
 	}
@@ -64,7 +70,6 @@ bool MenuOutputView::revr(Menu::ItemVec::const_iterator &iter) {
 			++iter;
 		}
 		if ((iter != menu()->cend()) && !(*iter)->isInvisible()) {
-			items.push_back(iter->get());
 			return true;
 		}
 	}
@@ -81,9 +86,13 @@ void MenuOutputView::updateVisible() {
 		Menu::ItemVec::const_iterator back = front;
 		// capture the selected item
 		if ((*front)->isVisible()) {
+			// start the selected item at the begining of visible items
 			items.push_front(front->get());
 			// capture iterator to selected item
 			seliter = items.cbegin();
+			// reset the selected item visible index; the selected item is now
+			// at the start of visible items
+			selectedVis = 0;
 		} else {
 			// must only happen with an empty menu
 			assert(menu()->empty());
@@ -91,15 +100,20 @@ void MenuOutputView::updateVisible() {
 			seliter = items.cend();
 		}
 		// start with an item before if selection moved towards front
-		if (sel < selected) {
-			fore(front);
+		if ((sel < selected) && fore(front)) {
+			items.push_front(front->get());
+			// selected item moved towards end of visible items
+			++selectedVis;
 		}
 		// continue to add items
 		bool done = false;
 		while (!done && (items.size() < range)) {
 			// item behind
-			if (!revr(back)) {
+			if (revr(back)) {
+				items.push_back(back->get());
+			} else {
 				done = true;
+				//showLast = true;
 			}
 			// may be at the target size
 			if (items.size() == range) {
@@ -107,6 +121,9 @@ void MenuOutputView::updateVisible() {
 			}
 			// item in front
 			if (fore(front)) {
+				items.push_front(front->get());
+				// selected item moved towards end of visible items
+				++selectedVis;
 				done = false;
 			}
 		}
@@ -114,6 +131,10 @@ void MenuOutputView::updateVisible() {
 		updateIdx = uidx;
 		selected = sel;
 		vchg = true;
+		// discover if first & last visible items of the menu are visible in
+		// this output view
+		showFirst = !fore(front);
+		showLast = !revr(back);
 	} else {
 		vchg = false;
 	}

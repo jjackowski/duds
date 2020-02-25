@@ -73,6 +73,12 @@ BOOST_AUTO_TEST_CASE(MenuBasics) {
 		BOOST_CHECK_EQUAL(acc.size(), 1);
 		// the one item is selected
 		BOOST_CHECK_EQUAL(acc.selected(), 0);
+		// selected item is first visible item
+		BOOST_CHECK_EQUAL(acc.selectedVisible(), 0);
+		// first visible item of the menu is shown
+		BOOST_CHECK_EQUAL(acc.showingFirst(), true);
+		// last visible item of the menu is shown
+		BOOST_CHECK_EQUAL(acc.showingLast(), true);
 		// item is not a toggle
 		BOOST_CHECK_EQUAL(acc.haveToggles(), false);
 		DM::MenuVisibleList::const_iterator iter = acc.begin();
@@ -214,6 +220,9 @@ BOOST_AUTO_TEST_CASE(FixtureInit) {
 	{
 		DM::MenuOutputViewAccess acc(outvAA);
 		BOOST_CHECK_EQUAL(acc.selected(), 0);
+		BOOST_CHECK_EQUAL(acc.selectedVisible(), 0);
+		BOOST_CHECK_EQUAL(acc.showingFirst(), true);
+		BOOST_CHECK_EQUAL(acc.showingLast(), false);
 		BOOST_CHECK(acc.begin() == acc.selectedIter());
 		BOOST_CHECK_EQUAL((*acc.selectedIter())->label(), "Item 0");
 		BOOST_CHECK_EQUAL(acc.haveToggles(), true);
@@ -295,6 +304,10 @@ BOOST_AUTO_TEST_CASE(Visibility) {
 	{
 		DM::MenuOutputViewAccess acc(outvAA);
 		BOOST_CHECK_EQUAL(acc.size(), 4);
+		BOOST_CHECK_EQUAL(acc.showingFirst(), false);
+		BOOST_CHECK_EQUAL(acc.showingLast(), false);
+		// selected item should be second visible item
+		BOOST_CHECK_EQUAL(acc.selectedVisible(), 1);
 		DM::MenuVisibleList::const_iterator iter = acc.selectedIter();
 		IndexedItem *item = dynamic_cast<IndexedItem*>(*iter);
 		BOOST_CHECK_EQUAL(item->index(), 10);
@@ -320,6 +333,10 @@ BOOST_AUTO_TEST_CASE(Visibility) {
 		IndexedItem *item = dynamic_cast<IndexedItem*>(*iter);
 		BOOST_CHECK_EQUAL(item->index(), 0);
 		iter = acc.begin();
+		BOOST_CHECK_EQUAL(acc.showingFirst(), true);
+		BOOST_CHECK_EQUAL(acc.showingLast(), false);
+		// selected item should be first visible item
+		BOOST_CHECK_EQUAL(acc.selectedVisible(), 0);
 		int cnt = 0;
 		while (iter != acc.end()) {
 			IndexedItem *item = dynamic_cast<IndexedItem*>(*iter);
@@ -337,15 +354,21 @@ BOOST_AUTO_TEST_CASE(Visibility) {
 		DM::MenuVisibleList::const_iterator iter = acc.selectedIter();
 		IndexedItem *item = dynamic_cast<IndexedItem*>(*iter);
 		BOOST_CHECK_EQUAL(item->index(), 1);
+		// selected item should be second visible item
+		BOOST_CHECK_EQUAL(acc.selectedVisible(), 1);
 	}
 	// adjust the selection to the end
 	viewA->backward(5);
 	{
 		DM::MenuOutputViewAccess acc(outvAA);
 		BOOST_CHECK_EQUAL(acc.size(), 4);
+		BOOST_CHECK_EQUAL(acc.showingFirst(), false);
+		BOOST_CHECK_EQUAL(acc.showingLast(), true);
 		DM::MenuVisibleList::const_iterator iter = acc.selectedIter();
 		IndexedItem *item = dynamic_cast<IndexedItem*>(*iter);
 		BOOST_CHECK_EQUAL(item->index(), 15);
+		// selected item should be last visible item
+		BOOST_CHECK_EQUAL(acc.selectedVisible(), 3);
 		iter = acc.begin();
 		int cnt = 12; // two items in direction of change from selection
 		while (iter != acc.end()) {
@@ -365,6 +388,10 @@ BOOST_AUTO_TEST_CASE(Visibility) {
 		DM::MenuVisibleList::const_iterator iter = acc.selectedIter();
 		IndexedItem *item = dynamic_cast<IndexedItem*>(*iter);
 		BOOST_CHECK_EQUAL(item->index(), 0);
+		BOOST_CHECK_EQUAL(acc.showingFirst(), true);
+		BOOST_CHECK_EQUAL(acc.showingLast(), false);
+		// selected item should be first visible item
+		BOOST_CHECK_EQUAL(acc.selectedVisible(), 0);
 	}
 	// adjust the selection past the start; should wrap to end
 	viewA->forward(10);
@@ -374,6 +401,10 @@ BOOST_AUTO_TEST_CASE(Visibility) {
 		DM::MenuVisibleList::const_iterator iter = acc.selectedIter();
 		IndexedItem *item = dynamic_cast<IndexedItem*>(*iter);
 		BOOST_CHECK_EQUAL(item->index(), 15);
+		BOOST_CHECK_EQUAL(acc.showingFirst(), false);
+		BOOST_CHECK_EQUAL(acc.showingLast(), true);
+		// selected item should be last visible item
+		BOOST_CHECK_EQUAL(acc.selectedVisible(), 3);
 	}
 	// adjust the selection near the start
 	viewA->forward(10);
@@ -383,6 +414,10 @@ BOOST_AUTO_TEST_CASE(Visibility) {
 		DM::MenuVisibleList::const_iterator iter = acc.selectedIter();
 		IndexedItem *item = dynamic_cast<IndexedItem*>(*iter);
 		BOOST_CHECK_EQUAL(item->index(), 5);
+		BOOST_CHECK_EQUAL(acc.showingFirst(), false);
+		BOOST_CHECK_EQUAL(acc.showingLast(), false);
+		// selected item should be third visible item
+		BOOST_CHECK_EQUAL(acc.selectedVisible(), 2);
 		iter = acc.begin();
 		int cnt = 3; // two items in direction of change from selection
 		while (iter != acc.end()) {
@@ -398,7 +433,7 @@ BOOST_AUTO_TEST_CASE(Visibility) {
 
 // change enabled and visible flags to test change in visible items
 BOOST_AUTO_TEST_CASE(Visibility_Change) {
-	// change several items to be disabled
+	// change a couple items to be disabled
 	{
 		DM::MenuAccess acc(menu);
 		for (int loop = 0; loop < 2; ++loop) {
@@ -409,10 +444,14 @@ BOOST_AUTO_TEST_CASE(Visibility_Change) {
 	{
 		DM::MenuOutputViewAccess acc(outvAA);
 		BOOST_CHECK_EQUAL(acc.size(), 4);
+		BOOST_CHECK_EQUAL(acc.showingFirst(), false);
+		BOOST_CHECK_EQUAL(acc.showingLast(), false);
 		DM::MenuVisibleList::const_iterator iter = acc.selectedIter();
 		IndexedItem *item = dynamic_cast<IndexedItem*>(*iter);
 		// first enabled item is selected
 		BOOST_CHECK_EQUAL(item->index(), 2);
+		// selected item should be second visible item
+		BOOST_CHECK_EQUAL(acc.selectedVisible(), 1);
 		iter = acc.begin();
 		// item zero not visible because selection was implicitly moved by
 		// disabling the previously selected item (0)
@@ -446,9 +485,12 @@ BOOST_AUTO_TEST_CASE(Visibility_Change) {
 	{
 		DM::MenuOutputViewAccess acc(outvAA);
 		BOOST_CHECK_EQUAL(acc.size(), 4);
+		BOOST_CHECK_EQUAL(acc.showingFirst(), false);
+		BOOST_CHECK_EQUAL(acc.showingLast(), false);
 		DM::MenuVisibleList::const_iterator iter = acc.selectedIter();
 		IndexedItem *item = dynamic_cast<IndexedItem*>(*iter);
 		BOOST_CHECK_EQUAL(item->index(), 2);
+		BOOST_CHECK_EQUAL(acc.selectedVisible(), 1);
 		iter = acc.begin();
 		int cnt = 1;
 		while (iter != acc.end()) {
@@ -486,9 +528,13 @@ BOOST_AUTO_TEST_CASE(Visibility_Change) {
 		// chose action occured
 		BOOST_CHECK_EQUAL(counts[5], 1);
 		BOOST_CHECK_EQUAL(acc.size(), 4);
+		BOOST_CHECK_EQUAL(acc.showingFirst(), false);
+		BOOST_CHECK_EQUAL(acc.showingLast(), false);
 		DM::MenuVisibleList::const_iterator iter = acc.selectedIter();
 		IndexedItem *item = dynamic_cast<IndexedItem*>(*iter);
 		BOOST_CHECK_EQUAL(item->index(), 5);
+		// selected item should be second visible item
+		BOOST_CHECK_EQUAL(acc.selectedVisible(), 1);
 		iter = acc.begin();
 		int cnt = 2;
 		while (iter != acc.end()) {
@@ -521,9 +567,12 @@ BOOST_AUTO_TEST_CASE(Visibility_Change) {
 	{
 		DM::MenuOutputViewAccess acc(outvAA);
 		BOOST_CHECK_EQUAL(acc.size(), 4);
+		BOOST_CHECK_EQUAL(acc.showingFirst(), false);
+		BOOST_CHECK_EQUAL(acc.showingLast(), false);
 		DM::MenuVisibleList::const_iterator iter = acc.selectedIter();
 		IndexedItem *item = dynamic_cast<IndexedItem*>(*iter);
 		BOOST_CHECK_EQUAL(item->index(), 5);
+		BOOST_CHECK_EQUAL(acc.selectedVisible(), 1);
 		iter = acc.begin();
 		int cnt = 4;
 		while (iter != acc.end()) {
@@ -536,6 +585,49 @@ BOOST_AUTO_TEST_CASE(Visibility_Change) {
 		}
 		// 4 items visible
 		BOOST_CHECK_EQUAL(cnt, 8);
+	}
+	// change all items before 4 to be invisible, and all after 13
+	{
+		DM::MenuAccess acc(menu);
+		for (int loop = 0; loop < 4; ++loop) {
+			BOOST_CHECK_NO_THROW(acc.hide(loop));
+		}
+		for (int loop = 14; loop < 16; ++loop) {
+			BOOST_CHECK_NO_THROW(acc.hide(loop));
+		}
+	}
+	// first visible item is still 4
+	{
+		DM::MenuOutputViewAccess acc(outvAA);
+		BOOST_CHECK_EQUAL(acc.size(), 4);
+		// item 4 is now the first visible item on the menu
+		BOOST_CHECK_EQUAL(acc.showingFirst(), true);
+		BOOST_CHECK_EQUAL(acc.showingLast(), false);
+		BOOST_CHECK_EQUAL(acc.selectedVisible(), 1);
+	}
+	// adjust the selection to near the end
+	viewA->jump(11);
+	{
+		DM::MenuOutputViewAccess acc(outvAA);
+		BOOST_CHECK_EQUAL(acc.size(), 4);
+		BOOST_CHECK_EQUAL(acc.showingFirst(), false);
+		// item 13 is the last shown; 14 & 15 are invisible
+		BOOST_CHECK_EQUAL(acc.showingLast(), true);
+		// selected item should be second visible item
+		BOOST_CHECK_EQUAL(acc.selectedVisible(), 1);
+		DM::MenuVisibleList::const_iterator iter = acc.selectedIter();
+		IndexedItem *item = dynamic_cast<IndexedItem*>(*iter);
+		BOOST_CHECK_EQUAL(item->index(), 11);
+		iter = acc.begin();
+		int cnt = 10; // two items in direction of change from selection
+		while (iter != acc.end()) {
+			item = dynamic_cast<IndexedItem*>(*iter);
+			BOOST_CHECK_EQUAL(item->index(), cnt);
+			++cnt;
+			++iter;
+		}
+		// 13 is the last item visible; was incremented one past in the loop
+		BOOST_CHECK_EQUAL(cnt, 14);
 	}
 }
 

@@ -114,6 +114,16 @@ public:
 	 */
 	BppImageSptr tryGet(char32_t gc);
 	/**
+	 * Returns a somewhat decent estimate of the largest size of a character
+	 * without actually inspecting all characters. If the result is zero, the
+	 * estimation failed.
+	 * @note  This simplistic font code lacks any real font metrics, so the
+	 *        result from this function may not be very good. It should do well
+	 *        with fixed width fonts. It may fail completely for fonts that are
+	 *        actually a set of icons and lack many characters.
+	 */
+	ImageDimensions estimatedMaxCharacterSize();
+	/**
 	 * Option flags that affect how text is rendered.
 	 */
 	typedef duds::general::BitFlags<struct BppFontRenderingFlags>  Flags;

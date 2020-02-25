@@ -161,6 +161,20 @@ struct ImageDimensions {
 	constexpr ImageDimensions swappedAxes() const {
 		return ImageDimensions(h, w);
 	}
+	/**
+	 * Returns new dimensions that only cover the union of this dimension and
+	 * the given dimension.
+	 */
+	constexpr ImageDimensions minExtent(const ImageDimensions &dim) {
+		return ImageDimensions(std::min(w, dim.w), std::min(h, dim.h));
+	}
+	/**
+	 * Returns new dimensions that are minimally large enough to fit this
+	 * dimension and the given dimension.
+	 */
+	constexpr ImageDimensions maxExtent(const ImageDimensions &dim) {
+		return ImageDimensions(std::max(w, dim.w), std::max(h, dim.h));
+	}
 };
 
 /**
@@ -962,11 +976,11 @@ public:
 	/**
 	 * Move assignment.
 	 */
-	BppImage operator = (BppImage &&mv);
+	BppImage &operator = (BppImage &&mv);
 	/**
 	 * Copy assignment.
 	 */
-	BppImage operator = (const BppImage &src);
+	BppImage &operator = (const BppImage &src);
 	/**
 	 * Swap two images.
 	 */
@@ -1343,15 +1357,19 @@ public:
 	 * Toggles the state of a pixel.
 	 * @param il     The location to toggle.
 	 */
-	bool togglePixel(const ImageLocation &il);
+	bool invertPixel(const ImageLocation &il);
 	/**
 	 * Toggles the state of a pixel.
 	 * @param x      Horizontal coordinate to toggle.
 	 * @param y      Vertical coordinate to toggle.
 	 */
-	bool togglePixel(int x, int y) {
-		return togglePixel(ImageLocation(x, y));
+	bool invertPixel(int x, int y) {
+		return invertPixel(ImageLocation(x, y));
 	}
+	/**
+	 * Toggles the state of all pixels.
+	 */
+	void invert();
 	/**
 	 * Changes the state of every pixel in the image to the given state.
 	 * @post  All pixels will be set to @a state.

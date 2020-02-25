@@ -92,6 +92,18 @@ BppImageSptr BppFont::tryGet(char32_t gc) {
 	return iter->second;
 }
 
+ImageDimensions BppFont::estimatedMaxCharacterSize() {
+	//const static char32_t checkDim[] = { 'M', 'q' };
+	ImageDimensions res(0, 0);
+	for (char32_t check : { 'M', 'q' }) {
+		BppImageSptr img = tryGet(check);
+		if (img) {
+			res = res.maxExtent(img->dimensions());
+		}
+	}
+	return res;
+}
+
 /**
  * Used to hold all the glyphs needed to render a string.
  */

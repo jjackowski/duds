@@ -67,6 +67,13 @@ struct MenuItemLacksValue : MenuError { };
 struct MenuViewAlreadyAttached : MenuError { };
 
 /**
+ * There is inadequate room to render the menu. This error may be used by
+ * menu rendering code, but is not used by the base menu code. It exists here
+ * to avoid each renderer having its own variation of this error.
+ */
+struct MenuTooSmall : MenuError { };
+
+/**
  * The index (position) of the MenuItem involved in an error.
  */
 typedef boost::error_info<struct Info_MenuItemIndex, std::size_t>

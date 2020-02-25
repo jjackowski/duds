@@ -11,25 +11,24 @@
 
 namespace duds { namespace ui { namespace menu {
 
-MenuOutputViewAccess::MenuOutputViewAccess(MenuOutputView *mov) : outview(mov) {
+MenuOutputViewAccess::MenuOutputViewAccess(
+	MenuOutputView *mov,
+	std::size_t newRange
+) : outview(mov) {
 	if (outview) {
-		menu = outview->menu().get();
-		outview->lock();
+		viewmenu = outview->menu().get();
+		outview->lock(newRange);
 		seliter = outview->items.cend();
 	} else {
-		menu = nullptr;
+		viewmenu = nullptr;
 	}
 }
-/*
-MenuOutputViewAccess::MenuOutputViewAccess(MenuOutputView &sv) :
-MenuOutputViewAccess(sv.shared_from_this()) { }
-*/
 
 void MenuOutputViewAccess::retire() noexcept {
-	if (menu) {
+	if (viewmenu) {
 		outview->unlock();
 		outview = nullptr;
-		menu = nullptr;
+		viewmenu = nullptr;
 	}
 }
 

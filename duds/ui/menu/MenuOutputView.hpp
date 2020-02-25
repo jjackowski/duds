@@ -48,10 +48,10 @@ private:
 	std::shared_ptr<MenuView> mview;
 	/**
 	 * The currently visible menu items. This data is only guarenteed to be
-	 * valid while a MenuOutputViewAccess is acting upon this MenuOutputView. The
-	 * data may or may not remain valid between accesses. The locks caused by
-	 * the access object include a shared lock on the menu, which is why shared
-	 * pointers are not needed here.
+	 * valid while a MenuOutputViewAccess object is acting upon this
+	 * MenuOutputView. The data may or may not remain valid between accesses.
+	 * The locks caused by the access object include a shared lock on the menu,
+	 * which is why shared pointers are not needed here.
 	 */
 	MenuVisibleList items;
 	/**
@@ -66,11 +66,19 @@ private:
 	 */
 	std::size_t range;
 	/**
-	 * Index of the selected item. When a MenuOutputViewAccess is operating upon
-	 * this object, it is the currently selected item. Otherwise it is the
-	 * previously selected item.
+	 * Index of the selected item from the container of all menu items. When a
+	 * MenuOutputViewAccess is operating upon this object, it is the currently
+	 * selected item. Otherwise it is the previously selected item.
 	 */
 	std::size_t selected;
+	/**
+	 * Index of the selected item within the list of currently visible menu
+	 * items. When a MenuOutputViewAccess is not operating upon this object,
+	 * this value has no meaning. Otherwise, it is the number of items from the
+	 * first in the visible list to the selected item. If the menu is empty,
+	 * this value should not be used.
+	 */
+	std::size_t selectedVis;
 	/**
 	 * The menu's update index value when this subview was last rendered.
 	 */
@@ -81,15 +89,27 @@ private:
 	 */
 	bool vchg;
 	/**
+	 * True if the visible list includes the first visible item on the menu.
+	 */
+	bool showFirst;
+	/**
+	 * True if the visible list includes the last visible item on the menu.
+	 */
+	bool showLast;
+	/**
 	 * Handles several tasks to lock and prepare menu data.
 	 * -# Calls MenuView::update() to conditionally update the view with any
 	 *    changes to the menu. If the view does update with new data, it
 	 *    requires an exclusive lock from the Menu. The lock is released by the
 	 *    end of the function.
 	 * -# Gets a shared lock on the menu data.
+	 * -# If a different range is requested, store the new range and force an
+	 *    update of the list of visible items.
 	 * -# Produce a list of the MenuItem objects that are visible.
+	 * @param newRange   The number of menu items that can be displayed, or -1
+	 *                   to not change the range.
 	 */
-	void lock();
+	void lock(std::size_t newRange);
 	/**
 	 * Informs the MenuView that it has one fewer MenuOutputView objects acting
 	 * upon it, and releases the shared lock on the menu data.
@@ -106,20 +126,18 @@ private:
 	void maxVisible(std::size_t newRange);
 	/**
 	 * A helper function for update() that moves @a iter towards the front of
-	 * the menu until it finds a visible menu item, and then adds that item
-	 * to the list of visible items.
+	 * the menu until it finds a visible menu item or the start of the menu.
 	 * @param iter  The location to start the search.
-	 * @return      True if an item was added, or false if there isn't an item
-	 *              in the forward direction that is visble.
+	 * @return      True if a visible item was found, or false if there isn't
+	 *              an item in the forward direction that is visble.
 	 */
 	bool fore(Menu::ItemVec::const_iterator &iter);
 	/**
 	 * A helper function for update() that moves @a iter towards the back of
-	 * the menu until it finds a visible menu item, and then adds that item
-	 * to the list of visible items.
+	 * the menu until it finds a visible menu item or the end of the menu.
 	 * @param iter  The location to start the search.
-	 * @return      True if an item was added, or false if there isn't an item
-	 *              in the backward direction that is visble.
+	 * @return      True if a visible item was found, or false if there isn't
+	 *              an item in the backward direction that is visble.
 	 */
 	bool revr(Menu::ItemVec::const_iterator &iter);
 	/**

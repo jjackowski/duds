@@ -149,6 +149,18 @@ public:
 		return items.size();
 	}
 	/**
+	 * Returns the number of MenuItem objects flagged as invisible in the menu.
+	 */
+	std::size_t invisible() const {
+		return invis;
+	}
+	/**
+	 * Returns the number of visible MenuItem objects in the menu.
+	 */
+	std::size_t visible() const {
+		return items.size() - invis;
+	}
+	/**
 	 * True if the menu has no items.
 	 */
 	bool empty() const {
