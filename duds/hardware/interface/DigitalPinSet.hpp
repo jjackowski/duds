@@ -262,7 +262,7 @@ public:
 	 * configuration from all other pins.
 	 */
 	bool independentConfig() const {
-		port()->independentConfig();
+		return port()->independentConfig();
 	}
 	/**
 	 * Returns true if the pin can operate as an input.

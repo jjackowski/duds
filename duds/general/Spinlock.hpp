@@ -163,9 +163,9 @@ public:
 	template <class Clock, class Duration>
 	bool try_lock_until(const std::chrono::time_point<Clock,Duration> &time) {
 		if (useYield) {
-			tryLockAlwaysYeildUntil(time);
+			return tryLockAlwaysYeildUntil(time);
 		} else {
-			tryLockNeverYeildUntil(time);
+			return tryLockNeverYeildUntil(time);
 		}
 	}
 	/**
@@ -197,9 +197,9 @@ public:
 	template <class Rep, class Period>
 	bool try_lock_for(const std::chrono::duration<Rep,Period> &duration) {
 		if (useYield) {
-			tryLockAlwaysYeildFor(duration);
+			return tryLockAlwaysYeildFor(duration);
 		} else {
-			tryLockNeverYeildFor(duration);
+			return tryLockNeverYeildFor(duration);
 		}
 	}
 	/**
