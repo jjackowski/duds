@@ -72,12 +72,12 @@ Right now, only Linux. Hardware access is only tested on Raspberry Pis, but the 
 
 # Build
 
-- [SCons](http://scons.org/) 2.3 to 2.5 or so (it isn't very picky about the version)
-  - Python 2.7 to less than 3 (older versions possible with SCons 2.3.4 and older)
+- [SCons](http://scons.org/) 2.3 to 3.1 or so (it isn't very picky about the version)
+  - Python 2.7 and newer (older versions possible with SCons 2.3.4 and older)
 - Build configuration options: run "scons -h"
   - The configuration can be changed for one build by specifying an option as an argument to scons.
   - To keep a configuration saved, set variables with the same name of the configuration options in Python syntax in localbuildconfig.py in the same directory as SConstruct.
-- gcc 7.3.x, 6.4.x
+- gcc 9.2.x, 7.3.x, 6.4.x
   - Other versions are untested. Older ones will likely fail.
   - Any output for ARM processors from gcc 7.1 and newer will not link correctly with any output from earlier versions of gcc. There are *huge* warnings about this with gcc 6.4.0 and 7.3.0.
 - [Boost](http://www.boost.org/) version 1.62 or newer

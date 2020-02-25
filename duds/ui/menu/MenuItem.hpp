@@ -51,7 +51,6 @@ class MenuAccess;
  * If an item is removed from a menu, it may be further modified and added to
  * another menu.
  *
- * @todo    Add some kind of image type that could be BPP, RGB, or vector.
  * @author  Jeff Jackowski
  */
 class MenuItem : public std::enable_shared_from_this<MenuItem> {
@@ -375,8 +374,8 @@ public:
 	virtual void deselect(MenuView &invokingView, const MenuAccess &access);
 	/**
 	 * Called by MenuView when the user choses this MenuItem. The call occurs
-	 * from the thread getting a MenuOutputViewAccess object. This thread will have
-	 * an exclusive lock on the menu.
+	 * from the thread getting a MenuOutputViewAccess object. This thread will
+	 * have an exclusive lock on the menu.
 	 * @param invokingView  The view used to chose this item.
 	 * @param access        An access object for the menu that may be used
 	 *                      to modify the menu.
