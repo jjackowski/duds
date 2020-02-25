@@ -222,7 +222,7 @@ else:
 		if not conf.CheckLib(dbgenv.subst(env['LIBS'][0]), language = 'C++', autoadd=0):
 			dbgenv['BOOSTABI'] = ''
 			if not conf.CheckLib(dbgenv.subst(env['LIBS'][0]), language = 'C++', autoadd=0):
-				print 'No suitable Boost libraries could be found.'
+				print('No suitable Boost libraries could be found.')
 				# really lame to not give help when there is a config problem,
 				# but that is what is going to happen; either exit here or get
 				# errors in the script, both of which result in no help.
@@ -233,7 +233,7 @@ else:
 					Exit(1)
 	# check optional libraries
 	remlibs = [ ]
-	for mac, lib in optionalLibs.iteritems():
+	for mac, lib in iter(optionalLibs.items()):
 		if conf.CheckLib(dbgenv.subst(lib), language = 'C++', autoadd=0):
 			conf.Define('HAVE_' + mac, 1, 'optional library')
 		else:
@@ -290,7 +290,7 @@ else:
 # add back the libraries
 dbgenv['LIBS'] = env['LIBS']
 # put in additional debug libs
-for mac, lib in optionalDbgLibs.iteritems():
+for mac, lib in iter(optionalDbgLibs.items()):
 	dbgenv.Append(
 		CPPDEFINES = mac,
 		LIBS = lib
@@ -322,7 +322,7 @@ if not GetOption('help'):
 
 	for env in envs:
 		# add in optional libraries
-		for mac, lib in optionalLibs.iteritems():
+		for mac, lib in iter(optionalLibs.items()):
 			env.Append(
 				#CPPDEFINES = ('HAVE_' + mac, 1),
 				LIBS = lib
@@ -350,16 +350,16 @@ if not GetOption('help'):
 
 #####
 # setup help text for the build options
-Help(buildopts.GenerateHelpText(env, cmp))
+Help(buildopts.GenerateHelpText(env))
 if GetOption('help'):
-	print 'Build target aliases:'
-	print '  libs-dbg    - All libraries; debugging build. This is the default.'
-	print '  libs-opt    - All libraries; optimized build.'
-	print '  libs        - Same as libs-dbg'
-	print '  samples-dbg - All sample programs; debugging build.'
-	print '  samples-opt - All sample programs; optimized build.'
-	print '  samples     - Same as samples-dbg.'
+	print('Build target aliases:')
+	print('  libs-dbg    - All libraries; debugging build. This is the default.')
+	print('  libs-opt    - All libraries; optimized build.')
+	print('  libs        - Same as libs-dbg')
+	print('  samples-dbg - All sample programs; debugging build.')
+	print('  samples-opt - All sample programs; optimized build.')
+	print('  samples     - Same as samples-dbg.')
 	if havetestlib:
-		print '  tests-dbg   - All unit test programs; debugging build.'
-		print '  tests-opt   - All unit test programs; optimized build.'
-		print '  tests       - Same as tests-dbg.'
+		print('  tests-dbg   - All unit test programs; debugging build.')
+		print('  tests-opt   - All unit test programs; optimized build.')
+		print('  tests       - Same as tests-dbg.')
