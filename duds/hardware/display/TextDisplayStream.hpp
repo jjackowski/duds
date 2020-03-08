@@ -255,12 +255,12 @@ protected:
 	virtual typename Traits::int_type overflow(
 		typename Traits::int_type c = Traits::eof()
 	) {
-		// there is no end to the data the display can take
-		if (c == Traits::eof()) {
-			return Traits::not_eof(c);
+		// ignore EOF
+		if (c != Traits::eof()) {
+			duds::general::SpinLockGuard lock(wblock);
+			bufWrite((Char)c);
 		}
-		duds::general::SpinLockGuard lock(wblock);
-		bufWrite((Char)c);
+		return Traits::not_eof(c);
 	}
 	virtual std::streamsize xsputn(const Char* s, std::streamsize count) {
 		duds::general::SpinLockGuard lock(wblock);
