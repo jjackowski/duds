@@ -90,6 +90,7 @@ std::ostream &operator << (std::ostream &os, const PinConfiguration::Port &port)
 	for (auto const &pin : port.gidIndex()) {
 		os << '\t' << pin << '\n';
 	}
+	return os;
 }
 
 } } }
