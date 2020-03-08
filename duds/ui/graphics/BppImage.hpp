@@ -148,7 +148,9 @@ struct ImageDimensions {
 	 * Returns true if the given location is within the bounds specified by
 	 * this object.
 	 */
-	bool withinBounds(const ImageLocation &loc) const;
+	constexpr bool withinBounds(const ImageLocation &loc) const {
+		return (loc.x >= 0) && (loc.x < w) && (loc.y >= 0) && (loc.y < h);
+	}
 	/**
 	 * Swaps the dimensions's axes.
 	 */
@@ -174,6 +176,30 @@ struct ImageDimensions {
 	 */
 	constexpr ImageDimensions maxExtent(const ImageDimensions &dim) {
 		return ImageDimensions(std::max(w, dim.w), std::max(h, dim.h));
+	}
+	/**
+	 * Returns a region clipped to fit within this object's dimensions.
+	 * @param dim  The region that may need to be clipped to fit.
+	 * @param loc  The offset location into this object's area. The offset may
+	 *             be negative. The default is no offset.
+	 * @return     The dimensions of @a dim that fit within this object. If
+	 *             either dimension value is zero (empty() is true), the regions
+	 *             do not overlap.
+	 */
+	constexpr ImageDimensions clip(
+		const ImageDimensions &dim,
+		const ImageLocation &loc = ImageLocation(0, 0)
+	) const {
+		return ImageDimensions(
+			std::max(
+				std::min(dim.w - ((loc.x < 0) ? loc.x : 0), w - std::abs(loc.x)),
+				0  // don't be negative
+			),
+			std::max(
+				std::min(dim.h - ((loc.y < 0) ? loc.y : 0), h - std::abs(loc.y)),
+				0
+			)
+		);
 	}
 };
 

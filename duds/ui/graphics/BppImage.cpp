@@ -24,10 +24,6 @@ std::ostream &operator << (std::ostream &os, const ImageDimensions &id) {
 	return os;
 }
 
-bool ImageDimensions::withinBounds(const ImageLocation &loc) const {
-	return (loc.x >= 0) && (loc.x < w) && (loc.y >= 0) && (loc.y < h);
-}
-
 
 BppImage::BppImage(const ImageDimensions &id) :
 img(bufferBlockSize(id.w, id.h)), dim(id),
@@ -432,11 +428,7 @@ void BppImage::write(
 		swapped = true;
 	}
 	// source dimensions clipped to available destination size
-	ImageDimensions d(
-		// (int16_t - int16_t) is type int
-		std::min((int)s.w, dim.w - dest.x),
-		std::min((int)s.h, dim.h - dest.y)
-	);
+	ImageDimensions d = dim.clip(s, dest);
 	if (swapped) {
 		d.swapAxes();
 	}
@@ -695,15 +687,13 @@ void BppImage::ConstPixel::dimensions(const ImageDimensions &d) {
 	}
 }
 
-static constexpr ImageLocation OneByOne(1, 1);
-
 void BppImage::ConstPixel::origdimloc(
 	const ImageLocation &o,
 	const ImageDimensions &d,
 	const ImageLocation &p
 ) {
 	if (d.withinBounds(p) &&
-		src->dimensions().withinBounds(o - OneByOne + d)
+		src->dimensions().withinBounds(o - ImageLocation(1,1) + d)
 	) {
 		// store the new data
 		orig = o;
