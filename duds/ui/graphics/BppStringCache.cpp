@@ -39,7 +39,7 @@ void BppStringCache::clear() {
 	curB = 0;
 }
 
-const BppImageSptr &BppStringCache::text(
+ConstBppImageSptr BppStringCache::text(
 	const std::string &str,
 	BppFont::Flags flags
 ) {
@@ -61,7 +61,7 @@ const BppImageSptr &BppStringCache::text(
 	std::lock_guard<duds::general::Spinlock> lock(block);
 	// store the result for later
 	std::pair<Cache::iterator, bool> res =
-		cache.emplace(BppString{img, str, flags});
+		cache.emplace(BppString{std::move(img), str, flags});
 	// insertion check
 	if (res.second) {
 		// update current image size sum

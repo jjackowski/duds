@@ -35,7 +35,7 @@ class BppStringCache : boost::noncopyable {
 		/**
 		 * The rendered image of the text.
 		 */
-		BppImageSptr img;
+		ConstBppImageSptr img;
 		/**
 		 * The text rendered into @a img.
 		 */
@@ -173,21 +173,17 @@ public:
 	 * it is done by calling BppFont::render() on this object's font. After
 	 * rendering, the cache size limits are enforced by removing the cached
 	 * item(s) that were last requested farthest in the past until maximums
-	 * are not exceeded.
+	 * are not exceeded. Returning a copy of the image's shared pointer
+	 * prevents cache evictions from destroying images before they are used.
 	 *
 	 * @param text   The text to render.
 	 * @param flags  The option flags. The default is to render varying width,
 	 *               fixed height text with each line aligned to the left.
-	 * @return       An image with the rendered text. If the cache is used
-	 *               from multiple threads, all callers should capture their
-	 *               own copy of the shared pointer rather than a reference to
-	 *               make it impossible for the image to be destroyed by the
-	 *               cache enforcing its size limits before the returned image
-	 *               is put to use.
+	 * @return       A const image with the rendered text.
 	 * @throw        GlyphNotFoundError  A glyph in @a str is not provided
 	 *                                   by the font.
 	 */
-	const BppImageSptr &text(
+	ConstBppImageSptr text(
 		const std::string &str,
 		BppFont::Flags flags = BppFont::AlignLeft
 	);

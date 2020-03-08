@@ -225,7 +225,7 @@ void runtest(
 		try {
 			std::ostringstream oss;
 			oss << "Pattern " << pat;
-			const duds::ui::graphics::BppImageSptr &label = bsc.text(oss.str());
+			duds::ui::graphics::ConstBppImageSptr label = bsc.text(oss.str());
 			duds::ui::graphics::ImageLocation lrc(
 				img.width() - label->width(),
 				img.height() - label->height()
