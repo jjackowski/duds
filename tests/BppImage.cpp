@@ -239,12 +239,40 @@ BOOST_AUTO_TEST_CASE(BppImage_SubZebraVertInc) {
 	BOOST_CHECK(cp == BPPN::BppImage::EndPixel());
 }
 
+BOOST_AUTO_TEST_CASE(BppImage_ZebraWrite) {
+	// write the zebra into an image 9 times and check result
+	BPPN::BppImage testimg(img->width() * 9, img->height());
+	BOOST_CHECK_EQUAL(testimg.width(), 72);
+	for (int w = 0; w < 9; ++w) {
+		testimg.write(img, BPPN::ImageLocation(w * 8, 0));
+	}
+	BOOST_CHECK_EQUAL(sizeof(BPPN::BppImage::PixelBlock), 8);
+	for (int x = 0; x < 72; x += 8) {
+		for (int y = 0; y < 2; ++y) {
+			// work out the byte for the width of x to x + 7
+			BPPN::BppImage::PixelBlock spot = *testimg.bufferLine(y);
+			spot = (spot >> (x % (sizeof(BPPN::BppImage::PixelBlock) * 8))) & 0xFF;
+			BPPN::BppImage::PixelBlock val;
+			if (y & 1) {
+				val = 0xAA;
+			} else {
+				val = 0x55;
+			}
+			BOOST_CHECK_MESSAGE(
+				spot == val,
+				"Bad image write result at (" << x << ", " << y << "): expected " <<
+				val << ", found " << spot << '.'
+			);
+		}
+	}
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 
 
 struct BarsImageFixure {
-	std::shared_ptr<BPPN::BppImage> img;
+	BPPN::BppImageSptr img;
 	BarsImageFixure() {
 		BPPN::BppImageArchive arc;
 		arc.load(TEST_PATH "BppImageGood.bppia");
