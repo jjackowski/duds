@@ -9,14 +9,13 @@
  */
 /**
  * @file
- * A sample of using HD44780 and TextDisplayStream along with BppImage to
- * define graphic icons for use with the display. Shows IPv4 addresses on the
- * display with icons for wired and wireless networks.
+ * A sample of using a ST7920 graphic LCD.
  */
 
 #include <duds/hardware/devices/displays/ST7920.hpp>
-#include <duds/ui/graphics//BppImageArchive.hpp>
-#include <duds/ui/graphics//BppStringCache.hpp>
+#include <duds/hardware/devices/displays/SimulatedBppDisplay.hpp>
+#include <duds/ui/graphics/BppImageArchive.hpp>
+#include <duds/ui/graphics/BppStringCache.hpp>
 #include <duds/hardware/interface/linux/SysFsPort.hpp>
 #ifndef USE_SYSFS_PORT
 #include <duds/hardware/interface/linux/GpioDevPort.hpp>
@@ -60,7 +59,8 @@ R PatternFill(P pattern) {
 }
 
 void runtest(
-	const std::shared_ptr<duds::hardware::devices::displays::ST7920> &disp,
+	//const std::shared_ptr<duds::hardware::devices::displays::ST7920> &disp,
+	const std::shared_ptr<duds::hardware::display::BppGraphicDisplay> disp,
 	std::shared_ptr<duds::ui::graphics::BppImage> lanIcon[3],
 	duds::ui::graphics::BppFontSptr &font,
 	bool once
@@ -253,7 +253,7 @@ int main(int argc, char *argv[])
 try {
 	std::string confpath, fontpath;
 	int dispW, dispH;
-	bool noinput = false, once = false, fakeport = false;
+	bool noinput = false, once = false, fakeport = false, consoleout = false;
 	bool usegpiodev =
 		#ifdef USE_SYSFS_PORT
 		false;
@@ -322,6 +322,11 @@ try {
 					default_value(binpath + "font_8x16.bppia"),
 				"Font file"
 			)
+			(
+				"console",
+				"Output a simulated graphic display to the console. This is not "
+				"mutually exclusive with using the real LCD."
+			)
 		;
 		boost::program_options::variables_map vm;
 		boost::program_options::store(
@@ -352,6 +357,9 @@ try {
 				usegpiodev = true;
 			}
 			#endif
+		}
+		if (vm.count("console")) {
+			consoleout = true;
 		}
 	}
 
@@ -401,15 +409,25 @@ try {
 			std::move(lcdset), std::move(lcdsel), dispW, dispH
 		);
 	disp->initialize();
+	// optional comsole output
+	std::shared_ptr<duds::hardware::devices::displays::SimulatedBppDisplay> simdisp =
+		std::make_shared<duds::hardware::devices::displays::SimulatedBppDisplay>(dispW, dispH);
 
 	if (noinput) {
-		// will not return, unless once is true
+		// will not return unless once is true
 		runtest(disp, lanIcon, font, once);
 	} else {
-		std::thread doit(runtest, std::ref(disp), lanIcon, std::ref(font), once);
+		std::thread doitD(runtest, disp, lanIcon, std::ref(font), once);
+		std::thread doitC;
+		if (consoleout) {
+			doitC = std::thread(runtest, simdisp, lanIcon, std::ref(font), once);
+		}
 		std::cin.get();
 		quit = true;
-		doit.join();
+		doitD.join();
+		if (consoleout) {
+			doitC.join();
+		}
 	}
 } catch (...) {
 	std::cerr << "Test failed in main():\n" <<
