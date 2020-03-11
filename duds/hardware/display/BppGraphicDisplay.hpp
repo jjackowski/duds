@@ -7,6 +7,9 @@
  *
  * Copyright (C) 2018  Jeff Jackowski
  */
+#ifndef BPPGRAPHICDISPLAY_HPP
+#define BPPGRAPHICDISPLAY_HPP
+
 #include <duds/ui/graphics/BppImage.hpp>
 
 namespace duds { namespace hardware { namespace display {
@@ -89,3 +92,5 @@ public:
 };
 
 } } }
+
+#endif        //  #ifndef BPPGRAPHICDISPLAY_HPP

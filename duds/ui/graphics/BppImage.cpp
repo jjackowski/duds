@@ -120,21 +120,18 @@ void BppImage::clear() {
 	blkPerLine = 0;
 }
 
-void BppImage::resize(int width, int height) {
-	if ((width < 0) || (height < 0)) {
+void BppImage::resize(const duds::ui::graphics::ImageDimensions &newdim) {
+	if ((newdim.w < 0) || (newdim.h < 0)) {
 		DUDS_THROW_EXCEPTION(ImageBoundsError() <<
-			ImageErrorDimensions(ImageDimensions(width, height))
+			ImageErrorDimensions(newdim)
 		);
 	}
-	if ((width == 0) || (height == 0)) {
+	if (newdim.empty()) {
 		clear();
-	} else if ((width != dim.w) || (height != dim.h)) {
-		/** @todo  Keep portion of image. */
-		/** @bug   Image data is corrupt, but buffer is the correct size and usable. */
+	} else if (newdim != dim) {
+		dim = newdim;
 		img.resize(bufferBlockSize(dim.w, dim.h));
 		blkPerLine = bufferBlocksPerLine(dim);
-		dim.w = width;
-		dim.h = height;
 	}
 }
 
@@ -162,7 +159,7 @@ void BppImage::bufferSpot(
 			ImageErrorLocation(il)
 		);
 	}
-	mask = 1 << (il.x % (sizeof(PixelBlock) * 8));
+	mask = (PixelBlock)1 << (il.x % (sizeof(PixelBlock) * 8));
 	addr = &(img[blkPerLine * il.y + (il.x / (sizeof(PixelBlock) * 8))]);
 }
 

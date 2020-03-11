@@ -58,6 +58,8 @@ ConstBppImageSptr BppStringCache::text(
 	}
 	// no match; it must be rendered
 	BppImageSptr img = fnt->render(str, flags);
+	// much easier to get to size this way than through res later
+	unsigned int imgSize = img->data().size();
 	std::lock_guard<duds::general::Spinlock> lock(block);
 	// store the result for later
 	std::pair<Cache::iterator, bool> res =
@@ -65,7 +67,7 @@ ConstBppImageSptr BppStringCache::text(
 	// insertion check
 	if (res.second) {
 		// update current image size sum
-		curB += img->data().size() * sizeof(BppImage::PixelBlock);
+		curB += imgSize * sizeof(BppImage::PixelBlock);
 		// cache size limit hit?
 		if ((curB > maxB) || (cache.size() > maxS)) {
 			Cache::index<index_seq>::type &sidx = cache.get<index_seq>();

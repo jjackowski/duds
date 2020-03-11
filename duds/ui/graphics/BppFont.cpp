@@ -262,7 +262,7 @@ try {
 				adv = diter->dim.w / diter->chars;
 				loc.x += (adv - gd.w) / 2;
 			}
-			bis->write(*viter, loc, ImageLocation(0,0), gd);
+			bis->write(*viter, loc, gd);
 			// advance  position to the left
 			il.x += adv;
 		}

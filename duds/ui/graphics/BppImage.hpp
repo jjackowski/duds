@@ -1019,9 +1019,21 @@ public:
 	void clear();
 	/**
 	 * Changes the size of the image.
-	 * @post  The image data is invalid. Should change this.
+	 * @param newdim  The new image dimensions.
+	 * @post  The image data is undefined.
+	 * @throw ImageBoundsError  A negative dimension was provided.
 	 */
-	void resize(int width, int height);
+	void resize(const duds::ui::graphics::ImageDimensions &newdim);
+	/**
+	 * Changes the size of the image.
+	 * @param width   The new width of the image.
+	 * @param height  The new height of the image.
+	 * @post  The image data is undefined.
+	 * @throw ImageBoundsError  A negative dimension was provided.
+	 */
+	void resize(int width, int height) {
+		resize(duds::ui::graphics::ImageDimensions(width, height));
+	}
 	/**
 	 * Returns true if there is no image data.
 	 */
@@ -1485,6 +1497,27 @@ public:
 		Operation op = OpSet
 	);
 	/**
+	 * Writes a portion of the source image, starting from (0, 0), into this
+	 * image.
+	 * @param src      The source image.
+	 * @param destLoc  The top-left location on this image where the source
+	 *                 image will be placed.
+	 * @param srcSize  The width and height of the source image that will be
+	 *                 used.
+	 * @param srcDir   The iteration direction on the source image. This allows
+	 *                 the source to be rotated by 0, 90, 180, or 270 degrees.
+	 * @param op       The operation used to modify this image.
+	 */
+	void write(
+		const BppImage * const src,
+		const ImageLocation &destLoc,
+		const ImageDimensions &srcSize,
+		Direction srcDir = HorizInc,
+		Operation op = OpSet
+	) {
+		write(src, destLoc, ImageLocation(0, 0), srcSize, srcDir, op);
+	}
+	/**
 	 * Writes the specified portion of the source into this image.
 	 * @param src      The source image.
 	 * @param destLoc  The top-left location on this image where the source
@@ -1506,6 +1539,27 @@ public:
 		Operation op = OpSet
 	) {
 		write(src.get(), destLoc, srcLoc, srcSize, srcDir, op);
+	}
+	/**
+	 * Writes a portion of the source image, starting from (0, 0), into this
+	 * image.
+	 * @param src      The source image.
+	 * @param destLoc  The top-left location on this image where the source
+	 *                 image will be placed.
+	 * @param srcSize  The width and height of the source image that will be
+	 *                 used.
+	 * @param srcDir   The iteration direction on the source image. This allows
+	 *                 the source to be rotated by 0, 90, 180, or 270 degrees.
+	 * @param op       The operation used to modify this image.
+	 */
+	void write(
+		const std::shared_ptr<const BppImage> src,
+		const ImageLocation &destLoc,
+		const ImageDimensions &srcSize,
+		Direction srcDir = HorizInc,
+		Operation op = OpSet
+	) {
+		write(src.get(), destLoc, ImageLocation(0, 0), srcSize, srcDir, op);
 	}
 	/**
 	 * Writes as much of the given source image as will fit into this image.
