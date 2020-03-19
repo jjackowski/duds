@@ -1081,7 +1081,11 @@ public:
 	 * Retuns a pointer to the start of image data.
 	 * @throw ImageZeroSizeError
 	 */
-	PixelBlock *buffer();
+	PixelBlock *buffer() {
+		// re-use the const implementation
+		return const_cast<BppImage::PixelBlock*>
+		(((const BppImage*)this)->buffer());
+	}
 	/**
 	 * Provides access to the internal vector storing the image data.
 	 */
@@ -1093,18 +1097,25 @@ public:
 	 * Returns a pointer to the start of the given line.
 	 * @param py  The Y-coordinate of the line.
 	 * @return    The address of the start of line @a py.
+	 * @throw     ImageBoundsError  The given location is out of bounds. To
+	 *                              satisfy C++ iterator requirements, one past
+	 *                              the end will not throw, but should not be
+	 *                              dereferenced.
 	 */
-	// improve error handling; move to cpp
-	const PixelBlock *bufferLine(int py) const {
-		return &(img[blkPerLine * py]);
-	}
+	const PixelBlock *bufferLine(int py) const;
 	/**
 	 * Returns a pointer to the start of the given line.
 	 * @param py  The Y-coordinate of the line.
 	 * @return    The address of the start of line @a py.
+	 * @throw     ImageBoundsError  The given location is out of bounds. To
+	 *                              satisfy C++ iterator requirements, one past
+	 *                              the end will not throw, but should not be
+	 *                              dereferenced.
 	 */
 	PixelBlock *bufferLine(int py) {
-		return &(img[blkPerLine * py]);
+		// re-use the const implementation
+		return const_cast<BppImage::PixelBlock*>
+		(((const BppImage*)this)->bufferLine(py));
 	}
 	/**
 	 * Returns the number of PixelBlock objects per row in the image data.
@@ -1122,6 +1133,7 @@ public:
 	 * @param mask  A bitmask that will be set to identify the pixel inside
 	 *              the PixelBlock.
 	 * @param il    The location to find within the image data.
+	 * @throw       ImageBoundsError  The given location is out of bounds.
 	 */
 	void bufferSpot(
 		PixelBlock *(&addr),
@@ -1139,6 +1151,7 @@ public:
 	 *              the PixelBlock.
 	 * @param x     The X coordinate.
 	 * @param y     The Y coordinate.
+	 * @throw       ImageBoundsError  The given location is out of bounds.
 	 */
 	void bufferSpot(PixelBlock *(&addr), PixelBlock &mask, int x, int y) {
 		bufferSpot(addr, mask, ImageLocation(x, y));
@@ -1153,6 +1166,7 @@ public:
 	 * @param mask  A bitmask that will be set to identify the pixel inside
 	 *              the PixelBlock.
 	 * @param il    The location to find within the image data.
+	 * @throw       ImageBoundsError  The given location is out of bounds.
 	 */
 	void bufferSpot(
 		const PixelBlock *(&addr),
@@ -1408,6 +1422,12 @@ public:
 	 * Toggles the state of all pixels.
 	 */
 	void invert();
+	/**
+	 * Toggles the state of all pixels of the indicated horizontal lines.
+	 * @param start  The first horizontal line (y-coordinate) to invert.
+	 * @param stop   The line after the last to invert.
+	 */
+	void invertLines(int start, int stop);
 	/**
 	 * Changes the state of every pixel in the image to the given state.
 	 * @post  All pixels will be set to @a state.

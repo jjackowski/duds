@@ -142,9 +142,14 @@ const BppImage::PixelBlock *BppImage::buffer() const {
 	return &(img[0]);
 }
 
-BppImage::PixelBlock *BppImage::buffer() {
-	// re-use the const implementation
-	return const_cast<BppImage::PixelBlock*>(((const BppImage*)this)->buffer());
+const BppImage::PixelBlock *BppImage::bufferLine(int py) const {
+	if ((py > dim.h) || (py < 0)) {
+		DUDS_THROW_EXCEPTION(ImageBoundsError() <<
+			ImageErrorDimensions(dim) <<
+			ImageErrorLocation(ImageLocation(0, py))
+		);
+	}
+	return &(img[blkPerLine * py]);
 }
 
 void BppImage::bufferSpot(
@@ -285,6 +290,13 @@ bool BppImage::invertPixel(const ImageLocation &il) {
 void BppImage::invert() {
 	for (PixelBlock &b : img) {
 		b = ~b;
+	}
+}
+
+void BppImage::invertLines(int start, int stop) {
+	PixelBlock *end = bufferLine(stop);
+	for (PixelBlock *b = bufferLine(start); b < end; ++b) {
+		*b = ~(*b);
 	}
 }
 

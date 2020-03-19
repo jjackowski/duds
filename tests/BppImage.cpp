@@ -67,12 +67,22 @@ struct ZebraImageFixture {
 BOOST_FIXTURE_TEST_SUITE(BppImage_ZebraTests, ZebraImageFixture)
 
 BOOST_AUTO_TEST_CASE(BppImage_ZebraBufferLine) {
-	for (int y = 0; y < 8; ++y) {
-		std::uint8_t row = *img->bufferLine(y);
-		if (y & 1) {
-			BOOST_CHECK_EQUAL(row, 0xAA);
+	for (int y = -1; y < 10; ++y) {
+		std::uint8_t row;
+		// out of bounds
+		if ((y < 0) || (y > 8)) {
+			BOOST_CHECK_THROW(row = *img->bufferLine(y), BPPN::ImageBoundsError);
 		} else {
-			BOOST_CHECK_EQUAL(row, 0x55);
+			// in bounds or one past
+			BOOST_CHECK_NO_THROW(row = *img->bufferLine(y));
+			// in bounds
+			if (y < 8) {
+				if (y & 1) {
+					BOOST_CHECK_EQUAL(row, 0xAA);
+				} else {
+					BOOST_CHECK_EQUAL(row, 0x55);
+				}
+			}
 		}
 	}
 }
@@ -263,6 +273,28 @@ BOOST_AUTO_TEST_CASE(BppImage_ZebraWrite) {
 				"Bad image write result at (" << x << ", " << y << "): expected " <<
 				val << ", found " << spot << '.'
 			);
+		}
+	}
+}
+
+BOOST_AUTO_TEST_CASE(BppImage_ZebraInvertLine) {
+	img->invertLines(2, 6);
+	for (int y = 0; y < 8; ++y) {
+		std::uint8_t row = *img->bufferLine(y);
+		// not inverted
+		if ((y < 2) || (y >= 6)) {
+			if (y & 1) {
+				BOOST_CHECK_EQUAL(row, 0xAA);
+			} else {
+				BOOST_CHECK_EQUAL(row, 0x55);
+			}
+		}
+		else {
+			if (y & 1) {
+				BOOST_CHECK_EQUAL(row, 0x55);
+			} else {
+				BOOST_CHECK_EQUAL(row, 0xAA);
+			}
 		}
 	}
 }
