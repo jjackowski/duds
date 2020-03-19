@@ -448,12 +448,16 @@ try {
 	);
 	duds::hardware::devices::instruments::INA219 meter(smbus, 0.1);
 	{
-		std::string binpath(argv[0]);
-		while (!binpath.empty() && (binpath.back() != '/')) {
-			binpath.pop_back();
+		std::string imgpath(argv[0]);
+		int found = 0;
+		while (!imgpath.empty() && (found < 3)) {
+			imgpath.pop_back();
+			if (imgpath.back() == '/') {
+				++found;
+			}
 		}
 		// load some icons before messing with hardware
-		imgArc.load(binpath + "numberparts.bppia");
+		imgArc.load(imgpath + "images/numberparts.bppia");
 	}
 
 	// read in digital pin config

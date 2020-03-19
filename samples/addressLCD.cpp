@@ -388,13 +388,20 @@ try {
 		}
 	}
 
-	std::string binpath(argv[0]);
-	while (!binpath.empty() && (binpath.back() != '/')) {
-		binpath.pop_back();
+	std::string imgpath(argv[0]);
+	{
+		int found = 0;
+		while (!imgpath.empty() && (found < 3)) {
+			imgpath.pop_back();
+			if (imgpath.back() == '/') {
+				++found;
+			}
+		}
+		imgpath += "images/";
 	}
 	// load some icons before messing with hardware
 	duds::ui::graphics::BppImageArchive imgArc;
-	imgArc.load(binpath + "neticons.bppia");
+	imgArc.load(imgpath + "neticons.bppia");
 	duds::ui::graphics::BppImageSptr wiredIcon = imgArc.get("WiredLAN");
 	duds::ui::graphics::BppImageSptr wirelessIcon[4] = {
 		imgArc.get("WirelessLAN_S0"),

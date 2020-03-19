@@ -156,6 +156,7 @@ The default build target is the DUDS library made for debugging. Sample programs
     - linux-armv6l-opt
       - samples (built with target "samples-opt")
     - linux-x86_64-dbg
+    - images (image archives built with target "images")
 
 There is currently no target for installation. Despite using Linux since 2001, I'm not really sure how software is typically installed.
 

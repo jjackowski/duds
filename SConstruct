@@ -88,25 +88,39 @@ tools = SConscript('tools/SConscript', exports = 'toolenv', duplicate=0,
 #####
 # bit-per-pixel image compiler
 
-def BppiCppBuild(target, source, env):
-	return subprocess.call([
-		tools['bppic'].path,
-		source[0].path,
-		'-c',
-		target[0].path
-	]) != 0
-bppiCppBuilder = Builder(action = BppiCppBuild,
-	src_suffix = '.bppi', suffix = '.h')
-
-def BppiArcBuild(target, source, env):
+def BppiArcBuilder(target, source, env):
 	return subprocess.call([
 		tools['bppic'].path,
 		source[0].path,
 		'-a',
 		target[0].path
 	]) != 0
-bppiArcBuilder = Builder(action = BppiArcBuild,
+bppiArcBuilder = Builder(action = BppiArcBuilder,
 	src_suffix = '.bppi', suffix = '.bppia')
+
+def BppiArc(env, source):
+	# build rule for the image archive
+	target = env.BppiArcBuilder(source)
+	# dependency on the image compiler
+	env.Depends(target, tools['bppic'])
+	return target
+
+def BppiCppBuilder(target, source, env):
+	return subprocess.call([
+		tools['bppic'].path,
+		source[0].path,
+		'-c',
+		target[0].path
+	]) != 0
+bppiCppBuilder = Builder(action = BppiCppBuilder,
+	src_suffix = '.bppi', suffix = '.h')
+
+def BppiCpp(env, source):
+	# build rule for the image archive
+	target = env.BppiCppBuilder(source)
+	# dependency on the image compiler
+	env.Depends(target, tools['bppic'])
+	return target
 
 
 #####
@@ -153,10 +167,12 @@ env = Environment(
 	]
 )
 env.Append(BUILDERS = {
-	'BppiArc' : bppiArcBuilder,
-	'BppiCpp' : bppiCppBuilder,
+	'BppiArcBuilder' : bppiArcBuilder,
+	'BppiCppBuilder' : bppiCppBuilder,
 })
 
+env.AddMethod(BppiArc)
+env.AddMethod(BppiCpp)
 
 #####
 # Debugging build enviornment
@@ -314,11 +330,14 @@ optenv.AppendUnique(
 )
 
 #####
-# library build
+# main build
 
 if not GetOption('help'):
 	envs = [ dbgenv, optenv ]
-	#trgs = [ [ ], [ ] ]
+	# image build
+	imgs = SConscript('images/SConscript', exports = 'env tools', duplicate=0,
+		variant_dir = env.subst('bin/images'))
+	Alias('images', imgs)
 
 	for env in envs:
 		# add in optional libraries
@@ -359,6 +378,7 @@ if GetOption('help'):
 	print('  samples-dbg - All sample programs; debugging build.')
 	print('  samples-opt - All sample programs; optimized build.')
 	print('  samples     - Same as samples-dbg.')
+	print('  images      - All bit-per-pixel image archives.')
 	if havetestlib:
 		print('  tests-dbg   - All unit test programs; debugging build.')
 		print('  tests-opt   - All unit test programs; optimized build.')

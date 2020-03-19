@@ -260,9 +260,16 @@ try {
 		#else
 		true;
 		#endif
-	std::string binpath(argv[0]);
-	while (!binpath.empty() && (binpath.back() != '/')) {
-		binpath.pop_back();
+	std::string imgpath(argv[0]);
+	{
+		int found = 0;
+		while (!imgpath.empty() && (found < 3)) {
+			imgpath.pop_back();
+			if (imgpath.back() == '/') {
+				++found;
+			}
+		}
+		imgpath += "images/";
 	}
 	{ // option parsing
 		boost::program_options::options_description optdesc(
@@ -319,7 +326,7 @@ try {
 			(
 				"font",
 				boost::program_options::value<std::string>(&fontpath)->
-					default_value(binpath + "font_8x16.bppia"),
+					default_value(imgpath + "font_8x16.bppia"),
 				"Font file"
 			)
 			(
@@ -365,7 +372,7 @@ try {
 
 	// load some icons before messing with hardware
 	duds::ui::graphics::BppImageArchive imgArc;
-	imgArc.load(binpath + "neticons.bppia");
+	imgArc.load(imgpath + "neticons.bppia");
 	std::shared_ptr<duds::ui::graphics::BppImage> lanIcon[3] = {
 		imgArc.get("WiredLAN"),
 		imgArc.get("WirelessLAN_S1"),
