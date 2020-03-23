@@ -293,8 +293,8 @@ void BppImage::invert() {
 	}
 }
 
-void BppImage::invertLines(int start, int stop) {
-	PixelBlock *end = bufferLine(stop);
+void BppImage::invertLines(int start, int height) {
+	PixelBlock *end = bufferLine(start + height);
 	for (PixelBlock *b = bufferLine(start); b < end; ++b) {
 		*b = ~(*b);
 	}

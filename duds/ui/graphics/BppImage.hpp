@@ -1425,9 +1425,9 @@ public:
 	/**
 	 * Toggles the state of all pixels of the indicated horizontal lines.
 	 * @param start  The first horizontal line (y-coordinate) to invert.
-	 * @param stop   The line after the last to invert.
+	 * @param stop   The number of lines to invert.
 	 */
-	void invertLines(int start, int stop);
+	void invertLines(int start, int height);
 	/**
 	 * Changes the state of every pixel in the image to the given state.
 	 * @post  All pixels will be set to @a state.

@@ -278,7 +278,8 @@ BOOST_AUTO_TEST_CASE(BppImage_ZebraWrite) {
 }
 
 BOOST_AUTO_TEST_CASE(BppImage_ZebraInvertLine) {
-	img->invertLines(2, 6);
+	// invert four lines starting with line (y) 2
+	img->invertLines(2, 4);
 	for (int y = 0; y < 8; ++y) {
 		std::uint8_t row = *img->bufferLine(y);
 		// not inverted
