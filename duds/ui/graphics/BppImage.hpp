@@ -167,14 +167,14 @@ struct ImageDimensions {
 	 * Returns new dimensions that only cover the union of this dimension and
 	 * the given dimension.
 	 */
-	constexpr ImageDimensions minExtent(const ImageDimensions &dim) {
+	constexpr ImageDimensions minExtent(const ImageDimensions &dim) const {
 		return ImageDimensions(std::min(w, dim.w), std::min(h, dim.h));
 	}
 	/**
 	 * Returns new dimensions that are minimally large enough to fit this
 	 * dimension and the given dimension.
 	 */
-	constexpr ImageDimensions maxExtent(const ImageDimensions &dim) {
+	constexpr ImageDimensions maxExtent(const ImageDimensions &dim) const {
 		return ImageDimensions(std::max(w, dim.w), std::max(h, dim.h));
 	}
 	/**
@@ -1051,19 +1051,19 @@ public:
 	/**
 	 * Returns the number of pixels that make up the image.
 	 */
-	std::size_t size() const {
+	int size() const {
 		return dim.w * dim.h;
 	}
 	/**
 	 * Returns the width of the image.
 	 */
-	int width() const {
+	std::int16_t width() const {
 		return dim.w;
 	}
 	/**
 	 * Returns the height of the image.
 	 */
-	int height() const {
+	std::int16_t height() const {
 		return dim.h;
 	}
 	/**

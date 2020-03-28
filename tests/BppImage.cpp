@@ -256,7 +256,7 @@ BOOST_AUTO_TEST_CASE(BppImage_ZebraWrite) {
 	for (int w = 0; w < 9; ++w) {
 		testimg.write(img, BPPN::ImageLocation(w * 8, 0));
 	}
-	BOOST_CHECK_EQUAL(sizeof(BPPN::BppImage::PixelBlock), 8);
+	BOOST_CHECK_EQUAL(sizeof(BPPN::BppImage::PixelBlock), sizeof(void*));
 	for (int x = 0; x < 72; x += 8) {
 		for (int y = 0; y < 2; ++y) {
 			// work out the byte for the width of x to x + 7
