@@ -26,8 +26,8 @@ namespace menu {
 
 class MenuAccess;
 class MenuItem;
-class MenuOutputView;
-class MenuOutputViewAccess;
+class MenuOutput;
+class MenuOutputAccess;
 class MenuView;
 
 /**
@@ -88,15 +88,15 @@ private:
 	int lockCnt;
 	/**
 	 * This value is incremented every time the menu is changed. It is used to
-	 * tell when a MenuOutputView needs to be re-rendered to show an up-to-date
+	 * tell when a MenuOutput needs to be re-rendered to show an up-to-date
 	 * menu. This value should only be changed by a thread with an exclusive
 	 * lock on @a block.
 	 */
 	int updateIdx;
 	friend MenuAccess;
 	friend MenuItem;
-	friend MenuOutputView;
-	friend MenuOutputViewAccess;
+	friend MenuOutput;
+	friend MenuOutputAccess;
 	friend MenuView;
 public:
 	/**

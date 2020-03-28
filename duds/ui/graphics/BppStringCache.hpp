@@ -176,7 +176,7 @@ public:
 	 * are not exceeded. Returning a copy of the image's shared pointer
 	 * prevents cache evictions from destroying images before they are used.
 	 *
-	 * @param text   The text to render.
+	 * @param str    The string to render.
 	 * @param flags  The option flags. The default is to render varying width,
 	 *               fixed height text with each line aligned to the left.
 	 * @return       A const image with the rendered text.

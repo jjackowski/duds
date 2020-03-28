@@ -96,8 +96,8 @@ Supported devices are listed on the @ref SupDev page.
 
 @subsection DUDSbuildList Long list
 
-- [SCons](http://scons.org/) 2.3 to 3.1 or so (it isn't very picky about the version)
-  - Python 2.7 and newer (older versions possible with SCons 2.3.4 and older)
+- [SCons](http://scons.org/) 2.3 to 3.1 or so (the build isn't very picky about the version)
+  - Python 2.7 or 3.x
 - Build configuration options: run "scons -h"
   - The configuration can be changed for one build by specifying an option as an argument to scons.
   - To keep a configuration saved, set variables with the same name of the configuration options in Python syntax in localbuildconfig.py in the same directory as SConstruct.
@@ -120,29 +120,27 @@ Supported devices are listed on the @ref SupDev page.
     - Variant (header only)
   - Build configuration options include Boost directories and variations on the names of the Boost library binaries.
   - Default configuration is for a regular Boost build that is installed to default paths. This works on Gentoo Linux when Boost is installed by Portage.
-  - Ubuntu needs build configuration setting BOOSTTAG= (equals empty string) given to SCons. This changes the expected name of the Boost libraries; Ubuntu does not use the default names from the Boost build.
+  - Raspbian, Debian, and Ubuntu need build configuration setting BOOSTTAG= (equals empty string) given to SCons. This changes the expected name of the Boost libraries; these Linux distributions do not use the default names from the Boost build.
   - Windows will need several build options because there is no standard install that I know about. DUDS isn't useful on Windows at the moment, so don't worry about it.
 - Build host
   - Linux
     - Parallel builds work best with 1GB RAM per job and some swap space.
       - Using "-j4" on a Raspberry Pi 2 or 3 isn't helpful. Using "-j2" needs swap space, but may be faster than "-j1", the default.
     - Builds tested mostly on armv6 and amd64.
-    - Time building with command "scons samples":
-      - Raspberry Pi Zero: about 75 minutes
-      - Raspberry Pi 3 Model B:
-        - about 18 minutes with -j1 (default)
-        - about 10 minutes with -j2 and -j3 using external hard drive for swap
+    - Time for a complete debug build:
+      - Raspberry Pi Zero: over an hour and a half
+      - Raspberry Pi 3 Model B: getting close to half an hour with -j1 (default).
   - Windows
     - Not yet
     - VS2015 might be lacking some C++14 support needed by DUDS, and older versions will be lacking.
 
 @subsection DUDSbuildWord More Words!
 
-DUDS uses [SCons](http://scons.org/) 2.5 as its build system, which is written in Python and requires Python 2.7.x; Python 3.x will not work. Compiling and linking is done with gcc 6.4.0 or 7.3.0. Development is moving to gcc 7.3.0. Newer versions have not been tested.
+DUDS uses [SCons](http://scons.org/) 3.x as its build system, which is written in Python. Compiling and linking is done with gcc 6.4.x, 7.3.x, 9.2.x, or something similar.
 
 The so-called C++14 standard, officially ISO/IEC 14882:2014, is used by DUDS. Use of features in newer C++ specifications is being avoided for now.
 
-The [Boost C++ library](http://www.boost.org/) is required. Version 1.62 or newer must be used. Version 1.65.1 is best as it allows exceptions to include a stack trace. Boost's multiprecision library is used for 128-bit integer support when gcc's __int128 is not available, and for serializing 128-bit integers even when __int128 is available. This results in some notable differences in 128-bit integer support on 32 and 64 bit platforms, but maintains a serialization format that is identical across platforms when things like endianness and padding do not affect the results.
+The [Boost C++ library](http://www.boost.org/) is required. Version 1.62 or newer must be used. Version 1.65.1 or newer is best as it allows exceptions to include a stack trace. Boost's multiprecision library is used for 128-bit integer support when gcc's __int128 is not available, and for serializing 128-bit integers even when __int128 is available. This results in some notable differences in 128-bit integer support on 32 and 64 bit platforms, but maintains a serialization format that is identical across platforms when things like endianness and padding do not affect the results.
 
 The Boost unit test framework is used by a test program. This program does not require any special hardware to run. Some of the tests require leap second information from a zoneinfo (is that the proper name?) file. If the file isn't specified as the first argument to the program, those tests will be skipped.
 

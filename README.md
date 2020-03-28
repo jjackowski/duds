@@ -72,8 +72,8 @@ Right now, only Linux. Hardware access is only tested on Raspberry Pis, but the 
 
 # Build
 
-- [SCons](http://scons.org/) 2.3 to 3.1 or so (it isn't very picky about the version)
-  - Python 2.7 and newer (older versions possible with SCons 2.3.4 and older)
+- [SCons](http://scons.org/) 2.3 to 3.1 or so (the build isn't very picky about the version)
+  - Python 2.7 or 3.x
 - Build configuration options: run "scons -h"
   - The configuration can be changed for one build by specifying an option as an argument to scons.
   - To keep a configuration saved, set variables with the same name of the configuration options in Python syntax in localbuildconfig.py in the same directory as SConstruct.
@@ -103,11 +103,9 @@ Right now, only Linux. Hardware access is only tested on Raspberry Pis, but the 
     - Parallel builds work best with 1GB RAM per job and some swap space.
       - Using "-j4" on a Raspberry Pi 2 or 3 isn't helpful. Using "-j2" needs swap space, but may be faster than "-j1", the default.
     - Builds tested mostly on armv6 and amd64.
-    - Time building with command "scons samples":
-      - Raspberry Pi Zero: about 75 minutes
-      - Raspberry Pi 3 Model B:
-        - about 18 minutes with -j1 (default)
-        - about 10 minutes with -j2 and -j3 using external hard drive for swap
+    - Time for a complete debug build:
+      - Raspberry Pi Zero: over an hour and a half
+      - Raspberry Pi 3 Model B: getting close to half an hour with -j1 (default).
 
 # Build targets
 

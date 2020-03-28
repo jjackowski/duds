@@ -7,30 +7,30 @@
  *
  * Copyright (C) 2019  Jeff Jackowski
  */
-#include <duds/ui/menu/MenuOutputView.hpp>
+#include <duds/ui/menu/MenuOutput.hpp>
 
 namespace duds { namespace ui { namespace menu {
 
 /**
- * Provides access to a MenuOutputView for rendering.
+ * Provides access to a MenuOutput for rendering.
  * Input processing in the MenuView may occur during this object's
  * constructor, which may cause a MenuItem's @ref MenuItem::chose() "chose()"
  * function to be called.
  *
  * This will acquire a shared lock on the associated Menu and MenuView objects
  * that are released when this object is destroyed or retire() is called. It
- * will also get an exclusive lock on the MenuOutputView during the
+ * will also get an exclusive lock on the MenuOutput during the
  * constructor. None of these locks are recursive; a thread must not have
- * multiple MenuOutputViewAccess objects from the same MenuOutputView on the
+ * multiple MenuOutputAccess objects from the same MenuOutput on the
  * stack at the same time.
  *
  * @author  Jeff Jackowski
  */
-class MenuOutputViewAccess {
+class MenuOutputAccess {
 	/**
 	 * The output view being accessed.
 	 */
-	MenuOutputView *outview;
+	MenuOutput *outview;
 	/**
 	 * The menu used by the view.
 	 */
@@ -39,40 +39,40 @@ class MenuOutputViewAccess {
 	 * An iterator to the selected item.
 	 */
 	MenuVisibleList::const_iterator seliter;
-	friend MenuOutputView;
+	friend MenuOutput;
 public:
 	/**
-	 * Creates a new MenuOutputViewAccess object that will provide information
+	 * Creates a new MenuOutputAccess object that will provide information
 	 * on the visible items from the given output view.
 	 * @param mov       The output view to use.
 	 * @param newRange  The number of menu items that can be displayed, or -1
 	 *                  to not change the range.
 	 */
-	MenuOutputViewAccess(MenuOutputView *mov, std::size_t newRange = -1);
+	MenuOutputAccess(MenuOutput *mov, std::size_t newRange = -1);
 	/**
-	 * Creates a new MenuOutputViewAccess object that will provide information
+	 * Creates a new MenuOutputAccess object that will provide information
 	 * on the visible items from the given output view.
 	 * @param mov       The output view to use.
 	 * @param newRange  The number of menu items that can be displayed, or -1
 	 *                  to not change the range.
 	 */
-	MenuOutputViewAccess(MenuOutputView &mov, std::size_t newRange = -1) :
-		MenuOutputViewAccess(&mov, newRange) { }
+	MenuOutputAccess(MenuOutput &mov, std::size_t newRange = -1) :
+		MenuOutputAccess(&mov, newRange) { }
 	/**
-	 * Creates a new MenuOutputViewAccess object that will provide information
+	 * Creates a new MenuOutputAccess object that will provide information
 	 * on the visible items from the given output view.
 	 * @param mov       The output view to use.
 	 * @param newRange  The number of menu items that can be displayed, or -1
 	 *                  to not change the range.
 	 */
-	MenuOutputViewAccess(
-		const std::shared_ptr<MenuOutputView> &mov,
+	MenuOutputAccess(
+		const std::shared_ptr<MenuOutput> &mov,
 		std::size_t newRange = -1
-	) : MenuOutputViewAccess(mov.get(), newRange) { }
+	) : MenuOutputAccess(mov.get(), newRange) { }
 	/**
 	 * Relinquishes access to the outview's data.
 	 */
-	~MenuOutputViewAccess() {
+	~MenuOutputAccess() {
 		retire();
 	}
 	/**
@@ -86,9 +86,9 @@ public:
 		return viewmenu;
 	}
 	/**
-	 * Returns the MenuOutputView being accessed.
+	 * Returns the MenuOutput being accessed.
 	 */
-	const MenuOutputView *outputView() const {
+	const MenuOutput *outputView() const {
 		return outview;
 	}
 	/**

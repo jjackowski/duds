@@ -17,8 +17,8 @@ namespace duds { namespace ui { namespace menu {
 
 class Menu;
 class MenuItem;
-class MenuOutputView;
-class MenuOutputViewAccess;
+class MenuOutput;
+class MenuOutputAccess;
 
 /**
  * Keeps track of the selected menu item, and updates it based on user input.
@@ -26,15 +26,15 @@ class MenuOutputViewAccess;
  * User input is provided to the backward(), forward(), jump(), and chose()
  * functions. These functions are called in an asynchronous fashion; no
  * access objects are required, and the view may be in use by another thread.
- * The input is evaluated when a new MenuOutputViewAccess object begins to use
- * the MenuView, and no other MenuOutputViewAccess object is using the view.
+ * The input is evaluated when a new MenuOutputAccess object begins to use
+ * the MenuView, and no other MenuOutputAccess object is using the view.
  *
  * Updating the view and output views requires the MenuView to have a brief
  * exclusive lock on the menu data. After the update, a shared lock on the
- * menu data is maintained by the MenuOutputView while it is in use. This
+ * menu data is maintained by the MenuOutput while it is in use. This
  * prevents a MenuView object from being used at the same time by multiple
- * MenuOutputView objects on the same thread. The deadlock can be avoided by
- * having only one MenuOutputViewAccess object on the stack at the same time.
+ * MenuOutput objects on the same thread. The deadlock can be avoided by
+ * having only one MenuOutputAccess object on the stack at the same time.
  * Technically, two on the satck will work if they use different MenuView
  * objects even if they use the same menu, but this shouldn't be required to
  * make anything work. 
@@ -61,7 +61,7 @@ private:
 	 */
 	duds::general::Spinlock block;
 	/**
-	 * The number of MenuOutputView objects currently using this MenuView.
+	 * The number of MenuOutput objects currently using this MenuView.
 	 */
 	int outvUsers;
 	/**
@@ -78,7 +78,7 @@ private:
 	bool choseItem;
 	/**
 	 * Updates the view's selected and chosen menu item if there are no
-	 * MenuOutputView objects currently rendering this view. Also increments
+	 * MenuOutput objects currently rendering this view. Also increments
 	 * the internal count of subviews currently accessing this
 	 * menu view. This is needed to prevent update() from making changes
 	 * while the view is in use.
@@ -128,7 +128,7 @@ private:
 	 */
 	void removal(std::size_t idx);
 	friend Menu;
-	friend MenuOutputView;
+	friend MenuOutput;
 public:
 	/**
 	 * Constructs a new MenuView without attaching it to a Menu. It must be
@@ -168,11 +168,11 @@ public:
 	/**
 	 * Returns the index of the currently selected item.
 	 *
-	 * This value is not changed until after all MenuOutputViewAccess objects
+	 * This value is not changed until after all MenuOutputAccess objects
 	 * presently using this view are retired or destructed, and another
-	 * MenuOutputViewAccess object using this view is created. As a result, the
+	 * MenuOutputAccess object using this view is created. As a result, the
 	 * index of an item that is not @ref MenuItem::isSelectable() "selectable"
-	 * may be returned if the item was changed and a new MenuOutputViewAccess
+	 * may be returned if the item was changed and a new MenuOutputAccess
 	 * object has not been created since.
 	 */
 	int selectedIndex() const {
@@ -198,14 +198,14 @@ public:
 	 * confusing, or erroneous to the user.
 	 *
 	 * The currently selected item is not changed until after all
-	 * MenuOutputViewAccess objects presently using this view are retired or
-	 * destructed, and another MenuOutputViewAccess object using this view is
+	 * MenuOutputAccess objects presently using this view are retired or
+	 * destructed, and another MenuOutputAccess object using this view is
 	 * created. Calling backward() and forward() multiple times before the
 	 * current selection is re-evaluated is allowed, and will change an
 	 * internal selection offset (@a nextSelOff) each time.
 	 *
 	 * Between a call to jump() or chose() and the creation of a new
-	 * MenuOutputViewAccess object, this function will have no effect. jump() is
+	 * MenuOutputAccess object, this function will have no effect. jump() is
 	 * intended to select a specific item, so this behavior will prevent
 	 * another item from being selected in the case that backward() or
 	 * forward() are called shortly after jump(). The behavior also prevents
@@ -244,14 +244,14 @@ public:
 	 * confusing, or erroneous to the user.
 	 *
 	 * The currently selected item is not changed until after all
-	 * MenuOutputViewAccess objects presently using this view are retired or
-	 * destructed, and another MenuOutputViewAccess object using this view is
+	 * MenuOutputAccess objects presently using this view are retired or
+	 * destructed, and another MenuOutputAccess object using this view is
 	 * created. Calling backward() and forward() multiple times before the
 	 * current selection is re-evaluated is allowed, and will change an
 	 * internal selection offset (@a nextSelOff) each time.
 	 *
 	 * Between a call to jump() or chose() and the creation of a new
-	 * MenuOutputViewAccess object, this function will have no effect. jump() is
+	 * MenuOutputAccess object, this function will have no effect. jump() is
 	 * intended to select a specific item, so this behavior will prevent
 	 * another item from being selected in the case that backward() or
 	 * forward() are called shortly after jump(). The behavior also prevents
@@ -275,17 +275,17 @@ public:
 	 * Jump to a particular option by position index.
 	 *
 	 * The currently selected item is not changed until after all
-	 * MenuOutputViewAccess objects presently using this view are retired or
-	 * destructed, and another MenuOutputViewAccess object using this view is
+	 * MenuOutputAccess objects presently using this view are retired or
+	 * destructed, and another MenuOutputAccess object using this view is
 	 * created.
 	 *
 	 * Between a call to this function and the creation of a new
-	 * MenuOutputViewAccess object, calls to backward() and forward() will have no
+	 * MenuOutputAccess object, calls to backward() and forward() will have no
 	 * effect. jump() is intended to select a specific item, so this behavior
 	 * will prevent another item from being selected in the case that backward()
 	 * or forward() are called shortly after jump(). However, jump() may be
 	 * called multiple times, but only the last call before calling chose() or
-	 * creating a new MenuOutputViewAccess object will affect the selected item.
+	 * creating a new MenuOutputAccess object will affect the selected item.
 	 *
 	 * @param pos  The position index to select, but not chose. If the option
 	 *             is not @ref MenuItem::isSelectable() "selectable", then the
@@ -296,17 +296,17 @@ public:
 	void jump(int pos);
 	/**
 	 * Queues a request to chose what will be the currently selected menu item
-	 * during input processing when a MenuOutputViewAccess object is created.
+	 * during input processing when a MenuOutputAccess object is created.
 	 * Input changing the selection will be processed first, regardless of the
 	 * order of function calls to this object. In order to limit any problems
 	 * this might cause, changes to a selection are ignored after chose() is
-	 * called until after the next MenuOutputViewAccess has started the next menu
+	 * called until after the next MenuOutputAccess has started the next menu
 	 * rendering cycle.
 	 * @note  If the ordering of keypresses is not known, call chose() after
 	 *        any calls to forward(), backward(), or jump(). If the ordering
 	 *        is known, call the functions in the same order.
 	 * @post  Calls to forward(), backward(), and jump() will do nothing until
-	 *        another MenuOutputViewAccess has started the next menu rendering
+	 *        another MenuOutputAccess has started the next menu rendering
 	 *        cycle.
 	 */
 	void chose();

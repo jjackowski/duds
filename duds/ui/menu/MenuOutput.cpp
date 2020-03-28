@@ -7,16 +7,16 @@
  *
  * Copyright (C) 2019  Jeff Jackowski
  */
-#include <duds/ui/menu/MenuOutputView.hpp>
+#include <duds/ui/menu/MenuOutput.hpp>
 #include <duds/ui/menu/MenuItem.hpp>
 
 namespace duds { namespace ui { namespace menu {
 
-MenuOutputView::MenuOutputView(const std::shared_ptr<MenuView> &view, int vis) :
+MenuOutput::MenuOutput(const std::shared_ptr<MenuView> &view, int vis) :
 Page(view->menu()->title()), mview(view), range(vis), selected(0),
 updateIdx(-1) { }
 
-void MenuOutputView::lock(std::size_t newRange) {
+void MenuOutput::lock(std::size_t newRange) {
 	// potentially update the menu; requires exclusive menu lock for
 	// an actual update, so must be done prior to getting a shared lock
 	mview->update();
@@ -34,12 +34,12 @@ void MenuOutputView::lock(std::size_t newRange) {
 	updateVisible();
 }
 
-void MenuOutputView::unlock() {
+void MenuOutput::unlock() {
 	mview->decUser();
 	mview->menu()->block.unlock_shared();
 }
 
-void MenuOutputView::maxVisible(std::size_t newRange) {
+void MenuOutput::maxVisible(std::size_t newRange) {
 	// something different?
 	if (newRange != range) {
 		// change the range
@@ -50,7 +50,7 @@ void MenuOutputView::maxVisible(std::size_t newRange) {
 	}
 }
 
-bool MenuOutputView::fore(Menu::ItemVec::const_iterator &iter) {
+bool MenuOutput::fore(Menu::ItemVec::const_iterator &iter) {
 	if (iter != menu()->cbegin()) {
 		--iter;
 		while ((iter != menu()->cbegin()) && (*iter)->isInvisible()) {
@@ -63,7 +63,7 @@ bool MenuOutputView::fore(Menu::ItemVec::const_iterator &iter) {
 	return false;
 }
 
-bool MenuOutputView::revr(Menu::ItemVec::const_iterator &iter) {
+bool MenuOutput::revr(Menu::ItemVec::const_iterator &iter) {
 	if (iter != menu()->cend()) {
 		++iter;
 		while ((iter != menu()->cend()) && (*iter)->isInvisible()) {
@@ -76,7 +76,7 @@ bool MenuOutputView::revr(Menu::ItemVec::const_iterator &iter) {
 	return false;
 }
 
-void MenuOutputView::updateVisible() {
+void MenuOutput::updateVisible() {
 	std::size_t sel = mview->selectedIndex();
 	int uidx = menu()->updateIndex();
 	if ((updateIdx != uidx) || (sel != selected)) {

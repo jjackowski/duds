@@ -13,18 +13,18 @@
 
 namespace duds { namespace ui { namespace menu {
 
-class MenuOutputViewAccess;
+class MenuOutputAccess;
 
 /**
- * Type used by MenuOutputView and MenuOutputViewAccess for the list of visible
+ * Type used by MenuOutput and MenuOutputAccess for the list of visible
  * menu items.
  */
 typedef std::list<MenuItem*>  MenuVisibleList;
 
 /**
  * Compiles a list of visible menu items based on the selected item of a
- * MenuView. The visible items are queried from a MenuOutputViewAccess
- * object. MenuOutputViewAccess handles locking and unlocking the required
+ * MenuView. The visible items are queried from a MenuOutputAccess
+ * object. MenuOutputAccess handles locking and unlocking the required
  * data. This class holds more persistent data, and allows reuse of the
  * visible list when no changes have occurred.
  *
@@ -32,15 +32,15 @@ typedef std::list<MenuItem*>  MenuVisibleList;
  * exclusive lock on the menu data. After the update, a shared lock on the
  * menu data is maintained by the output view while it is in use. This
  * prevents a MenuView object from being used at the same time by multiple
- * MenuOutputView objects on the same thread. The deadlock can be avoided by
- * having only one MenuOutputViewAccess object on the stack at the same time.
+ * MenuOutput objects on the same thread. The deadlock can be avoided by
+ * having only one MenuOutputAccess object on the stack at the same time.
  * Technically, two on the satck will work if they use different MenuView
  * objects even if they use the same menu, but this shouldn't be required to
  * make anything work. 
  *
  * @author  Jeff Jackowski
  */
-class MenuOutputView : public Page {
+class MenuOutput : public Page {
 private:
 	/**
 	 * The menu view handling the selected menu item.
@@ -48,8 +48,8 @@ private:
 	std::shared_ptr<MenuView> mview;
 	/**
 	 * The currently visible menu items. This data is only guarenteed to be
-	 * valid while a MenuOutputViewAccess object is acting upon this
-	 * MenuOutputView. The data may or may not remain valid between accesses.
+	 * valid while a MenuOutputAccess object is acting upon this
+	 * MenuOutput. The data may or may not remain valid between accesses.
 	 * The locks caused by the access object include a shared lock on the menu,
 	 * which is why shared pointers are not needed here.
 	 */
@@ -57,7 +57,7 @@ private:
 	/**
 	 * Iterator to the currently selected item. It will be the end iterator only
 	 * if no item is selected. A view of a menu with at least one item will
-	 * have a selected item when a MenuOutputViewAccess object is operating on
+	 * have a selected item when a MenuOutputAccess object is operating on
 	 * the view.
 	 */
 	MenuVisibleList::const_iterator seliter;
@@ -67,13 +67,13 @@ private:
 	std::size_t range;
 	/**
 	 * Index of the selected item from the container of all menu items. When a
-	 * MenuOutputViewAccess is operating upon this object, it is the currently
+	 * MenuOutputAccess is operating upon this object, it is the currently
 	 * selected item. Otherwise it is the previously selected item.
 	 */
 	std::size_t selected;
 	/**
 	 * Index of the selected item within the list of currently visible menu
-	 * items. When a MenuOutputViewAccess is not operating upon this object,
+	 * items. When a MenuOutputAccess is not operating upon this object,
 	 * this value has no meaning. Otherwise, it is the number of items from the
 	 * first in the visible list to the selected item. If the menu is empty,
 	 * this value should not be used.
@@ -111,7 +111,7 @@ private:
 	 */
 	void lock(std::size_t newRange);
 	/**
-	 * Informs the MenuView that it has one fewer MenuOutputView objects acting
+	 * Informs the MenuView that it has one fewer MenuOutput objects acting
 	 * upon it, and releases the shared lock on the menu data.
 	 */
 	void unlock();
@@ -152,24 +152,24 @@ private:
 	void updateVisible();
 	/**
 	 * True if the view has changed.
-	 * @pre  A MenuOutputViewAccess object is acting upon this object. This will
+	 * @pre  A MenuOutputAccess object is acting upon this object. This will
 	 *       cause the selected item to be updated, and updateVisible() will
 	 *       record if a change occurred.
 	 */
 	bool changed() const {
 		return vchg;
 	}
-	friend MenuOutputViewAccess;
+	friend MenuOutputAccess;
 public:
 	/**
 	 * Constructs a new output view for a given menu that will start with a
 	 * specified maximum number of visible items.
-	 * @note  MenuOutputView objects must be managed by std::shared_ptr.
+	 * @note  MenuOutput objects must be managed by std::shared_ptr.
 	 * @param view  The MenuView that will feed this view.
 	 * @param vis   The initial maximum number of visible menu items.
 	 * @sa make()
 	 */
-	MenuOutputView(const std::shared_ptr<MenuView> &view, int vis);
+	MenuOutput(const std::shared_ptr<MenuView> &view, int vis);
 	/**
 	 * Makes a new output view for a given menu that will start with a
 	 * specified maximum number of visible items, and returns a std::shared_ptr
@@ -177,11 +177,11 @@ public:
 	 * @param view  The MenuView that will feed this view.
 	 * @param vis   The initial maximum number of visible menu items.
 	 */
-	static std::shared_ptr<MenuOutputView> make(
+	static std::shared_ptr<MenuOutput> make(
 		const std::shared_ptr<MenuView> &view,
 		int vis
 	) {
-		return std::make_shared<MenuOutputView>(view, vis);
+		return std::make_shared<MenuOutput>(view, vis);
 	}
 	/**
 	 * Returns the MenuView used by this output view.
@@ -199,19 +199,19 @@ public:
 	 * Helper function that returns a shared pointer to this object from the
 	 * base class Page.
 	 */
-	std::shared_ptr<MenuOutputView> shared_from_this() {
-		return std::static_pointer_cast<MenuOutputView>(Page::shared_from_this());
+	std::shared_ptr<MenuOutput> shared_from_this() {
+		return std::static_pointer_cast<MenuOutput>(Page::shared_from_this());
 	}
 };
 
 /**
- * A shared pointer to a MenuOutputView.
+ * A shared pointer to a MenuOutput.
  */
-typedef std::shared_ptr<MenuOutputView>  MenuOutputViewSptr;
+typedef std::shared_ptr<MenuOutput>  MenuOutputSptr;
 
 /**
- * A weak pointer to a MenuOutputView.
+ * A weak pointer to a MenuOutput.
  */
-typedef std::weak_ptr<MenuOutputView>  MenuOutputViewWptr;
+typedef std::weak_ptr<MenuOutput>  MenuOutputWptr;
 
 } } }

@@ -7,12 +7,12 @@
  *
  * Copyright (C) 2019  Jeff Jackowski
  */
-#include <duds/ui/menu/MenuOutputViewAccess.hpp>
+#include <duds/ui/menu/MenuOutputAccess.hpp>
 
 namespace duds { namespace ui { namespace menu {
 
-MenuOutputViewAccess::MenuOutputViewAccess(
-	MenuOutputView *mov,
+MenuOutputAccess::MenuOutputAccess(
+	MenuOutput *mov,
 	std::size_t newRange
 ) : outview(mov) {
 	if (outview) {
@@ -24,7 +24,7 @@ MenuOutputViewAccess::MenuOutputViewAccess(
 	}
 }
 
-void MenuOutputViewAccess::retire() noexcept {
+void MenuOutputAccess::retire() noexcept {
 	if (viewmenu) {
 		outview->unlock();
 		outview = nullptr;

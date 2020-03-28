@@ -16,7 +16,7 @@
 #include <boost/test/unit_test.hpp>
 #include <boost/test/data/test_case.hpp>
 #include <duds/ui/menu/MenuAccess.hpp>
-#include <duds/ui/menu/MenuOutputViewAccess.hpp>
+#include <duds/ui/menu/MenuOutputAccess.hpp>
 #include <duds/ui/menu/GenericMenuItem.hpp>
 
 #include <iostream>
@@ -61,10 +61,10 @@ BOOST_AUTO_TEST_CASE(MenuBasics) {
 	view->chose();
 	// chose function has not yet been called
 	BOOST_CHECK_EQUAL(val, 0);
-	DM::MenuOutputViewSptr outv = DM::MenuOutputView::make(view, 4);
+	DM::MenuOutputSptr outv = DM::MenuOutput::make(view, 4);
 	// visible list
 	{
-		DM::MenuOutputViewAccess acc(outv);
+		DM::MenuOutputAccess acc(outv);
 		// view was changed above
 		BOOST_CHECK_EQUAL(acc.changed(), true);
 		// item should have been chosen
@@ -89,7 +89,7 @@ BOOST_AUTO_TEST_CASE(MenuBasics) {
 	}
 	// no change
 	{
-		DM::MenuOutputViewAccess acc(outv);
+		DM::MenuOutputAccess acc(outv);
 		// view was not changed
 		BOOST_CHECK_EQUAL(acc.changed(), false);
 	}
@@ -119,7 +119,7 @@ struct MenuFixture {
 	DM::MenuSptr menu;
 	DM::MenuViewSptr viewA, viewB;
 	// outvAA and outvAB will use viewA, while outvB will use viewB
-	DM::MenuOutputViewSptr outvAA, outvAB, outvB;
+	DM::MenuOutputSptr outvAA, outvAB, outvB;
 	// All counts start at zero and increment when the corresponding menu item
 	// is chosen. Array is larger than needed to support tests that add more
 	// menu items.
@@ -128,9 +128,9 @@ struct MenuFixture {
 		menu(DM::Menu::make("Fixture menu")),
 		viewA(DM::MenuView::make(menu)),
 		viewB(DM::MenuView::make(menu)),
-		outvAA(DM::MenuOutputView::make(viewA, 4)),
-		outvAB(DM::MenuOutputView::make(viewA, 6)),
-		outvB(DM::MenuOutputView::make(viewB, 8)),
+		outvAA(DM::MenuOutput::make(viewA, 4)),
+		outvAB(DM::MenuOutput::make(viewA, 6)),
+		outvB(DM::MenuOutput::make(viewB, 8)),
 		counts { 0 }
 	{
 		DM::MenuAccess acc(menu);
@@ -218,7 +218,7 @@ BOOST_AUTO_TEST_CASE(FixtureInit) {
 		BOOST_CHECK_EQUAL(menu->updateIndex(), ui);
 	}
 	{
-		DM::MenuOutputViewAccess acc(outvAA);
+		DM::MenuOutputAccess acc(outvAA);
 		BOOST_CHECK_EQUAL(acc.selected(), 0);
 		BOOST_CHECK_EQUAL(acc.selectedVisible(), 0);
 		BOOST_CHECK_EQUAL(acc.showingFirst(), true);
@@ -286,7 +286,7 @@ BOOST_AUTO_TEST_CASE(Values) {
 
 BOOST_AUTO_TEST_CASE(Visibility) {
 	{
-		DM::MenuOutputViewAccess acc(outvAA);
+		DM::MenuOutputAccess acc(outvAA);
 		BOOST_CHECK_EQUAL(acc.size(), 4);
 		DM::MenuVisibleList::const_iterator iter = acc.begin();
 		int cnt = 0;
@@ -302,7 +302,7 @@ BOOST_AUTO_TEST_CASE(Visibility) {
 	// adjust the selection
 	viewA->jump(10);
 	{
-		DM::MenuOutputViewAccess acc(outvAA);
+		DM::MenuOutputAccess acc(outvAA);
 		BOOST_CHECK_EQUAL(acc.size(), 4);
 		BOOST_CHECK_EQUAL(acc.showingFirst(), false);
 		BOOST_CHECK_EQUAL(acc.showingLast(), false);
@@ -324,7 +324,7 @@ BOOST_AUTO_TEST_CASE(Visibility) {
 	}
 	// selection change should not have altered viewB or outvB
 	{
-		DM::MenuOutputViewAccess acc(outvB);
+		DM::MenuOutputAccess acc(outvB);
 		BOOST_CHECK_EQUAL(acc.size(), 8);
 		// move selection
 		viewB->backward(1);
@@ -349,7 +349,7 @@ BOOST_AUTO_TEST_CASE(Visibility) {
 	}
 	// check moved selection on view B
 	{
-		DM::MenuOutputViewAccess acc(outvB);
+		DM::MenuOutputAccess acc(outvB);
 		BOOST_CHECK_EQUAL(acc.size(), 8);
 		DM::MenuVisibleList::const_iterator iter = acc.selectedIter();
 		IndexedItem *item = dynamic_cast<IndexedItem*>(*iter);
@@ -360,7 +360,7 @@ BOOST_AUTO_TEST_CASE(Visibility) {
 	// adjust the selection to the end
 	viewA->backward(5);
 	{
-		DM::MenuOutputViewAccess acc(outvAA);
+		DM::MenuOutputAccess acc(outvAA);
 		BOOST_CHECK_EQUAL(acc.size(), 4);
 		BOOST_CHECK_EQUAL(acc.showingFirst(), false);
 		BOOST_CHECK_EQUAL(acc.showingLast(), true);
@@ -383,7 +383,7 @@ BOOST_AUTO_TEST_CASE(Visibility) {
 	// adjust the selection past the end; should wrap to start
 	viewA->backward(5);
 	{
-		DM::MenuOutputViewAccess acc(outvAA);
+		DM::MenuOutputAccess acc(outvAA);
 		BOOST_CHECK_EQUAL(acc.size(), 4);
 		DM::MenuVisibleList::const_iterator iter = acc.selectedIter();
 		IndexedItem *item = dynamic_cast<IndexedItem*>(*iter);
@@ -396,7 +396,7 @@ BOOST_AUTO_TEST_CASE(Visibility) {
 	// adjust the selection past the start; should wrap to end
 	viewA->forward(10);
 	{
-		DM::MenuOutputViewAccess acc(outvAA);
+		DM::MenuOutputAccess acc(outvAA);
 		BOOST_CHECK_EQUAL(acc.size(), 4);
 		DM::MenuVisibleList::const_iterator iter = acc.selectedIter();
 		IndexedItem *item = dynamic_cast<IndexedItem*>(*iter);
@@ -409,7 +409,7 @@ BOOST_AUTO_TEST_CASE(Visibility) {
 	// adjust the selection near the start
 	viewA->forward(10);
 	{
-		DM::MenuOutputViewAccess acc(outvAA);
+		DM::MenuOutputAccess acc(outvAA);
 		BOOST_CHECK_EQUAL(acc.size(), 4);
 		DM::MenuVisibleList::const_iterator iter = acc.selectedIter();
 		IndexedItem *item = dynamic_cast<IndexedItem*>(*iter);
@@ -442,7 +442,7 @@ BOOST_AUTO_TEST_CASE(Visibility_Change) {
 	}
 	// the disabled change should not alter what is visible
 	{
-		DM::MenuOutputViewAccess acc(outvAA);
+		DM::MenuOutputAccess acc(outvAA);
 		BOOST_CHECK_EQUAL(acc.size(), 4);
 		BOOST_CHECK_EQUAL(acc.showingFirst(), false);
 		BOOST_CHECK_EQUAL(acc.showingLast(), false);
@@ -483,7 +483,7 @@ BOOST_AUTO_TEST_CASE(Visibility_Change) {
 	}
 	// the above change should make items 3 & 4 invisible
 	{
-		DM::MenuOutputViewAccess acc(outvAA);
+		DM::MenuOutputAccess acc(outvAA);
 		BOOST_CHECK_EQUAL(acc.size(), 4);
 		BOOST_CHECK_EQUAL(acc.showingFirst(), false);
 		BOOST_CHECK_EQUAL(acc.showingLast(), false);
@@ -524,7 +524,7 @@ BOOST_AUTO_TEST_CASE(Visibility_Change) {
 	viewA->backward(1);
 	// should have moved selection from 2 to 5 since 3 & 4 are still invisible
 	{
-		DM::MenuOutputViewAccess acc(outvAA);
+		DM::MenuOutputAccess acc(outvAA);
 		// chose action occured
 		BOOST_CHECK_EQUAL(counts[5], 1);
 		BOOST_CHECK_EQUAL(acc.size(), 4);
@@ -565,7 +565,7 @@ BOOST_AUTO_TEST_CASE(Visibility_Change) {
 	}
 	// first visible item should now be 4
 	{
-		DM::MenuOutputViewAccess acc(outvAA);
+		DM::MenuOutputAccess acc(outvAA);
 		BOOST_CHECK_EQUAL(acc.size(), 4);
 		BOOST_CHECK_EQUAL(acc.showingFirst(), false);
 		BOOST_CHECK_EQUAL(acc.showingLast(), false);
@@ -598,7 +598,7 @@ BOOST_AUTO_TEST_CASE(Visibility_Change) {
 	}
 	// first visible item is still 4
 	{
-		DM::MenuOutputViewAccess acc(outvAA);
+		DM::MenuOutputAccess acc(outvAA);
 		BOOST_CHECK_EQUAL(acc.size(), 4);
 		// item 4 is now the first visible item on the menu
 		BOOST_CHECK_EQUAL(acc.showingFirst(), true);
@@ -608,7 +608,7 @@ BOOST_AUTO_TEST_CASE(Visibility_Change) {
 	// adjust the selection to near the end
 	viewA->jump(11);
 	{
-		DM::MenuOutputViewAccess acc(outvAA);
+		DM::MenuOutputAccess acc(outvAA);
 		BOOST_CHECK_EQUAL(acc.size(), 4);
 		BOOST_CHECK_EQUAL(acc.showingFirst(), false);
 		// item 13 is the last shown; 14 & 15 are invisible
@@ -655,7 +655,7 @@ BOOST_AUTO_TEST_CASE(Visibility_Errors) {
 	}
 	// the end of the menu is not visible, so no visibility change
 	{
-		DM::MenuOutputViewAccess acc(outvAA);
+		DM::MenuOutputAccess acc(outvAA);
 		BOOST_CHECK_EQUAL(acc.size(), 4);
 		DM::MenuVisibleList::const_iterator iter = acc.selectedIter();
 		IndexedItem *item = dynamic_cast<IndexedItem*>(*iter);
@@ -676,7 +676,7 @@ BOOST_AUTO_TEST_CASE(Visibility_Errors) {
 	viewA->jump(16);
 	// the end of the menu is visible, including the appended item
 	{
-		DM::MenuOutputViewAccess acc(outvAA);
+		DM::MenuOutputAccess acc(outvAA);
 		BOOST_CHECK_EQUAL(acc.size(), 4);
 		DM::MenuVisibleList::const_iterator iter = acc.selectedIter();
 		IndexedItem *item = dynamic_cast<IndexedItem*>(*iter);
@@ -718,7 +718,7 @@ BOOST_AUTO_TEST_CASE(Visibility_Errors) {
 	// item 12 is now visible, item 16 at different position, but still
 	// selected
 	{
-		DM::MenuOutputViewAccess acc(outvAA);
+		DM::MenuOutputAccess acc(outvAA);
 		BOOST_CHECK_EQUAL(acc.size(), 4);
 		DM::MenuVisibleList::const_iterator iter = acc.selectedIter();
 		IndexedItem *item = dynamic_cast<IndexedItem*>(*iter);
@@ -802,32 +802,32 @@ BOOST_DATA_TEST_CASE_F(
 ) {
 	// after init; before more changes
 	{
-		DM::MenuOutputViewAccess accAA(outvAA);
+		DM::MenuOutputAccess accAA(outvAA);
 		BOOST_CHECK_EQUAL(accAA.changed(), true);
-		// Normally having a second MenuOutputViewAccess in scope on the stack
+		// Normally having a second MenuOutputAccess in scope on the stack
 		// doesn't make sense. It is done here to check that a deadlock does not
 		// occur.
-		DM::MenuOutputViewAccess accAB(outvAB);
+		DM::MenuOutputAccess accAB(outvAB);
 		BOOST_CHECK_EQUAL(accAB.changed(), true);
 	}
 	{
 		// this cannot be part of the scope above; it will cause a deadlock
-		DM::MenuOutputViewAccess accB(outvB);
+		DM::MenuOutputAccess accB(outvB);
 		BOOST_CHECK_EQUAL(accB.changed(), true);
 	}
 	// select an item on view A
 	viewA->jump(sample.pselidx);
 	{
-		DM::MenuOutputViewAccess accAA(outvAA);
+		DM::MenuOutputAccess accAA(outvAA);
 		// will change if the selection is different than the default of zero
 		BOOST_CHECK_EQUAL(accAA.changed(), sample.pselidx != 0);
-		DM::MenuOutputViewAccess accAB(outvAB);
+		DM::MenuOutputAccess accAB(outvAB);
 		// same as above
 		BOOST_CHECK_EQUAL(accAB.changed(), sample.pselidx != 0);
 	}
 	// view B hasn't changed
 	{
-		DM::MenuOutputViewAccess acc(outvB);
+		DM::MenuOutputAccess acc(outvB);
 		BOOST_CHECK_EQUAL(acc.changed(), false);
 	}
 	// modify the menu
@@ -846,7 +846,7 @@ BOOST_DATA_TEST_CASE_F(
 	}
 	// checks on output view AA
 	{
-		DM::MenuOutputViewAccess acc(outvAA);
+		DM::MenuOutputAccess acc(outvAA);
 		BOOST_CHECK_EQUAL(acc.changed(), true);
 		BOOST_CHECK_EQUAL(acc.size(), 4);
 		DM::MenuVisibleList::const_iterator iter = acc.selectedIter();
@@ -864,7 +864,7 @@ BOOST_DATA_TEST_CASE_F(
 	}
 	// checks on output view B
 	{
-		DM::MenuOutputViewAccess acc(outvB);
+		DM::MenuOutputAccess acc(outvB);
 		BOOST_CHECK_EQUAL(acc.changed(), true);
 		BOOST_CHECK_EQUAL(acc.size(), 8);
 		DM::MenuVisibleList::const_iterator iter = acc.selectedIter();
@@ -905,7 +905,7 @@ BOOST_DATA_TEST_CASE_F(
 		BOOST_CHECK_EQUAL(cnt, 8);
 	}
 	{
-		DM::MenuOutputViewAccess acc(outvAA);
+		DM::MenuOutputAccess acc(outvAA);
 		BOOST_CHECK_EQUAL(acc.changed(), false);
 	}
 }

@@ -1424,8 +1424,8 @@ public:
 	void invert();
 	/**
 	 * Toggles the state of all pixels of the indicated horizontal lines.
-	 * @param start  The first horizontal line (y-coordinate) to invert.
-	 * @param stop   The number of lines to invert.
+	 * @param start   The first horizontal line (y-coordinate) to invert.
+	 * @param height  The number of lines to invert.
 	 */
 	void invertLines(int start, int height);
 	/**

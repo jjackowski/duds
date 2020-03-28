@@ -1,0 +1,3 @@
+# CodeDocs.xyz Configuration File
+# It seems the default config file for Doxygen is not the default for codedocs.
+DOXYFILE = Doxyfile

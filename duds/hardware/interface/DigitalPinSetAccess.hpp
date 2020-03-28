@@ -373,7 +373,6 @@ public:
 	 * @param state  The new output states. The vector makes a parallel data
 	 *               structure with the specified subset of pins. Gaps
 	 *               (ID of -1) are not presently supported.
-	 * @param state  The new output state.
 	 */
 	void output(
 		const std::vector<unsigned int> &pos,

@@ -374,7 +374,7 @@ public:
 	virtual void deselect(MenuView &invokingView, const MenuAccess &access);
 	/**
 	 * Called by MenuView when the user choses this MenuItem. The call occurs
-	 * from the thread getting a MenuOutputViewAccess object. This thread will
+	 * from the thread getting a MenuOutputAccess object. This thread will
 	 * have an exclusive lock on the menu.
 	 * @param invokingView  The view used to chose this item.
 	 * @param access        An access object for the menu that may be used
