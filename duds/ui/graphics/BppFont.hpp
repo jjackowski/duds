@@ -48,6 +48,39 @@ protected:
 	 */
 	virtual BppImageSptr renderGlyph(char32_t gc);
 public:
+	BppFont() = default;
+	/**
+	 * @copydoc load(const std::string &)
+	 */
+	BppFont(const std::string &path) {
+		load(path);
+	}
+	/**
+	 * @copydoc load(std::istream &)
+	 */
+	BppFont(std::istream &is) {
+		load(is);
+	}
+	/**
+	 * Returns a shared pointer to a new BppFont object.
+	 */
+	static std::shared_ptr<BppFont> make() {
+		return std::make_shared<BppFont>();
+	}
+	/**
+	 * Returns a shared pointer to a new BppFont object constructed using the
+	 * BppFont(const std::string &) constructor.
+	 */
+	static std::shared_ptr<BppFont> make(const std::string &path) {
+		return std::make_shared<BppFont>(path);
+	}
+	/**
+	 * Returns a shared pointer to a new BppFont object constructed using the
+	 * BppFont(std::istream &) constructor.
+	 */
+	static std::shared_ptr<BppFont> make(std::istream &is) {
+		return std::make_shared<BppFont>(is);
+	}
 	/**
 	 * Loads glyphs from an image archive in the specified file. The glyphs
 	 * from the archive will augment what is already stored in this object,

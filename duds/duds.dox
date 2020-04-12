@@ -73,7 +73,7 @@ The documentation is generated with the help of [Doxygen](http://www.doxygen.org
 
 @subsection DUDSplatOS Operating Systems
 
-At present, DUDS only supports Linux, including kernel versions 3.6 through 4.14, and likely newer. The kernel's user-space interfaces for hardware may change and break support, but that doesn't happen on a regular basis. The hardware interface libraries are written to allow multiple implementations, but I have no other operating systems to test with, nor the inclination to make an implementation for another system.
+At present, DUDS only supports Linux, including kernel versions 3.6 through 4.19, and likely newer. The kernel's user-space interfaces for hardware may change and break support, but that doesn't happen on a regular basis. The hardware interface libraries are written to allow multiple implementations, but I have no other operating systems to test with, nor the inclination to make an implementation for another system.
 
 I plan on supporting data representations and network communications on Windows as well as Linux, and hopefully this will work on other systems, too. The intention is to allow front-ends on a variety of platforms. However, since my only Windows running computer is an old thing with XP and Visual Studio 2005, I'm not yet sure how I'm going to build DUDS on Windows. Also, I'm not giving up C++14 to build on Windows and I'm not sure if VS2015 supports all the C++14 features used in the source, but it should at least have almost all of the support needed. Earlier versions of Visual Studio all lack required C++14 features.
 

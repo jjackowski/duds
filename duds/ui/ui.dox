@@ -110,13 +110,13 @@ Items have the following attributes:
 
 @subsubsection DUDSmenuArchMenu  Menu
 
-Menu objects hold MenuItems using std::shared_ptr<MenuItem>, or MenuItemSptr, objects. They are tasked with allowing thread-safe access to the items such that the items are not altered while in use for output. Modifications to the menu are done with the help of an exclusive and recursive lock on the menu data. The MenuAccess class provides this lock and has functions to make modifications. MenuItem objects can also modify themselves, but require the same lock after they have been added to a menu. They will automatically get and release that lock as needed. A shared lock is required during output and is acquired with a MenuOutput object.
+Menu objects hold @ref duds::ui::menu::MenuItem "MenuItems" using std::shared_ptr<MenuItem>, or @ref duds::ui::menu::MenuItemSptr "MenuItemSptr", objects. They are tasked with allowing thread-safe access to the items such that the items are not altered while in use for output. Modifications to the menu are done with the help of an exclusive and recursive lock on the menu data. The @ref duds::ui::menu::MenuAccess "MenuAccess" class provides this lock and has functions to make modifications. MenuItem objects can also modify themselves, but require the same lock after they have been added to a menu. They will automatically get and release that lock as needed. A shared lock is required during output and is acquired with a @ref duds::ui::menu::MenuOutput "MenuOutput" object.
 
 Because of this, menus cannot be changed while being output. If an attempt is made, the thread attempting modification will be blocked until after all output has completed. If the modification is attempted while a MenuOutput object is in scope and working on the same Menu, the offending thread will be deadlocked. This deadlock situation requires code outputting the menu to modify the same menu during the output, which is bad design.
 
 @subsubsection DUDSmenuArchView  MenuView
 
-The MenuView class is responsible for handling user input to select and chose menu items. There can be multiple MenuView objects for each Menu; each view will have its own selected item and handle input independently.
+The @ref duds::ui::menu::MenuView "MenuView" class is responsible for handling user input to select and chose menu items. There can be multiple MenuView objects for each Menu; each view will have its own selected item and handle input independently.
 
 Input may be provided to the view asynchronously of other menu operations. Because of this, the view will not provide any feedback if the input was useful. An attempt to select a non-existent or disabled menu item will not cause an error because the view will not have a lock on the menu's data. This allows the user input code to feed input to the MenuView in an almost brainless fashion.
 

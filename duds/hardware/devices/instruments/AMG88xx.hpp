@@ -9,21 +9,9 @@
  */
 #include <duds/hardware/interface/I2c.hpp>
 #include <duds/hardware/interface/Conversation.hpp>
-//#include <duds/hardware/devices/DeviceErrors.hpp>
 #include <duds/data/Quantity.hpp>
-//#include <duds/general/Errors.hpp>
 
 namespace duds { namespace hardware { namespace devices { namespace instruments {
-
-/* *
- * Base class for all AMG88xx specific errors.
- */
-//struct AMG88xxError : DeviceError { };
-
-/* *
- * The received CRC value was not consistent with the message data.
- */
-//struct AM2320CrcError : virtual AM2320Error, virtual duds::general::CrcError { };
 
 /**
  * Support for the AMG88xx, a low resolution thermal camera.
