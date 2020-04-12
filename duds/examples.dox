@@ -1,0 +1,57 @@
+// Example listing
+
+/**
+ * @example am2320test.cpp
+ * Outputs data from a AM2320 on stdout.
+ */
+
+/**
+ * @example amg88xxtest.cpp
+ * Outputs an image in text from a AM2320 on stdout.
+ */
+
+/**
+ * @example apds9301test.cpp
+ * Outputs data from a APDS9301 on stdout.
+ */
+
+/**
+ * @example clockLCD.cpp
+ * Uses a 20x4 text LCD to display the time and date.
+ */
+
+/**
+ * @example evdevin.cpp
+ * A demonstration of how to use EvdevInput without Poller.
+ */
+
+/**
+ * @example ina219test.cpp
+ * Outputs data from a INA219 on stdout.
+ */
+
+/**
+ * @example pinconfig.cpp
+ * Reads an I/O pin configuration file, interprets the file using
+ * PinConfiguration, and outputs a human readable result.
+ */
+
+/**
+ * @example rendertext.cpp
+ * Renders bit-per-pixel text entered on stdin to a simulated display on stdout.
+ */
+
+/**
+ * @example st7920.cpp
+ * Renders a series of test images to a ST7920 LCD.
+ */
+
+/**
+ * @example textdisplay.cpp
+ * Simple demonstration of how to use a text LCD.
+ */
+
+/**
+ * @example tsl2591test.cpp
+ * Outputs data from a TSL2591 on stdout.
+ */
