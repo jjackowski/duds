@@ -44,6 +44,7 @@ targets = [
 	envthread.Program('st7920', ['st7920.cpp'] + libs),
 	envthread.Program('pinconfig', ['pinconfig.cpp'] + libs),
 	envsamp.Program('rendertext', ['rendertext.cpp'] + libs),       # 15
+	envsamp.Program('evdevin', ['evdevin.cpp'] + libs),
 ]
 # needs a font
 # st7920

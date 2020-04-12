@@ -49,6 +49,9 @@ buildopts.Add('BOOSTVER',
 buildopts.Add(PathVariable('EIGENINC',
 	'The directory containing the Eigen header files.',
 	'/usr/include/eigen3/', PathVariable.PathAccept))
+buildopts.Add(PathVariable('EVDEVINC',
+	'The libevdev include path.',
+	'/usr/include/libevdev-1.0', PathVariable.PathAccept))
 
 puname = platform.uname()
 
@@ -144,7 +147,7 @@ env = Environment(
 	# options passed to C++ compiler
 	CXXFLAGS = [
 		'-std=gnu++14'  # allow gcc extentions to C++, like __int128
-		#'-std=c++11'    # no GNU extensions, no 128-bit integer
+		#'-std=c++14'    # no GNU extensions, no 128-bit integer
 	],
 	# macros
 	CPPDEFINES = [
@@ -173,6 +176,9 @@ env.Append(BUILDERS = {
 
 env.AddMethod(BppiArc)
 env.AddMethod(BppiCpp)
+
+# filled in later
+env['optionalLibs'] = { }
 
 #####
 # Debugging build enviornment
@@ -221,6 +227,8 @@ if GetOption('clean'):
 	] ))
 	env['Use_Eigen'] = False
 	dbgenv['Use_Eigen'] = False
+	env['Use_Evdev'] = True
+	dbgenv['Use_Evdev'] = True
 	env['Use_GpioDevPort'] = True
 	dbgenv['Use_GpioDevPort'] = True
 
@@ -267,7 +275,7 @@ else:
 	#	dbgenv['USE_PYTHON'
 
 	# Boost stacktrace (broken in 1.65.0, maybe earlier; fixed in 1.65.1)
-	# includes push_options.pp, but the file isn't installed.
+	#    1.65.0 includes push_options.pp, but the file isn't installed.
 	# Also, the dl library is required.
 	dbgenv.Append(CPPDEFINES = 'BOOST_STACKTRACE_USE_ADDR2LINE')
 	if conf.CheckCXXHeader('boost/stacktrace.hpp') and \
@@ -284,6 +292,18 @@ else:
 	else:
 		env['Use_Eigen'] = False
 		dbgenv['Use_Eigen'] = False
+	# remove the Eigen path; only add where needed
+	dbgenv['CPPPATH'] = env['CPPPATH']
+
+	# Evdev
+	dbgenv.Append(CPPPATH = '$EVDEVINC')
+	if conf.CheckCHeader('libevdev/libevdev.h') and \
+	conf.CheckLib('evdev', language = 'C', autoadd=0):
+		env['Use_Evdev'] = True
+		dbgenv['Use_Evdev'] = True
+	else:
+		env['Use_Evdev'] = False
+		dbgenv['Use_Evdev'] = False
 	# remove the Eigen path; only add where needed
 	dbgenv['CPPPATH'] = env['CPPPATH']
 
@@ -311,6 +331,7 @@ for mac, lib in iter(optionalDbgLibs.items()):
 		CPPDEFINES = mac,
 		LIBS = lib
 	)
+	dbgenv['optionalLibs'][mac] = lib
 # remove Boost unit test library; should only be added for test programs
 if 'LIBBOOST_TEST' in optionalLibs:
 	del optionalLibs['LIBBOOST_TEST']
@@ -346,6 +367,7 @@ if not GetOption('help'):
 				#CPPDEFINES = ('HAVE_' + mac, 1),
 				LIBS = lib
 			)
+			env['optionalLibs'][mac] = lib
 		# build library
 		libs = SConscript('duds/SConscript', exports = 'env', duplicate=0,
 			variant_dir = env.subst('bin/${PSYS}-${PARCH}-${BUILDTYPE}/lib'))

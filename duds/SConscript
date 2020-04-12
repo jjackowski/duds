@@ -8,17 +8,26 @@
 
 Import('*')
 
-LinuxSource = Glob('*/*/linux/[A-FH-Z]*cpp')
+LinuxIfSource = Glob('hardware/interface/linux/[A-FH-Z]*cpp')
 if env['Use_GpioDevPort']:
-	LinuxSource += Glob('*/*/linux/G*cpp')
+	LinuxIfSource += Glob('hardware/interface/linux/G*cpp')
+
+LinuxOsSource = Glob('os/linux/[A-DF-Z]*cpp')
+if env['Use_Evdev']:
+	env.Append(
+		CPPPATH = '$EVDEVINC',
+		LIBS = 'evdev'
+	)
+	LinuxOsSource += Glob('os/linux/E*cpp')
 
 targets = [
 	# include all source files in the DUDS library using a very simple method
 	env.SharedLibrary('duds', Glob('*.cpp') + Glob('*/*.cpp') +
-		Glob('*/*/*.cpp') + LinuxSource + Glob('*/devices/*/*cpp') +
-		Glob('*/*/test/*.cpp')),
+		Glob('[a-np-z]*/*/*.cpp') + LinuxIfSource + Glob('*/devices/*/*cpp') +
+		Glob('ui/menu/renderers/*.cpp') + Glob('*/*/test/*.cpp') +
+		LinuxOsSource),
 	# changed to static temporarily to ease the use of eclipse programs and
-	# delay learning more about software istalls
+	# delay learning more about software installs
 	#env.StaticLibrary('duds', Glob('*.cpp') + Glob('*/*.cpp') +
 	#	Glob('*/*/*.cpp') + Glob('*/*/linux/*cpp') + Glob('*/devices/*/*cpp') )
 		# + Glob('*/*/*/*.cpp') +  Glob('*/*/*/*/*.cpp'))
