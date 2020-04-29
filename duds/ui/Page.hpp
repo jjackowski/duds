@@ -7,6 +7,9 @@
  *
  * Copyright (C) 2019  Jeff Jackowski
  */
+#ifndef PAGE_HPP
+#define PAGE_HPP
+
 #include <memory>
 
 namespace duds { namespace ui {
@@ -14,32 +17,50 @@ namespace duds { namespace ui {
 /**
  * Represents the notion of a page that may be visited, and helps allow a way
  * to track the path of pages the user has seen.
- * @todo  Implement.
+ * @note    Pages must be managed by std::shared_ptr.
  * @author  Jeff Jackowski
  */
 class Page : public std::enable_shared_from_this<Page> {
+	/**
+	 * The page's name or title.
+	 */
 	std::string name;
 protected:
+	/**
+	 * Changes the name of the page.
+	 * @param t  The new name or title of the page.
+	 */
 	void title(const std::string &t) {
 		name = t;
 	}
 public:
+	/**
+	 * Constructs a page with no name.
+	 */
 	Page() = default;
-	Page(const std::string &title) : name(title) { }
-	const std::string title() const {
+	/**
+	 * Constructs a page with the given name.
+	 * @param t  The new name or title of the page.
+	 */
+	Page(const std::string &t) : name(t) { }
+	/**
+	 * Returns the name or title of the page.
+	 */
+	const std::string &title() const {
 		return name;
 	}
-	// no render function here; When object is constructed, it must be known
-	// what kind of rendering is done, and when invoked, will have
-	// render-specific data. The rendering procedure is not abstracted here,
-	// just the concept of a page.
 };
 
-/*
-class TextPage : public Page {
-public:
-	virtual void render(duds::hardware::display::TextDisplay &) = 0;
-};
-*/
+/**
+ * A shared pointer to a Page.
+ */
+typedef std::shared_ptr<Page>  PageSptr;
+
+/**
+ * A weak pointer to a Page.
+ */
+typedef std::weak_ptr<Page>  PageWptr;
 
 } }
+
+#endif        //  #ifndef PAGE_HPP
