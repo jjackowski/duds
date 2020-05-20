@@ -145,6 +145,12 @@ struct ImageDimensions {
 		return !w || !h;
 	}
 	/**
+	 * Set the dimensions to zero area.
+	 */
+	void clear() {
+		w = h = 0;
+	}
+	/**
 	 * Returns true if the given location is within the bounds specified by
 	 * this object.
 	 */
@@ -1423,11 +1429,35 @@ public:
 	 */
 	void invert();
 	/**
-	 * Toggles the state of all pixels of the indicated horizontal lines.
+	 * Toggles the state of all pixels of the given contiguous horizontal lines.
 	 * @param start   The first horizontal line (y-coordinate) to invert.
 	 * @param height  The number of lines to invert.
 	 */
 	void invertLines(int start, int height);
+	/**
+	 * Writes a pattern of pixles to a set of contiguous horizontal lines.
+	 * @param start   The first horizontal line (y-coordinate) to write.
+	 * @param height  The number of lines to write.
+	 * @param val     The value, or pattern, of pixels to write. The pattern
+	 *                may extend past the right side boundry of the image.
+	 */
+	void patternLines(int start, int height, PixelBlock val);
+	/**
+	 * Sets all the pixles of the given contiguous horizontal lines.
+	 * @param start   The first horizontal line (y-coordinate) to write.
+	 * @param height  The number of lines to write.
+	 */
+	void setLines(int start, int height) {
+		patternLines(start, height, -1);
+	}
+	/**
+	 * Clears all the pixles of the given contiguous horizontal lines.
+	 * @param start   The first horizontal line (y-coordinate) to write.
+	 * @param height  The number of lines to write.
+	 */
+	void clearLines(int start, int height) {
+		patternLines(start, height, 0);
+	}
 	/**
 	 * Changes the state of every pixel in the image to the given state.
 	 * @post  All pixels will be set to @a state.
@@ -1663,6 +1693,9 @@ public:
 	// https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
 };
 
+/**
+ * Support swap operations with the C++ standard library and BppImage objects.
+ */
 inline void swap(BppImage &bi0, BppImage &bi1) {
 	bi0.swap(bi1);
 }
@@ -1671,6 +1704,43 @@ typedef std::shared_ptr<BppImage>  BppImageSptr;
 typedef std::shared_ptr<const BppImage>  ConstBppImageSptr;
 typedef std::weak_ptr<BppImage>  BppImageWptr;
 typedef std::weak_ptr<const BppImage>  ConstBppImageWptr;
+
+/**
+ * Returns the maximum extent of the dimensions of two bit-per-pixel images.
+ * The images do not have to exist; non-existant images are handled as having
+ * zero size.
+ * @param i0  A bit-per-pixel image object. A nullptr indicates the image does
+ *            not exist.
+ * @param i1  A bit-per-pixel image object. A nullptr indicates the image does
+ *            not exist.
+ */
+ImageDimensions MaxExtent(const BppImage *i0, const BppImage *i1);
+
+/**
+ * Returns the maximum extent of the dimensions of two bit-per-pixel images.
+ * @param i0  A bit-per-pixel image object.
+ * @param i1  A bit-per-pixel image object.
+ */
+inline ImageDimensions MaxExtent(
+	const BppImage &i0,
+	const BppImage &i1
+) {
+	return MaxExtent(&i0, &i1);
+}
+
+/**
+ * Returns the maximum extent of the dimensions of two bit-per-pixel images.
+ * The images do not have to exist; non-existant images are handled as having
+ * zero size.
+ * @param i0  A shared pointer to a bit-per-pixel image object.
+ * @param i1  A shared pointer to a bit-per-pixel image object.
+ */
+inline ImageDimensions MaxExtent(
+	const ConstBppImageSptr &i0,
+	const ConstBppImageSptr &i1
+) {
+	return MaxExtent(i0.get(), i1.get());
+}
 
 } } }
 

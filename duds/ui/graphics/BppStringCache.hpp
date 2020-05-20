@@ -134,6 +134,115 @@ public:
 		unsigned int maxStrings = -1
 	);
 	/**
+	 * Creates a cache of rendered strings made using a font created from
+	 * the given image archive path.
+	 * @param path        The image archive used to create the font that will
+	 *                    be used to render the cached text. This object
+	 *                    will take ownership of the font.
+	 * @param maxBytes    The maximum size of the rendered string images in
+	 *                    bytes. If this value is very low, even zero, then
+	 *                    only one rendered image will be cached.
+	 * @param maxStrings  The maximum number of rendered strings that may be
+	 *                    held by the cache. This value cannot be zero.
+	 * @throw             StringCacheZeroSize  The cache size limits prevent
+	 *                                         any image from being kept in
+	 *                                         the cache. @a maxBytes is zero.
+	 * @throw ImageArchiveStreamError
+	 *        Failed to open the file.
+	 * @throw ImageNotArchiveStreamError
+	 *        The stream does not have an image archive stream.
+	 * @throw ImageArchiveStreamTruncatedError
+	 *        The stream appears to have an incomplete copy of the archive
+	 *        stream. Any images fully read prior to the error will be
+	 *        available.
+	 * @throw ImageArchiveUnsupportedVersionError
+	 *        The software does not support the claimed archive version.
+	 */
+	BppStringCache(
+		const std::string &path,
+		unsigned int maxBytes = 256 * 1024,
+		unsigned int maxStrings = -1
+	) : BppStringCache(BppFont::make(path), maxBytes, maxStrings) { }
+	/**
+	 * Creates a cache of rendered strings made using the given font.
+	 * @param font        The font to use to render the cached text.
+	 * @param maxBytes    The maximum size of the rendered string images in
+	 *                    bytes. If this value is very low, even zero, then
+	 *                    only one rendered image will be cached.
+	 * @param maxStrings  The maximum number of rendered strings that may be
+	 *                    held by the cache. This value cannot be zero.
+	 * @throw             StringCacheZeroSize  The cache size limits prevent
+	 *                                         any image from being kept in
+	 *                                         the cache. @a maxBytes is zero.
+	 */
+	static std::shared_ptr<BppStringCache> make(
+		const BppFontSptr &font,
+		unsigned int maxBytes = 256 * 1024,
+		unsigned int maxStrings = -1
+	) {
+		return std::make_shared<BppStringCache>(font, maxBytes, maxStrings);
+	}
+	/**
+	 * Creates a cache of rendered strings made using the given font.
+	 * @param font        The font to use to render the cached text. This object
+	 *                    will take ownership of the font.
+	 * @param maxBytes    The maximum size of the rendered string images in
+	 *                    bytes. If this value is very low, even zero, then
+	 *                    only one rendered image will be cached.
+	 * @param maxStrings  The maximum number of rendered strings that may be
+	 *                    held by the cache. This value cannot be zero.
+	 * @throw             StringCacheZeroSize  The cache size limits prevent
+	 *                                         any image from being kept in
+	 *                                         the cache. @a maxBytes is zero.
+	 */
+	static std::shared_ptr<BppStringCache> make(
+		BppFontSptr &&font,
+		unsigned int maxBytes = 256 * 1024,
+		unsigned int maxStrings = -1
+	) {
+		return std::make_shared<BppStringCache>(
+			std::move(font),
+			maxBytes,
+			maxStrings
+		);
+	}
+	/**
+	 * Creates a cache of rendered strings made using a font created from
+	 * the given image archive path.
+	 * @param path        The image archive used to create the font that will
+	 *                    be used to render the cached text. This object
+	 *                    will take ownership of the font.
+	 * @param maxBytes    The maximum size of the rendered string images in
+	 *                    bytes. If this value is very low, even zero, then
+	 *                    only one rendered image will be cached.
+	 * @param maxStrings  The maximum number of rendered strings that may be
+	 *                    held by the cache. This value cannot be zero.
+	 * @throw             StringCacheZeroSize  The cache size limits prevent
+	 *                                         any image from being kept in
+	 *                                         the cache. @a maxBytes is zero.
+	 * @throw ImageArchiveStreamError
+	 *        Failed to open the file.
+	 * @throw ImageNotArchiveStreamError
+	 *        The stream does not have an image archive stream.
+	 * @throw ImageArchiveStreamTruncatedError
+	 *        The stream appears to have an incomplete copy of the archive
+	 *        stream. Any images fully read prior to the error will be
+	 *        available.
+	 * @throw ImageArchiveUnsupportedVersionError
+	 *        The software does not support the claimed archive version.
+	 */
+	static std::shared_ptr<BppStringCache> make(
+		const std::string &path,
+		unsigned int maxBytes = 256 * 1024,
+		unsigned int maxStrings = -1
+	) {
+		return std::make_shared<BppStringCache>(
+			BppFont::make(path),
+			maxBytes,
+			maxStrings
+		);
+	}
+	/**
 	 * Returns the font object used by this cache to render text.
 	 */
 	const BppFontSptr &font() const {
@@ -189,6 +298,9 @@ public:
 	);
 };
 
+/**
+ * A std::shared_ptr to a BppStringCache object.
+ */
 typedef std::shared_ptr<BppStringCache>  BppStringCacheSptr;
 
 } } }

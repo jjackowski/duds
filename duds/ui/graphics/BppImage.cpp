@@ -300,6 +300,13 @@ void BppImage::invertLines(int start, int height) {
 	}
 }
 
+void BppImage::patternLines(int start, int height, PixelBlock val) {
+	PixelBlock *end = bufferLine(start + height);
+	for (PixelBlock *b = bufferLine(start); b < end; ++b) {
+		*b = val;
+	}
+}
+
 void BppImage::blankImage(bool s) {
 	PixelBlock v;
 	if (s) {
@@ -761,6 +768,20 @@ bool BppImage::Pixel::toggle() {
 	} else {
 		DUDS_THROW_EXCEPTION(ImageIteratorEndError());
 	}
+}
+
+ImageDimensions MaxExtent(const BppImage *i0, const BppImage *i1) {
+	ImageDimensions dim(0, 0);
+	if (i0) {
+		if (i1) {
+			dim = i0->dimensions().maxExtent(i1->dimensions());
+		} else {
+			dim = i0->dimensions();
+		}
+	} else if (i1) {
+		dim = i1->dimensions();
+	}
+	return dim;
 }
 
 } } }
