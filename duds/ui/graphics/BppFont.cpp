@@ -65,11 +65,11 @@ void BppFont::add(char32_t gc, BppImageSptr &&img) {
 	glyphs[gc] = std::move(img);
 }
 
-const BppImageSptr &BppFont::get(char32_t gc) {
+const ConstBppImageSptr &BppFont::get(char32_t gc) {
 	std::lock_guard<duds::general::Spinlock> lock(block);
-	std::unordered_map<char32_t, BppImageSptr>::const_iterator
+	std::unordered_map<char32_t, ConstBppImageSptr>::const_iterator
 		iter = glyphs.find(gc);
-	if (iter != glyphs.end()) {
+	if (iter == glyphs.end()) {
 		BppImageSptr bis = renderGlyph(gc);
 		glyphs[gc] = std::move(bis);
 		return glyphs[gc];
@@ -77,11 +77,11 @@ const BppImageSptr &BppFont::get(char32_t gc) {
 	return iter->second;
 }
 
-BppImageSptr BppFont::tryGet(char32_t gc) {
+ConstBppImageSptr BppFont::tryGet(char32_t gc) {
 	std::lock_guard<duds::general::Spinlock> lock(block);
-	std::unordered_map<char32_t, BppImageSptr>::const_iterator
+	std::unordered_map<char32_t, ConstBppImageSptr>::const_iterator
 		iter = glyphs.find(gc);
-	if (iter != glyphs.end()) {
+	if (iter == glyphs.end()) {
 		BppImageSptr bis;
 		try {
 			renderGlyph(gc);
@@ -93,10 +93,9 @@ BppImageSptr BppFont::tryGet(char32_t gc) {
 }
 
 ImageDimensions BppFont::estimatedMaxCharacterSize() {
-	//const static char32_t checkDim[] = { 'M', 'q' };
 	ImageDimensions res(0, 0);
 	for (char32_t check : { 'M', 'q' }) {
-		BppImageSptr img = tryGet(check);
+		ConstBppImageSptr img = tryGet(check);
 		if (img) {
 			res = res.maxExtent(img->dimensions());
 		}
@@ -107,7 +106,7 @@ ImageDimensions BppFont::estimatedMaxCharacterSize() {
 /**
  * Used to hold all the glyphs needed to render a string.
  */
-typedef std::vector<BppImageSptr>  ImageVec;
+typedef std::vector<ConstBppImageSptr>  ImageVec;
 /**
  * Information on a line.
  */
@@ -146,7 +145,7 @@ try {
 	int maxline = 0;
 	// find all the needed glyphs
 	std::string::const_iterator titer = text.cbegin();
-	std::unordered_map<char32_t, BppImageSptr>::const_iterator giter;
+	std::unordered_map<char32_t, ConstBppImageSptr>::const_iterator giter;
 	for (; titer != text.cend(); ++titer) {
 		/** @todo  Make this work for characters larger than a byte. */
 		// handle line breaks

@@ -30,7 +30,7 @@ protected:
 	/**
 	 * The glyph images keyed by character.
 	 */
-	std::unordered_map<char32_t, BppImageSptr>  glyphs;
+	std::unordered_map<char32_t, ConstBppImageSptr>  glyphs;
 	/**
 	 * Used for thread safety.
 	 */
@@ -138,14 +138,14 @@ public:
 	 * @return       A shared pointer to the requested glyph image.
 	 * @throw        GlyphNotFoundError  The glyph is not provided by the font.
 	 */
-	const BppImageSptr &get(char32_t gc);
+	const ConstBppImageSptr &get(char32_t gc);
 	/**
 	 * Returns the glyph of the specified character code.
 	 * @param gc     The character code of the glyph.
 	 * @return       A shared pointer to the requested glyph image, or an
 	 *               empty shared pointer if the font lacks the glyph.
 	 */
-	BppImageSptr tryGet(char32_t gc);
+	ConstBppImageSptr tryGet(char32_t gc);
 	/**
 	 * Returns a somewhat decent estimate of the largest size of a character
 	 * without actually inspecting all characters. If the result is zero, the
