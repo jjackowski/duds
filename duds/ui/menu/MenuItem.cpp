@@ -9,6 +9,7 @@
  */
 #include <duds/ui/menu/GenericMenuItem.hpp>
 #include <duds/ui/menu/Menu.hpp>
+#include <duds/ui/menu/MenuErrors.hpp>
 #include <duds/general/Errors.hpp>
 
 namespace duds { namespace ui { namespace menu {

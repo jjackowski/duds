@@ -9,7 +9,6 @@
  */
 #include <duds/ui/menu/Menu.hpp>
 #include <duds/ui/menu/MenuView.hpp>
-#include <duds/ui/Page.hpp>
 
 namespace duds { namespace ui { namespace menu {
 
@@ -40,7 +39,7 @@ typedef std::list<MenuItem*>  MenuVisibleList;
  *
  * @author  Jeff Jackowski
  */
-class MenuOutput : public Page {
+class MenuOutput {
 private:
 	/**
 	 * The menu view handling the selected menu item.
@@ -62,16 +61,6 @@ private:
 	 */
 	MenuVisibleList::const_iterator seliter;
 	/**
-	 * The maximum number of visible items.
-	 */
-	std::size_t range;
-	/**
-	 * Index of the selected item from the container of all menu items. When a
-	 * MenuOutputAccess is operating upon this object, it is the currently
-	 * selected item. Otherwise it is the previously selected item.
-	 */
-	std::size_t selected;
-	/**
 	 * Index of the selected item within the list of currently visible menu
 	 * items. When a MenuOutputAccess is not operating upon this object,
 	 * this value has no meaning. Otherwise, it is the number of items from the
@@ -80,9 +69,19 @@ private:
 	 */
 	std::size_t selectedVis;
 	/**
+	 * The maximum number of visible items.
+	 */
+	std::size_t range = 1;
+	/**
+	 * Index of the selected item from the container of all menu items. When a
+	 * MenuOutputAccess is operating upon this object, it is the currently
+	 * selected item. Otherwise it is the previously selected item.
+	 */
+	std::size_t selected = 0;
+	/**
 	 * The menu's update index value when this subview was last rendered.
 	 */
-	int updateIdx;
+	int updateIdx = -1;
 	/**
 	 * True when the view has changed since the last access, and false
 	 * otherwise. Changed in updateVisible().
@@ -106,6 +105,7 @@ private:
 	 * -# If a different range is requested, store the new range and force an
 	 *    update of the list of visible items.
 	 * -# Produce a list of the MenuItem objects that are visible.
+	 *
 	 * @param newRange   The number of menu items that can be displayed, or -1
 	 *                   to not change the range.
 	 */
@@ -162,10 +162,15 @@ private:
 	friend MenuOutputAccess;
 public:
 	/**
-	 * Constructs a new output view for a given menu that will start with a
+	 * Constructs a menu output without a view. Before this object can be used,
+	 * attach() must be called.
+	 */
+	MenuOutput() = default;
+	/**
+	 * Constructs a new output for a given menu view that will start with a
 	 * specified maximum number of visible items.
 	 * @note  MenuOutput objects must be managed by std::shared_ptr.
-	 * @param view  The MenuView that will feed this view.
+	 * @param view  The MenuView that will feed this output.
 	 * @param vis   The initial maximum number of visible menu items.
 	 * @sa make()
 	 */
@@ -174,7 +179,7 @@ public:
 	 * Makes a new output view for a given menu that will start with a
 	 * specified maximum number of visible items, and returns a std::shared_ptr
 	 * that will manage its memory.
-	 * @param view  The MenuView that will feed this view.
+	 * @param view  The MenuView that will feed this output.
 	 * @param vis   The initial maximum number of visible menu items.
 	 */
 	static std::shared_ptr<MenuOutput> make(
@@ -184,24 +189,29 @@ public:
 		return std::make_shared<MenuOutput>(view, vis);
 	}
 	/**
+	 * Attaches this object to the given MenuView. The object may be re-attached
+	 * to different MenuView objects during its lifetime.
+	 * @pre  A MenuOutputAccess object is not currently acting upon this object.
+	 * @param view  The MenuView that will feed this output.
+	 * @param vis   The maximum number of visible menu items, or 0 for no
+	 *              change. If this object has not yet been attached to a view
+	 *              and 0 is specified, a value of 1 will be used.
+	 */
+	void attach(const std::shared_ptr<MenuView> &view, int vis = 0);
+	/**
 	 * Returns the MenuView used by this output view.
 	 */
 	const std::shared_ptr<MenuView> &view() const {
 		return mview;
 	}
 	/**
-	 * Returns the MenuV used by this output view.
+	 * Returns the Menu used by this output view.
+	 * @throw  MenuOutputNotAttached  This object hasn't been attached to a
+	 *                                MenuView. This can happen if it is
+	 *                                constructed using the default constructor
+	 *                                and attach() is not called.
 	 */
-	const std::shared_ptr<Menu> &menu() const {
-		return mview->menu();
-	}
-	/**
-	 * Helper function that returns a shared pointer to this object from the
-	 * base class Page.
-	 */
-	std::shared_ptr<MenuOutput> shared_from_this() {
-		return std::static_pointer_cast<MenuOutput>(Page::shared_from_this());
-	}
+	const std::shared_ptr<Menu> &menu() const;
 };
 
 /**

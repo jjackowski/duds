@@ -11,6 +11,7 @@
 #define MENUITEM_HPP
 
 #include <duds/general/BitFlags.hpp>
+#include <boost/noncopyable.hpp>
 #include <memory>
 
 namespace duds { namespace ui { namespace menu {
@@ -53,7 +54,7 @@ class MenuAccess;
  *
  * @author  Jeff Jackowski
  */
-class MenuItem : public std::enable_shared_from_this<MenuItem> {
+class MenuItem : public std::enable_shared_from_this<MenuItem>, boost::noncopyable {
 public:
 	/**
 	 * A set of option and state flags for menu items.
@@ -103,7 +104,7 @@ private:
 	/**
 	 * The owning Menu object.
 	 */
-	Menu *parent;
+	Menu *parent = nullptr;
 	/**
 	 * The item's option flags.
 	 */
@@ -120,7 +121,7 @@ public:
 	MenuItem(
 		const std::string &label,
 		Flags flags = Flags::Zero()
-	) : lbl(label), parent(nullptr), flgs(flags) { }
+	) : lbl(label), flgs(flags) { }
 	/**
 	 * Constructs a new MenuItem.
 	 * @note  All MenuItem objects must be managed by std::shared_ptr.
@@ -134,7 +135,7 @@ public:
 		const std::string &label,
 		const std::string &description,
 		Flags flags = Flags::Zero()
-	) : lbl(label), descr(description), parent(nullptr), flgs(flags) { }
+	) : lbl(label), descr(description), flgs(flags) { }
 	/**
 	 * Constructs a new MenuItem with an associated value.
 	 * @note  All MenuItem objects must be managed by std::shared_ptr.
@@ -144,15 +145,21 @@ public:
 	 * @param value        The current value associated with the menu item.
 	 * @param flags        The option flags for the item. While the default is
 	 *                     zero, the MenuItem::HasValue flag will be OR'd with
-	 *                     the given value by the constructor.
+	 *                     the value given to this constructor so it is implicit
+	 *                     when an item's value string is provided.
 	 */
 	MenuItem(
 		const std::string &label,
 		const std::string &description,
 		const std::string &value,
 		Flags flags = Flags::Zero()
-	) : lbl(label), descr(description), val(value), parent(nullptr),
-	flgs(flags | HasValue) { }
+	) : lbl(label), descr(description), val(value), flgs(flags | HasValue) { }
+	/**
+	 * Copy constructs a new MenuItem. The new item will contain the same data
+	 * as the original, except that it is not yet part of any menu.
+	 */
+	MenuItem(const MenuItem &mi) : lbl(mi.lbl), descr(mi.descr), val(mi.val),
+	flgs(mi.flgs) { }
 	/**
 	 * Returns the label text for this item.
 	 */
@@ -374,8 +381,9 @@ public:
 	virtual void deselect(MenuView &invokingView, const MenuAccess &access);
 	/**
 	 * Called by MenuView when the user choses this MenuItem. The call occurs
-	 * from the thread getting a MenuOutputAccess object. This thread will
-	 * have an exclusive lock on the menu.
+	 * during a MenuView::update() call. This thread will have an exclusive
+	 * lock on the menu. If this function throws an exception, the caller of
+	 * MenuView::update() can catch that exception.
 	 * @param invokingView  The view used to chose this item.
 	 * @param access        An access object for the menu that may be used
 	 *                      to modify the menu.

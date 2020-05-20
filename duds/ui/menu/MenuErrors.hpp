@@ -67,6 +67,11 @@ struct MenuItemLacksValue : MenuError { };
 struct MenuViewAlreadyAttached : MenuError { };
 
 /**
+ * Attempted use of a MenuOutput object that hasn't been attached to a MenuView.
+ */
+struct MenuOutputNotAttached : MenuError { };
+
+/**
  * There is inadequate room to render the menu. This error may be used by
  * menu rendering code, but is not used by the base menu code. It exists here
  * to avoid each renderer having its own variation of this error.

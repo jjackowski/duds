@@ -10,6 +10,7 @@
 #include <duds/ui/menu/Menu.hpp>
 #include <duds/ui/menu/MenuItem.hpp>
 #include <duds/ui/menu/MenuView.hpp>
+#include <duds/ui/menu/MenuErrors.hpp>
 #include <duds/general/Errors.hpp>
 
 namespace duds { namespace ui { namespace menu {

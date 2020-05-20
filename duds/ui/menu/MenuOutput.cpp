@@ -9,17 +9,36 @@
  */
 #include <duds/ui/menu/MenuOutput.hpp>
 #include <duds/ui/menu/MenuItem.hpp>
+#include <duds/ui/menu/MenuErrors.hpp>
+#include <duds/general/Errors.hpp>
 
 namespace duds { namespace ui { namespace menu {
 
 MenuOutput::MenuOutput(const std::shared_ptr<MenuView> &view, int vis) :
-Page(view->menu()->title()), mview(view), range(vis), selected(0),
-updateIdx(-1) { }
+mview(view), range(vis) { }
+
+void MenuOutput::attach(const std::shared_ptr<MenuView> &view, int vis) {
+	// only make changes if being attached to something different
+	if (mview != view) {
+		mview = view;
+		if (vis > 0) {
+			range = vis;
+		}
+		items.clear();
+		updateIdx = -1;
+	}
+}
+
+const std::shared_ptr<Menu> &MenuOutput::menu() const {
+	if (!mview) {
+		DUDS_THROW_EXCEPTION(MenuOutputNotAttached());
+	}
+	return mview->menu();
+}
 
 void MenuOutput::lock(std::size_t newRange) {
-	// potentially update the menu; requires exclusive menu lock for
-	// an actual update, so must be done prior to getting a shared lock
-	mview->update();
+	// mark view as in use; prevents view updates
+	mview->incUser();
 	// get a shared lock on the menu to allow multiple threads to render the
 	// menu simultaneously
 	menu()->block.lock_shared();

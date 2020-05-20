@@ -10,7 +10,7 @@
 #ifndef MENU_HPP
 #define MENU_HPP
 
-#include <duds/ui/menu/MenuErrors.hpp>
+//#include <duds/ui/menu/MenuErrors.hpp>
 #include <boost/noncopyable.hpp>
 #include <thread>
 #include <shared_mutex>

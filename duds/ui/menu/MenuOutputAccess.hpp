@@ -66,7 +66,7 @@ public:
 	 *                  to not change the range.
 	 */
 	MenuOutputAccess(
-		const std::shared_ptr<MenuOutput> &mov,
+		const MenuOutputSptr &mov,
 		std::size_t newRange = -1
 	) : MenuOutputAccess(mov.get(), newRange) { }
 	/**
@@ -182,12 +182,18 @@ public:
 		return outview->seliter;
 	}
 	/**
+	 * Returns the selected MenuItem object.
+	 */
+	const MenuItem &selectedItem() const {
+		return **outview->seliter;
+	}
+	/**
 	 * Returns the index of the currently selected MenuItem from Menu's
 	 * container. This is @b not the position within the visible items; it
 	 * is the position within all items for the menu. If the menu is empty,
 	 * this value should not be used.
 	 */
-	std::size_t selected() const {
+	std::size_t selectedIndex() const {
 		return outview->selected;
 	}
 	/**

@@ -11,6 +11,8 @@
 #define MENUVIEW_HPP
 
 #include <duds/general/Spinlock.hpp>
+#include <duds/ui/Page.hpp>
+#include <boost/any.hpp>
 #include <list>
 
 namespace duds { namespace ui { namespace menu {
@@ -26,40 +28,44 @@ class MenuOutputAccess;
  * User input is provided to the backward(), forward(), jump(), and chose()
  * functions. These functions are called in an asynchronous fashion; no
  * access objects are required, and the view may be in use by another thread.
- * The input is evaluated when a new MenuOutputAccess object begins to use
- * the MenuView, and no other MenuOutputAccess object is using the view.
+ * The input is evaluated when no other MenuOutputAccess object is using the
+ * view and update() is called.
  *
- * Updating the view and output views requires the MenuView to have a brief
- * exclusive lock on the menu data. After the update, a shared lock on the
- * menu data is maintained by the MenuOutput while it is in use. This
- * prevents a MenuView object from being used at the same time by multiple
- * MenuOutput objects on the same thread. The deadlock can be avoided by
- * having only one MenuOutputAccess object on the stack at the same time.
- * Technically, two on the satck will work if they use different MenuView
- * objects even if they use the same menu, but this shouldn't be required to
- * make anything work. 
+ * Updating the view requires its update() function to have a brief
+ * exclusive lock on the menu data. For output, a shared lock on the
+ * menu data is maintained by each MenuOutput object while a corresponding
+ * MenuOutputAccess object is in use. This prevents altering the menu while
+ * it is being output.
+ *
+ * An optional arbitrary object is stored to assist with writing
+ * MenuItem::chose() functions that must deal with being invoked from multiple
+ * MenuView objects. It is available through the context() function.
  *
  * @author  Jeff Jackowski
  */
-class MenuView : public std::enable_shared_from_this<MenuView> {
+class MenuView : public Page {
 private:
+	/**
+	 * Arbitrary context data that is available to MenuItem::chose().
+	 */
+	boost::any ctx;
 	/**
 	 * The parent menu that supplies the MenuItems.
 	 */
 	std::shared_ptr<Menu> parent;
 	/**
-	 * The index of the currently selected menu item.
-	 */
-	std::size_t currSel;
-	/**
-	 * The index of the next menu item to select.
-	 */
-	std::size_t nextSel;
-	/**
 	 * Protects this object's data from inappropriate modification when used in
 	 * a multithreaded manner.
 	 */
 	duds::general::Spinlock block;
+	/**
+	 * The index of the currently selected menu item.
+	 */
+	int currSel;
+	/**
+	 * The index of the next menu item to select.
+	 */
+	int nextSel;
 	/**
 	 * The number of MenuOutput objects currently using this MenuView.
 	 */
@@ -77,13 +83,10 @@ private:
 	 */
 	bool choseItem;
 	/**
-	 * Updates the view's selected and chosen menu item if there are no
-	 * MenuOutput objects currently rendering this view. Also increments
-	 * the internal count of subviews currently accessing this
-	 * menu view. This is needed to prevent update() from making changes
-	 * while the view is in use.
+	 * Increments the internal count of subviews currently accessing this
+	 * menu view.
 	 */
-	void update();
+	void incUser();
 	/**
 	 * Decrements the internal count of subviews currently accessing this
 	 * menu view.
@@ -169,11 +172,10 @@ public:
 	 * Returns the index of the currently selected item.
 	 *
 	 * This value is not changed until after all MenuOutputAccess objects
-	 * presently using this view are retired or destructed, and another
-	 * MenuOutputAccess object using this view is created. As a result, the
-	 * index of an item that is not @ref MenuItem::isSelectable() "selectable"
-	 * may be returned if the item was changed and a new MenuOutputAccess
-	 * object has not been created since.
+	 * presently using this view are retired or destructed, and a call to
+	 * update() is made. As a result, the index of an item that is not
+	 * @ref MenuItem::isSelectable() "selectable" may be returned if the
+	 * item was changed and the menu view has not been updated since.
 	 */
 	int selectedIndex() const {
 		return currSel;
@@ -199,18 +201,17 @@ public:
 	 *
 	 * The currently selected item is not changed until after all
 	 * MenuOutputAccess objects presently using this view are retired or
-	 * destructed, and another MenuOutputAccess object using this view is
-	 * created. Calling backward() and forward() multiple times before the
-	 * current selection is re-evaluated is allowed, and will change an
-	 * internal selection offset (@a nextSelOff) each time.
+	 * destructed, and then a call to update() is made. Calling backward()
+	 * and forward() multiple times before the current selection is
+	 * re-evaluated is allowed, and will change an internal selection offset
+	 * (@a nextSelOff) each time.
 	 *
-	 * Between a call to jump() or chose() and the creation of a new
-	 * MenuOutputAccess object, this function will have no effect. jump() is
-	 * intended to select a specific item, so this behavior will prevent
-	 * another item from being selected in the case that backward() or
-	 * forward() are called shortly after jump(). The behavior also prevents
-	 * chosing an item that may not be the intended item by ignoring selction
-	 * changes after chosing an item.
+	 * Between a call to jump() or chose() and update(), this function will
+	 * have no effect. jump() is intended to select a specific item, so this
+	 * behavior will prevent another item from being selected in the case that
+	 * backward() or forward() are called shortly after jump(). The behavior
+	 * also prevents chosing an item that may not be the intended item by
+	 * ignoring selction changes after chosing an item.
 	 *
 	 * @param dist  The number of @ref MenuItem::isSelectable() "selectable"
 	 *              items to move toward the back of the item list. If the
@@ -224,7 +225,7 @@ public:
 	 *                item, then the item selected will be the last selectable
 	 *                item.
 	 */
-	void backward(int dist);
+	void backward(int dist = 1);
 	/**
 	 * Changes the selection toward the front (first item) of the menu.
 	 *
@@ -245,18 +246,17 @@ public:
 	 *
 	 * The currently selected item is not changed until after all
 	 * MenuOutputAccess objects presently using this view are retired or
-	 * destructed, and another MenuOutputAccess object using this view is
-	 * created. Calling backward() and forward() multiple times before the
-	 * current selection is re-evaluated is allowed, and will change an
-	 * internal selection offset (@a nextSelOff) each time.
+	 * destructed, and then a call to update() is made. Calling backward()
+	 * and forward() multiple times before the current selection is
+	 * re-evaluated is allowed, and will change an internal selection offset
+	 * (@a nextSelOff) each time.
 	 *
-	 * Between a call to jump() or chose() and the creation of a new
-	 * MenuOutputAccess object, this function will have no effect. jump() is
-	 * intended to select a specific item, so this behavior will prevent
-	 * another item from being selected in the case that backward() or
-	 * forward() are called shortly after jump(). The behavior also prevents
-	 * chosing an item that may not be the intended item by ignoring selction
-	 * changes after chosing an item.
+	 * Between a call to jump() or chose() and update(), this function will
+	 * have no effect. jump() is intended to select a specific item, so this
+	 * behavior will prevent another item from being selected in the case that
+	 * backward() or forward() are called shortly after jump(). The behavior
+	 * also prevents chosing an item that may not be the intended item by
+	 * ignoring selction changes after chosing an item.
 	 *
 	 * @param dist  The number of @ref MenuItem::isSelectable() "selectable"
 	 *              items to move toward the front of the item list. If the
@@ -270,30 +270,50 @@ public:
 	 *                item, then the item selected will be the first selectable
 	 *                item.
 	 */
-	void forward(int dist);
+	void forward(int dist = 1) {
+		backward(-dist);
+	}
 	/**
-	 * Jump to a particular option by position index.
+	 * Jump to a particular option by position index. If negative, the size of
+	 * the menu will be added so that -1 will jump to the last item, -2 will
+	 * jump to the next to last item, and so forth. If the option is not
+	 * selectable, no change will occur.
 	 *
 	 * The currently selected item is not changed until after all
 	 * MenuOutputAccess objects presently using this view are retired or
-	 * destructed, and another MenuOutputAccess object using this view is
-	 * created.
+	 * destructed, and update() is called.
 	 *
-	 * Between a call to this function and the creation of a new
-	 * MenuOutputAccess object, calls to backward() and forward() will have no
-	 * effect. jump() is intended to select a specific item, so this behavior
-	 * will prevent another item from being selected in the case that backward()
-	 * or forward() are called shortly after jump(). However, jump() may be
-	 * called multiple times, but only the last call before calling chose() or
-	 * creating a new MenuOutputAccess object will affect the selected item.
+	 * Between a call to this function and update(), calls to backward() and
+	 * forward() will have no effect. jump() is intended to select a specific
+	 * item, so this behavior will prevent another item from being selected in
+	 * the case that backward() or forward() are called shortly after jump().
+	 * However, jump() may be called multiple times, but only the last call
+	 * before calling chose() or update() will affect the selected item.
 	 *
 	 * @param pos  The position index to select, but not chose. If the option
 	 *             is not @ref MenuItem::isSelectable() "selectable", then the
-	 *             next option backward (toward last item),
-	 *             wrapping to the begining of the menu if needed, that is
-	 *             visible and enabled will be selected.
+	 *             current menu item will remain selected. If the current item
+	 *             is no longer selectable, then the next option backward
+	 *             (toward last item), wrapping to the begining of the menu if
+	 *             needed, that is visible and enabled will be selected.
 	 */
 	void jump(int pos);
+	/**
+	 * Jumps to the first option in the menu. If the first option is not
+	 * selectable, no change will occur.
+	 * @sa jump()
+	 */
+	void jumpToFirst() {
+		jump(std::numeric_limits<int>::min());
+	}
+	/**
+	 * Jumps to the last option in the menu. If the last option is not
+	 * selectable, no change will occur.
+	 * @sa jump()
+	 */
+	void jumpToLast() {
+		jump(-1);
+	}
 	/**
 	 * Queues a request to chose what will be the currently selected menu item
 	 * during input processing when a MenuOutputAccess object is created.
@@ -310,6 +330,58 @@ public:
 	 *        cycle.
 	 */
 	void chose();
+	/**
+	 * Returns true if any input for the menu view has been queued and is
+	 * awaiting processing. Input is queued by calls to backward(), forward(),
+	 * jump(), jumpToFirst(), jumpToLast(), and chose(). It is processed by
+	 * calling update().
+	 * @note   The menu may need to be output again for reasons other than
+	 *         changes from input, such as changes to the underlying menu or
+	 *         its items.
+	 */
+	bool queuedInput();
+	/**
+	 * Updates the view's selected and chosen menu item if there are no
+	 * MenuOutput objects currently rendering this view. This is where the
+	 * menu resolves the effects of calls to backward(), forward(), jump(),
+	 * and chose(). MenuItem::chose() functions are called here. Not calling
+	 * this function will make it appear that the menu is ignoring input.
+	 * Resolving the effects of input here allows the program to ensure one
+	 * update between multiple render attempts on the same menu view. It also
+	 * allows the program to use one MenuOutput object with submenus because
+	 * the menu to show may change based on input that is resolved here before
+	 * acquiring a MenuOutputAccess object.
+	 * @note    This function uses a MenuAccess object internally, so it will
+	 *          block until it can get exclusive access to the Menu object.
+	 * @return  True if an update could take place, or false if it was delayed
+	 *          because another thread was using the view through a
+	 *          MenuOutputAccess object. A true value does not mean that an
+	 *          update occured because there may not have been a change
+	 *          requiring an update.
+	 * @throw exception   If an item is chosen, its MenuItem::chose() function
+	 *                    is called. If that function throws, the exception will
+	 *                    be re-thrown.
+	 */
+	bool update();
+	/**
+	 * Returns the arbitrary context object for this view.
+	 */
+	const boost::any &context() const {
+		return ctx;
+	}
+	/**
+	 * Returns the arbitrary context object for this view.
+	 */
+	boost::any &context() {
+		return ctx;
+	}
+	/**
+	 * Helper function that returns a shared pointer to this object from the
+	 * base class Page.
+	 */
+	std::shared_ptr<MenuView> shared_from_this() {
+		return std::static_pointer_cast<MenuView>(Page::shared_from_this());
+	}
 };
 
 /**

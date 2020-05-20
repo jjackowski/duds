@@ -9,6 +9,7 @@
  */
 #include <duds/ui/menu/MenuView.hpp>
 #include <duds/ui/menu/MenuAccess.hpp>
+#include <duds/ui/menu/MenuErrors.hpp>
 #include <duds/general/Errors.hpp>
 
 namespace duds { namespace ui { namespace menu {
@@ -25,6 +26,7 @@ void MenuView::attach(const std::shared_ptr<Menu> &menu) {
 	}
 	parent = menu;
 	parent->addView(shared_from_this());
+	title(parent->title());
 }
 
 int MenuView::adv(int pos) {
@@ -82,7 +84,7 @@ int MenuView::retr(int pos) {
 	return off;
 }
 
-void MenuView::update() {
+bool MenuView::update() {
 	std::lock_guard<duds::general::Spinlock> lock(block);
 	// if there is no other thread using this menu view . . .
 	if (!outvUsers++) {
@@ -97,12 +99,13 @@ void MenuView::update() {
 			(nextSel == currSel)
 		) {
 			// all done
-			return;
+			--outvUsers;
+			return true;
 		}
 		// prepare to update the view; requires exclusive menu lock
 		MenuAccess ma(parent);
 		// record new update index; may have changed
-		updateIdx = /*uidx =*/ parent->updateIndex();
+		updateIdx = parent->updateIndex();
 		// the new proposed position starts where indicated, even if the option
 		// cannot be selected
 		int prop = nextSel;
@@ -124,6 +127,15 @@ void MenuView::update() {
 		}
 		// no offset?
 		if (!nextSelOff) {
+			// item to select was within menu bounds?
+			if (prop == nextSel) {
+				Menu::ItemVec::const_iterator mi = parent->iterator(prop);
+				// not selectable?
+				if (!(*mi)->isSelectable()) {
+					// no change to selected item
+					prop = currSel;
+				}
+			}
 			// use the item if selectable, or find the next selectable item
 			prop = adv(prop);
 		} else {
@@ -131,41 +143,71 @@ void MenuView::update() {
 			// advance toward end of menu
 			if (nextSelOff > 0) {
 				// wrap check
-				int off;
-				if ((prop == parent->size() - 1) || ((off = adv(prop + 1)) == prop)) {
+				if ((prop == parent->size() - 1) || (adv(prop + 1) == prop)) {
 					// select the first item
 					prop = adv(0);
 				} else {
-					// off now has item position advanced by one item
-					for (
-						--nextSelOff;
-						nextSelOff && (off < (parent->size() - 1));
-						--nextSelOff
-					) {
-						off = adv(off + 1);
+					// start at current location
+					Menu::ItemVec::const_iterator mi = parent->iterator(prop);
+					int off = prop;
+					// advance!
+					for (; nextSelOff && (mi != parent->items.end()); --nextSelOff) {
+						++mi;
+						++off;
+						// move past and do not count invisible items
+						while ((mi != parent->items.end()) && (*mi)->isInvisible()) {
+							++mi;
+							++off;
+						}
 					}
-					prop = off;
+					// not at end?
+					if (mi != parent->items.end()) {
+						// use the found item
+						prop = off;
+					} else {
+						// use the last item
+						prop = retr(parent->size() - 1);
+					}
 				}
 			}
 			// advance toward start of menu
 			else {
 				// wrap check
-				int off;
-				if ((prop == 0) || ((off = retr(prop - 1)) == prop)) {
+				if ((prop == 0) || (retr(prop - 1) == prop)) {
 					// select the last item
 					prop = retr(parent->size() - 1);
 				} else {
-					// off now has item position moved back by one item
-					for (++nextSelOff; nextSelOff && (off > 0); ++nextSelOff) {
-						off = retr(off - 1);
+					// start at current location
+					Menu::ItemVec::const_iterator mi = parent->iterator(prop);
+					int off = prop;
+					// advance backwards!
+					for (; nextSelOff && off; ++nextSelOff) {
+						--mi;
+						--off;
+						// move past and do not count invisible items
+						while (off && (*mi)->isInvisible()) {
+							--mi;
+							--off;
+						}
 					}
-					prop = off;
+					// not at start?
+					if (off) {
+						// use the found item
+						prop = off;
+					} else {
+						// use the first item
+						prop = adv(0);
+					}
 				}
 			}
 		}
 		if (prop != currSel) {
-			parent->iterator(currSel)->get()->deselect(*this, ma);
-			parent->iterator(prop)->get()->select(*this, ma);
+			try {
+				parent->iterator(currSel)->get()->deselect(*this, ma);
+			} catch (...) { }
+			try {
+				parent->iterator(prop)->get()->select(*this, ma);
+			} catch (...) { }
 		}
 		// prepare the next selection values to move from the current
 		// selection
@@ -176,9 +218,17 @@ void MenuView::update() {
 			// do not continue chosing
 			choseItem = false;
 			// invoke the menu item's chose function
-			parent->iterator(currSel)->get()->chose(*this, ma);
+			try {
+				parent->iterator(currSel)->get()->chose(*this, ma);
+			} catch (...) {
+				// still must decrement user count
+				--outvUsers;
+				throw;
+			}
 		}
 	}
+	// updating is delayed if outvUsers is not zero after decrement
+	return !--outvUsers;
 }
 
 void MenuView::insertion(std::size_t idx) {
@@ -219,6 +269,11 @@ void MenuView::removal(std::size_t idx) {
 	}
 }
 
+void MenuView::incUser() {
+	std::lock_guard<duds::general::Spinlock> lock(block);
+	++outvUsers;
+}
+
 void MenuView::decUser() {
 	std::lock_guard<duds::general::Spinlock> lock(block);
 	--outvUsers;
@@ -229,14 +284,6 @@ void MenuView::backward(int dist) {
 	// do not change selection further if an item is to be chosen
 	if (!choseItem) {
 		nextSelOff += dist;
-	}
-}
-
-void MenuView::forward(int dist) {
-	std::lock_guard<duds::general::Spinlock> lock(block);
-	// do not change selection further if an item is to be chosen
-	if (!choseItem) {
-		nextSelOff -= dist;
 	}
 }
 
@@ -254,6 +301,11 @@ void MenuView::jump(int pos) {
 void MenuView::chose() {
 	std::lock_guard<duds::general::Spinlock> lock(block);
 	choseItem = true;
+}
+
+bool MenuView::queuedInput() {
+	std::lock_guard<duds::general::Spinlock> lock(block);
+	return choseItem || nextSelOff || (nextSel != currSel);
 }
 
 } } }
