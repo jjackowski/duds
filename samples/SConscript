@@ -44,7 +44,6 @@ targets = [
 	envthread.Program('st7920', ['st7920.cpp'] + libs),
 	envthread.Program('pinconfig', ['pinconfig.cpp'] + libs),
 	envsamp.Program('rendertext', ['rendertext.cpp'] + libs),       # 15
-	envsamp.Program('evdevin', ['evdevin.cpp'] + libs),
 ]
 # needs a font
 # st7920
@@ -69,5 +68,13 @@ if envthread['Use_Eigen']:
 	targets.append(enveigen.Program('orientation', ['orientation.cpp'] + libs))
 	#targets.append(enveigen.Program('orientation-LSM9DS1', ['orientation-LSM9DS1.cpp'] + libs))
 	#targets.append(enveigen.Program('orientation-LCD', ['orientation-LCD.cpp'] + libs))
+
+if envsamp['Use_Evdev']:
+	targets.append(envsamp.Program('evdevin', ['evdevin.cpp'] + libs))
+	trg = envthread.Program('bppmenu', ['bppmenu.cpp'] + libs)
+	envthread.Depends(trg, File('../../images/font_Vx7.bppia').abspath)
+	envthread.Depends(trg, File('../../images/font_Vx8B.bppia').abspath)
+	envthread.Depends(trg, File('../../images/menuicons.bppia').abspath)
+	targets.append(trg)
 
 Return('targets')
