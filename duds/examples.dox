@@ -16,6 +16,12 @@
  */
 
 /**
+ * @example bppmenu.cpp
+ * Uses a bit-per-pixel LCD (ST7920) or console output to demonstrate use of
+ * the menu system.
+ */
+
+/**
  * @example clockLCD.cpp
  * Uses a 20x4 text LCD to display the time and date.
  */
