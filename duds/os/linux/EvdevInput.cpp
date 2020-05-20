@@ -145,12 +145,16 @@ void EvdevInput::respondToNextEvent() {
 		if (result == LIBEVDEV_READ_STATUS_SUCCESS) {
 			EventTypeCode etc(ie.type, ie.code);
 			InputMap::const_iterator iter = receivers.find(etc);
+			const InputSignal *is;
 			if (iter != receivers.end()) {
-				// don't let input handlers prevent handling all the input
-				try {
-					iter->second(etc, ie.value);
-				} catch (...) { }
+				is = &iter->second;
+			} else {
+				is = &defReceiver;
 			}
+			// don't let input handlers prevent handling all the input
+			try {
+				(*is)(etc, ie.value);
+			} catch (...) { }
 		}
 	} while ((result >= 0) && (libevdev_has_event_pending(dev) > 0));
 }

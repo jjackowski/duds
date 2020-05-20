@@ -111,9 +111,9 @@ public:
 	 * @param etc  The event type and event code of the input event to handle.
 	 * @param val  The value of the input.
 	 */
-	typedef boost::signals2::signal< void(EventTypeCode etc, std::int32_t val) >
+	typedef boost::signals2::signal<void(EventTypeCode etc, std::int32_t val)>
 		InputSignal;
-protected:
+private:
 	/**
 	 * A type that relates events to signal handlers.
 	 */
@@ -122,6 +122,10 @@ protected:
 	 * Relates events to signal handlers.
 	 */
 	InputMap receivers;
+	/**
+	 * Handles input for events that are not listed in the @a receivers InputMap.
+	 */
+	InputSignal defReceiver;
 	/**
 	 * The object provided by libevdev that is needed to work with the input
 	 * device.
@@ -299,7 +303,7 @@ public:
 	 */
 	boost::signals2::connection inputConnect(
 		EventTypeCode etc,
-		const InputSignal::slot_type &slot, // use boost::bind, not std::bind
+		const InputSignal::slot_type &slot,
 		boost::signals2::connect_position at = boost::signals2::at_back
 	) {
 		return receivers[etc].connect(slot, at);
@@ -352,7 +356,7 @@ public:
 		return receivers[etc].connect_extended(group, slot, at);
 	}
 	/**
-	 * Disconnect a group from an input signal.
+	 * Disconnect a group from an input event signal.
 	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
 	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
@@ -366,7 +370,7 @@ public:
 		receivers[etc].disconnect(group);
 	}
 	/**
-	 * Disconnect a slot from an input signal.
+	 * Disconnect a slot from an input event signal.
 	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
 	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
@@ -377,7 +381,77 @@ public:
 	void inputDisconnect(EventTypeCode etc, const Slot &slotFunc) {
 		receivers[etc].disconnect(slotFunc);
 	}
-
+	/**
+	 * Make a connection to the default input event signal.
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * for an overview of the whole boost::singals2 system.
+	 */
+	boost::signals2::connection inputConnect(
+		const InputSignal::slot_type &slot,
+		boost::signals2::connect_position at = boost::signals2::at_back
+	) {
+		return defReceiver.connect(slot, at);
+	}
+	/**
+	 * Make a connection to the default input event signal.
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * for an overview of the whole boost::singals2 system.
+	 */
+	boost::signals2::connection inputConnect(
+		const InputSignal::group_type &group,
+		const InputSignal::slot_type &slot,
+		boost::signals2::connect_position at = boost::signals2::at_back
+	) {
+		return defReceiver.connect(group, slot, at);
+	}
+	/**
+	 * Make a connection to the default input event signal.
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * for an overview of the whole boost::singals2 system.
+	 */
+	boost::signals2::connection inputConnectExtended(
+		const InputSignal::extended_slot_type &slot,
+		boost::signals2::connect_position at = boost::signals2::at_back
+	) {
+		return defReceiver.connect_extended(slot, at);
+	}
+	/**
+	 * Make a connection to the default input event signal.
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * for an overview of the whole boost::singals2 system.
+	 */
+	boost::signals2::connection inputConnectExtended(
+		const InputSignal::group_type &group,
+		const InputSignal::extended_slot_type &slot,
+		boost::signals2::connect_position at = boost::signals2::at_back
+	) {
+		return defReceiver.connect_extended(group, slot, at);
+	}
+	/**
+	 * Disconnect a group from the default input event signal.
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * for an overview of the whole boost::singals2 system.
+	 */
+	void inputDisconnect(
+		const InputSignal::group_type &group
+	) {
+		defReceiver.disconnect(group);
+	}
+	/**
+	 * Disconnect a slot from the default input event signal.
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * for an overview of the whole boost::singals2 system.
+	 */
+	template<typename Slot>
+	void inputDisconnect(const Slot &slotFunc) {
+		defReceiver.disconnect(slotFunc);
+	}
 };
 
 /**
