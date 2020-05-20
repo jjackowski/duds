@@ -42,6 +42,12 @@ class QuantityIterator {
 	 */
 	Unit arrayUnit;
 public:
+	// iterator traits
+	typedef Quantity value_type;
+	typedef typename std::iterator_traits<I>::pointer  pointer;
+	typedef typename std::iterator_traits<I>::reference  reference;
+	typedef typename std::iterator_traits<I>::iterator_category  iterator_category;
+	typedef void  difference_type;
 	/**
 	 * Make an iterator to nowhere.
 	 */
@@ -85,12 +91,10 @@ public:
 	}
 	/**
 	 * Returns a reference to the value stored in the container.
-	 * @bug  This may fail when @a I is a const_iterator. The problem could
-	 *       be fixed easily by specifying a return type of auto, but that
-	 *       requires C++14. Not sure how to solve this with type traits.
+	 * @return  The dereferenced value from the container. If this is a const
+	 *          iterator, the return type will also be const.
 	 */
-	double &value() const {
-	//auto value() const { // needs C++14; crashes gcc 4.8.5
+	auto value() const {
 		return *iter;
 	}
 	/**
@@ -210,6 +214,7 @@ struct QuantityArray {
 /**
  * A QuantityArray for the common usage of a three dimentional coordinate or
  * a triple axis sample.
+ * @author  Jeff Jackowski
  */
 struct QuantityXyz : public QuantityArray<3> {
 	/**
@@ -400,7 +405,7 @@ struct QuantityNddArray {
 	 *                                           array's boundries.
 	 */
 	template <class Dim>
-	Quantity set(const Dim &pos, const Quantity &q) {
+	void set(const Dim &pos, const Quantity &q) {
 		if (unit != q.unit) {
 			DUDS_THROW_EXCEPTION(UnitMismatch());
 		}
@@ -418,7 +423,7 @@ struct QuantityNddArray {
 	 *                                           the position is outside the
 	 *                                           array's boundries.
 	 */
-	Quantity set(const Array::DimList &pos, const Quantity &q) {
+	void set(const Array::DimList &pos, const Quantity &q) {
 		if (unit != q.unit) {
 			DUDS_THROW_EXCEPTION(UnitMismatch());
 		}
