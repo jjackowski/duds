@@ -79,6 +79,9 @@ try {
 		std::make_shared<duds::ui::graphics::BppFont>();
 	font->load(fontpath);
 	duds::ui::graphics::BppStringCache bsc(font);
+	
+	duds::ui::graphics::ImageDimensions cdim = font->estimatedMaxCharacterSize();
+	std::cout << "Estimated character size is " << cdim << std::endl;
 
 	char inbuf[256] = { 0 };
 	do {

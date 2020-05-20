@@ -30,6 +30,20 @@ void Path::push(const PageSptr &page) {
 	}
 }
 
+void Path::push(PageSptr &&page) {
+	// is the current page not the last page on the stack?
+	if (pages.size() > (spot + 1)) {
+		// remove pages past the new current page
+		pages.resize(spot + 2);
+		// place the new page after the current
+		pages[++spot] = std::move(page);
+	} else {
+		// add to the end
+		pages.emplace_back(std::move(page));
+		++spot;
+	}
+}
+
 void Path::move(int steps) {
 	// no change?
 	if (!steps) {

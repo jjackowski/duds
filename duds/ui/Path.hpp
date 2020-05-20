@@ -53,6 +53,14 @@ public:
 	 */
 	void push(const PageSptr &page);
 	/**
+	 * Pushes a new page after the current page. All pages after the current
+	 * page prior to the push are removed.
+	 * @param page  The new page; its contents will be moved into the internal
+	 *              vector.
+	 * @post  The new page is now the current page.
+	 */
+	void push(PageSptr &&page);
+	/**
 	 * Changes the current page by the given amount. If the amount would go
 	 * past the first or last page, the result will be the first or last page
 	 * without error.

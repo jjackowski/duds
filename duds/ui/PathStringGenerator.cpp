@@ -345,9 +345,10 @@ std::string PathStringGenerator::generate(const Path &path) const {
 		if ((overacc == poveracc) && ((unsigned int)tlen > maxLen)) {
 			// shorten the maximum
 			overacc += std::max(
-				//(tlen - maxLen) / (unsigned int)titles.size(),
-				//(unsigned int)1
-				averageLength(titles.size(), tlen, clen) * (int)titles.size() - (int)maxLen,
+				averageLength(
+					titles.size(),
+					tlen, clen
+				) * (int)titles.size() - (int)maxLen,
 				1
 			);
 		}

@@ -91,6 +91,8 @@ public:
 	}
 };
 
+typedef std::shared_ptr<BppGraphicDisplay>  BppGraphicDisplaySptr;
+
 } } }
 
 #endif        //  #ifndef BPPGRAPHICDISPLAY_HPP

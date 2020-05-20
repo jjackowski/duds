@@ -12,7 +12,6 @@
 #include <boost/exception/errinfo_errno.hpp>
 #include <duds/os/linux/Poller.hpp>
 #include <duds/general/Errors.hpp>
-//#include <vector>
 #include <assert.h>
 
 namespace duds { namespace os { namespace linux {

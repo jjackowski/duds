@@ -53,7 +53,7 @@ typedef boost::error_info<struct Info_PathMinTitleLength, unsigned int>
 /**
  * Produces a string showing the path through pages as tracked by a Path
  * object.
- * This ojbect has a number of parameters that affect its output:
+ * This object has a number of parameters that affect its output:
  * | Function               | Default value     | Short description
  * |------------------------|-------------------|---------------------------------
  * | separator()            | empty string      | put between page titles
