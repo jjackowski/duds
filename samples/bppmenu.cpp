@@ -466,13 +466,19 @@ void runtest(
 	quit = true;
 }
 
-void doPoll(os::Poller &poller) {
+void doPoll(os::Poller &poller)
+try {
 	while (!quit) {
 		// wait time is how long it may take this thread to end, and it must
 		// end before program termination
 		poller.wait(std::chrono::milliseconds(64));
 	}
+} catch (...) {
+	std::cerr << "Test failed in doPoll():\n" <<
+	boost::current_exception_diagnostic_information() << std::endl;
+	quit = true;
 }
+
 
 int main(int argc, char *argv[])
 try {
@@ -631,6 +637,8 @@ try {
 		if (uselcd) {
 			boost::property_tree::ptree tree;
 			boost::property_tree::read_info(confpath, tree);
+			// if an exception is thrown here, the program will terminate without
+			// getting to the catch block below; don't know why
 			pc.parse(tree.get_child("pins"));
 			port = duds::hardware::interface::linux::GpioDevPort::makeConfiguredPort(pc);
 			duds::hardware::interface::DigitalPinSet lcdset;
@@ -663,6 +671,7 @@ try {
 		inputPolling.join();
 	}
 } catch (...) {
+	quit = true;
 	std::cerr << "Test failed in main():\n" <<
 	boost::current_exception_diagnostic_information() << std::endl;
 	return 1;
