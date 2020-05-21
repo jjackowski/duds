@@ -154,6 +154,7 @@ void ST7920::initialize() {
 			0x24,            // use extended commands
 			0x6,             // increment cursor, no display shift
 			0xC,             // turn on display w/o cursor
+			0x1,             // clear display
 			0x8,             // turn off display
 			0x20,            // 4 bit bus mode
 			0x30,            // 8-bit bus mode; sync nibble reception
