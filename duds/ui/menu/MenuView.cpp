@@ -163,7 +163,7 @@ bool MenuView::update() {
 					// not at end?
 					if (mi != parent->items.end()) {
 						// use the found item
-						prop = off;
+						prop = adv(off);
 					} else {
 						// use the last item
 						prop = retr(parent->size() - 1);
@@ -193,7 +193,7 @@ bool MenuView::update() {
 					// not at start?
 					if (off) {
 						// use the found item
-						prop = off;
+						prop = retr(off);
 					} else {
 						// use the first item
 						prop = adv(0);
