@@ -353,7 +353,7 @@ static void opset(
 	const BppImage::PixelBlock &src,
 	const BppImage::PixelBlock &mask
 ) {
-	*dest |= src & mask;
+	*dest = (*dest & ~mask) | (src & mask);
 }
 
 static void opnot(
@@ -361,7 +361,7 @@ static void opnot(
 	const BppImage::PixelBlock &src,
 	const BppImage::PixelBlock &mask
 ) {
-	*dest |= ~src & mask;
+	*dest = (*dest & ~mask) | (~src & mask);
 }
 
 static void opand(
@@ -369,7 +369,7 @@ static void opand(
 	const BppImage::PixelBlock &src,
 	const BppImage::PixelBlock &mask
 ) {
-	*dest |= (src & *dest) & mask;
+	*dest = (*dest & ~mask) | ((src & *dest) & mask);
 }
 
 static void opor(
@@ -377,7 +377,7 @@ static void opor(
 	const BppImage::PixelBlock &src,
 	const BppImage::PixelBlock &mask
 ) {
-	*dest |= (src | *dest) & mask;
+	*dest |= src & mask;
 }
 
 static void opxor(
@@ -385,7 +385,7 @@ static void opxor(
 	const BppImage::PixelBlock &src,
 	const BppImage::PixelBlock &mask
 ) {
-	*dest |= (src ^ *dest) & mask;
+	*dest = (*dest & ~mask) | ((src ^ *dest) & mask);
 }
 
 const BppImage::OpFunction BppImage::OpFunctions[OpTotal] = {

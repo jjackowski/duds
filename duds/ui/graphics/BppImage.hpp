@@ -1669,6 +1669,21 @@ public:
 	);
 	/**
 	 * Draws a box into this image.
+	 * @param ul     The upper-left location of the box.
+	 * @param id     The dimensions of the box.
+	 * @param state  The pixel state to write.
+	 * @throw        ImageBoundsError  The box extends beyond the bounds of the
+	 *                                 image.
+	 */
+	void drawBox(
+		ImageLocation ul,
+		ImageDimensions id,
+		bool state
+	) {
+		drawBox(ul, id, state ? OpSet : OpNot);
+	}
+	/**
+	 * Draws a box into this image.
 	 * @param x   The upper-left horizontal coordinate of the box.
 	 * @param y   The upper-left vertical coordinate of the box.
 	 * @param w   The width of the box.
@@ -1689,6 +1704,25 @@ public:
 		Operation op = OpSet
 	) {
 		drawBox(ImageLocation(x, y), ImageDimensions(w, h), op);
+	}
+	/**
+	 * Draws a box into this image.
+	 * @param x      The upper-left horizontal coordinate of the box.
+	 * @param y      The upper-left vertical coordinate of the box.
+	 * @param w      The width of the box.
+	 * @param h      The height of the box.
+	 * @param state  The pixel state to write.
+	 * @throw        ImageBoundsError  The box extends beyond the bounds of the
+	 *                                 image.
+	 */
+	void drawBox(
+		int x,
+		int y,
+		int w,
+		int h,
+		bool state
+	) {
+		drawBox(ImageLocation(x, y), ImageDimensions(w, h), state ? OpSet : OpNot);
 	}
 	// https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
 };
