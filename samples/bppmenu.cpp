@@ -213,6 +213,7 @@ public:
 		if (renderer.iconDimensions().w > 0) {
 			renderer.iconTextMargin(1);
 		}
+		renderer.addScrollBar(2);
 		root = curr = menu::MenuView::make(menus.rootMenu());
 		root->context() = this;
 		path.push(root);
@@ -442,6 +443,8 @@ void runtest(
 			menuout.attach(views.view());
 		} else {
 			std::this_thread::sleep_for(std::chrono::seconds(2));
+			//views.view()->jumpToLast();
+			//views.view()->backward(3);
 			//views.view()->update();
 			if ((cnt & 15) == 8) {
 				views.back();

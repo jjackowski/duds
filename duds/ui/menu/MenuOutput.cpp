@@ -112,15 +112,19 @@ void MenuOutput::updateVisible() {
 			// reset the selected item visible index; the selected item is now
 			// at the start of visible items
 			selectedVis = 0;
+			// the selected item is the first and last on the menu for now
+			firstIdx = lastIdx = sel;
 		} else {
 			// must only happen with an empty menu
 			assert(menu()->empty());
 			// ensure valid iterator
 			seliter = items.cend();
+			firstIdx = lastIdx = -1;
 		}
 		// start with an item before if selection moved towards front
 		if ((sel < selected) && fore(front)) {
 			items.push_front(front->get());
+			firstIdx = front - menu()->cbegin();
 			// selected item moved towards end of visible items
 			++selectedVis;
 		}
@@ -130,6 +134,7 @@ void MenuOutput::updateVisible() {
 			// item behind
 			if (revr(back)) {
 				items.push_back(back->get());
+				lastIdx = back - menu()->cbegin();
 			} else {
 				done = true;
 				//showLast = true;
@@ -141,6 +146,7 @@ void MenuOutput::updateVisible() {
 			// item in front
 			if (fore(front)) {
 				items.push_front(front->get());
+				firstIdx = front - menu()->cbegin();
 				// selected item moved towards end of visible items
 				++selectedVis;
 				done = false;

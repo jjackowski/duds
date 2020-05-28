@@ -15,10 +15,13 @@ namespace duds { namespace ui { namespace menu { namespace renderers {
 
 namespace graphics = duds::ui::graphics;
 
+constexpr BppMenuRenderer::Flags BppMenuRenderer::ScrollBarMask;
+constexpr BppMenuRenderer::Flags BppMenuRenderer::ScrollBarNeverHides;
 constexpr BppMenuRenderer::Flags BppMenuRenderer::HorizontalList;
 constexpr BppMenuRenderer::Flags BppMenuRenderer::InvertSelected;
 constexpr BppMenuRenderer::Flags BppMenuRenderer::ValueRightJusified;
 constexpr BppMenuRenderer::Flags BppMenuRenderer::DoNotShowText;
+constexpr BppMenuRenderer::Flags BppMenuRenderer::ScrollBarShown;
 constexpr BppMenuRenderer::Flags BppMenuRenderer::Calculated;
 constexpr BppMenuRenderer::Flags BppMenuRenderer::InternalMask;
 
@@ -39,17 +42,56 @@ void BppMenuRenderer::maxVisible(std::uint16_t i) {
 	}
 }
 
+void BppMenuRenderer::addScrollBar(
+	std::uint16_t width,
+	std::uint16_t margin,
+	std::uint16_t minsize,
+	ScrollBarPlacement place
+) {
+	scrollMg = margin;
+	scrollWidth = width;
+	posInd = std::make_unique<duds::ui::graphics::BppPositionIndicator>(
+		minsize
+	);
+	flgs.setMasked(place, ScrollBarMask);
+	flgs.clear(Calculated);
+}
+
+void BppMenuRenderer::removeScrollBar() {
+	posInd.reset();
+	scrollMg = scrollWidth = 0;
+	flgs.clear(Calculated | ScrollBarShown);
+}
+
 void BppMenuRenderer::recalculateDimensions(
 	duds::ui::graphics::ImageDimensions fitDim
 ) {
+	// the dimensions may need modification; scroll bar will be removed
+	duds::ui::graphics::ImageDimensions fit(fitDim);
+	int width = fitDim.w;
+	int place = (flgs & ScrollBarMask).flags();
+	// using scroll bar?
+	if (posInd) {
+		// vertical placement for scroll bar?
+		if (place < ScrollBottom) {
+			// remove its width
+			width -= scrollWidth + scrollMg;
+			fit.w = width;
+		} else {
+		// horizontal scroll?
+			// remove its size
+			fit.h -= scrollWidth + scrollMg;
+		}
+	}
 	if (flgs & HorizontalList) {
-		fitDim.w /= items;
+		// max width for each item
+		width /= items;
 	}
 	// proposed text dimensions; do not alter dimensions to use until they fit
 	duds::ui::graphics::ImageDimensions propTextDim;
 	// compute text dimensions even if no text displayed; use result to test
 	// for display area that is too small
-	propTextDim.w = fitDim.w;
+	propTextDim.w = width;
 	// showing a separate value column?
 	if (valWidth) {
 		propTextDim.w -= valWidth + valMg;
@@ -80,37 +122,39 @@ void BppMenuRenderer::recalculateDimensions(
 	}
 	// too short or small to fit? must fit at least one character for text
 	// width, and not exceed height
-	if ((propTextDim.h > fitDim.h) ||
+	if ((propTextDim.h > fit.h) ||
 		((flgs & DoNotShowText) && (propTextDim.w < 0)) ||
 		((~flgs & DoNotShowText) && (propTextDim.w < fntDim.w))
 	) {
 		DUDS_THROW_EXCEPTION(BppMenuDestinationTooSmall() <<
 			graphics::ImageErrorSourceDimensions(propTextDim) <<
-			graphics::ImageErrorTargetDimensions(fitDim)
+			graphics::ImageErrorTargetDimensions(fit)
 		);
 	}
 	// showing item text?
 	if (~flgs & DoNotShowText) {
 		// use proposed text dimensions
 		textDim = propTextDim;
-		// width fits full space (fitDim modified for horizontal list)
-		itemDim.w = fitDim.w;
+		// width fits full space
+		itemDim.w = width;
 	} else {
 		// no text dimensions
 		textDim.w = textDim.h = 0;
 		// width is adequate to fit what will be displayed
-		itemDim.w = fitDim.w - propTextDim.w;
+		itemDim.w = width - propTextDim.w;
 	}
 	itemDim.h = textDim.h;
 	// compute number of items visible, and determine if a partial item
 	// is visible
 	int fullshow;
 	if (flgs & HorizontalList) {
-		fullshow = fitDim.w / (itemDim.w + itemMg);
-		fracshow = fitDim.w % (itemDim.w + itemMg);
+		// use fit width that excludes scroll bar if present
+		fullshow = fit.w / (itemDim.w + itemMg);
+		fracshow = fit.w % (itemDim.w + itemMg);
 	} else {
-		fullshow = fitDim.h / (itemDim.h + itemMg);
-		fracshow = fitDim.h % (itemDim.h + itemMg);
+		// use fit width that excludes scroll bar if present
+		fullshow = fit.h / (itemDim.h + itemMg);
+		fracshow = fit.h % (itemDim.h + itemMg);
 	}
 	items = fullshow;
 	// only allow fractionally visible items if at least two full items
@@ -120,6 +164,20 @@ void BppMenuRenderer::recalculateDimensions(
 	} else {
 		fracshow = 0;
 	}
+	// scroll bar
+	if (posInd) {
+		// size the scroll bar to fit
+		posInd->position(duds::ui::graphics::ImageLocation(
+			place == ScrollRight ? fitDim.w - scrollWidth : 0,
+			place == ScrollBottom ? fitDim.h - scrollWidth : 0
+		));
+		posInd->dimensions(duds::ui::graphics::ImageDimensions(
+			place < ScrollBottom ? scrollWidth : fitDim.w,
+			place < ScrollBottom ? fitDim.h : scrollWidth
+		));
+		flgs.set(ScrollBarShown);
+	}
+	// store new output dimension
 	destDim = fitDim;
 	// flag recalcuation done
 	flgs.set(Calculated);
@@ -130,18 +188,39 @@ void BppMenuRenderer::render(
 	duds::ui::menu::MenuOutputAccess &mova
 ) {
 	// need to have the string cache but don't have one?
-	if ((flgs & ~DoNotShowText) && !cache) {
+	if ((~flgs & DoNotShowText) && !cache) {
 		DUDS_THROW_EXCEPTION(BppMenuLacksStringCache());
 	}
 	// destination image dimensions will be used in a number of places
 	const graphics::ImageDimensions &fitDim = dest->dimensions();
 	// ensure item dimensions have been computed
-	if ((flgs & ~Calculated) || (destDim != fitDim)) {
+	if ((~flgs & Calculated) || (destDim != fitDim)) {
 		recalculateDimensions(fitDim);
 		// different number of items fit than shown previously?
 		if (items != mova.maxVisible()) {
 			// fix it
 			mova.maxVisible(items);
+		}
+	}
+	int place = (flgs & ScrollBarMask).flags();
+	int scrollSize = scrollMg + scrollWidth;
+	// have scroll bar that hides?
+	if (posInd && (~flgs & ScrollBarNeverHides) && (place < ScrollBottom)) {
+		// shown previously but not needed now?
+		if (mova.showingAll()) {
+			if (flgs & ScrollBarShown) {
+				// enlarge text label area
+				itemDim.w += scrollSize;
+				textDim.w += scrollSize;
+				flgs.clear(ScrollBarShown);
+			}
+			// no space used by missing scroll bar
+			scrollSize = 0;
+		} else if ((~flgs & ScrollBarShown) && !mova.showingAll()) {
+			// reduce text label area
+			itemDim.w -= scrollSize;
+			textDim.w -= scrollSize;
+			flgs.set(ScrollBarShown);
 		}
 	}
 	// should have caused recalculateDimensions() to throw
@@ -174,10 +253,16 @@ void BppMenuRenderer::render(
 		// write items to the destinatiom image directly
 		img = dest;
 	}
-	// render each item
-	graphics::ImageLocation pos(0, 0);
-	//graphics::ImageDimensions dim(0, itemDim.h);
+	// make useful scroll bar data to avoid some more conditionals later
+	int startX;
+	if (place == ScrollLeft) {
+		startX = scrollSize;
+	} else {
+		startX = 0;
+	}
+	graphics::ImageLocation pos(startX, 0);
 	int idx = 0;
+	// render each item
 	for (duds::ui::menu::MenuItem* mitem : mova) {
 		// useful for advancing the position later, especially for horizontal
 		// menus
@@ -302,6 +387,17 @@ void BppMenuRenderer::render(
 			} else {
 				// faster than drawBox()
 				img->invertLines(pos.y, itemDim.h);
+				// scroll margin in inverted region?
+				if (scrollSize && (place < ScrollBottom)) {
+					// blank the margin only; scroll bar render will do the rest
+					img->drawBox(
+						place == ScrollRight ? destDim.w - scrollSize : 0,
+						pos.y,         // y
+						scrollSize,    // width == margin for scroll
+						itemDim.h,     // height
+						false          // state
+					);
+				}
 			}
 		}
 		// deal with fractionally visible item
@@ -325,7 +421,7 @@ void BppMenuRenderer::render(
 						graphics::ImageDimensions(itemDim.w, fracshow)
 					);
 					// advance downward
-					pos.x = 0;
+					pos.x = startX;
 					pos.y = fracshow + itemMg;
 				}
 				// write the rest of the items to the destination image directly
@@ -356,12 +452,21 @@ void BppMenuRenderer::render(
 				pos.x = startPos.x + itemDim.w + itemMg;
 			} else {
 				// advance downward
-				pos.x = 0;
+				pos.x = startX;
 				pos.y += itemDim.h + itemMg;
 			}
 		}
 		// keep track of display index
 		++idx;
+	}
+	// scroll bar
+	if (posInd && (flgs & ScrollBarShown)) {
+		// using visible() seems like a good idea, but the item indices used in
+		// the next line are from a vector that includes all the menu's items,
+		// even if not visible, so using visible() will result in the scroll bar
+		// indicating the end of the menu early if items are hidden
+		posInd->range(mova.menu()->size()); //visible());
+		posInd->render(dest, mova.firstIndex(), mova.lastIndex());
 	}
 }
 

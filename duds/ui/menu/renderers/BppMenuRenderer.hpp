@@ -7,8 +7,12 @@
  *
  * Copyright (C) 2020  Jeff Jackowski
  */
+#ifndef BPPMENURENDERER_HPP
+#define BPPMENURENDERER_HPP
+
 #include <duds/ui/menu/MenuOutputAccess.hpp>
 #include <duds/ui/graphics/BppStringCache.hpp>
+#include <duds/ui/graphics/BppPositionIndicator.hpp>
 
 namespace duds { namespace ui { namespace menu { namespace renderers {
 
@@ -99,6 +103,10 @@ struct BppMenuLacksStringCache : BppMenuRendererError { };
  * a call to maxVisible(std::uint16_t) before rendering. Each item will take
  * the same amount of space on the destination image.
  *
+ * A scoll bar may be optionally added to the menu by a call to addScrollBar().
+ * By default, the scroll bar will only be present if there are too many menu
+ * items to fit in the destination image.
+ *
  * @todo    Horizontal ordering needs testing; assume broken for now.
  * @todo    Support rendering the selected menu item's description text
  *          somewhere.
@@ -106,27 +114,53 @@ struct BppMenuLacksStringCache : BppMenuRendererError { };
  */
 class BppMenuRenderer {
 public:
+	/**
+	 * Values used to control which edge of the menu will host the scroll bar.
+	 */
+	enum ScrollBarPlacement {
+		ScrollRight,
+		ScrollLeft,
+		ScrollBottom,
+		ScrollTop
+	};
+	/**
+	 * A type for configuration flags.
+	 */
 	typedef duds::general::BitFlags<struct BppMenuFlags>  Flags;
+	/**
+	 * Mask that defines where the ScrollBarPlacement value is put in the
+	 * configuration flags.
+	 */
+	static constexpr Flags ScrollBarMask           = Flags(3);
+	/**
+	 * True to always show the scroll bar. If not set, the scroll bar will not
+	 * be shown if the menu fits within the destination image.
+	 */
+	static constexpr Flags ScrollBarNeverHides     = Flags::Bit(2);
 	/**
 	 * Items are arranged horizontally instead of vertically.
 	 */
-	static constexpr Flags HorizontalList          = Flags::Bit(0);
+	static constexpr Flags HorizontalList          = Flags::Bit(3);
 	/**
 	 * The selected item will be rendered inverted.
 	 */
-	static constexpr Flags InvertSelected          = Flags::Bit(1);
+	static constexpr Flags InvertSelected          = Flags::Bit(4);
 	/**
 	 * Right justify value text when values are placed in a column separate
 	 * from the item label. If the value column width is zero or not provided,
 	 * this flag will have no effect.
 	 */
-	static constexpr Flags ValueRightJusified      = Flags::Bit(2);
+	static constexpr Flags ValueRightJusified      = Flags::Bit(5);
 	/**
 	 * Only show icons, not text, for the menu items. This will prevent values,
 	 * as well as text naming a menu item, from being shown.
 	 */
-	static constexpr Flags DoNotShowText           = Flags::Bit(3);
+	static constexpr Flags DoNotShowText           = Flags::Bit(6);
 private:
+	/**
+	 * Indicates that the scroll bar was rendered on the previous render call.
+	 */
+	static constexpr Flags ScrollBarShown          = Flags::Bit(14);
 	/**
 	 * When set, indicates that internal dimension values have been calculated.
 	 * This avoids the need to recalculate them every time the menu is rendered.
@@ -137,6 +171,10 @@ private:
 	 * for internal flags.
 	 */
 	static constexpr Flags InternalMask            = Flags(0xFF00);
+	/**
+	 * Optional position indicator to show user location within the menu.
+	 */
+	std::unique_ptr<duds::ui::graphics::BppPositionIndicator> posInd;
 	/**
 	 * Icon used to denote a selected menu item.
 	 */
@@ -206,9 +244,17 @@ private:
 	 */
 	std::uint16_t iconTxMg = 0;
 	/**
+	 * Space in pixels to have between label or value text and the scroll bar.
+	 */
+	std::uint16_t scrollMg = 0;
+	/**
 	 * Number of items to display.
 	 */
 	std::uint16_t items = 0;
+	/**
+	 * Thw width of the scroll bar in pixels.
+	 */
+	std::uint16_t scrollWidth;
 	/**
 	 * The number of pixels to show of a partially visible menu item.
 	 */
@@ -430,6 +476,27 @@ public:
 		flgs.clear(Calculated);
 	}
 	/**
+	 * Adds or replaces a scroll bar on the menu. The menu only supports a
+	 * single scroll bar.
+	 * @param width    The width of the indicator, or slider, in pixels.
+	 * @param margin   The width of the border between the indicator and menu
+	 *                 item(s).
+	 * @param minsize  The minimum length of the indicator (slider).
+	 * @param place    The edge occupied by the scroll bar.
+	 * @bug   The scroll bar will be sized as though menu items that are hidden
+	 *        from view are present on the display.
+	 */
+	void addScrollBar(
+		std::uint16_t width = 1,
+		std::uint16_t margin = 1,
+		std::uint16_t minsize = 4,
+		ScrollBarPlacement place = ScrollRight
+	);
+	/**
+	 * Removes the scroll bar from the menu.
+	 */
+	void removeScrollBar();
+	/**
 	 * Renders a menu to the given image.
 	 * @param dest  The destination image. If its size is different than the
 	 *              last image used, or if this is the first time rendering,
@@ -514,3 +581,5 @@ public:
 };
 
 } } } }
+
+#endif        //  #ifndef BPPMENURENDERER_HPP

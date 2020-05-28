@@ -69,6 +69,14 @@ private:
 	 */
 	std::size_t selectedVis;
 	/**
+	 * Index of the first menu item that is visible.
+	 */
+	std::size_t firstIdx;
+	/**
+	 * Index of the last menu item that is visible.
+	 */
+	std::size_t lastIdx;
+	/**
 	 * The maximum number of visible items.
 	 */
 	std::size_t range = 1;

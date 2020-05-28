@@ -207,6 +207,18 @@ public:
 		return outview->selectedVis;
 	}
 	/**
+	 * Returns the index of the first visible menu item, or -1 for an empty menu.
+	 */
+	std::size_t firstIndex() const {
+		return outview->firstIdx;
+	}
+	/**
+	 * Returns the index of the last visible menu item, or -1 for an empty menu.
+	 */
+	std::size_t lastIndex() const {
+		return outview->lastIdx;
+	}
+	/**
 	 * True if the menu's first visible item is one of the currently visible
 	 * items.
 	 */
@@ -219,6 +231,12 @@ public:
 	 */
 	bool showingLast() const {
 		return outview->showLast;
+	}
+	/**
+	 * True if the entire menu is currently visible.
+	 */
+	bool showingAll() const {
+		return outview->showFirst && outview->showLast;
 	}
 };
 
