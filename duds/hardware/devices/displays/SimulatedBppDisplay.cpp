@@ -22,12 +22,6 @@ SimulatedBppDisplay::SimulatedBppDisplay(
 ) : duds::hardware::display::BppGraphicDisplay(id)
 { }  // all done above
 
-SimulatedBppDisplay::~SimulatedBppDisplay() {
-	for (int h = height() + 3; h > 0; --h) {
-		std::cout << '\n';
-	}
-}
-
 void SimulatedBppDisplay::configure(const duds::ui::graphics::ImageDimensions &id) {
 	// range check on display size
 	if (id.empty()) {
@@ -36,11 +30,17 @@ void SimulatedBppDisplay::configure(const duds::ui::graphics::ImageDimensions &i
 		);
 	}
 	frmbuf.resize(id);
+	bottom = false;
 }
 
 void SimulatedBppDisplay::outputFrame(const duds::ui::graphics::BppImage *img) {
+	if (bottom) {
+		// return cursor to top
+		std::cout << "\033[" << height() + 2 << 'A';
+	}
+	bottom = true;
 	// output border
-	std::cout << "\n*";
+	std::cout << '*';
 	for (int w = width(); w > 0; --w) {
 		std::cout << '-';
 	}
@@ -79,8 +79,6 @@ void SimulatedBppDisplay::outputFrame(const duds::ui::graphics::BppImage *img) {
 		std::cout << '-';
 	}
 	std::cout << '*' << std::endl;
-	// return cursor to top
-	std::cout << "\033[" << height() + 3 << 'A';
 }
 
 } } } }

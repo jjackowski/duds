@@ -19,6 +19,11 @@ namespace duds { namespace hardware { namespace devices { namespace displays {
  */
 class SimulatedBppDisplay : public duds::hardware::display::BppGraphicDisplay {
 	/**
+	 * True after rendering a frame to denote output is at the bottom of the
+	 * frame.
+	 */
+	bool bottom = false;
+	/**
 	 * Writes out only the changed portions of the image to the display, and
 	 * updates the image in @a frmbuf to match.
 	 * @param img  The new image to show.
@@ -46,10 +51,6 @@ public:
 	 */
 	SimulatedBppDisplay(unsigned int w, unsigned int h) :
 	SimulatedBppDisplay(duds::ui::graphics::ImageDimensions(w, h)) { }
-	/**
-	 * Positions cursor after expected end of display text.
-	 */
-	virtual ~SimulatedBppDisplay();
 	/**
 	 * Initializes the object to a usable state.
 	 * @param id  The dimensions of the display in "pixels" (really characters).
