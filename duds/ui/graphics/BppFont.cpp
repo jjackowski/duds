@@ -22,7 +22,7 @@ constexpr BppFont::Flags BppFont::AlignCenter;
 constexpr BppFont::Flags BppFont::AlignRight;
 constexpr BppFont::Flags BppFont::AlignMask;
 
-BppImageSptr BppFont::renderGlyph(char32_t gc) {
+ConstBppImageSptr BppFont::renderGlyph(char32_t gc) {
 	DUDS_THROW_EXCEPTION(GlyphNotFoundError() << Character(gc));
 }
 
@@ -70,7 +70,7 @@ const ConstBppImageSptr &BppFont::get(char32_t gc) {
 	std::unordered_map<char32_t, ConstBppImageSptr>::const_iterator
 		iter = glyphs.find(gc);
 	if (iter == glyphs.end()) {
-		BppImageSptr bis = renderGlyph(gc);
+		ConstBppImageSptr bis = renderGlyph(gc);
 		glyphs[gc] = std::move(bis);
 		return glyphs[gc];
 	}
@@ -82,9 +82,9 @@ ConstBppImageSptr BppFont::tryGet(char32_t gc) {
 	std::unordered_map<char32_t, ConstBppImageSptr>::const_iterator
 		iter = glyphs.find(gc);
 	if (iter == glyphs.end()) {
-		BppImageSptr bis;
+		ConstBppImageSptr bis;
 		try {
-			renderGlyph(gc);
+			bis = renderGlyph(gc);
 			glyphs[gc] = bis;
 		} catch (...) { }
 		return bis;
@@ -106,7 +106,7 @@ ImageDimensions BppFont::estimatedMaxCharacterSize() {
 /**
  * Used to hold all the glyphs needed to render a string.
  */
-typedef std::vector<ConstBppImageSptr>  ImageVec;
+typedef std::vector<const BppImage *>  ImageVec;
 /**
  * Information on a line.
  */
@@ -177,12 +177,13 @@ try {
 			// no glyph?
 			if (giter == glyphs.end()) {
 				// try to get it again; may throw
-				gv.emplace_back(renderGlyph(*titer));
+				ConstBppImageSptr glyph = renderGlyph(*titer);
+				gv.emplace_back(glyph.get());
 				// store it in the cache
-				glyphs[*titer] = gv.back();
+				glyphs[*titer] = std::move(glyph);
 			} else {
 				// have glyph
-				gv.push_back(giter->second);
+				gv.push_back(giter->second.get());
 			}
 		}
 		// record dimension stats

@@ -46,7 +46,7 @@ protected:
 	 * @param gc     The character code of the glyph.
 	 * @return       The glyph image.
 	 */
-	virtual BppImageSptr renderGlyph(char32_t gc);
+	virtual ConstBppImageSptr renderGlyph(char32_t gc);
 public:
 	BppFont() = default;
 	/**
