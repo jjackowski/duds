@@ -50,6 +50,8 @@ targets = [
 envsamp.Depends(targets[13], File('../../images/font_8x16.bppia').abspath)
 # rendertext
 envsamp.Depends(targets[15], File('../../images/font_8x16.bppia').abspath)
+# addressLCD
+envsamp.Depends(targets[1], File('../../images/font_Vx8B.bppia').abspath)
 
 # These are be needed if image archive files, instead of header files, are
 # generated. SCons seems to be catching the dependency from the includes.

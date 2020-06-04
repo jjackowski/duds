@@ -15,6 +15,10 @@
  */
 
 #include <duds/hardware/devices/displays/SimulatedBppDisplay.hpp>
+#include <duds/hardware/devices/displays/ST7920.hpp>
+#include <duds/hardware/interface/linux/GpioDevPort.hpp>
+#include <duds/hardware/interface/PinConfiguration.hpp>
+#include <boost/property_tree/info_parser.hpp>
 #include <duds/ui/graphics/BppImageArchive.hpp>
 #include <duds/ui/graphics/BppStringCache.hpp>
 #include <iostream>
@@ -29,8 +33,10 @@ bool quit = false;
 
 int main(int argc, char *argv[])
 try {
-	std::string fontpath;
+	std::string fontpath, confpath, lcdname;
 	std::string imgpath(argv[0]);
+	int dispW, dispH;
+	bool uselcd = false;
 	{
 		int found = 0;
 		while (!imgpath.empty() && (found < 3)) {
@@ -56,6 +62,34 @@ try {
 					default_value(imgpath + "font_8x16.bppia"),
 				"Font file"
 			)
+			(
+				"st7920",
+				"Use a graphic ST7920 LCD instead of console output"
+			)
+			(
+				"conf,c",
+				boost::program_options::value<std::string>(&confpath)->
+					default_value("samples/pins.conf"),
+				"Pin configuration file; required if ST7920 LCD used"
+			)
+			(
+				"lcdname",
+				boost::program_options::value<std::string>(&lcdname)->
+					default_value("lcdGraphic"),
+				"Name of LCD inside pin configuration"
+			)
+			( // the display width
+				"width,x",
+				boost::program_options::value<int>(&dispW)->
+					default_value(144),
+				"ST7920 display width in pixels"
+			)
+			( // the display height
+				"height,y",
+				boost::program_options::value<int>(&dispH)->
+					default_value(32),
+				"ST7920 display height in pixels"
+			)
 		;
 		boost::program_options::variables_map vm;
 		boost::program_options::store(
@@ -70,10 +104,11 @@ try {
 			optdesc << std::endl;
 			return 0;
 		}
+		if (vm.count("st7920")) {
+			uselcd = true;
+		}
 	}
 
-	// load some icons before messing with hardware
-	duds::ui::graphics::BppImageArchive imgArc;
 	// load font
 	duds::ui::graphics::BppFontSptr font =
 		std::make_shared<duds::ui::graphics::BppFont>();
@@ -82,6 +117,28 @@ try {
 	
 	duds::ui::graphics::ImageDimensions cdim = font->estimatedMaxCharacterSize();
 	std::cout << "Estimated character size is " << cdim << std::endl;
+	
+	std::shared_ptr<duds::hardware::devices::displays::ST7920> lcd;
+	duds::hardware::devices::displays::SimulatedBppDisplay sd;
+	// display configuration
+	duds::hardware::interface::PinConfiguration pc;
+	std::shared_ptr<duds::hardware::interface::DigitalPort> port;
+	// ST7920
+	if (uselcd) {
+		boost::property_tree::ptree tree;
+		boost::property_tree::read_info(confpath, tree);
+		// if an exception is thrown here, the program will terminate without
+		// getting to the catch block below; don't know why
+		pc.parse(tree.get_child("pins"));
+		port = duds::hardware::interface::linux::GpioDevPort::makeConfiguredPort(pc);
+		duds::hardware::interface::DigitalPinSet lcdset;
+		duds::hardware::interface::ChipSelect lcdsel;
+		pc.getPinSetAndSelect(lcdset, lcdsel, lcdname);
+		lcd = std::make_shared<duds::hardware::devices::displays::ST7920>(
+			std::move(lcdset), std::move(lcdsel), dispW, dispH
+			);
+		lcd->initialize();
+	}		
 
 	char inbuf[256] = { 0 };
 	do {
@@ -92,8 +149,20 @@ try {
 			duds::ui::graphics::ConstBppImageSptr label = bsc.text(inbuf);
 			std::cout << ", size " << label->width() << 'x' << label->height() <<
 			std::endl;
-			duds::hardware::devices::displays::SimulatedBppDisplay sd(label->dimensions());
-			sd.write(label);
+			if (uselcd) {
+				const duds::ui::graphics::ImageDimensions &dim = lcd->dimensions();
+				duds::ui::graphics::BppImage frame(dim);
+				frame.clearImage();
+				duds::ui::graphics::ImageLocation loc(
+					std::max((dim.w - label->width()) / 2, 0),
+					std::max((dim.h - label->height()) / 2, 0)
+				);
+				frame.write(label, loc);
+				lcd->write(&frame);
+			} else {
+				sd.configure(label->dimensions());
+				sd.write(label);
+			}
 		}
 	} while (std::cin.good() && inbuf[0]);
 
