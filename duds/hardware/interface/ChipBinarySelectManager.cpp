@@ -45,7 +45,7 @@ void ChipBinarySelectManager::setSelectPin(
 	DigitalPinCap cap = dpa->capabilities();
 	// check for no output ability
 	if (!cap.canOutput()) {
-		DUDS_THROW_EXCEPTION(DigitalPinCannotInputError() <<
+		DUDS_THROW_EXCEPTION(DigitalPinCannotOutputError() <<
 			PinErrorId(dpa->globalId())
 		);
 	}

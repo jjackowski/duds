@@ -55,7 +55,7 @@ void ChipPinSetSelectManager::setSelectPins(
 	for (; iter != caps.cend(); ++pos, ++iter) {
 		// check for no output ability
 		if (!iter->canOutput()) {
-			DUDS_THROW_EXCEPTION(DigitalPinCannotInputError() <<
+			DUDS_THROW_EXCEPTION(DigitalPinCannotOutputError() <<
 				PinErrorId(dpsa->globalId(pos))
 			);
 		}

@@ -45,8 +45,8 @@ public:
 	 *                           any pins, or @a acc is empty. If thrown, no
 	 *                           changes to this chip select manager will be
 	 *                           made.
-	 * @throw DigitalPinCannotInputError  One of the provided pins is incapable
-	 *                                    of output.
+	 * @throw DigitalPinCannotOutputError  One of the provided pins is incapable
+	 *                                     of output.
 	 */
 	ChipMultiplexerSelectManager(std::unique_ptr<DigitalPinSetAccess> &&acc);
 	/**
@@ -66,8 +66,8 @@ public:
 	 *                           any pins, or @a acc is empty. If thrown, no
 	 *                           changes to this chip select manager will be
 	 *                           made.
-	 * @throw DigitalPinCannotInputError  One of the provided pins is incapable
-	 *                                    of output.
+	 * @throw DigitalPinCannotOutputError  One of the provided pins is incapable
+	 *                                     of output.
 	 */
 	void setAccess(std::unique_ptr<DigitalPinSetAccess> &&acc);
 	/**

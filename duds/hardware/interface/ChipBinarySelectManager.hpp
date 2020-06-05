@@ -54,6 +54,11 @@ public:
 	 * @param dpa       The access object for the select pin.
 	 * @param initSel   Non-zero to initially select ID 1 (logic high), or
 	 *                  zero for ID 0 (logic low).
+	 * @throw ChipSelectInUse       A ChipAccess object provided by this manager
+	 *                              currently exists.
+	 * @throw PinDoesNotExist          The DigitalPinAccess object does not
+	 *                                 provide access to any pin.
+	 * @throw DigitalPinCannotOutputError  The pin cannot output.
 	 */
 	ChipBinarySelectManager(
 		std::unique_ptr<DigitalPinAccess> &&dpa,
@@ -72,6 +77,11 @@ public:
 	 * Sets the DigitalPinAccess object to use for the chip select line.
 	 * @param dpa      The access object for the select pin.
 	 * @param initSel  The initially selected chip ID. Must be 0 or 1.
+	 * @throw ChipSelectInUse       A ChipAccess object provided by this manager
+	 *                              currently exists.
+	 * @throw PinDoesNotExist          The DigitalPinAccess object does not
+	 *                                 provide access to any pin.
+	 * @throw DigitalPinCannotOutputError  The pin cannot output.
 	 */
 	void setSelectPin(std::unique_ptr<DigitalPinAccess> &&dpa, int initSel = 0);
 };

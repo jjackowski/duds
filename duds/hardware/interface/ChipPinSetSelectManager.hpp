@@ -58,11 +58,11 @@ public:
 	 *                         (1 << index)
 	 * @throw ChipSelectInUse  A ChipAccess object provided by this manager
 	 *                         currently exists.
-	 * @throw PinUnsupportedOperation  The given pin does not support output.
 	 * @throw PinDoesNotExist          The DigitalPinAccess object does not
 	 *                                 provide access to any pin.
 	 * @throw ChipSelectTooManyPins    More than 32 pins are in the access
 	 *                                 object.
+	 * @throw DigitalPinCannotOutputError  At least one pin cannot output.
 	 */
 	ChipPinSetSelectManager(
 		std::unique_ptr<DigitalPinSetAccess> &&dpsa,
@@ -83,11 +83,11 @@ public:
 	 *                         (1 << index)
 	 * @throw ChipSelectInUse  A ChipAccess object provided by this manager
 	 *                         currently exists.
-	 * @throw PinUnsupportedOperation  The given pin does not support output.
 	 * @throw PinDoesNotExist          The DigitalPinAccess object does not
 	 *                                 provide access to any pin.
 	 * @throw ChipSelectTooManyPins    More than 32 pins are in the access
 	 *                                 object.
+	 * @throw DigitalPinCannotOutputError  At least one pin cannot output.
 	 */
 	void setSelectPins(
 		std::unique_ptr<DigitalPinSetAccess> &&dpsa,
