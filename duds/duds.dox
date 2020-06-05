@@ -122,15 +122,17 @@ Supported devices are listed on the @ref SupDev page.
     - Variant (header only)
   - Build configuration options include Boost directories and variations on the names of the Boost library binaries.
   - Default configuration is for a regular Boost build that is installed to default paths. This works on Gentoo Linux when Boost is installed by Portage.
-  - Raspbian, Debian, and Ubuntu need build configuration setting BOOSTTAG= (equals empty string) given to SCons. This changes the expected name of the Boost libraries; these Linux distributions do not use the default names from the Boost build.
+  - Raspberry Pi OS, Raspbian, Debian, and Ubuntu need build configuration setting "BOOSTTAG=" (equals empty string) given to SCons. This changes the expected name of the Boost libraries; these Linux distributions do not use the default names from the Boost build.
   - Windows will need several build options because there is no standard install that I know about. DUDS isn't useful on Windows at the moment, so don't worry about it.
 - Build host
   - Linux
+    - Raspberry Pi OS, Raspbian, Debian, and Ubuntu need build configuration setting "BOOSTTAG=" (equals empty string) given to SCons. This changes the expected name of the Boost libraries; these Linux distributions do not use the default names from the Boost build.
+    - Gentoo works with the default configuration on a normal Gentoo install.
     - Parallel builds work best with 1GB RAM per job and some swap space.
       - Using "-j4" on a Raspberry Pi 2 or 3 isn't helpful. Using "-j2" needs swap space, but may be faster than "-j1", the default.
     - Builds tested mostly on armv6 and amd64.
     - Time for a complete debug build:
-      - Raspberry Pi Zero: over an hour and a half
+      - Raspberry Pi Zero: about two and a half hours
       - Raspberry Pi 3 Model B: getting close to half an hour with -j1 (default).
   - Windows
     - Not yet
