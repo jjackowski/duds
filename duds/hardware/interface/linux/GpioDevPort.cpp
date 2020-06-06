@@ -328,7 +328,7 @@ public:
 };
 
 /**
- * Implements using a two gpiohandle_requests object for working with multiple
+ * Implements using two gpiohandle_requests object for working with multiple
  * pins.
  * @author  Jeff Jackowski
  */
@@ -385,7 +385,6 @@ public:
 	}
 	virtual void outputOffset(int chipFd, std::uint32_t offset, bool state) {
 		bool rem = RemoveOffset(inReq, offset);
-		// saw a transient error on this line, but don't know the cause
 		assert(rem);
 		CloseIfOpen(inReq);
 		AddOffset(outReq, offset);
@@ -409,7 +408,9 @@ public:
 		length = inReq.lines;
 	}
 	virtual void write(int chipFd) {
-		SetOutput(chipFd, outReq);
+		if (outReq.lines) {
+			SetOutput(chipFd, outReq);
+		}
 	}
 	virtual void write(int chipFd, std::uint32_t offset, bool state) {
 		int idx = FindOffset(outReq, offset);
@@ -634,7 +635,8 @@ void GpioDevPort::madeAccess(DigitalPinSetAccess &acc) {
 				pid,
 				(pe.conf.options & DigitalPinConfig::OutputState) > 0
 			);
-		} // pin could be configured with DirImmaterial
+		}
+		assert(pe.conf.options & DigitalPinConfig::DirMask);
 	}
 	portData(acc).pointer = igr;
 }
@@ -753,14 +755,21 @@ void GpioDevPort::outputImpl(
 	// loop through all pins to alter
 	std::vector<unsigned int>::const_iterator piter = pvec.begin();
 	std::vector<bool>::const_iterator siter = state.begin();
+	int outs = 0;
 	for (; piter != pvec.end(); ++piter, ++siter) {
-		// configure the port data; no output happens yet
-		gr->outputState(*piter, *siter);
+		// configured for output? might be changing state ahead of config change
+		if (pins[*piter].conf.options & DigitalPinConfig::DirOutput) {
+			// configure the port data; no output happens yet
+			gr->outputState(*piter, *siter);
+			++outs;
+		}
 		// store new state
 		pins[*piter].conf.options.setTo(DigitalPinConfig::OutputState, *siter);
 	}
-	// send output
-	gr->write(chipFd);
+	// send output if already in output state
+	if (outs) {
+		gr->write(chipFd);
+	}
 } catch (PinError &pe) {
 	pe << boost::errinfo_file_name(devpath);
 	throw;
