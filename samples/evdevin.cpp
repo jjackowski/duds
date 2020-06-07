@@ -99,6 +99,7 @@ try {
 		}
 	}
 	duds::os::linux::EvdevInput evin;
+	duds::os::linux::InputHandlersSptr inhan = evin.makeConnectedHandlers();
 	try {
 		evin.open(devpath);
 	} catch (duds::os::linux::EvdevFileOpenError &) {
@@ -112,7 +113,7 @@ try {
 	int cnt = 0;
 	for (auto event : events) {
 		if (evin.hasEvent(event)) {
-			evin.inputConnect(event, &show);
+			inhan->connect(event, &show);
 			std::cout << "Found event " << event << std::endl;
 			++cnt;
 		}

@@ -19,32 +19,6 @@
 
 namespace duds { namespace os { namespace linux {
 
-std::string EventTypeCode::typeName() const noexcept {
-	return typeName(std::string());
-}
-
-std::string EventTypeCode::typeName(const std::string &unknown) const noexcept {
-	const char *str = libevdev_event_type_get_name(type);
-	if (str) {
-		return str;
-	} else {
-		return unknown;
-	}
-}
-
-std::string EventTypeCode::codeName() const noexcept {
-	return codeName(std::string());
-}
-
-std::string EventTypeCode::codeName(const std::string &unknown) const noexcept {
-	const char *str = libevdev_event_code_get_name(type, code);
-	if (str) {
-		return str;
-	} else {
-		return unknown;
-	}
-}
-
 EvdevInput::EvdevInput() : fd(-1) { }
 
 EvdevInput::EvdevInput(const std::string &path) {
@@ -74,7 +48,7 @@ void EvdevInput::open(const std::string &path) {
 }
 
 EvdevInput::EvdevInput(EvdevInput &&e) :
-receivers(std::move(e.receivers)),
+defReceiver(std::move(e.defReceiver)),
 dev(e.dev),
 fd(e.fd) {
 	e.dev = nullptr;
@@ -91,7 +65,7 @@ EvdevInput::~EvdevInput() {
 }
 
 EvdevInput &EvdevInput::operator=(EvdevInput &&old) noexcept {
-	receivers = std::move(old.receivers);
+	defReceiver = std::move(old.defReceiver);
 	dev = old.dev;
 	old.dev = nullptr;
 	fd = old.fd;
@@ -144,16 +118,9 @@ void EvdevInput::respondToNextEvent() {
 		);
 		if (result == LIBEVDEV_READ_STATUS_SUCCESS) {
 			EventTypeCode etc(ie.type, ie.code);
-			InputMap::const_iterator iter = receivers.find(etc);
-			const InputSignal *is;
-			if (iter != receivers.end()) {
-				is = &iter->second;
-			} else {
-				is = &defReceiver;
-			}
 			// don't let input handlers prevent handling all the input
 			try {
-				(*is)(etc, ie.value);
+				defReceiver(etc, ie.value);
 			} catch (...) { }
 		}
 	} while ((result >= 0) && (libevdev_has_event_pending(dev) > 0));
@@ -175,6 +142,21 @@ const input_absinfo *EvdevInput::absInfo(unsigned int absEc) const {
 		);
 	}
 	return ia;
+}
+
+boost::signals2::connection EvdevInput::connect(const InputHandlersSptr &ihs) {
+	return defReceiver.connect(InputSignal::slot_type(
+		&InputHandlers::handleEvent,
+		ihs.get(),
+		_1,
+		_2
+	).track_foreign(ihs));
+}
+
+InputHandlersSptr EvdevInput::makeConnectedHandlers() {
+	InputHandlersSptr ihs = std::make_shared<InputHandlers>();
+	connect(ihs);
+	return ihs;
 }
 
 } } }

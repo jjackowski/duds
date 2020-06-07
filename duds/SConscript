@@ -12,13 +12,13 @@ LinuxIfSource = Glob('hardware/interface/linux/[A-FH-Z]*cpp')
 if env['Use_GpioDevPort']:
 	LinuxIfSource += Glob('hardware/interface/linux/G*cpp')
 
-LinuxOsSource = Glob('os/linux/[A-DF-Z]*cpp')
+LinuxOsSource = Glob('os/linux/[A-DF-HJ-Z]*cpp')
 if env['Use_Evdev']:
 	env.Append(
 		CPPPATH = '$EVDEVINC',
 		LIBS = 'evdev'
 	)
-	LinuxOsSource += Glob('os/linux/E*cpp')
+	LinuxOsSource += Glob('os/linux/[EI]*cpp')
 
 targets = [
 	# include all source files in the DUDS library using a very simple method

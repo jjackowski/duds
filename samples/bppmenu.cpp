@@ -179,6 +179,7 @@ class MenuViews {
 	menu::MenuViewSptr subs[16][16];
 	menu::MenuViewSptr curr;
 	graphics::BppStringCacheSptr strcache;
+	duds::os::linux::InputHandlersSptr inputHandlers;
 public:
 	duds::ui::menu::renderers::BppMenuRenderer renderer;
 	duds::ui::Path path;
@@ -227,33 +228,46 @@ public:
 		psgen.currentFooter("]");
 		//configure input
 		if (input) {
-			input->inputConnect(
+			inputHandlers = input->makeConnectedHandlers();
+			inputHandlers->connect(
 				duds::os::linux::EventTypeCode(EV_KEY, KEY_UP),
 				std::bind(&MenuViews::inputUp, this, std::placeholders::_2)
 			);
-			input->inputConnect(
+			inputHandlers->connect(
 				os::EventTypeCode(EV_KEY, KEY_PAGEUP),
 				std::bind(&MenuViews::inputPageUp, this, std::placeholders::_2)
 			);
-			input->inputConnect(
+			inputHandlers->connect(
 				os::EventTypeCode(EV_KEY, KEY_DOWN),
 				std::bind(&MenuViews::inputDown, this, std::placeholders::_2)
 			);
-			input->inputConnect(
+			inputHandlers->connect(
 				os::EventTypeCode(EV_KEY, KEY_PAGEDOWN),
 				std::bind(&MenuViews::inputPageDown, this, std::placeholders::_2)
 			);
-			input->inputConnect(
+			inputHandlers->connect(
+				os::EventTypeCode(EV_KEY, KEY_HOME),
+				std::bind(&MenuViews::inputHome, this, std::placeholders::_2)
+			);
+			inputHandlers->connect(
+				os::EventTypeCode(EV_KEY, KEY_END),
+			std::bind(&MenuViews::inputEnd, this, std::placeholders::_2)
+			);
+			inputHandlers->connect(
 				os::EventTypeCode(EV_KEY, KEY_ENTER),
 				std::bind(&MenuViews::inputChose, this, std::placeholders::_2)
 			);
-			input->inputConnect(
+			inputHandlers->connect(
 				os::EventTypeCode(EV_KEY, KEY_LEFT),
 				std::bind(&MenuViews::inputBack, this, std::placeholders::_2)
 			);
-			input->inputConnect(
+			inputHandlers->connect(
 				os::EventTypeCode(EV_KEY, KEY_RIGHT),
 				std::bind(&MenuViews::inputForward, this, std::placeholders::_2)
+			);
+			inputHandlers->connect(
+				os::EventTypeCode(EV_KEY, KEY_ESC),
+				std::bind(&signalHandler, 0)
 			);
 		}
 	}
@@ -275,6 +289,16 @@ public:
 	void inputPageDown(int val) {
 		if (val > 0) {
 			curr->backward(renderer.maxVisible());
+		}
+	}
+	void inputHome(int val) {
+		if (val > 0) {
+			curr->jumpToFirst();
+		}
+	}
+	void inputEnd(int val) {
+		if (val > 0) {
+			curr->jumpToLast();
 		}
 	}
 	void inputChose(int val) {
@@ -615,10 +639,12 @@ try {
 				std::cerr << "Failed to grab input device." << std::endl;
 			}
 		}
-		einput->inputConnect(
-			os::EventTypeCode(EV_KEY, KEY_ESC),
+		/*
+		einput->connect(
+			//os::EventTypeCode(EV_KEY, KEY_ESC),
 			std::bind(&signalHandler, 0)
 		);
+		*/
 	}
 
 	// load fonts

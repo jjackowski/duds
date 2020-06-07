@@ -8,92 +8,19 @@
  * Copyright (C) 2020  Jeff Jackowski
  */
 #include <libevdev/libevdev.h>
-#include <boost/signals2/signal.hpp>
 #include <duds/os/linux/Poller.hpp>
+#include <duds/os/linux/InputHandlers.hpp>
 
 namespace duds { namespace os { namespace linux {
 
 /**
- * Combines an event type and an event code for the purpose of using a
- * combination of both to identify an input receiver.
- */
-union EventTypeCode {
-	struct {
-		/**
-		 * An event type, such as EV_KEY, EV_ABS, or EV_REL.
-		 */
-		std::uint16_t type;
-		/**
-		 * An event code, such as KEY_A, ABS_X, or REL_Y.
-		 */
-		std::uint16_t code;
-	};
-	/**
-	 * The combined event type and code.
-	 */
-	std::uint32_t typecode;
-	/**
-	 * Makes this type trivially constructable.
-	 */
-	EventTypeCode() = default;
-	/**
-	 * Constructs an EventTypeCode pre-filled with an event type and code.
-	 * @param t  The event type, such as EV_KEY, EV_ABS, or EV_REL.
-	 * @param c  The event code, such as KEY_A, ABS_X, or REL_Y.
-	 */
-	constexpr EventTypeCode(std::uint16_t t, std::uint16_t c) : type(t), code(c) { }
-	/**
-	 * Returns a string of the macro name for the event type, such as "EV_KEY",
-	 * or an empty string if the type is unknown or the strings are unavailable.
-	 * The strings are provided by libevdev_event_type_get_name().
-	 */
-	std::string typeName() const noexcept;
-	/**
-	 * Returns a string of the macro name for the event type, such as "EV_KEY",
-	 * or the given string if the type is unknown or the strings are
-	 * unavailable. The strings are provided by libevdev_event_type_get_name().
-	 * @param unknown  The string to return if the type name is not provided by
-	 *                 libevdev.
-	 */
-	std::string typeName(const std::string &unknown) const noexcept;
-	/**
-	 * Returns a string of the macro name for the event code, such as "REL_Y",
-	 * or an empty string if the code is unknown or the strings are unavailable.
-	 * The strings are provided by libevdev_event_code_get_name().
-	 */
-	std::string codeName() const noexcept;
-	/**
-	 * Returns a string of the macro name for the event code, such as "REL_Y",
-	 * or the given string if the code is unknown or the strings are unavailable.
-	 * The strings are provided by libevdev_event_code_get_name().
-	 * @param unknown  The string to return if the code name is not provided by
-	 *                 libevdev.
-	 */
-	std::string codeName(const std::string &unknown) const noexcept;
-	/**
-	 * Less-than comparison for EventTypeCode to allow it to be used as a key in
-	 * a container class.
-	 */
-	constexpr bool operator < (EventTypeCode etc) const {
-		return typecode < etc.typecode;
-	}
-	/**
-	 * Obvious equality operator.
-	 */
-	constexpr bool operator == (EventTypeCode etc) const {
-		return typecode == etc.typecode;
-	}
-	/**
-	 * Obvious inequality operator.
-	 */
-	constexpr bool operator != (EventTypeCode etc) const {
-		return typecode != etc.typecode;
-	}
-};
-
-
-/**
  * Handles getting input from a specific input device using libevdev.
+ * A single InputSignal processes all input events from the device. If
+ * InputSignals for specific events are needed, use InputHandlers. These
+ * objects can be connected with custom code, or with
+ * connect(const InputHandlersSptr &). An InputHandlers object may be used
+ * with multiple EvdevInput objects.
+ *
  * This class is not thread-safe, but this should not be an issue.
  *
  * If used with Poller, this object @b must be managed by a std::shared_ptr.
@@ -105,25 +32,8 @@ class EvdevInput :
 	public PollResponder,
 	public std::enable_shared_from_this<EvdevInput>
 {
-public:
 	/**
-	 * The signal type that will handle input events.
-	 * @param etc  The event type and event code of the input event to handle.
-	 * @param val  The value of the input.
-	 */
-	typedef boost::signals2::signal<void(EventTypeCode etc, std::int32_t val)>
-		InputSignal;
-private:
-	/**
-	 * A type that relates events to signal handlers.
-	 */
-	typedef std::map<EventTypeCode, InputSignal>  InputMap;
-	/**
-	 * Relates events to signal handlers.
-	 */
-	InputMap receivers;
-	/**
-	 * Handles input for events that are not listed in the @a receivers InputMap.
+	 * Handles all input events.
 	 */
 	InputSignal defReceiver;
 	/**
@@ -155,8 +65,10 @@ public:
 	EvdevInput(const std::string &path);
 	/**
 	 * Move constructor.
+	 * @post  The InputSignal, used to handle input events, within @a old will
+	 *        no longer be usable until after it is move-assigned.
 	 */
-	EvdevInput(EvdevInput &&e);
+	EvdevInput(EvdevInput &&old);
 	/**
 	 * Creates a EvdevInput object managed by a std::shared_ptr.
 	 * @param path  The device file. This is normally some variation of
@@ -176,6 +88,8 @@ public:
 	~EvdevInput();
 	/**
 	 * Move assignment.
+	 * @post  The InputSignal, used to handle input events, within @a old will
+	 *        no longer be usable until after it is move-assigned.
 	 */
 	EvdevInput &operator = (EvdevInput &&old) noexcept;
 	/**
@@ -294,112 +208,39 @@ public:
 	 */
 	const input_absinfo *absInfo(unsigned int absEc) const;
 	/**
-	 * Make a connection to an input event signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
-	 * for an overview of the whole boost::singals2 system.
-	 * @param etc  The event type and code that will be forwarded to the
-	 *             provided slot function.
+	 * Connect the given InputHandlers to the end of the input event signal.
+	 * @post  When the last reference to the InputHandlers object is lost, it
+	 *        will be automaticlly removed from the event signal.
+	 * @param ihs  The InputHandlers object that should process events from
+	 *             this input device.
 	 */
-	boost::signals2::connection inputConnect(
-		EventTypeCode etc,
-		const InputSignal::slot_type &slot,
-		boost::signals2::connect_position at = boost::signals2::at_back
-	) {
-		return receivers[etc].connect(slot, at);
-	}
+	boost::signals2::connection connect(const InputHandlersSptr &ihs);
 	/**
-	 * Make a connection to an input event signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
-	 * for an overview of the whole boost::singals2 system.
-	 * @param etc  The event type and code that will be forwarded to the
-	 *             provided slot function.
+	 * Makes a new InputHandlers object, connects it to the input event signal
+	 * for this device, and retruns the object.
+	 * @post  When the last reference to the InputHandlers object is lost, it
+	 *        will be automaticlly removed from the event signal.
 	 */
-	boost::signals2::connection inputConnect(
-		EventTypeCode etc,
-		const InputSignal::group_type &group,
-		const InputSignal::slot_type &slot,
-		boost::signals2::connect_position at = boost::signals2::at_back
-	) {
-		return receivers[etc].connect(group, slot, at);
-	}
+	InputHandlersSptr makeConnectedHandlers();
 	/**
-	 * Make a connection to an input event signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
-	 * for an overview of the whole boost::singals2 system.
-	 * @param etc  The event type and code that will be forwarded to the
-	 *             provided slot function.
-	 */
-	boost::signals2::connection inputConnectExtended(
-		EventTypeCode etc,
-		const InputSignal::extended_slot_type &slot,
-		boost::signals2::connect_position at = boost::signals2::at_back
-	) {
-		return receivers[etc].connect_extended(slot, at);
-	}
-	/**
-	 * Make a connection to an input event signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
-	 * for an overview of the whole boost::singals2 system.
-	 * @param etc  The event type and code that will be forwarded to the
-	 *             provided slot function.
-	 */
-	boost::signals2::connection inputConnectExtended(
-		EventTypeCode etc,
-		const InputSignal::group_type &group,
-		const InputSignal::extended_slot_type &slot,
-		boost::signals2::connect_position at = boost::signals2::at_back
-	) {
-		return receivers[etc].connect_extended(group, slot, at);
-	}
-	/**
-	 * Disconnect a group from an input event signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
-	 * for an overview of the whole boost::singals2 system.
-	 * @param etc  The event type and code that will be forwarded to the
-	 *             provided slot function.
-	 */
-	void inputDisconnect(
-		EventTypeCode etc,
-		const InputSignal::group_type &group
-	) {
-		receivers[etc].disconnect(group);
-	}
-	/**
-	 * Disconnect a slot from an input event signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
-	 * for an overview of the whole boost::singals2 system.
-	 * @param etc  The event type and code that will be forwarded to the
-	 *             provided slot function.
-	 */
-	template<typename Slot>
-	void inputDisconnect(EventTypeCode etc, const Slot &slotFunc) {
-		receivers[etc].disconnect(slotFunc);
-	}
-	/**
-	 * Make a connection to the default input event signal.
+	 * Make a connection to the input event signal.
 	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
 	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
-	boost::signals2::connection inputConnect(
+	boost::signals2::connection connect(
 		const InputSignal::slot_type &slot,
 		boost::signals2::connect_position at = boost::signals2::at_back
 	) {
 		return defReceiver.connect(slot, at);
 	}
 	/**
-	 * Make a connection to the default input event signal.
+	 * Make a connection to the input event signal.
 	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
 	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
-	boost::signals2::connection inputConnect(
+	boost::signals2::connection connect(
 		const InputSignal::group_type &group,
 		const InputSignal::slot_type &slot,
 		boost::signals2::connect_position at = boost::signals2::at_back
@@ -407,24 +248,24 @@ public:
 		return defReceiver.connect(group, slot, at);
 	}
 	/**
-	 * Make a connection to the default input event signal.
+	 * Make a connection to the input event signal.
 	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
 	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
-	boost::signals2::connection inputConnectExtended(
+	boost::signals2::connection connectExtended(
 		const InputSignal::extended_slot_type &slot,
 		boost::signals2::connect_position at = boost::signals2::at_back
 	) {
 		return defReceiver.connect_extended(slot, at);
 	}
 	/**
-	 * Make a connection to the default input event signal.
+	 * Make a connection to the input event signal.
 	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
 	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
-	boost::signals2::connection inputConnectExtended(
+	boost::signals2::connection connectExtended(
 		const InputSignal::group_type &group,
 		const InputSignal::extended_slot_type &slot,
 		boost::signals2::connect_position at = boost::signals2::at_back
@@ -432,25 +273,31 @@ public:
 		return defReceiver.connect_extended(group, slot, at);
 	}
 	/**
-	 * Disconnect a group from the default input event signal.
+	 * Disconnect a group from the input event signal.
 	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
 	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
-	void inputDisconnect(
+	void disconnect(
 		const InputSignal::group_type &group
 	) {
 		defReceiver.disconnect(group);
 	}
 	/**
-	 * Disconnect a slot from the default input event signal.
+	 * Disconnect a slot from the input event signal.
 	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
 	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	template<typename Slot>
-	void inputDisconnect(const Slot &slotFunc) {
+	void disconnect(const Slot &slotFunc) {
 		defReceiver.disconnect(slotFunc);
+	}
+	/**
+	 * Disconnects all slots from the input event signal.
+	 */
+	void disconnectAll() {
+		defReceiver.disconnect_all_slots();
 	}
 };
 
