@@ -37,6 +37,11 @@
  */
 
 /**
+ * @example mcp9808test.cpp
+ * Outputs temperature data from a MCP9808 on stdout.
+ */
+
+/**
  * @example pinconfig.cpp
  * Reads an I/O pin configuration file, interprets the file using
  * PinConfiguration, and outputs a human readable result.

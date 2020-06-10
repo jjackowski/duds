@@ -16,13 +16,13 @@
 namespace duds { namespace hardware { namespace devices { namespace instruments {
 
 /**
- * Preliminary support for TI's INA219.
+ * Preliminary support for TI's INA219 voltage and current sensor.
  * This device measures two voltages in a way that allows computation of
  * current and power. The current must pass through a shunt resistor. The
  * voltage across that resistor, and the voltage between there and ground,
  * is measured. This class can compute the power and current based on these
  * measurements, but it needs to know the shunt resistance for these
- * computations
+ * computations.
  *
  * Normally uses address 0x40. Does not use PEC; not really a SMBus device.
  *

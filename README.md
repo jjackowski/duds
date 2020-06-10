@@ -69,6 +69,7 @@ Right now, only Linux. Hardware access is only tested on Raspberry Pis, but the 
 	- Temperature sensors and thermal cameras
 		- AM2320
 		- AMG88xx
+		- MCP9808
 	- Voltage
 		- INA219
 

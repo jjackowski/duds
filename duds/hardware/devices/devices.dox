@@ -91,6 +91,7 @@ None of the drivers here properly report brightness in physical units. The datas
 
 - @ref duds::hardware::devices::instruments::AM2320 "AM2320": temperature and relative humidity
 - @ref duds::hardware::devices::instruments::AMG88xx "AMG88xx": temperature and thermal camera
+- @ref duds::hardware::devices::instruments::MCP9808 "MCP9808": temperature
 
 @subsection SupDevInstVolt  Voltage
 
