@@ -149,6 +149,7 @@ try {
 			duds::ui::graphics::ConstBppImageSptr label = bsc.text(inbuf);
 			std::cout << ", size " << label->width() << 'x' << label->height() <<
 			std::endl;
+			assert(label->dimensions() == font->lineDimensions(inbuf));
 			if (uselcd) {
 				const duds::ui::graphics::ImageDimensions &dim = lcd->dimensions();
 				duds::ui::graphics::BppImage frame(dim);

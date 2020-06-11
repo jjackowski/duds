@@ -212,6 +212,20 @@ public:
 	/*
 	BppImageSptr renderSingleLine(const std::string &text, Flags flags = AlignLeft);
 	*/
+	/**
+	 * Returns the dimensions of a single-line string without the overhead of
+	 * rendering the string.
+	 * @param text   The text to consider.
+	 * @param flags  Either zero, for a potentially variable width, or
+	 *               FixedWidth to produce a width where each glyph is the
+	 *               width of the widest glyph in the text.
+	 * @throw        GlyphNotFoundError  A glyph in @a text is not provided
+	 *                                   by the font.
+	 */
+	ImageDimensions lineDimensions(
+		const std::string &text,
+		Flags flags = Flags::Zero()
+	);
 };
 
 typedef std::shared_ptr<BppFont>  BppFontSptr;

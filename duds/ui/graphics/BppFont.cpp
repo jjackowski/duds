@@ -276,4 +276,43 @@ try {
 	throw;
 }
 
+ImageDimensions BppFont::lineDimensions(const std::string &text, Flags flags)
+try {
+	ImageDimensions dim(0, 0);
+	{
+		std::lock_guard<duds::general::Spinlock> lock(block);
+		for (auto c : text) {
+			// find next glyph
+			std::unordered_map<char32_t, ConstBppImageSptr>::const_iterator giter =
+				glyphs.find(c);
+			// no glyph?
+			if (giter == glyphs.end()) {
+				// try to get it again; may throw
+				ConstBppImageSptr glyph = renderGlyph(c);
+				// store it in the cache
+				glyphs[c] = std::move(glyph);
+			}
+			// height
+			dim.h = std::max(dim.h, giter->second->height());
+			// width -- fixed?
+			if (flags & (FixedWidth | FixedWidthPerLine)) {
+				// store max width so far rather than cumulative width
+				dim.w = std::max(dim.w, giter->second->width());
+			} else {
+				// update cumulative width
+				dim.w += giter->second->width();
+			}
+		}
+	}
+	// fixed width?
+	if (flags & (FixedWidth | FixedWidthPerLine)) {
+		// compute total width
+		dim.w = dim.w * text.size();
+	}
+	return dim;
+} catch (boost::exception &be) {
+	be << String(text);
+	throw;
+}
+
 } } }
