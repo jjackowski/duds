@@ -568,7 +568,7 @@
 
 /* Character 79, glyph O */
 \79 5 7
-	0123 { // distinct from zero
+	0123 {	// distinct from zero
 0	 XX   // 0
 1	X  X  // 1
 2	X  X  // 2
