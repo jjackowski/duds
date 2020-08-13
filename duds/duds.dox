@@ -38,7 +38,7 @@ A few files in duds/general have code I did not write. They are marked with the 
 @section DUDSgoal  Goals
 
 - Be a well designed C++ happy library that is multi-platform where applicable.
-- Take advantage of C++14.
+- Take advantage of C++17.
 - Support multi-threaded programs.
 - Support dynamic resource usage.
 - Favor correctness over performance.
@@ -77,7 +77,7 @@ The documentation is generated with the help of [Doxygen](http://www.doxygen.org
 
 At present, DUDS only supports Linux, including kernel versions 3.6 through 4.19, and likely newer. The kernel's user-space interfaces for hardware may change and break support, but that doesn't happen on a regular basis. The hardware interface libraries are written to allow multiple implementations, but I have no other operating systems to test with, nor the inclination to make an implementation for another system.
 
-I plan on supporting data representations and network communications on Windows as well as Linux, and hopefully this will work on other systems, too. The intention is to allow front-ends on a variety of platforms. However, since my only Windows running computer is an old thing with XP and Visual Studio 2005, I'm not yet sure how I'm going to build DUDS on Windows. Also, I'm not giving up C++14 to build on Windows and I'm not sure if VS2015 supports all the C++14 features used in the source, but it should at least have almost all of the support needed. Earlier versions of Visual Studio all lack required C++14 features.
+I plan on supporting data representations and network communications on Windows as well as Linux, and hopefully this will work on other systems, too. The intention is to allow front-ends on a variety of platforms. However, since my only Windows running computer is an old thing with XP and Visual Studio 2005, I'm not yet sure how I'm going to build DUDS on Windows. Also, I'm not giving up C++17 to build on Windows and I'm not sure if VS2015 supports all the C++17 features used in the source, but it should at least have almost all of the support needed. Earlier versions of Visual Studio all lack required C++14 features.
 
 All development will be on Linux with gcc for a while longer, and I'm in no rush to change that.
 
@@ -103,7 +103,7 @@ Supported devices are listed on the @ref SupDev page.
 - Build configuration options: run "scons -h"
   - The configuration can be changed for one build by specifying an option as an argument to scons.
   - To keep a configuration saved, set variables with the same name of the configuration options in Python syntax in localbuildconfig.py in the same directory as SConstruct.
-- gcc 9.2.x, 7.3.x, 6.4.x
+- gcc 9.2.x, 7.3.x
   - Other versions are untested. Older ones will likely fail.
   - Any output for ARM processors from gcc 7.1 and newer will not link correctly with any output from earlier versions of gcc. There are @b huge warnings about this with gcc 6.4.0 and 7.3.0.
 - [Boost](http://www.boost.org/) version 1.62 or newer
@@ -136,13 +136,13 @@ Supported devices are listed on the @ref SupDev page.
       - Raspberry Pi 3 Model B: getting close to half an hour with -j1 (default).
   - Windows
     - Not yet
-    - VS2015 might be lacking some C++14 support needed by DUDS, and older versions will be lacking.
+    - VS2015 might be lacking some C++17 support needed by DUDS, and older versions will be lacking.
 
 @subsection DUDSbuildWord More Words!
 
-DUDS uses [SCons](http://scons.org/) 3.x as its build system, which is written in Python. Compiling and linking is done with gcc 6.4.x, 7.3.x, 9.2.x, or something similar.
+DUDS uses [SCons](http://scons.org/) 3.x as its build system, which is written in Python. Compiling and linking is done with gcc 7.3.x, 9.2.x, or something similar.
 
-The so-called C++14 standard, officially ISO/IEC 14882:2014, is used by DUDS. Use of features in newer C++ specifications is being avoided for now.
+The so-called C++17 standard, officially ISO/IEC 14882:2017, is used by DUDS. Use of features in newer C++ specifications is being avoided for now.
 
 The [Boost C++ library](http://www.boost.org/) is required. Version 1.62 or newer must be used. Version 1.65.1 or newer is best as it allows exceptions to include a stack trace. Boost's multiprecision library is used for 128-bit integer support when gcc's __int128 is not available, and for serializing 128-bit integers even when __int128 is available. This results in some notable differences in 128-bit integer support on 32 and 64 bit platforms, but maintains a serialization format that is identical across platforms when things like endianness and padding do not affect the results.
 

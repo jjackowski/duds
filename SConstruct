@@ -73,8 +73,8 @@ toolenv = Environment(
 	],
 	# options passed to C++ compiler
 	CXXFLAGS = [
-		'-std=gnu++14'  # allow gcc extentions to C++, like __int128
-		#'-std=c++11'    # no GNU extensions, no 128-bit integer
+		'-std=gnu++17'  # allow gcc extentions to C++, like __int128
+		#'-std=c++17'    # no GNU extensions, no 128-bit integer
 	],
 	LIBS = [
 		'libboost_program_options${BOOSTTOOLSET}${BOOSTTAG}${BOOSTABI}${BOOSTVER}',
@@ -146,8 +146,8 @@ env = Environment(
 	],
 	# options passed to C++ compiler
 	CXXFLAGS = [
-		'-std=gnu++14'  # allow gcc extentions to C++, like __int128
-		#'-std=c++14'    # no GNU extensions, no 128-bit integer
+		'-std=gnu++17'  # allow gcc extentions to C++, like __int128
+		#'-std=c++17'    # no GNU extensions, no 128-bit integer
 	],
 	# macros
 	CPPDEFINES = [
