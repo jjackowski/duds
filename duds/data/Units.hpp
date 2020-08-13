@@ -29,8 +29,8 @@ namespace units {
 // base units
 constexpr Unit Ampere   (DUDS_UNIT_VALUE(1, 0, 0, 0, 0, 0, 0, 0, 0));
 constexpr Unit Candela  (DUDS_UNIT_VALUE(0, 1, 0, 0, 0, 0, 0, 0, 0));
-constexpr Unit Kilogram (DUDS_UNIT_VALUE(0, 0, 1, 0, 0, 0, 0, 0, 0));
-constexpr Unit Kelvin   (DUDS_UNIT_VALUE(0, 0, 0, 1, 0, 0, 0, 0, 0));
+constexpr Unit Kelvin   (DUDS_UNIT_VALUE(0, 0, 1, 0, 0, 0, 0, 0, 0));
+constexpr Unit Kilogram (DUDS_UNIT_VALUE(0, 0, 0, 1, 0, 0, 0, 0, 0));
 constexpr Unit Meter    (DUDS_UNIT_VALUE(0, 0, 0, 0, 1, 0, 0, 0, 0));
 constexpr Unit Mole     (DUDS_UNIT_VALUE(0, 0, 0, 0, 0, 1, 0, 0, 0));
 constexpr Unit Second   (DUDS_UNIT_VALUE(0, 0, 0, 0, 0, 0, 1, 0, 0));
@@ -61,4 +61,3 @@ constexpr Unit Katal    (DUDS_UNIT_VALUE( 0,  0,  0,  0,  0,  1, -1,  0,  0));
 } } }
 
 #endif        //  #ifndef UNITS_HPP
-
