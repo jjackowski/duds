@@ -158,6 +158,20 @@ struct ImageDimensions {
 		return (loc.x >= 0) && (loc.x < w) && (loc.y >= 0) && (loc.y < h);
 	}
 	/**
+	 * Returns true if the given dimensions are not larger than this object's
+	 * dimensions.
+	 */
+	constexpr bool fits(const ImageDimensions &id) const {
+		return (id.w <= w) && (id.h <= h);
+	}
+	/**
+	 * Returns true if the given dimensions at the given location relative to
+	 * this object can fit within this object's dimentions.
+	 */
+	constexpr bool fits(const ImageLocation &loc, const ImageDimensions &id) const {
+		return ((loc.x + id.w) <= w) && ((loc.y + id.h) <= h);
+	}
+	/**
 	 * Swaps the dimensions's axes.
 	 */
 	void swapAxes() {
@@ -473,11 +487,6 @@ public:
 		 * Obvious copy constructor.
 		 */
 		ConstPixel(const ConstPixel &) = default;
-		/**
-		 * Constructs a ConstPixel to reference the same location of the same
-		 * image as the given Pixel object.
-		 */
-		ConstPixel(const Pixel &p);
 		/**
 		 * Construct a ConstPixel to be the end iterator of the given image.
 		 */
@@ -919,7 +928,7 @@ public:
 			}
 		};
 		/**
-		 * Dereferences the ConstPixel; provides the state of the pixel.
+		 * Dereferences the Pixel; provides the state of the pixel.
 		 */
 		BoolProxy operator*() {
 			return BoolProxy(this);
@@ -1099,6 +1108,10 @@ public:
 	const std::vector<PixelBlock> &data() const {
 		return img;
 	}
+	/**
+	 * Returns true if the contents of the two images are identical.
+	 */
+	bool operator == (const BppImage &other) const;
 	/**
 	 * Returns a pointer to the start of the given line.
 	 * @param py  The Y-coordinate of the line.
@@ -1651,7 +1664,7 @@ public:
 	 *            into an image one PixelBlock at a time. The overhead may not
 	 *            make this function worthwhile unless a PixelBlock is large
 	 *            enough, and 32-bits might not be large enough. The algorithm
-	 *            could be adapted for use in the write() functions. 
+	 *            could be adapted for use in the write() functions.
 	 * @param ul  The upper-left location of the box.
 	 * @param id  The dimensions of the box.
 	 * @param op  The bit-wise operation to perform to draw the box. One

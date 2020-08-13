@@ -142,6 +142,36 @@ const BppImage::PixelBlock *BppImage::buffer() const {
 	return &(img[0]);
 }
 
+bool BppImage::operator == (const BppImage &other) const {
+	// both empty?
+	if (dim.empty() && other.dim.empty()) {
+		return true;
+	}
+	// dimension mismatch?
+	if (dim != other.dim) {
+		return false;
+	}
+	// produce mask for right side of image; might cover whole image
+	PixelBlock mask = PixelBlock(-1) >>
+		(sizeof(PixelBlock) * 8) - (dim.w % (sizeof(PixelBlock) * 8));
+	// traverse image data
+	const PixelBlock *spot = &(img[0]), *otherspot = &(other.img[0]);
+	for (int y = 0; y < dim.h; ++y, ++spot, ++otherspot) {
+		// visit all but rightmost block; may visit nothing
+		for (int x = 0; x < (blocksPerLine() - 1); ++x, ++spot, ++otherspot) {
+			if (*spot != *otherspot) {
+				return false;
+			}
+		}
+		// compare rightmost block
+		if ((*spot & mask) != (*otherspot & mask)) {
+			return false;
+		}
+	}
+	// everything matches
+	return true;
+}
+
 const BppImage::PixelBlock *BppImage::bufferLine(int py) const {
 	if ((py > dim.h) || (py < 0)) {
 		DUDS_THROW_EXCEPTION(ImageBoundsError() <<
@@ -483,12 +513,12 @@ void BppImage::drawBox(
 	if (!(ul.x % (sizeof(PixelBlock) * 8)) && ((stop - ul.x) >= (sizeof(PixelBlock) * 8))) {
 		// a whole block will be used
 		ul.x += sizeof(PixelBlock) * 8;
-		mask = -1;
+		mask = ones;
 	} else {
 		// first bit
-		mask = 1 << (ul.x % (sizeof(PixelBlock) * 8));
+		mask = PixelBlock(1) << (ul.x % (sizeof(PixelBlock) * 8));
 		modmask = mask << 1;
-		// is there a way to optimize out the loop?
+		// is there a way to optimize out the loop?  yes
 		for (++ul.x; modmask && (ul.x < stop); ++ul.x) {
 			mask |= modmask;
 			modmask <<= 1;
@@ -507,15 +537,12 @@ void BppImage::drawBox(
 		// compute the next mask
 		if ((stop - ul.x) >= (sizeof(PixelBlock) * 8)) {
 			// a whole block will be used
-			ul.x += sizeof(PixelBlock) * 8;
-			mask = -1;
+			mask = ones;
 		} else {
-			// is there a way to optimize out the loop?
-			for (mask = 1, modmask = 2, ++ul.x; modmask && (ul.x < stop); ++ul.x) {
-				mask |= modmask;
-				modmask <<= 1;
-			}
+			mask = ones >>
+				(sizeof(PixelBlock) * 8) - (ul.x % (sizeof(PixelBlock) * 8));
 		}
+		ul.x += sizeof(PixelBlock) * 8;
 		// write next block changes
 		offset = 0;
 		for (int loop = 0; loop < id.h; offset += blocksPerLine(), ++loop) {
@@ -570,9 +597,6 @@ src(const_cast<BppImage*>(img)) {
 	}
 	*/
 }
-
-BppImage::ConstPixel::ConstPixel(const BppImage::Pixel &p) :
-ConstPixel((ConstPixel)p) { }
 
 BppImage::ConstPixel &BppImage::ConstPixel::operator = (
 	const BppImage::Pixel &p
