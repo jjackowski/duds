@@ -116,7 +116,13 @@ public:
 		}
 		// make a new connection
 		return iter->newCon = inst->newMeasurementConnect(
-			std::bind(&handleNewMeasure, this, _1, _2), at
+			std::bind(
+				&handleNewMeasure,
+				this,
+				std::placeholders::_1,
+				std::placeholders::_2
+			),
+			at
 		);
 	}
 	boost::signals2::connection newMeasurementSource(
@@ -133,7 +139,12 @@ public:
 		}
 		// make a new connection
 		return iter->newCon = inst->newMeasurementConnect(
-			group, std::bind(&handleNewMeasure, this, _1, _2), at
+			group, std::bind(&handleNewMeasure,
+				this,
+				std::placeholders::_1,
+				std::placeholders::_2
+			),
+			at
 		);
 	}
 	/**

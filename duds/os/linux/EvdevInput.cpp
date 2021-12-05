@@ -148,8 +148,8 @@ boost::signals2::connection EvdevInput::connect(const InputHandlersSptr &ihs) {
 	return defReceiver.connect(InputSignal::slot_type(
 		&InputHandlers::handleEvent,
 		ihs.get(),
-		_1,
-		_2
+		boost::placeholders::_1,
+		boost::placeholders::_2
 	).track_foreign(ihs));
 }
 
