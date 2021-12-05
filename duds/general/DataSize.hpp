@@ -57,7 +57,7 @@ typedef boost::error_info<struct Info_DataSizeBlocks, std::size_t>
 	throw boost::enable_current_exception(DataSizeConversionError()) << \
 			DataSizeSourceUnit(bits) << DataSizeTargetUnit(trgbits) << \
 			DataSizeBlocks(blocks) << \
-			boost::throw_function(BOOST_THROW_EXCEPTION_CURRENT_FUNCTION) << \
+			boost::throw_function(BOOST_CURRENT_FUNCTION) << \
 			boost::throw_file(__FILE__) << ::boost::throw_line((int)__LINE__) << \
 			duds::general::StackTrace(boost::stacktrace::stacktrace())
 #else
@@ -65,7 +65,7 @@ typedef boost::error_info<struct Info_DataSizeBlocks, std::size_t>
 	throw boost::enable_current_exception(DataSizeConversionError()) << \
 			DataSizeSourceUnit(bits) << DataSizeTargetUnit(trgbits) << \
 			DataSizeBlocks(blocks) << \
-			boost::throw_function(BOOST_THROW_EXCEPTION_CURRENT_FUNCTION) << \
+			boost::throw_function(BOOST_CURRENT_FUNCTION) << \
 			boost::throw_file(__FILE__) << ::boost::throw_line((int)__LINE__)
 #endif
 

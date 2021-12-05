@@ -17,6 +17,7 @@
 
 #include <boost/exception/exception.hpp>
 #include <boost/exception/info.hpp>
+#include <boost/current_function.hpp>
 #include <exception>
 
 #ifdef DUDS_ERRORS_TERSE
@@ -46,7 +47,7 @@
  */
 #define DUDS_THROW_EXCEPTION(x) \
 	::boost::throw_exception(::boost::enable_error_info(x) << \
-	::boost::throw_function(BOOST_THROW_EXCEPTION_CURRENT_FUNCTION) << \
+	::boost::throw_function(BOOST_CURRENT_FUNCTION) << \
 	::boost::throw_file(__FILE__) << ::boost::throw_line((int)__LINE__) << \
 	duds::general::StackTrace(boost::stacktrace::stacktrace()))
 #else
