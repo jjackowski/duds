@@ -16,6 +16,7 @@
 #include <shared_mutex>
 #include <vector>
 #include <map>
+#include <memory>
 
 namespace duds { namespace ui {
 

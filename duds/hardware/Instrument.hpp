@@ -12,7 +12,6 @@
 
 #include <duds/Something.hpp>
 #include <duds/data/Measurement.hpp>
-#include <duds/general/Errors.hpp>
 #include <duds/hardware/MeasurementSignalSource.hpp>
 //#include <boost/signals2/signal.hpp>
 //#include <boost/uuid/uuid.hpp>

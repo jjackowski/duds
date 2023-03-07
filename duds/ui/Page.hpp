@@ -11,6 +11,7 @@
 #define PAGE_HPP
 
 #include <memory>
+#include <string>
 
 namespace duds { namespace ui {
 

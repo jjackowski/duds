@@ -13,6 +13,7 @@
 #include <duds/general/BitFlags.hpp>
 #include <boost/noncopyable.hpp>
 #include <memory>
+#include <string>
 
 namespace duds { namespace ui { namespace menu {
 
