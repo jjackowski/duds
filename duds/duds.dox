@@ -98,15 +98,15 @@ Supported devices are listed on the @ref SupDev page.
 
 @subsection DUDSbuildList Long list
 
-- [SCons](http://scons.org/) 2.3 to 4.0 or so (the build isn't very picky about the version)
+- [SCons](http://scons.org/) 2.3 to 4.5 or so (the build isn't very picky about the version)
   - Python 2.7 or 3.x
 - Build configuration options: run "scons -h"
   - The configuration can be changed for one build by specifying an option as an argument to scons.
   - To keep a configuration saved, set variables with the same name of the configuration options in Python syntax in localbuildconfig.py in the same directory as SConstruct.
-- gcc 11.3.x, 9.2.x to 9.4.x, 7.3.x
+- gcc 12.3.x, 11.3.x, 9.2.x to 9.4.x, 7.3.x
   - Other versions are untested. Older ones will likely fail.
   - Any output for ARM processors from gcc 7.1 and newer will not link correctly with any output from earlier versions of gcc. There are @b huge warnings about this with gcc 6.4.0 and 7.3.0.
-- [Boost](http://www.boost.org/) version 1.62 or newer, tested to 1.76
+- [Boost](http://www.boost.org/) version 1.62 or newer, tested to 1.82
   - Boost libraries used:
     - Date_time
     - Exception (header only)

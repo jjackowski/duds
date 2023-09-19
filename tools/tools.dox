@@ -34,6 +34,10 @@ For archive file output, the name may have any non-whitespace character, but can
 - Tab using "\t".
 - Backslash using "\\".
 
+-------------------------------------------------------------------------------
+Doxygen 1.9.6 fails to parse and output the rest of this document correctly.
+Version 1.8.13 handled it correctly. Symptoms: the line of dashes above caused output of a literal "&lt;hr&gt;", and on one test run, generated a new sub-section tag for it, but no more HTML is generated.
+
 Names are intended to be stored using UTF-8, but only the decimal number escape sequence code has any code specific to UTF-8. No testing has been done to ensure proper UTF-8 support, so it should be considered broken. However, the archive file format supports strings up to 255 bytes long and is character encoding agnostic, so UTF-8 support shouldn't require changing the compiler's archive output.
 
 The name must be followed by any amount of any combination of whitespace and commas, then the width, followed by more whitespace and/or commas, and then the height. Following the height, all characters are ignored until an opening curly brace ('{'). That brace begins the image data.
