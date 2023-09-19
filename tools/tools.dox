@@ -36,9 +36,9 @@ For archive file output, the name may have any non-whitespace character, but can
 
 -------------------------------------------------------------------------------
 Doxygen 1.9.6 fails to parse and output the rest of this document correctly.
-Version 1.8.13 handled it correctly. Symptoms: the line of dashes above caused output of a literal "&lt;hr&gt;", and on one test run, generated a new sub-section tag for it, but no more HTML is generated.
+Version 1.8.13 handled it correctly. Symptoms: the line of dashes above caused output of a literal user readable version of the horizontal rule tag ("&lt;hr&gt;"), and on one test run, generated a new sub-section tag for it, but no more HTML is generated until near the end. Enough with this bug and back to the documentation.
 
-Names are intended to be stored using UTF-8, but only the decimal number escape sequence code has any code specific to UTF-8. No testing has been done to ensure proper UTF-8 support, so it should be considered broken. However, the archive file format supports strings up to 255 bytes long and is character encoding agnostic, so UTF-8 support shouldn't require changing the compiler's archive output.
+Names are stored using UTF-8, but only the decimal number escape sequence code has any code specific to UTF-8. This may change to make it easier to specify non-ASCII characters.
 
 The name must be followed by any amount of any combination of whitespace and commas, then the width, followed by more whitespace and/or commas, and then the height. Following the height, all characters are ignored until an opening curly brace ('{'). That brace begins the image data.
 
@@ -75,9 +75,11 @@ WirelessLAN
  * This comment will be found in C++ output files. The double-slash
  * comments will not.
  */
-WirelessLAN_commented  // the name, must be unique in the source file
-5, 8                   // width then height
+WirelessLAN_commented  // The name; must be unique in the source file.
+5, 8                   // Width then height.
     Completely ignored text. Better style-wise to use comments.
+    Done so that a row of numbers can be added to label the columns
+    of the image data.
     // No space before the start of the comment after '{', or it will
     // be the first row of the image.
 	01234 {// the number on this line is ignored, '{' starts image data
