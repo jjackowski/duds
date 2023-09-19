@@ -7,6 +7,9 @@
  *
  * Copyright (C) 2019  Jeff Jackowski
  */
+#ifndef BPPIMAGEERRORS_HPP
+#define BPPIMAGEERRORS_HPP
+
 #include <boost/exception/exception.hpp>
 #include <boost/exception/info.hpp>
 #include <exception>
@@ -110,7 +113,7 @@ typedef boost::error_info<struct Info_String, std::string> String;
 /**
  * A character, like one requested for rendering in a specific font.
  */
-typedef boost::error_info<struct Info_Character, wchar_t> Character;
+typedef boost::error_info<struct Info_Character, char32_t> Character;
 
 /**
  * The maximum size of a BppStringCache is zero. If allowed, rendered text
@@ -118,4 +121,21 @@ typedef boost::error_info<struct Info_Character, wchar_t> Character;
  */
 struct StringCacheZeroSize : ImageError { };
 
+/**
+ * A given string cache does not correspond to the given font.
+ */
+struct FontStringCacheMismatchError : ImageError { };
+
+/**
+ * A specified font is not present in the font pool.
+ */
+struct FontNotFoundError : ImageError { };
+
+/**
+ * The name of the font and is not present in the font pool.
+ */
+typedef boost::error_info<struct Info_FontName, std::string> FontName;
+
 } } }
+
+#endif        //  #ifndef BPPIMAGEERRORS_HPP

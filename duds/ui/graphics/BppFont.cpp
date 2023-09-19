@@ -11,6 +11,7 @@
 #include <duds/ui/graphics/BppImageErrors.hpp>
 #include <duds/ui/graphics/BppImageArchiveSequence.hpp>
 #include <duds/general/Errors.hpp>
+#include <codecvt>
 
 namespace duds { namespace ui { namespace graphics {
 
@@ -46,21 +47,30 @@ void BppFont::load(std::istream &is) {
 	BppImageArchiveSequence bias(is);
 	bias.readHeader();
 	BppImageArchiveSequence::iterator iter = bias.begin();
+	std::wstring_convert<
+		std::codecvt_utf8<char32_t>,
+		char32_t
+	> conv;
 	for (; iter != bias.end(); ++iter) {
-		/** @todo  Make this work for characters larger than a byte. */
-		if (iter->first.length() == 1) {
-			std::lock_guard<duds::general::Spinlock> lock(block);
-			glyphs[iter->first[0]] = iter->second;
+		// UTF-8 needs up to 4 bytes for a character code
+		if (iter->first.length() <= 4) {
+			// convert from UTF-8
+			std::u32string u32 = conv.from_bytes(iter->first);
+			// could have more than one character
+			if (u32.length() == 1) {
+				std::lock_guard<duds::general::Spinlock> lock(block);
+				glyphs[u32[0]] = iter->second;
+			}
 		}
 	}
 }
 
-void BppFont::add(char32_t gc, const BppImageSptr &img) {
+void BppFont::add(char32_t gc, const ConstBppImageSptr &img) {
 	std::lock_guard<duds::general::Spinlock> lock(block);
 	glyphs[gc] = img;
 }
 
-void BppFont::add(char32_t gc, BppImageSptr &&img) {
+void BppFont::add(char32_t gc, ConstBppImageSptr &&img) {
 	std::lock_guard<duds::general::Spinlock> lock(block);
 	glyphs[gc] = std::move(img);
 }
@@ -94,11 +104,19 @@ ConstBppImageSptr BppFont::tryGet(char32_t gc) {
 
 ImageDimensions BppFont::estimatedMaxCharacterSize() {
 	ImageDimensions res(0, 0);
-	for (char32_t check : { 'M', 'q' }) {
+	for (char32_t check : { '8', 'M', 'q', 'y' }) {
 		ConstBppImageSptr img = tryGet(check);
 		if (img) {
 			res = res.maxExtent(img->dimensions());
 		}
+	}
+	// if no dimensions have yet been found, but there are glyphs . . .
+	if ((res == ImageDimensions(0, 0)) && !glyphs.empty()) {
+		// . . . get the first glyph and use that
+		std::lock_guard<duds::general::Spinlock> lock(block);
+		std::unordered_map<char32_t, ConstBppImageSptr>::const_iterator iter =
+			glyphs.cbegin();
+		return iter->second->dimensions();
 	}
 	return res;
 }
@@ -107,6 +125,7 @@ ImageDimensions BppFont::estimatedMaxCharacterSize() {
  * Used to hold all the glyphs needed to render a string.
  */
 typedef std::vector<const BppImage *>  ImageVec;
+
 /**
  * Information on a line.
  */
@@ -124,12 +143,24 @@ struct LineDimensions {
 	 */
 	constexpr LineDimensions() : chars(0), dim(0, 0) { }
 };
+
 /**
  * Information on each line of text to render.
  */
 typedef std::vector<LineDimensions>  DimVec;
 
-BppImageSptr BppFont::render(const std::string &text, Flags flags)
+/**
+ * String converter; UTF-8 to/from UTF-32.
+ */
+static std::wstring_convert< std::codecvt_utf8< char32_t >, char32_t > conv;
+
+BppImageSptr BppFont::render(const std::string &text, Flags flags) {
+	// convert UTF-8 to UTF-32, then render
+	std::u32string text32 = conv.from_bytes(text);
+	return render(text32, flags);
+}
+
+BppImageSptr BppFont::render(const std::u32string &text, Flags flags)
 try {
 	// Will store all glyphs needed for output in the same order as text. All
 	// lines are included. Line breaks are not.
@@ -144,10 +175,9 @@ try {
 	// greatest number of characters on a line
 	int maxline = 0;
 	// find all the needed glyphs
-	std::string::const_iterator titer = text.cbegin();
+	std::u32string::const_iterator titer = text.cbegin();
 	std::unordered_map<char32_t, ConstBppImageSptr>::const_iterator giter;
 	for (; titer != text.cend(); ++titer) {
-		/** @todo  Make this work for characters larger than a byte. */
 		// handle line breaks
 		if (*titer == '\n') {
 			// update maximum characters per line
@@ -272,11 +302,17 @@ try {
 
 	return bis;
 } catch (boost::exception &be) {
-	be << String(text);
+	be << String(conv.to_bytes(text));
 	throw;
 }
 
-ImageDimensions BppFont::lineDimensions(const std::string &text, Flags flags)
+ImageDimensions BppFont::lineDimensions(const std::string &text, Flags flags) {
+	// convert UTF-8 to UTF-32, then figure dimensions
+	std::u32string text32 = conv.from_bytes(text);
+	return lineDimensions(text32, flags);
+}
+
+ImageDimensions BppFont::lineDimensions(const std::u32string &text, Flags flags)
 try {
 	ImageDimensions dim(0, 0);
 	{
@@ -311,7 +347,7 @@ try {
 	}
 	return dim;
 } catch (boost::exception &be) {
-	be << String(text);
+	be << String(conv.to_bytes(text));
 	throw;
 }
 

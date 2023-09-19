@@ -17,6 +17,7 @@ targets = [
 ]
 
 testenv.Depends(targets[0], imgarc)
+testenv.Depends(targets[0], File('../../images/font_8x16.bppia').abspath)
 
 Return('targets')
 

@@ -34,10 +34,10 @@ protected:
 	/**
 	 * Used for thread safety.
 	 */
-	duds::general::Spinlock block;
+	mutable duds::general::Spinlock block;
 	/**
 	 * Called to render the requested glyph when it is not present in the
-	 * @a glyphs map. The base implementation always throws GlyphNotFoundError.
+	 * @a glyphs map. The base implementation always throws GlyphNotFoundError
 	 * along with a Character attribute. Implementors should do the same when
 	 * the glyph cannot be supplied.
 	 * @note         The thread will have a lock on @a block when this function
@@ -87,10 +87,6 @@ public:
 	 * and will replace glyphs if there is a collision.
 	 * @note  Only images with a name that is just a single character will be
 	 *        kept. All other images will be discarded.
-	 * @bug   Character values above 127 from files made by the
-	 *        @ref DUDStoolsBppic will not be made availble. This is because the
-	 *        compiler will encode the character code using UTF-8, and the code
-	 *        here does not decode UTF-8.
 	 * @param path  The path of the archive file to load.
 	 * @throw ImageArchiveStreamError
 	 *        Failed to open the file.
@@ -125,15 +121,18 @@ public:
 	 * @param gc     The character code of the glyph.
 	 * @param img    The image to store.
 	 */
-	void add(char32_t gc, const BppImageSptr &img);
+	void add(char32_t gc, const ConstBppImageSptr &img);
 	/**
 	 * Adds or replaces a glyph in the font.
 	 * @param gc     The character code of the glyph.
 	 * @param img    The image to store. The shared pointer will be moved.
 	 */
-	void add(char32_t gc, BppImageSptr &&img);
+	void add(char32_t gc, ConstBppImageSptr &&img);
 	/**
 	 * Returns the glyph of the specified character code.
+	 * The returned reference is to the internally stored shared pointer rather
+	 * than a new shared pointer. This makes get() prefered over tryGet() unless
+	 * it is uncertain if the requested glyph exists in the font.
 	 * @param gc     The character code of the glyph.
 	 * @return       A shared pointer to the requested glyph image.
 	 * @throw        GlyphNotFoundError  The glyph is not provided by the font.
@@ -200,7 +199,7 @@ public:
 	 * Variable sized glyphs are supported. Glyphs are aligned vertically along
 	 * their lower edge. This places shorter glyphs lower than taller ones.
 	 *
-	 * @param text   The text to render.
+	 * @param text   The text to render in a UTF-8 string.
 	 * @param flags  The option flags. The default is to render varying width,
 	 *               fixed height text with each line aligned to the left.
 	 * @return       A new image with the rendered text.
@@ -209,9 +208,38 @@ public:
 	 *                                   by the font.
 	 */
 	BppImageSptr render(const std::string &text, Flags flags = AlignLeft);
-	/*
-	BppImageSptr renderSingleLine(const std::string &text, Flags flags = AlignLeft);
-	*/
+	/**
+	 * Renders the given text using this object's font.
+	 *
+	 * The newline character can be used to denote the start of another line.
+	 * Lines are only made explicitly.
+	 *
+	 * Variable sized glyphs are supported. Glyphs are aligned vertically along
+	 * their lower edge. This places shorter glyphs lower than taller ones.
+	 *
+	 * @param text   The text to render in a UTF-32 string.
+	 * @param flags  The option flags. The default is to render varying width,
+	 *               fixed height text with each line aligned to the left.
+	 * @return       A new image with the rendered text.
+	 * @bug          Only tested for rendering a single line of text.
+	 * @throw        GlyphNotFoundError  A glyph in @a text is not provided
+	 *                                   by the font.
+	 */
+	BppImageSptr render(const std::u32string &text, Flags flags = AlignLeft);
+	/**
+	 * Returns the dimensions of a single-line string without the overhead of
+	 * rendering the string.
+	 * @param text   The text to consider in a UTF-8 string.
+	 * @param flags  Either zero, for a potentially variable width, or
+	 *               FixedWidth to produce a width where each glyph is the
+	 *               width of the widest glyph in the text.
+	 * @throw        GlyphNotFoundError  A glyph in @a text is not provided
+	 *                                   by the font.
+	 */
+	ImageDimensions lineDimensions(
+		const std::string &text,
+		Flags flags = Flags::Zero()
+	);
 	/**
 	 * Returns the dimensions of a single-line string without the overhead of
 	 * rendering the string.
@@ -223,7 +251,7 @@ public:
 	 *                                   by the font.
 	 */
 	ImageDimensions lineDimensions(
-		const std::string &text,
+		const std::u32string &text,
 		Flags flags = Flags::Zero()
 	);
 };

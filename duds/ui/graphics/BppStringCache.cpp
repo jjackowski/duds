@@ -10,6 +10,7 @@
 #include <duds/ui/graphics/BppStringCache.hpp>
 #include <duds/ui/graphics/BppImageErrors.hpp>
 #include <duds/general/Errors.hpp>
+#include <codecvt>
 
 namespace duds { namespace ui { namespace graphics {
 
@@ -94,6 +95,15 @@ ConstBppImageSptr BppStringCache::text(
 	// }
 	// return from item in cache
 	return res.first->img;
+}
+
+ConstBppImageSptr BppStringCache::text(
+	const std::u32string &str,
+	BppFont::Flags flags
+) {
+	std::wstring_convert< std::codecvt_utf8< char32_t >, char32_t > conv;
+	std::string cstr = conv.to_bytes(str);
+	return text(cstr, flags);
 }
 
 } } }

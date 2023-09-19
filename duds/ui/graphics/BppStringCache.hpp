@@ -285,7 +285,7 @@ public:
 	 * are not exceeded. Returning a copy of the image's shared pointer
 	 * prevents cache evictions from destroying images before they are used.
 	 *
-	 * @param str    The string to render.
+	 * @param str    The UTF-8 string to render.
 	 * @param flags  The option flags. The default is to render varying width,
 	 *               fixed height text with each line aligned to the left.
 	 * @return       A const image with the rendered text.
@@ -294,6 +294,28 @@ public:
 	 */
 	ConstBppImageSptr text(
 		const std::string &str,
+		BppFont::Flags flags = BppFont::AlignLeft
+	);
+	/**
+	 * Returns an image of the requested string either from a pre-rendered
+	 * item in the cache or by rendering a new image. If the text is rendered,
+	 * it is done by calling BppFont::render() on this object's font. After
+	 * rendering, the cache size limits are enforced by removing the cached
+	 * item(s) that were last requested farthest in the past until maximums
+	 * are not exceeded. Returning a copy of the image's shared pointer
+	 * prevents cache evictions from destroying images before they are used.
+	 *
+	 * @param str    The UTF-32 string to render. Internally the UTF-8
+	 *               representation is used for the cache. This may not be
+	 *               the best way to do it.
+	 * @param flags  The option flags. The default is to render varying width,
+	 *               fixed height text with each line aligned to the left.
+	 * @return       A const image with the rendered text.
+	 * @throw        GlyphNotFoundError  A glyph in @a str is not provided
+	 *                                   by the font.
+	 */
+	ConstBppImageSptr text(
+		const std::u32string &str,
 		BppFont::Flags flags = BppFont::AlignLeft
 	);
 };
