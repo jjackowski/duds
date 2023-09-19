@@ -200,11 +200,15 @@ public:
 	 *                   prototypes like ones on breadboards, may require longer
 	 *                   delays. The default value seems to work well for such
 	 *                   prototypes.
-	 * @throw DisplaySizeError   Either the width or height is beyond the
-	 *                           supported range.
+	 * @throw duds::hardware::display::DisplaySizeError
+	 *                   Either the width or height size is outside the
+	 *                   supported range.
 	 * @throw duds::hardware::interface::PinDoesNotExist
+	 *                   @a outPins or @a enablePin is empty.
 	 * @throw duds::hardware::interface::PinRangeError
+	 *                   @a outPins lacks all the required pins.
 	 * @throw duds::hardware::interface::DigitalPinCannotOutputError
+	 *                   A pin in @a outPins does not support output.
 	 */
 	ST7920(
 		duds::hardware::interface::DigitalPinSet &&outPins,
@@ -248,11 +252,15 @@ public:
 	 *                   prototypes like ones on breadboards, may require longer
 	 *                   delays. The default value seems to work well for such
 	 *                   prototypes.
-	 * @throw DisplaySizeError   Either the width or height is beyond the
-	 *                           supported range.
+	 * @throw duds::hardware::display::DisplaySizeError
+	 *                   Either the width or height size is outside the
+	 *                   supported range.
 	 * @throw duds::hardware::interface::PinDoesNotExist
+	 *                   @a outPins or @a enablePin is empty.
 	 * @throw duds::hardware::interface::PinRangeError
+	 *                   @a outPins lacks all the required pins.
 	 * @throw duds::hardware::interface::DigitalPinCannotOutputError
+	 *                   A pin in @a outPins does not support output.
 	 */
 	void configure(
 		duds::hardware::interface::DigitalPinSet &&outPins,
