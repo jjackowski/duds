@@ -1,6 +1,9 @@
 /**
  * 8 pixel tall font with a varying width. It is a modification of the 6x10
- * font from the Linux kernel. GPL 2.0.
+ * font from the Linux kernel, with some additions. GPL 2.0.
+ *
+ * Beyond ASCII, this includes a few geometric shapes (U+25A0 to U+25CF, 
+ * parital) and some ballot box glyphs (U+2610 to U+2612).
  */
 
 /* Character 32, glyph   */
@@ -1236,8 +1239,8 @@
 9	      // 9
 	}
 
-/* Character 248, glyph ø */
-\248 5 8
+/* Character 176, glyph Â° */
+\176 5 8
 	012345 {
 0	 XX   // 0
 1	X  X  // 1
@@ -1247,4 +1250,199 @@
 5	      // 5
 6	      // 6
 7	      // 7
+	}
+
+/* Black square */
+\9632 6 8
+	0123456 {
+0	       // 0
+1	XXXXX  // 1
+2	XXXXX  // 2
+3	XXXXX  // 3
+4	XXXXX  // 4
+5	XXXXX  // 5
+6	       // 6
+7	       // 7
+	}
+
+/* White square */
+\9633 6 8
+	0123456 {
+0	       // 0
+1	XXXXX  // 1
+2	X   X  // 2
+3	X   X  // 3
+4	X   X  // 4
+5	XXXXX  // 5
+6	       // 6
+7	       // 7
+	}
+
+/* White square, rounded */
+\9634 6 8
+	0123456 {
+0	       // 0
+1	 XXX   // 1
+2	X   X  // 2
+3	X   X  // 3
+4	X   X  // 4
+5	 XXX   // 5
+6	       // 6
+7	       // 7
+	}
+
+/* White square containing black square */
+\9635 6 8
+	0123456 {
+0	       // 0
+1	XXXXX  // 1
+2	X   X  // 2
+3	X X X  // 3
+4	X   X  // 4
+5	XXXXX  // 5
+6	       // 6
+7	       // 7
+	}
+
+/* Black up-pointing triangle */
+\9650 6 8
+	0123456 {
+0	       // 0
+1	       // 1
+2	  X    // 2
+3	 XXX   // 3
+4	XXXXX  // 4
+5	       // 5
+6	       // 6
+7	       // 7
+	}
+
+/* Black right-pointing triangle */
+\9654 5 8
+	012345 {
+0	X     // 0
+1	XX    // 1
+2	XXX   // 2
+3	XXXX  // 3
+4	XXX   // 4
+5	XX    // 5
+6	X     // 6
+7	      // 7
+	}
+
+/* Black down-pointing triangle */
+\9660 6 8
+	0123456 {
+0	       // 0
+1	       // 1
+2	XXXXX  // 2
+3	 XXX   // 3
+4	  X    // 4
+5	       // 5
+6	       // 6
+7	       // 7
+	}
+
+/* Black left-pointing triangle */
+\9664 5 8
+	012345 {
+0	   X  // 0
+1	  XX  // 1
+2	 XXX  // 2
+3	XXXX  // 3
+4	 XXX  // 4
+5	  XX  // 5
+6	   X  // 6
+7	      // 7
+	}
+
+/* Black diamond */
+\9670 6 8
+	0123456 {
+0	       // 0
+1	  X    // 1
+2	 XXX   // 2
+3	XXXXX  // 3
+4	 XXX   // 4
+5	  X    // 5
+6	       // 6
+7	       // 7
+	}
+
+/* White diamond */
+\9671 6 8
+	0123456 {
+0	       // 0
+1	  X    // 1
+2	 X X   // 2
+3	X   X  // 3
+4	 X X   // 4
+5	  X    // 5
+6	       // 6
+7	       // 7
+	}
+
+/* White diamond containing black diamond */
+\9672 6 8
+	0123456 {
+0	       // 0
+1	  X    // 1
+2	 X X   // 2
+3	X X X  // 3
+4	 X X   // 4
+5	  X    // 5
+6	       // 6
+7	       // 7
+	}
+
+/* Black circle */
+\9679 6 8
+	0123456 {
+0	       // 0
+1	 XXX   // 1
+2	XXXXX  // 2
+3	XXXXX  // 3
+4	XXXXX  // 4
+5	 XXX   // 5
+6	       // 6
+7	       // 7
+	}
+
+/* Ballot box */
+\9744 8 8
+	01234567 {
+0	XXXXXXX // 0
+1	X     X // 1
+2	X     X // 2
+3	X     X // 3
+4	X     X // 4
+5	X     X // 5
+6	XXXXXXX // 6
+7           // 7
+	}
+
+/* Ballot box with check */
+\9745 8 8
+	01234567 {
+0	XXXXXXX // 0
+1	X    XX // 1
+2	X   X X // 2
+3	XX  X X // 3
+4	X X X X // 4
+5	X  X  X // 5
+6	XXXXXXX // 6
+7           // 7
+	}
+
+/* Ballot box with X */
+\9746 8 8
+	01234567 {
+0	XXXXXXX // 0
+1	XX   XX // 1
+2	X X X X // 2
+3	X  X  X // 3
+4	X X X X // 4
+5	XX   XX // 5
+6	XXXXXXX // 6
+7           // 7
 	}
