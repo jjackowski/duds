@@ -15,6 +15,7 @@
 #define BOOST_TEST_DYN_LINK
 #include <boost/test/unit_test.hpp>
 #include <duds/general/SignedMagnitudeToTwosComplement.hpp>
+#include <cstdint>
 
 BOOST_AUTO_TEST_SUITE(SignedMagnitudeToTwosComplement)
 

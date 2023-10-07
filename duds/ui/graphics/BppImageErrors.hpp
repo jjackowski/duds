@@ -14,6 +14,7 @@
 #include <boost/exception/info.hpp>
 #include <exception>
 #include <memory>
+#include <cstdint>
 
 namespace duds { namespace ui { namespace graphics {
 

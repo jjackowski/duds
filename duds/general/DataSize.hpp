@@ -11,6 +11,7 @@
 #define DATASIZES_HPP
 
 #include <duds/general/Errors.hpp>
+#include <cstdint>
 
 namespace duds { namespace general {
 

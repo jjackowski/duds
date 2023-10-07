@@ -103,7 +103,7 @@ Supported devices are listed on the @ref SupDev page.
 - Build configuration options: run "scons -h"
   - The configuration can be changed for one build by specifying an option as an argument to scons.
   - To keep a configuration saved, set variables with the same name of the configuration options in Python syntax in localbuildconfig.py in the same directory as SConstruct.
-- gcc 12.3.x, 11.3.x, 9.2.x to 9.4.x, 7.3.x
+- gcc 13.2.x, 12.3.x, 11.3.x, 9.2.x to 9.4.x, 7.3.x
   - Other versions are untested. Older ones will likely fail.
   - Any output for ARM processors from gcc 7.1 and newer will not link correctly with any output from earlier versions of gcc. There are @b huge warnings about this with gcc 6.4.0 and 7.3.0.
 - [Boost](http://www.boost.org/) version 1.62 or newer, tested to 1.82
@@ -122,12 +122,10 @@ Supported devices are listed on the @ref SupDev page.
     - Variant (header only)
   - Build configuration options include Boost directories and variations on the names of the Boost library binaries.
   - Default configuration is for a regular Boost build that is installed to default paths. This works on Gentoo Linux when Boost is installed by Portage.
-  - Raspberry Pi OS, Raspbian, Debian, and Ubuntu need build configuration setting "BOOSTTAG=" (equals empty string) given to SCons. This changes the expected name of the Boost libraries; these Linux distributions do not use the default names from the Boost build.
   - Windows will need several build options because there is no standard install that I know about. DUDS isn't useful on Windows at the moment, so don't worry about it.
 - Build host
   - Linux
     - Raspberry Pi OS, Raspbian, Debian, Ubuntu, and similar:
-      - Use build configuration setting "BOOSTTAG=" (equals empty string) given to SCons. This changes the expected name of the Boost libraries; these Linux distributions do not use the default names from the Boost build.
       - The libraries and build system can be installed from root using this command:
         - apt-get install libboost-date-time-dev libboost-exception-dev libboost-filesystem-dev libboost-program-options-dev libboost-serialization-dev libboost-stacktrace-dev libboost-system-dev libboost-test-dev libeigen3-dev libevdev-dev scons
     - Gentoo works with the default configuration on a normal Gentoo install.

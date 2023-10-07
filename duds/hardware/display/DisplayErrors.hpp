@@ -11,6 +11,7 @@
 #define DISPLAYERRORS_HPP
 
 #include <boost/exception/info.hpp>
+#include <cstdint>
 
 namespace duds { namespace hardware { namespace display {
 

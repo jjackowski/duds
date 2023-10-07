@@ -42,7 +42,7 @@ buildopts.Add('BOOSTTOOLSET',
 #	'')
 buildopts.Add('BOOSTTAG',
 	'Additional tags for Boost libraries. The libraries must support threading. Include leading dashes.',
-	'-mt')
+	'') # used to be '-mt', but it seems this is no longer the default
 buildopts.Add('BOOSTVER',
 	'The version tag for Boost libraries; may be needed on Windows. Include a leading dash.',
 	'')

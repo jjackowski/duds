@@ -14,6 +14,7 @@
 #include <boost/noncopyable.hpp>
 #include <thread>
 #include <shared_mutex>
+#include <string>
 #include <vector>
 #include <map>
 #include <memory>

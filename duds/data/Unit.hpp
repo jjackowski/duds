@@ -15,6 +15,7 @@
 #include <boost/exception/info.hpp>
 #include <duds/general/SignExtend.hpp>
 #include <stdexcept>
+#include <cstdint>
 
 namespace duds { namespace data {
 
