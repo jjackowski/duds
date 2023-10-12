@@ -59,6 +59,16 @@ typedef GenericMeasurement<
 	float
 >  Measurement;
 
+/**
+ * A shared pointer to a Measurement, a common GenericMeasurement type.
+ */
+typedef std::shared_ptr<Measurement>  MeasurementSptr;
+
+/**
+ * A shared pointer to a const Measurement, a common GenericMeasurement type.
+ */
+typedef std::shared_ptr<const Measurement>  ConstMeasurementSptr;
+
 template <
 	class VT = GenericValue,
 	class QT = double,

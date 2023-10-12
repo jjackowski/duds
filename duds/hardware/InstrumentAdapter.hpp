@@ -16,7 +16,7 @@ template <class VT, class QT>
 class GenericSample;
 
 template <class SVT, class SQT, class TVT, class TQT>
-class GenericMeasuement;
+class GenericMeasurement;
 
 } }
 
