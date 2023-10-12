@@ -329,20 +329,23 @@ try {
 			// find next glyph
 			std::unordered_map<char32_t, ConstBppImageSptr>::const_iterator giter =
 				glyphs.find(c);
+			ConstBppImageSptr glyph;
 			// no glyph?
 			if (giter == glyphs.end()) {
 				// try to get it again; may throw
-				ConstBppImageSptr glyph = renderGlyph(c);
+				glyph = renderGlyph(c);
+			} else {
+				glyph = giter->second;
 			}
 			// height
-			dim.h = std::max(dim.h, giter->second->height());
+			dim.h = std::max(dim.h, glyph->height());
 			// width -- fixed?
 			if (flags & (FixedWidth | FixedWidthPerLine)) {
 				// store max width so far rather than cumulative width
-				dim.w = std::max(dim.w, giter->second->width());
+				dim.w = std::max(dim.w, glyph->width());
 			} else {
 				// update cumulative width
-				dim.w += giter->second->width();
+				dim.w += glyph->width();
 			}
 		}
 	}
