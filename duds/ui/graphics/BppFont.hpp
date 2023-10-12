@@ -37,9 +37,11 @@ protected:
 	mutable duds::general::Spinlock block;
 	/**
 	 * Called to render the requested glyph when it is not present in the
-	 * @a glyphs map. The base implementation always throws GlyphNotFoundError
-	 * along with a Character attribute. Implementors should do the same when
-	 * the glyph cannot be supplied.
+	 * @a glyphs map. The base implementation will return the white square
+	 * glyph (value 9633, 0x25A1) if the font has it, or it will throw
+	 * GlyphNotFoundError along with a Character attribute. Implementors should
+	 * either render the glyph and add it to the @a glyphs map, or call the
+	 * base implementation.
 	 * @note         The thread will have a lock on @a block when this function
 	 *               is called.
 	 * @throw        GlyphNotFoundError  The glyph is not provided by the font.

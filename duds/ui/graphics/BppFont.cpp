@@ -24,6 +24,16 @@ constexpr BppFont::Flags BppFont::AlignRight;
 constexpr BppFont::Flags BppFont::AlignMask;
 
 ConstBppImageSptr BppFont::renderGlyph(char32_t gc) {
+	// if an implementing derived class renders the glyph, it can add the image
+	// to the glyphs map so that it doesn't need to be rendered again:
+	//glyphs[gc] = image;
+	// use the white square character if present
+	std::unordered_map<char32_t, ConstBppImageSptr>::const_iterator giter =
+		glyphs.find(9633);
+	if (giter != glyphs.end()) {
+		return giter->second;
+	}
+	// got nothing, so throw
 	DUDS_THROW_EXCEPTION(GlyphNotFoundError() << Character(gc));
 }
 
@@ -209,8 +219,6 @@ try {
 				// try to get it again; may throw
 				ConstBppImageSptr glyph = renderGlyph(*titer);
 				gv.emplace_back(glyph.get());
-				// store it in the cache
-				glyphs[*titer] = std::move(glyph);
 			} else {
 				// have glyph
 				gv.push_back(giter->second.get());
@@ -325,8 +333,6 @@ try {
 			if (giter == glyphs.end()) {
 				// try to get it again; may throw
 				ConstBppImageSptr glyph = renderGlyph(c);
-				// store it in the cache
-				glyphs[c] = std::move(glyph);
 			}
 			// height
 			dim.h = std::max(dim.h, giter->second->height());
