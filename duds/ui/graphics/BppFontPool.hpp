@@ -103,6 +103,15 @@ public:
 	 */
 	void addWithCache(const std::string &name, const std::string &fontpath);
 	/**
+	 * Adds a new name for an already added font. The font and its string cache
+	 * will both be available from both names, and any other aliased names.
+	 * @param existing  The name of the already added font to alias.
+	 * @param newname   The additional name to give the existing font.
+	 * @throw           FontNotFoundError   There is no font with the name in
+	 *                                      @a existing inside this pool.
+	 */
+	void alias(const std::string &existing, const std::string &newname);
+	/**
 	 * Returns a shared pointer to a stored font, or an empty shared pointer
 	 * if the font is not present.
 	 * @param font  The name of the font to find.

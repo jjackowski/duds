@@ -38,6 +38,7 @@ BOOST_AUTO_TEST_CASE(BppFont_Pool) {
 		}
 		imgpath += "images/font_8x16.bppia";
 	}
+	// test adding font to the pool
 	BOOST_REQUIRE_NO_THROW(pool.addWithCache("8x16", imgpath));
 	font = pool.getFont("8x16");
 	BOOST_CHECK(font);
@@ -45,24 +46,41 @@ BOOST_AUTO_TEST_CASE(BppFont_Pool) {
 	BOOST_REQUIRE(scache);
 	BOOST_CHECK(scache->font().get() == font.get());
 	BOOST_CHECK_EQUAL(scache->strings(), 0);
+	// bad font test
 	BOOST_CHECK_THROW(pool.render("16x8", "Hi"), BPPN::FontNotFoundError);
+	// render a string through the font
 	BPPN::ConstBppImageSptr img;
 	BOOST_REQUIRE_NO_THROW(img = pool.render("8x16", "Hi"));
 	BOOST_CHECK_EQUAL(img->width(), 16);
 	BOOST_CHECK_EQUAL(img->height(), 16);
 	BOOST_CHECK_EQUAL(scache->strings(), 0);
+	// render same string, but through string cache
 	BPPN::ConstBppImageSptr imgHi;
 	BOOST_REQUIRE_NO_THROW(imgHi = pool.text("8x16", "Hi"));
 	BOOST_CHECK_EQUAL(imgHi->width(), 16);
 	BOOST_CHECK_EQUAL(imgHi->height(), 16);
 	BOOST_CHECK_EQUAL(scache->strings(), 1);
 	BOOST_CHECK(img.get() != imgHi.get());
+	// render same string again through string cache; should be same image
 	BOOST_REQUIRE_NO_THROW(img = pool.text("8x16", "Hi"));
 	BOOST_CHECK_EQUAL(scache->strings(), 1);
 	BOOST_CHECK(img.get() == imgHi.get());
+	// yet again, but with different string type
 	BOOST_REQUIRE_NO_THROW(img = pool.text("8x16", U"Hi"));
 	BOOST_CHECK_EQUAL(scache->strings(), 1);
 	BOOST_CHECK(img.get() == imgHi.get());
+	// render a single character string; should not add to the cache
+	BOOST_REQUIRE_NO_THROW(img = pool.text("8x16", "W"));
+	BOOST_CHECK_EQUAL(scache->strings(), 1);
+	// the single character string image should be the same as the one given by
+	// the font for the character
+	BPPN::ConstBppImageSptr imgW;
+	BOOST_REQUIRE_NO_THROW(imgW = font->get('W'));
+	BOOST_CHECK(img.get() == imgW.get());
+	// alias test -- same name for same font in font pool
+	BOOST_CHECK_THROW(pool.alias("16x8", "Hi"), BPPN::FontNotFoundError);
+	BOOST_REQUIRE_NO_THROW(pool.alias("8x16", "TallFont"));
+	BOOST_CHECK(pool.getFont("8x16") == pool.getFont("TallFont"));
 }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -39,7 +39,7 @@ class BppStringCache : boost::noncopyable {
 		/**
 		 * The text rendered into @a img.
 		 */
-		std::string text;
+		std::u32string text;
 		/**
 		 * The font rendering flags.
 		 */
@@ -62,7 +62,7 @@ class BppStringCache : boost::noncopyable {
 					BppString,
 					boost::multi_index::member<
 						BppString,
-						std::string,
+						std::u32string,
 						&BppString::text
 					>,
 					boost::multi_index::member<

@@ -88,6 +88,19 @@ void BppFontPool::addWithCache(
 	fonts.emplace(name, std::move(fc));
 }
 
+void BppFontPool::alias(
+	const std::string &existing,
+	const std::string &newname
+) {
+	std::lock_guard<duds::general::Spinlock> lock(block);
+	std::unordered_map<std::string, FontAndCache>::const_iterator iter =
+		fonts.find(existing);
+	if (iter == fonts.cend()) {
+		DUDS_THROW_EXCEPTION(FontNotFoundError() << FontName(existing));
+	}
+	fonts.emplace(newname, FontAndCache{iter->second.fnt, iter->second.sc});
+}
+
 BppFontSptr BppFontPool::getFont(const std::string &font) const {
 	std::lock_guard<duds::general::Spinlock> lock(block);
 	std::unordered_map<std::string, FontAndCache>::const_iterator iter =

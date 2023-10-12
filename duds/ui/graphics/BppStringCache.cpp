@@ -41,9 +41,15 @@ void BppStringCache::clear() {
 }
 
 ConstBppImageSptr BppStringCache::text(
-	const std::string &str,
+	const std::u32string &str,
 	BppFont::Flags flags
 ) {
+	// check for a single character string
+	if (str.length() == 1) {
+		// attempt to provide the string image from the font; do not cache
+		// what the font already holds
+		return fnt->get(str[0]);
+	}
 	{
 		std::lock_guard<duds::general::Spinlock> lock(block);
 		// attempt to find a match
@@ -98,11 +104,11 @@ ConstBppImageSptr BppStringCache::text(
 }
 
 ConstBppImageSptr BppStringCache::text(
-	const std::u32string &str,
+	const std::string &str,
 	BppFont::Flags flags
 ) {
 	std::wstring_convert< std::codecvt_utf8< char32_t >, char32_t > conv;
-	std::string cstr = conv.to_bytes(str);
+	std::u32string cstr = conv.from_bytes(str);
 	return text(cstr, flags);
 }
 
