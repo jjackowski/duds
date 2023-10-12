@@ -164,7 +164,7 @@ typedef boost::error_info<struct Info_SetName, std::string>
  *
  * Intended usage follows this order:
  * -# Parse a configuration file with
- *    [boost::property_tree](https://www.boost.org/doc/libs/1_67_0/doc/html/property_tree.html).
+ *    [boost::property_tree](https://www.boost.org/doc/libs/1_83_0/doc/html/property_tree.html).
  * -# Construct a PinConfiguration and give it a subtree from the parsed
  *    configuration.
  * -# Make a suitable DigitalPort object.
@@ -174,7 +174,7 @@ typedef boost::error_info<struct Info_SetName, std::string>
  * -# The PinConfiguration may be destroyed when it no longer needs to be
  *    queried.
  *
- * [Boost property tree](https://www.boost.org/doc/libs/1_67_0/doc/html/property_tree.html)
+ * [Boost property tree](https://www.boost.org/doc/libs/1_83_0/doc/html/property_tree.html)
  * is used to parse and represnt data prior to passing that data to this object.
  * See the @ref DUDStoolsPinConf page for detailed documentation on what is
  * expected of the property tree.
@@ -504,7 +504,7 @@ public:
 	 * Constructs and parses the pin configuration that starts at the given
 	 * subtree.
 	 *
-	 * [Boost property tree](https://www.boost.org/doc/libs/1_67_0/doc/html/property_tree.html)
+	 * [Boost property tree](https://www.boost.org/doc/libs/1_83_0/doc/html/property_tree.html)
 	 * is used to parse and represnt data prior to passing that data to this
 	 * object. See the @ref DUDStoolsPinConf page for detailed documentation
 	 * on what is expected of the property tree.
@@ -529,7 +529,7 @@ public:
 	/**
 	 * Parses the pin configuration that starts at the given subtree.
 	 *
-	 * [Boost property tree](https://www.boost.org/doc/libs/1_67_0/doc/html/property_tree.html)
+	 * [Boost property tree](https://www.boost.org/doc/libs/1_83_0/doc/html/property_tree.html)
 	 * is used to parse and represnt data prior to passing that data to this
 	 * function. See the @ref DUDStoolsPinConf page for detailed documentation
 	 * on what is expected of the property tree.

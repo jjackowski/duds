@@ -63,8 +63,8 @@ public:
 	void clear();
 	/**
 	 * Make a connection to an input event signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 * @param etc  The event type and code that will be forwarded to the
 	 *             provided slot function.
@@ -78,8 +78,8 @@ public:
 	}
 	/**
 	 * Make a connection to an input event signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 * @param etc  The event type and code that will be forwarded to the
 	 *             provided slot function.
@@ -94,8 +94,8 @@ public:
 	}
 	/**
 	 * Make a connection to an input event signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 * @param etc  The event type and code that will be forwarded to the
 	 *             provided slot function.
@@ -109,8 +109,8 @@ public:
 	}
 	/**
 	 * Make a connection to an input event signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 * @param etc  The event type and code that will be forwarded to the
 	 *             provided slot function.
@@ -125,8 +125,8 @@ public:
 	}
 	/**
 	 * Disconnect a group from an input event signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 * @param etc  The event type and code of the items to remove.
 	 */
@@ -138,8 +138,8 @@ public:
 	}
 	/**
 	 * Disconnect a slot from an input event signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 * @param etc  The event type and code of the items to remove.
 	 */
@@ -157,8 +157,8 @@ public:
 	}
 	/**
 	 * Make a connection to the default input event signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	boost::signals2::connection connect(
@@ -169,8 +169,8 @@ public:
 	}
 	/**
 	 * Make a connection to the default input event signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	boost::signals2::connection connect(
@@ -182,8 +182,8 @@ public:
 	}
 	/**
 	 * Make a connection to the default input event signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	boost::signals2::connection connectExtended(
@@ -194,8 +194,8 @@ public:
 	}
 	/**
 	 * Make a connection to the default input event signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	boost::signals2::connection connectExtended(
@@ -207,8 +207,8 @@ public:
 	}
 	/**
 	 * Disconnect a group from the default input event signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	void disconnect(
@@ -218,8 +218,8 @@ public:
 	}
 	/**
 	 * Disconnect a slot from the default input event signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	template<typename Slot>

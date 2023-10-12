@@ -224,8 +224,8 @@ public:
 	InputHandlersSptr makeConnectedHandlers();
 	/**
 	 * Make a connection to the input event signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	boost::signals2::connection connect(
@@ -236,8 +236,8 @@ public:
 	}
 	/**
 	 * Make a connection to the input event signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	boost::signals2::connection connect(
@@ -249,8 +249,8 @@ public:
 	}
 	/**
 	 * Make a connection to the input event signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	boost::signals2::connection connectExtended(
@@ -261,8 +261,8 @@ public:
 	}
 	/**
 	 * Make a connection to the input event signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	boost::signals2::connection connectExtended(
@@ -274,8 +274,8 @@ public:
 	}
 	/**
 	 * Disconnect a group from the input event signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	void disconnect(
@@ -285,8 +285,8 @@ public:
 	}
 	/**
 	 * Disconnect a slot from the input event signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	template<typename Slot>

@@ -68,8 +68,8 @@ protected:
 public:
 	/**
 	 * Make a connection to receive signals for new measurements.
-	 * See the [Boost reference documentation](http://www.boost.org/doc/libs/1_58_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](http://www.boost.org/doc/libs/1_58_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	boost::signals2::connection newMeasurementConnect(
@@ -80,8 +80,8 @@ public:
 	}
 	/**
 	 * Make a connection to receive signals for new measurements.
-	 * See the [Boost reference documentation](http://www.boost.org/doc/libs/1_58_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](http://www.boost.org/doc/libs/1_58_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	boost::signals2::connection newMeasurementConnect(
@@ -93,8 +93,8 @@ public:
 	}
 	/**
 	 * Make a connection to receive signals for new measurements.
-	 * See the [Boost reference documentation](http://www.boost.org/doc/libs/1_58_0/doc/html/boost/signals2/signal.html#idp187906672-bb)
-	 * for more details, or the [tutorial](http://www.boost.org/doc/libs/1_58_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp187906672-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	boost::signals2::connection newMeasurementConnectExtended(
@@ -105,8 +105,8 @@ public:
 	}
 	/**
 	 * Make a connection to receive signals for new measurements.
-	 * See the [Boost reference documentation](http://www.boost.org/doc/libs/1_58_0/doc/html/boost/signals2/signal.html#idp187906672-bb)
-	 * for more details, or the [tutorial](http://www.boost.org/doc/libs/1_58_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp187906672-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	boost::signals2::connection newMeasurementConnectExtended(
@@ -118,8 +118,8 @@ public:
 	}
 	/**
 	 * Disconnect from the new measurement signal. See the
-	 * [Boost reference documentation](http://www.boost.org/doc/libs/1_58_0/doc/html/boost/signals2/signal.html#idp195142656-bb)
-	 * for more details, or the [tutorial](http://www.boost.org/doc/libs/1_58_0/doc/html/signals2/tutorial.html)
+	 * [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp195142656-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	void newMeasurementDisconnect(
@@ -129,8 +129,8 @@ public:
 	}
 	/**
 	 * Disconnect from the new measurement signal. See the
-	 * [Boost reference documentation](http://www.boost.org/doc/libs/1_58_0/doc/html/boost/signals2/signal.html#idp195142656-bb)
-	 * for more details, or the [tutorial](http://www.boost.org/doc/libs/1_58_0/doc/html/signals2/tutorial.html)
+	 * [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp195142656-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	template<typename S>
@@ -140,8 +140,8 @@ public:
 
 	/**
 	 * Make a connection to receive signals for old measurements.
-	 * See the [Boost reference documentation](http://www.boost.org/doc/libs/1_58_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](http://www.boost.org/doc/libs/1_58_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	boost::signals2::connection oldMeasurementConnect(
@@ -152,8 +152,8 @@ public:
 	}
 	/**
 	 * Make a connection to receive signals for old measurements.
-	 * See the [Boost reference documentation](http://www.boost.org/doc/libs/1_58_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](http://www.boost.org/doc/libs/1_58_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	boost::signals2::connection oldMeasurementConnect(
@@ -165,8 +165,8 @@ public:
 	}
 	/**
 	 * Make a connection to receive signals for old measurements.
-	 * See the [Boost reference documentation](http://www.boost.org/doc/libs/1_58_0/doc/html/boost/signals2/signal.html#idp187906672-bb)
-	 * for more details, or the [tutorial](http://www.boost.org/doc/libs/1_58_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp187906672-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	boost::signals2::connection oldMeasurementConnectExtended(
@@ -177,8 +177,8 @@ public:
 	}
 	/**
 	 * Make a connection to receive signals for old measurements.
-	 * See the [Boost reference documentation](http://www.boost.org/doc/libs/1_58_0/doc/html/boost/signals2/signal.html#idp187906672-bb)
-	 * for more details, or the [tutorial](http://www.boost.org/doc/libs/1_58_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp187906672-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	boost::signals2::connection oldMeasurementConnectExtended(
@@ -190,8 +190,8 @@ public:
 	}
 	/**
 	 * Disconnect from the old measurement signal. See the
-	 * [Boost reference documentation](http://www.boost.org/doc/libs/1_58_0/doc/html/boost/signals2/signal.html#idp195142656-bb)
-	 * for more details, or the [tutorial](http://www.boost.org/doc/libs/1_58_0/doc/html/signals2/tutorial.html)
+	 * [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp195142656-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	void oldMeasurementDisconnect(
@@ -201,8 +201,8 @@ public:
 	}
 	/**
 	 * Disconnect from the old measurement signal. See the
-	 * [Boost reference documentation](http://www.boost.org/doc/libs/1_58_0/doc/html/boost/signals2/signal.html#idp195142656-bb)
-	 * for more details, or the [tutorial](http://www.boost.org/doc/libs/1_58_0/doc/html/signals2/tutorial.html)
+	 * [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp195142656-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	template<typename S>

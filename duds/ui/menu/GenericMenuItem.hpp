@@ -161,8 +161,8 @@ public:
 	virtual void deselect(MenuView &invokingView, const MenuAccess &access);
 	/**
 	 * Make a connection to the generic menu item chose signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	boost::signals2::connection choseConnect(
@@ -173,8 +173,8 @@ public:
 	}
 	/**
 	 * Make a connection to the generic menu item chose signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	boost::signals2::connection choseConnect(
@@ -186,8 +186,8 @@ public:
 	}
 	/**
 	 * Make a connection to the generic menu item chose signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	boost::signals2::connection choseConnectExtended(
@@ -198,8 +198,8 @@ public:
 	}
 	/**
 	 * Make a connection to the generic menu item chose signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	boost::signals2::connection choseConnectExtended(
@@ -211,8 +211,8 @@ public:
 	}
 	/**
 	 * Disconnect a group from the generic menu item chose signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	void choseDisconnect(
@@ -222,8 +222,8 @@ public:
 	}
 	/**
 	 * Disconnect from the generic menu item chose signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	template<typename Slot>
@@ -232,8 +232,8 @@ public:
 	}
 	/**
 	 * Make a connection to the generic menu item select signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	boost::signals2::connection selectConnect(
@@ -244,8 +244,8 @@ public:
 	}
 	/**
 	 * Make a connection to the generic menu item select signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	boost::signals2::connection selectConnect(
@@ -257,8 +257,8 @@ public:
 	}
 	/**
 	 * Make a connection to the generic menu item select signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	boost::signals2::connection selectConnectExtended(
@@ -269,8 +269,8 @@ public:
 	}
 	/**
 	 * Make a connection to the generic menu item select signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	boost::signals2::connection selectConnectExtended(
@@ -282,8 +282,8 @@ public:
 	}
 	/**
 	 * Disconnect a group from the generic menu item select signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	void selectDisconnect(
@@ -293,8 +293,8 @@ public:
 	}
 	/**
 	 * Disconnect from the generic menu item select signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	template<typename Slot>
@@ -303,8 +303,8 @@ public:
 	}
 	/**
 	 * Make a connection to the generic menu item deselect signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	boost::signals2::connection deselectConnect(
@@ -315,8 +315,8 @@ public:
 	}
 	/**
 	 * Make a connection to the generic menu item deselect signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	boost::signals2::connection deselectConnect(
@@ -328,8 +328,8 @@ public:
 	}
 	/**
 	 * Make a connection to the generic menu item deselect signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	boost::signals2::connection deselectConnectExtended(
@@ -340,8 +340,8 @@ public:
 	}
 	/**
 	 * Make a connection to the generic menu item deselect signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	boost::signals2::connection deselectConnectExtended(
@@ -353,8 +353,8 @@ public:
 	}
 	/**
 	 * Disconnect a group from the generic menu item deselect signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	void deselectDisconnect(
@@ -364,8 +364,8 @@ public:
 	}
 	/**
 	 * Disconnect from the generic menu item deselect signal.
-	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_67_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
-	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_67_0/doc/html/signals2/tutorial.html)
+	 * See the [Boost reference documentation](https://www.boost.org/doc/libs/1_83_0/doc/html/boost/signals2/signal.html#idp182137616-bb)
+	 * for more details, or the [tutorial](https://www.boost.org/doc/libs/1_83_0/doc/html/signals2/tutorial.html)
 	 * for an overview of the whole boost::singals2 system.
 	 */
 	template<typename Slot>
