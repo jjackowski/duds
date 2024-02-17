@@ -21,7 +21,7 @@
 #include <duds/hardware/interface/linux/GpioDevPort.hpp>
 #endif
 #include <duds/hardware/interface/ChipPinSelectManager.hpp>
-#include <duds/hardware/devices/clocks/LinuxClockDriver.hpp>
+#include <duds/hardware/devices/clocks/LinuxClock.hpp>
 #include <duds/time/planetary/Planetary.hpp>
 #include <duds/hardware/interface/PinConfiguration.hpp>
 #include <boost/property_tree/info_parser.hpp>
@@ -319,8 +319,9 @@ bool quit = false;
 
 void runtest(const std::shared_ptr<displays::HD44780> &tmd)
 try {
-	duds::hardware::devices::clocks::LinuxClockDriver lcd;
-	duds::hardware::devices::clocks::LinuxClockDriver::Measurement::TimeSample ts;
+	duds::hardware::devices::clocks::LinuxClockSptr lcd =
+		duds::hardware::devices::clocks::LinuxClock::make();
+	duds::hardware::devices::clocks::LinuxClock::Measurement::TimeSample ts;
 	//display::TextDisplayStream tds(tmd);
 	display::TextDisplayBufferedStream tds(tmd);
 	std::chrono::high_resolution_clock::time_point start;
@@ -334,7 +335,7 @@ try {
 		// used to tell how long it took to write the time & date to the display
 		start = std::chrono::high_resolution_clock::now();
 		//tds << displays::move(0,0);
-		lcd.sampleTime(ts);
+		lcd->sampleTime(ts);
 		// put time in time_t; integer value is in seconds UTC
 		std::time_t tt = duds::time::planetary::earth->timeUtc(ts.value);
 		// compute microseconds after time in tt

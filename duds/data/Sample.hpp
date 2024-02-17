@@ -8,6 +8,7 @@
  * Copyright (C) 2017  Jeff Jackowski
  */
 #include <duds/data/GenericValue.hpp>
+#include <boost/uuid/nil_generator.hpp>
 #include <limits>
 
 namespace duds { namespace data {
@@ -132,6 +133,25 @@ struct GenericSample {
 	 */
 	operator CompactSample<VT, QT> () const {
 		return makeCompactSample();
+	}
+	/**
+	 * Initializes the sample to hold no data.
+	 * @post  isClear() will return true.
+	 */
+	void clear() {
+		origin = boost::uuids::nil_uuid();
+		//value = std::string(); // good idea, but template types kills it
+		accuracy = precision = estError = resolution = unspecified();
+	}
+	/**
+	 * Returns true when this object contains no sample data.
+	 * Not called isEmpty() because all fields will contain data, and it
+	 * suggests the result will be true after calling clear().
+	 * @todo  Reconsider the checked condition.
+	 */
+	bool isClear() const {
+		// constraining the value is a nice idea, but is type specific
+		return /*(value.which() == 0) &&*/ origin.is_nil();
 	}
 };
 

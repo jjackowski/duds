@@ -10,10 +10,9 @@
 #ifndef CLOCK_HPP
 #define CLOCK_HPP
 
-#include <duds/hardware/Instrument.hpp>
-#include <duds/hardware/InstrumentDriver.hpp>
-#include <duds/hardware/InstrumentAdapter.hpp>
+#include <duds/hardware/devices/Device.hpp>
 #include <duds/hardware/devices/DeviceErrors.hpp>
+#include <boost/uuid/name_generator.hpp>
 
 namespace duds { namespace hardware { namespace devices {
 
@@ -64,9 +63,6 @@ typedef NanoTimeSample   TimeSample;
  */
 struct ClockError : DeviceError { };
 
-// change the name
-extern const boost::uuids::uuid SystemClockPart;
-
 /**
  * The foundation to a clock driver.
  * @todo  Need to include a way to get a UUID for the clock from a config file.
@@ -79,20 +75,14 @@ extern const boost::uuids::uuid SystemClockPart;
  * @author Jeff Jackowski
  */
 template<class SVT, class SQT, class TVT, class TQT>
-class GenericClockDriver :
-public duds::hardware::GenericInstrumentDriver<SVT, SQT, TVT, TQT> {
+class GenericClock :
+public duds::hardware::devices::GenericDevice<SVT, SQT, TVT, TQT> {
 public:
 	// copied from base class; cannot use from derived classes without scope
-	/** @copydoc GenericInstrumentDriver::Adapter */
-	typedef duds::hardware::GenericInstrumentAdapter<SVT, SQT, TVT, TQT>
-		Adapter;
-	/** @copydoc GenericInstrumentDriver::Measurement */
-	typedef duds::data::GenericMeasurement<SVT, SQT, TVT, TQT> Measurement;
+	/** @copydoc GenericDevice::Measurement */
+	typedef duds::data::GenericMeasurement<SVT, SQT, TVT, TQT>  Measurement;
+	typedef std::shared_ptr<GenericClock < SVT, SQT, TVT, TQT > >  ClockSptr;
 protected:
-	/**
-	 * The instrument adapter that will send out sampling events.
-	 */
-	std::shared_ptr<Adapter> adp;
 	/**
 	 * General template to convert time in one format to another.
 	 * @tparam Ratio  The ratio of one second to one unit of @a Src.
@@ -187,19 +177,34 @@ protected:
 			(src * r::num) / r::den
 		);
 	}
-public:
+	GenericClock() = delete;
+	using duds::hardware::devices::GenericDevice<SVT, SQT, TVT, TQT>::sens;
 	/**
-	 * @todo  Should this be here, or just in derived classes?
+	 * @todo  Allow naming the clock sensor object.
 	 */
-	virtual void setAdapter(const std::shared_ptr<Adapter> &a) {
-		adp = a;
-		adp->setUnit(duds::data::units::Second);
-		// setting part is probably best done in a derived class
-		//adp->setPart(SystemClockPart);
+	GenericClock(const boost::uuids::uuid &id) :
+	duds::hardware::devices::GenericDevice<SVT, SQT, TVT, TQT>(id) {
+		boost::uuids::name_generator_latest g(id);
+		/** @todo  Provide the name of the clock to the Something base class. */
+		sens.push_back(
+			Sensor::make(
+				//std::static_pointer_cast< GenericClock< SVT, SQT, TVT, TQT > >(
+				//	Something::shared_from_this()
+				//),
+				this,
+				g("clock"),
+				0
+			)
+		);
+	}
+public:
+	//using Something::sharedPtr; // doesn't help; no effect
+	operator ClockSptr () const {
+		return Something::sharedPtr< GenericClock< SVT, SQT, TVT, TQT > >();
 	}
 	/**
-	 * Samples the time from the clock device without triggering a new
-	 * measurement event.
+	 * Samples the time from the clock device without storing the result in
+	 * the clock's sensor object.
 	 * @param time  The place to put the sampled time.
 	 */
 	virtual void sampleTime(typename Measurement::TimeSample &time) = 0;
@@ -219,8 +224,8 @@ public:
 	 */
 	virtual bool unambiguous() const noexcept = 0;
 	/**
-	 * Samples the time from the clock device without triggering a new
-	 * measurement event.
+	 * Samples the time from the clock device without storing the result in
+	 * the clock's sensor object.
 	 * @return   The sampled time.
 	 */
 	typename Measurement::TimeSample sampleTime() {
@@ -229,12 +234,19 @@ public:
 		return ts;
 	}
 	#ifdef DOXYGEN
-	// Additional documentation for clock driver requirements. The function
-	// is defined in GenericInstrumentDriver.
+	// Additional documentation for clock driver requirements. The functions
+	// are defined in GenericDevice.
 	/**
-	 * Samples the time from this clock and the given clock, then sends the
-	 * measurement event. The sample from this clock will be in the @a measured
-	 * field of the @a Measurement object.
+	 * Samples the time from this clock stores it in the @a measured field of
+	 * the @a Measurement object of the device's first sensor. The @a timestamp
+	 * field will be clear.
+	 */
+	virtual void sample() = 0;
+	/**
+	 * Samples the time from this clock and the given clock, then stores the
+	 * measurement. The sample from this clock will be in the @a measured
+	 * field of the @a Measurement object, while the sample from the given
+	 * @a clock will be in the @a timestamp field.
 	 * @param clock  The clock that will be sampled for the timestamp in the
 	 *               resulting measurement. If it is this clock, the clock
 	 *               @b must only be sampled once and the same time must be
@@ -243,20 +255,29 @@ public:
 	 *               hold the time in those fields so they might not evaluate
 	 *               as equal.
 	 */
-	virtual void sample(ClockDriver &clock) = 0;
+	virtual void sample(const ClockSptr &clock) = 0;
 	#endif
 };
 
 /**
  * General use clock driver type.
  */
-typedef GenericClockDriver<
+typedef GenericClock<
 	duds::data::GenericValue,
 	double,
 	duds::time::interstellar::NanoTime,
 	float
->  ClockDriver;
+>  Clock;
 
+typedef std::shared_ptr<Clock>  ClockSptr;
+
+/*
+template<class SVT, class SQT, class TVT, class TQT>
+class GenericClockSensor : public GenericSensor<SVT, SQT, TVT, TQT> {
+public:
+	
+};
+*/
 
 } } } }
 

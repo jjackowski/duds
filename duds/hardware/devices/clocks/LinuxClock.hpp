@@ -7,8 +7,8 @@
  *
  * Copyright (C) 2017  Jeff Jackowski
  */
-#ifndef LINUXCLOCKDRIVER_HPP
-#define LINUXCLOCKDRIVER_HPP
+#ifndef LINUXCLOCK_HPP
+#define LINUXCLOCK_HPP
 
 #include <duds/hardware/devices/clocks/Clock.hpp>
 #include <duds/time/planetary/Planetary.hpp>
@@ -18,6 +18,17 @@
 #include <errno.h>
 
 namespace duds { namespace hardware { namespace devices { namespace clocks {
+
+/**
+ * The UUID for the Linux clock device.
+ */
+constexpr boost::uuids::uuid LinuxClockDeviceId = {
+	0xbf, 0x2d, 0x4a, 0x68,
+	0x62, 0xda,
+	0x45, 0x56,
+	0x8c, 0xc6,
+	0x38, 0xd1, 0xd5, 0x5b, 0x20, 0x74
+};
 
 /**
  * Uses the Linux specific adjtimex() function to query for the time and the
@@ -38,16 +49,13 @@ namespace duds { namespace hardware { namespace devices { namespace clocks {
  * @author  Jeff Jackowski
  */
 template<class SVT, class SQT, class TVT, class TQT>
-class GenericLinuxClockDriver :
-public duds::hardware::devices::clocks::GenericClockDriver<SVT, SQT, TVT, TQT> {
+class GenericLinuxClock :
+public duds::hardware::devices::clocks::GenericClock<SVT, SQT, TVT, TQT> {
 public:
-	// copied from base class; cannot use from derived classes
-	/** @copydoc GenericInstrumentDriver::Adapter */
-	typedef duds::hardware::GenericInstrumentAdapter<SVT, SQT, TVT, TQT>
-		Adapter;
-	/** @copydoc GenericInstrumentDriver::Measurement */
 	typedef duds::data::GenericMeasurement<SVT, SQT, TVT, TQT> Measurement;
 private:
+	using duds::hardware::devices::GenericDevice<SVT, SQT, TVT, TQT>::sens;
+	using duds::hardware::devices::GenericDevice<SVT, SQT, TVT, TQT>::setMeasurement;
 	/**
 	 * Takes a partially converted time from adjtimex(), completes the
 	 * conversion, and places it in the destination along with sample quality
@@ -59,7 +67,7 @@ private:
 	 * @param  time    The time in either microseconds or nanoseconds.
 	 */
 	template <class Sample>
-	static void setSample(Sample &dest, const timex &src,
+	void setSample(Sample &dest, const timex &src,
 		const duds::data::int128_t &time
 	) {
 		// check for an unsync'ed clock
@@ -69,23 +77,25 @@ private:
 				duds::data::unspecified<typename Sample::Quality>();
 		} else {
 			// provide info on the correctness of the time
-			GenericClockDriver<SVT, SQT, TVT, TQT>::template convert<std::micro>(
+			GenericClock<SVT, SQT, TVT, TQT>::template convert<std::micro>(
 				dest.accuracy, src.maxerror);
-			GenericClockDriver<SVT, SQT, TVT, TQT>::template convert<std::micro>(
+			GenericClock<SVT, SQT, TVT, TQT>::template convert<std::micro>(
 				dest.estError, src.esterror);
 		}
 		// additional quality data
-		GenericClockDriver<SVT, SQT, TVT, TQT>::template convert<std::micro>(
+		GenericClock<SVT, SQT, TVT, TQT>::template convert<std::micro>(
 			dest.precision, src.precision);
 		dest.resolution = duds::data::unspecified<typename Sample::Quality>();
 		// the time
 		if (src.status & STA_NANO) {
-			GenericClockDriver<SVT, SQT, TVT, TQT>::template convert<std::nano>(
+			GenericClock<SVT, SQT, TVT, TQT>::template convert<std::nano>(
 				dest.value, time);
 		} else {
-			GenericClockDriver<SVT, SQT, TVT, TQT>::template convert<std::micro>(
+			GenericClock<SVT, SQT, TVT, TQT>::template convert<std::micro>(
 				dest.value, time);
 		}
+		// the origin
+		dest.origin = sens[0]->uuid();
 	}
 	/**
 	 * Samples the time by calling adjtimex() and computes the time in either
@@ -123,54 +133,58 @@ private:
 			time += tx.time.tv_sec * std::micro::den;
 		}
 	}
+	struct Token { };
 public:
-	/*
-	virtual void setAdapter(const std::shared_ptr<Adapter> &a) {
-		adp = a;
-		adp->setUnit(duds::data::units::Second);
-		// setting part is probably best done in a derived class
-		//adp->setPart(SystemClockPart);
-	}
-	*/
 	/**
-	 * Samples the time from the clock device without triggering a new
-	 * measurement event.
-	 * @param time  The place to put the sampled time.
+	 * Constructs a new clock device with its UUID.
+	 * @private
 	 */
+	GenericLinuxClock(Token) :
+	GenericClock<SVT, SQT, TVT, TQT>(LinuxClockDeviceId) { }
+	/**
+	 * Makes a new clock device object.
+	 */
+	static std::shared_ptr< GenericLinuxClock <SVT, SQT, TVT, TQT> > make() {
+		return std::make_shared< GenericLinuxClock <SVT, SQT, TVT, TQT> >(Token());
+	}
 	virtual void sampleTime(typename Measurement::TimeSample &time) {
 		timex tx;
 		duds::data::int128_t total;
 		doSample(tx, total);
 		setSample(time, tx, total);
 	}
-	/**
-	 * Samples the time from this clock and the given clock, then sends the
-	 * measurement event. The sample from this clock will be in the @a measured
-	 * field of the @a Measurement object.
-	 * @param clock  The clock that will be sampled for the timestamp in the
-	 *               resulting measurement. If it is this clock, the clock will
-	 *               only be sampled once and the same time will be in both the
-	 *               @a measured and @a timestamp fields of the @a Measurement
-	 *               object. Different types may be used to hold the time in
-	 *               those fields so they might not evaluate as equal.
-	 */
-	virtual void sample(ClockDriver &clock) {
+	virtual void sample() {
 		timex tx;
 		duds::data::int128_t total;
-		doSample(tx, total);
 		std::shared_ptr<Measurement> m =
 			std::make_shared<Measurement>();
+		doSample(tx, total);
+		setSample(m->measured, tx, total);
+		// no timestamp
+		m->timestamp.clear();
+		// store the measurement
+		setMeasurement(std::move(m));
+	}
+	virtual void sample(const ClockSptr &clock) {
+		timex tx;
+		duds::data::int128_t total;
+		std::shared_ptr<Measurement> m =
+			std::make_shared<Measurement>();
+		doSample(tx, total);
 		setSample(m->measured, tx, total);
 		// if the supplied clock driver is this clock driver . . .
-		if (this == &clock) {
+		if (this == clock.get()) {
+			// use the same time
 			setSample(m->timestamp, tx, total);
-		} else {
+		} else if (clock) {
 			// sample the other clock
-			clock.sampleTime(m->timestamp);
+			clock->sampleTime(m->timestamp);
+		} else {
+			// no timestamp
+			m->timestamp.clear();
 		}
-		// send out the measurement
-		// protected members of the parent class are not in this scope
-		GenericClockDriver<SVT, SQT, TVT, TQT>::adp->signalMeasurement(m);
+		// store the measurement
+		setMeasurement(std::move(m));
 	}
 	virtual bool unambiguous() const noexcept {
 		return true;
@@ -180,14 +194,16 @@ public:
 /**
  * General use Linux clock driver type.
  */
-typedef GenericLinuxClockDriver<
+typedef GenericLinuxClock<
 	duds::data::GenericValue,
 	double,
 	duds::time::interstellar::NanoTime,
 	float
->  LinuxClockDriver;
+>  LinuxClock;
+
+typedef std::shared_ptr<LinuxClock>  LinuxClockSptr;
 
 } } } }
 
 
-#endif        //  #ifndef LINUXCLOCKDRIVER_HPP
+#endif        //  #ifndef LINUXCLOCK_HPP

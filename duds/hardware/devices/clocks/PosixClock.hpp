@@ -7,8 +7,8 @@
  *
  * Copyright (C) 2017  Jeff Jackowski
  */
-#ifndef POSIXCLOCKDRIVER_HPP
-#define POSIXCLOCKDRIVER_HPP
+#ifndef POSIXCLOCK_HPP
+#define POSIXCLOCK_HPP
 
 #include <duds/hardware/devices/clocks/Clock.hpp>
 #include <time.h>
@@ -37,6 +37,17 @@ struct PosixClockUnsupported : ClockError { };
 typedef boost::error_info<struct Info_posixclockid, clockid_t>  PosixClockId;
 
 /**
+ * The UUID for the POSIX clock device.
+ */
+constexpr boost::uuids::uuid PosixClockDeviceId = {
+	0x41, 0xba, 0xe3, 0x09,
+	0xc2, 0xe9,
+	0x4c, 0x02,
+	0xb4, 0xd5,
+	0x5b, 0x24, 0xc3, 0x99, 0xc7, 0xeb
+};
+
+/**
  * A clock driver to use clocks through the POSIX interface.
  * Not all POSIX clocks are suitable to provide the time. For example,
  * CLOCK_MONOTONIC cannot be related to the time without additional
@@ -57,13 +68,8 @@ typedef boost::error_info<struct Info_posixclockid, clockid_t>  PosixClockId;
  * @author Jeff Jackowski
  */
 template<class SVT, class SQT, class TVT, class TQT>
-class GenericPosixClockDriver : public GenericClockDriver<SVT, SQT, TVT, TQT> {
+class GenericPosixClock : public GenericClock<SVT, SQT, TVT, TQT> {
 public:
-	// copied from base class; cannot use from derived classes without scope
-	/** @copydoc GenericInstrumentDriver::Adapter */
-	typedef duds::hardware::GenericInstrumentAdapter<SVT, SQT, TVT, TQT>
-		Adapter;
-	/** @copydoc GenericInstrumentDriver::Measurement */
 	typedef duds::data::GenericMeasurement<SVT, SQT, TVT, TQT> Measurement;
 private:
 	/**
@@ -139,22 +145,28 @@ private:
 		dest.accuracy = dest.estError = dest.precision =
 			duds::data::unspecified<typename Sample::Quality>();
 		// set the time
-		GenericClockDriver<SVT, SQT, TVT, TQT>::template convert<std::nano>(
+		GenericClock<SVT, SQT, TVT, TQT>::template convert<std::nano>(
 			dest.value, time);
 	}
+	struct Token { };
+	using duds::hardware::devices::GenericDevice<SVT, SQT, TVT, TQT>::sens;
+	using duds::hardware::devices::GenericDevice<SVT, SQT, TVT, TQT>::setMeasurement;
 public:
 	/**
-	 * Construct a clock driver for the given POSIX clock.
+	 * Construct a clock device for the given POSIX clock.
+	 * @private
 	 * @param id  The ID number for the POSIX clock.
 	 * @param os  An offset in seconds that will be applied to the time provdied
-	 *            by this object.
+	 *            by this object. A non-zero value may be needed to provide
+	 *            TAI, but this will result in incorrect times after another
+	 *            leap second is added.
 	 * @warning   On Linux, CLOCK_TAI may provide UTC. See the warning in the
 	 *            detail documentation of this class for more information.
 	 * @throw PosixClockUnsupported  The specified clock is not supported by
 	 *                               the system.
 	 */
-	GenericPosixClockDriver(clockid_t id = CLOCK_REALTIME, int os = 0) :
-	clk(id), offset(os) {
+	GenericPosixClock(clockid_t id, int os, Token) :
+	GenericClock<SVT, SQT, TVT, TQT>(PosixClockDeviceId), clk(id), offset(os) {
 		// query the clock for its resolution
 		timespec ts;
 		int res = clock_getres(clk, &ts);
@@ -165,54 +177,62 @@ public:
 		duds::data::int128_t rez = sum(ts);
 		// convert the resolution into the two quality types found
 		// in a Measurement 
-		GenericClockDriver<SVT, SQT, TVT, TQT>::template convert<std::nano>(
+		GenericClock<SVT, SQT, TVT, TQT>::template convert<std::nano>(
 			sampleResolution, rez);
-		GenericClockDriver<SVT, SQT, TVT, TQT>::template convert<std::nano>(
+		GenericClock<SVT, SQT, TVT, TQT>::template convert<std::nano>(
 			timeResolution, rez);
 	}
-	/*
-	virtual void setAdapter(const std::shared_ptr<Adapter> &a) {
-		adp = a;
-		adp->setUnit(duds::data::units::Second);
-		// setting part is probably best done in a derived class
-		//adp->setPart(SystemClockPart);
-	}
-	*/
 	/**
-	 * Samples the time from the clock device without triggering a new
-	 * measurement event.
-	 * @param time  The place to put the sampled time.
+	 * Makes a new clock device for a POSIX clock.
+	 * @param id  The ID number for the POSIX clock.
+	 * @param os  An offset in seconds that will be applied to the time provdied
+	 *            by this object. A non-zero value may be needed to provide
+	 *            TAI, but this will result in incorrect times after another
+	 *            leap second is added.
+	 * @warning   On Linux, CLOCK_TAI may provide UTC. See the warning in the
+	 *            detail documentation of this class for more information.
+	 * @throw PosixClockUnsupported  The specified clock is not supported by
+	 *                               the system.
 	 */
+	static std::shared_ptr< GenericPosixClock <SVT, SQT, TVT, TQT> > make(
+		clockid_t id = CLOCK_REALTIME, int os = 0
+	) {
+		return std::make_shared< GenericPosixClock <SVT, SQT, TVT, TQT> >(
+			id, os, Token()
+		);
+	}
 	virtual void sampleTime(typename Measurement::TimeSample &time) {
 		duds::data::int128_t sum = doSample();
 		setSample(time, sum);
 	}
-	/**
-	 * Samples the time from this clock and the given clock, then sends the
-	 * measurement event. The sample from this clock will be in the @a measured
-	 * field of the @a Measurement object.
-	 * @param clock  The clock that will be sampled for the timestamp in the
-	 *               resulting measurement. If it is this clock, the clock will
-	 *               only be sampled once and the same time will be in both the
-	 *               @a measured and @a timestamp fields of the @a Measurement
-	 *               object. Different types may be used to hold the time in
-	 *               those fields so they might not evaluate as equal.
-	 */
-	virtual void sample(ClockDriver &clock) {
+	virtual void sample() {
+		std::shared_ptr<Measurement> m =
+			std::make_shared<Measurement>();
+		duds::data::int128_t sum = doSample();
+		setSample(m->measured, sum);
+		// no timestamp
+		m->timestamp.clear();
+		// store the measurement
+		setMeasurement(std::move(m));
+	}
+	virtual void sample(const ClockSptr &clock) {
 		std::shared_ptr<Measurement> m =
 			std::make_shared<Measurement>();
 		duds::data::int128_t sum = doSample();
 		setSample(m->measured, sum);
 		// if the supplied clock driver is this clock driver . . .
-		if (this == &clock) {
+		if (this == clock.get()) {
 			// sample the clock just once
 			setSample(m->timestamp, sum);
-		} else {
+		} else if (clock) {
 			// sample the other clock
-			clock.sampleTime(m->timestamp);
+			clock->sampleTime(m->timestamp);
+		} else {
+			// no timestamp
+			m->timestamp.clear();
 		}
-		// send out the measurement
-		GenericClockDriver<SVT, SQT, TVT, TQT>::adp->signalMeasurement(m);
+		// store the measurement
+		setMeasurement(std::move(m));
 	}
 	virtual bool unambiguous() const noexcept {
 		return false;
@@ -222,14 +242,16 @@ public:
 /**
  * General use POSIX clock driver type.
  */
-typedef GenericPosixClockDriver<
+typedef GenericPosixClock<
 	duds::data::GenericValue,
 	double,
 	duds::time::interstellar::NanoTime,
 	float
->  PosixClockDriver;
+>  PosixClock;
+
+typedef std::shared_ptr<PosixClock>  PosixClockSptr;
 
 } } } }
 
 
-#endif        //  #ifndef POSIXCLOCKDRIVER_HPP
+#endif        //  #ifndef POSIXCLOCK_HPP

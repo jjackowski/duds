@@ -37,9 +37,9 @@ namespace instruments { }
 
 These clock drivers use clocks that are implemented in other software. They are typically handled by the operating system.
 
-- @ref duds::hardware::devices::clocks::GenericCppClockDriver "GenericCppClockDriver": uses the C++11 chrono library
-- @ref duds::hardware::devices::clocks::GenericLinuxClockDriver "GenericLinuxClockDriver": uses the adjtimex() function from Linux
-- @ref duds::hardware::devices::clocks::GenericPosixClockDriver "GenericPosixClockDriver": uses the clock_gettime() function from POSIX
+- @ref duds::hardware::devices::clocks::GenericCppClock "CppClock": uses the C++11 chrono library
+- @ref duds::hardware::devices::clocks::GenericLinuxClock "LinuxClock": uses the adjtimex() function from Linux
+- @ref duds::hardware::devices::clocks::GenericPosixClock "PosixClock": uses the clock_gettime() function from POSIX
 
 @section SupDevDisp  Displays
 

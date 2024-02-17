@@ -18,7 +18,7 @@ namespace duds {
 
 /**
  * Something specific; a base class for identifying things.
- * @note  All instances of Something should have their memory handled by a
+ * @note  All instances of Something must have their memory handled by a
  *        std::shared_prt<Something> object.
  * @author  Jeff Jackowski
  */
@@ -27,11 +27,11 @@ class Something : public std::enable_shared_from_this<Something> {
 	 * A unique identifier that is valid across all peers.
 	 */
 	boost::uuids::uuid someId;
+protected:
 	/**
 	 * A name for this item intended for user presentation.
 	 */
 	general::LanguageTaggedStringMap ltnames;
-protected:
 	/**
 	 * Simple constructor.
 	 * @post  The object's UUID, @a someId, is uninitialized.
@@ -44,7 +44,7 @@ protected:
 	Something(const boost::uuids::uuid &id) : someId(id) { }
 	/**
 	 * Sets the UUID that is associated with this object.
-	 * @pre  The object is still being prepared for use. The UUID should not
+	 * @pre  The object is still being prepared for use. The UUID must not be
 	 *       changed once the object is in use.
 	 * @param id  The new UUID.
 	 */
@@ -53,6 +53,16 @@ protected:
 	}
 public:
 	virtual ~Something() = 0;
+	/**
+	 * Returns a shared pointer to this object for a derived class.
+	 * @tparam DerivedClass  The class derived from this class.
+	 * @return               A shared pointer containing this object with the
+	 *                       type of the derived class.
+	 */
+	template <class DerivedClass>
+	std::shared_ptr<DerivedClass> sharedPtr() const {
+		return std::static_pointer_cast<DerivedClass>(shared_from_this());
+	}
 	/**
 	 * Returns the object's unique identifier.
 	 */

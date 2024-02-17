@@ -13,9 +13,9 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <duds/time/interstellar/Metricform.hpp>
 #include <duds/time/interstellar/Hectoform.hpp>
-#include <duds/hardware/devices/clocks/LinuxClockDriver.hpp>
-#include <duds/hardware/devices/clocks/PosixClockDriver.hpp>
-#include <duds/hardware/devices/clocks/CppClockDriver.hpp>
+#include <duds/hardware/devices/clocks/LinuxClock.hpp>
+#include <duds/hardware/devices/clocks/PosixClock.hpp>
+#include <duds/hardware/devices/clocks/CppClock.hpp>
 #include <boost/exception/diagnostic_information.hpp>
 #include <ratio>
 //#include <sys/time.h>
@@ -130,14 +130,19 @@ try {
 	//tzset();
 
 	timeout(ls, 0, IST::SecondClock::now());
-	duds::hardware::devices::clocks::LinuxClockDriver lcd;
-	duds::hardware::devices::clocks::PosixClockDriver pcd(CLOCK_TAI), rtcd(CLOCK_REALTIME);
-	duds::hardware::devices::clocks::CppClockDriver ccd;
-	duds::hardware::devices::clocks::LinuxClockDriver::Measurement::TimeSample lts, pts, cts, rtts;
-	lcd.sampleTime(lts);
-	pcd.sampleTime(pts);
-	ccd.sampleTime(cts);
-	rtcd.sampleTime(rtts);
+	duds::hardware::devices::clocks::LinuxClockSptr lcd =
+		duds::hardware::devices::clocks::LinuxClock::make();
+	duds::hardware::devices::clocks::PosixClockSptr pcd =
+		duds::hardware::devices::clocks::PosixClock::make(CLOCK_TAI);
+	duds::hardware::devices::clocks::PosixClockSptr rtcd =
+		duds::hardware::devices::clocks::PosixClock::make(CLOCK_REALTIME);
+	duds::hardware::devices::clocks::CppClockSptr ccd =
+		duds::hardware::devices::clocks::CppClock::make();
+	duds::hardware::devices::clocks::LinuxClock::Measurement::TimeSample lts, pts, cts, rtts;
+	lcd->sampleTime(lts);
+	pcd->sampleTime(pts);
+	ccd->sampleTime(cts);
+	rtcd->sampleTime(rtts);
 	timeout(ls, 0, lts.value);
 	timeout(ls, 0, pts.value);
 	timeout(ls, 0, cts.value);
