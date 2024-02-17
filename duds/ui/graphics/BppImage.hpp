@@ -1474,6 +1474,8 @@ public:
 	/**
 	 * Changes the state of every pixel in the image to the given state.
 	 * @post  All pixels will be set to @a state.
+	 * @sa clearImage()
+	 * @sa setImage()
 	 */
 	void blankImage(bool state);
 	/**

@@ -12,7 +12,6 @@
 
 #include <duds/data/Quantity.hpp>
 #include <duds/general/NddArray.hpp>
-#include <duds/general/Errors.hpp>
 #include <array>
 
 namespace duds { namespace data {
