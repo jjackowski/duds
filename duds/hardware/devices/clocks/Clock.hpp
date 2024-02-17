@@ -186,16 +186,7 @@ protected:
 	duds::hardware::devices::GenericDevice<SVT, SQT, TVT, TQT>(id) {
 		boost::uuids::name_generator_latest g(id);
 		/** @todo  Provide the name of the clock to the Something base class. */
-		sens.push_back(
-			Sensor::make(
-				//std::static_pointer_cast< GenericClock< SVT, SQT, TVT, TQT > >(
-				//	Something::shared_from_this()
-				//),
-				this,
-				g("clock"),
-				0
-			)
-		);
+		sens.push_back(Sensor::make(this, g("clock"), 0));
 	}
 public:
 	//using Something::sharedPtr; // doesn't help; no effect
@@ -270,14 +261,6 @@ typedef GenericClock<
 >  Clock;
 
 typedef std::shared_ptr<Clock>  ClockSptr;
-
-/*
-template<class SVT, class SQT, class TVT, class TQT>
-class GenericClockSensor : public GenericSensor<SVT, SQT, TVT, TQT> {
-public:
-	
-};
-*/
 
 } } } }
 

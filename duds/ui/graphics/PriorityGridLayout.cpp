@@ -450,8 +450,9 @@ void PriorityGridLayout::render(BppImage *dest) {
 			ImageLocation off(0, 0);
 			ImageDimensions dim(pstat.second.dim);
 			PanelMargins margin = { 0, 0, 0, 0 };
+			const BppImage *img;
 			try {
-				const BppImage *img = pstat.second.panel->render(
+				img = pstat.second.panel->render(
 					off,
 					dim,
 					margin,

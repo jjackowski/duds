@@ -93,7 +93,8 @@ public:
 protected:
 	/**
 	 * Contains Sensor objects to represent all the kinds of data this device
-	 * can collect.
+	 * can collect. Each sensor must be placed in the vector at the index
+	 * equal to Sensor::index().
 	 */
 	std::vector<SensorSptr> sens;
 	/**

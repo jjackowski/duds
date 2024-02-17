@@ -90,6 +90,8 @@ struct GenericSample {
 	}
 	/**
 	 * The UUID for the source instrument of this sample.
+	 * If this is nil (all zero), the Sample will be considered clear of data
+	 * by isClear().
 	 */
 	boost::uuids::uuid origin;
 	/**
