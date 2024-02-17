@@ -53,6 +53,11 @@ struct PanelNotAddedError : LayoutError { };
  */
 typedef boost::error_info<struct Info_PanelPriority, int> PanelPriority;
 
+/**
+ * Identifies a Panel's selected size-step in errors.
+ */
+typedef boost::error_info<struct Info_PanelSizeStep, int> PanelSizeStep;
+
 } } }
 
 #endif        //  #ifndef LAYOUTERRORS_HPP

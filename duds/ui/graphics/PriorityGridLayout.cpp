@@ -450,12 +450,18 @@ void PriorityGridLayout::render(BppImage *dest) {
 			ImageLocation off(0, 0);
 			ImageDimensions dim(pstat.second.dim);
 			PanelMargins margin = { 0, 0, 0, 0 };
-			const BppImage *img = pstat.second.panel->render(
-				off,
-				dim,
-				margin,
-				pstat.second.sizeStep
-			);
+			try {
+				const BppImage *img = pstat.second.panel->render(
+					off,
+					dim,
+					margin,
+					pstat.second.sizeStep
+				);
+			} catch (boost::exception &be) {
+				be << PanelPriority(pstat.first) <<
+				PanelSizeStep(pstat.second.sizeStep);
+				throw;
+			}
 			// showing something other than blank space?
 			if (img) {
 				ImageDimensions dimIncMar(
@@ -466,6 +472,8 @@ void PriorityGridLayout::render(BppImage *dest) {
 				if (!pstat.second.dim.fits(dimIncMar)) {
 					// failed
 					DUDS_THROW_EXCEPTION(PanelImageTooLargeError() <<
+						PanelPriority(pstat.first) <<
+						PanelSizeStep(pstat.second.sizeStep) <<
 						ImageErrorLocation(off) <<
 						ImageErrorSourceDimensions(dimIncMar) <<
 						ImageErrorTargetDimensions(pstat.second.dim)
