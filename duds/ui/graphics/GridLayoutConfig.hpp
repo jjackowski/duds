@@ -50,6 +50,10 @@ struct GridLayoutConfig {
 	 */
 	static constexpr Flags PanelHidden          = Flags::Bit(0);
 	/**
+	 * The panel is shown. This is the default.
+	 */
+	static constexpr Flags PanelShown           = Flags::Zero();
+	/**
 	 * Request that this panel's width be expanded past the requested minumum if
 	 * there is extra space available on the row. If multiple panels on the row
 	 * make this request, extra width will be provided about evenly among the
@@ -214,6 +218,18 @@ struct GridLayoutConfig {
 	void center() {
 		flags.setMasked(PanelCenter, PanelPositionMask);
 	}
+	/**
+	 * Sets the flag to hide the panel.
+	 */
+	void hide() {
+		flags |= PanelHidden;
+	}
+	/**
+	 * Clear the flag to show the panel.
+	 */
+	void show() {
+		flags &= ~PanelHidden;
+	}
 };
 
 /**
@@ -230,6 +246,27 @@ struct GridLocation {
 	 * The row position. Each row is independent of every other row.
 	 */
 	std::uint16_t r;
+	/**
+	 * Construct uninitialized.
+	 */
+	GridLocation() = default;
+	/**
+	 * Construct with the given location.
+	 * The template avoids warnings when the integer type is not std::int16_t.
+	 * If a value is the result of a computation, it will likely be an int
+	 * unless explicitly made otherwise, which is annoying when it comes with a
+	 * warning.
+	 * @param col  The column.
+	 * @param row  The row.
+	 */
+	template <
+		typename Int0,
+		typename Int1,
+		std::enable_if_t<std::is_integral<Int0>::value, bool> = true,
+		std::enable_if_t<std::is_integral<Int1>::value, bool> = true
+	>
+	constexpr GridLocation(Int0 col, Int1 row) :
+	c((std::int16_t)col), r((std::int16_t)row) { }
 	/**
 	 * Obvious equality operator.
 	 */
@@ -294,6 +331,82 @@ struct GridSizeStep {
 		const ImageDimensions &id,
 		const GridLocation &gl
 	) : minDim(id), loc(gl), flags(GridLayoutConfig::Flags::Zero()) { }
+	/**
+	 * Sets the horizontal positioning flags to indicate the panel should be
+	 * justified to the left edge. This is the default configuration.
+	 */
+	void justifyLeft() {
+		flags &= ~GridLayoutConfig::PanelPositionHorizMask;
+	}
+	/**
+	 * Sets the horizontal positioning flags to indicate the panel should be
+	 * justified to the right edge.
+	 */
+	void justifyRight() {
+		flags.setMasked(
+			GridLayoutConfig::PanelJustifyRight,
+			GridLayoutConfig::PanelPositionHorizMask
+		);
+	}
+	/**
+	 * Sets the horizontal positioning flags to indicate the panel should be
+	 * centered.
+	 */
+	void centerHoriz() {
+		flags.setMasked(
+			GridLayoutConfig::PanelCenterHoriz,
+			GridLayoutConfig::PanelPositionHorizMask
+		);
+	}
+	/**
+	 * Sets the vertcal positioning flags to indicate the panel should be
+	 * justified to the top edge. This is the default configuration.
+	 */
+	void justifyUp() {
+		flags &= ~GridLayoutConfig::PanelPositionVertMask;
+	}
+	/**
+	 * Sets the vertcal positioning flags to indicate the panel should be
+	 * justified to the bottom edge.
+	 */
+	void justifyDown() {
+		flags.setMasked(
+			GridLayoutConfig::PanelJustifyDown,
+			GridLayoutConfig::PanelPositionVertMask
+		);
+	}
+	/**
+	 * Sets the vertcal positioning flags to indicate the panel should be
+	 * centered.
+	 */
+	void centerVert() {
+		flags.setMasked(
+			GridLayoutConfig::PanelCenterVert,
+			GridLayoutConfig::PanelPositionVertMask
+		);
+	}
+	/**
+	 * Sets all the positioning flags to indicate the panel should be
+	 * centered horizontally and vertically.
+	 */
+	void center() {
+		flags.setMasked(
+			GridLayoutConfig::PanelCenter,
+			GridLayoutConfig::PanelPositionMask
+		);
+	}
+	/**
+	 * Sets the flag to hide the panel.
+	 */
+	void hide() {
+		flags |= GridLayoutConfig::PanelHidden;
+	}
+	/**
+	 * Clear the flag to show the panel.
+	 */
+	void show() {
+		flags &= ~GridLayoutConfig::PanelHidden;
+	}
 };
 
 } } }
