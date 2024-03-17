@@ -28,6 +28,11 @@ struct BppMenuRendererError : virtual std::exception, virtual boost::exception {
 struct BppMenuDestinationTooSmall : BppMenuRendererError { };
 
 /**
+ * The destination image doesn't exist.
+ */
+struct BppMenuDestinationMissing : BppMenuRendererError { };
+
+/**
  * The menu render is configured to render text, but has no string cache.
  */
 struct BppMenuLacksStringCache : BppMenuRendererError { };
@@ -80,7 +85,7 @@ struct BppMenuLacksStringCache : BppMenuRendererError { };
  *    - If omitted, the value text will be rendered with the label text. This
  *      will likely need some more development work to look good.
  *    - The text may optionally be right justified by using the configuration
- *      flag ValueRightJusified.
+ *      flag ValueRightJustified.
  * -# Item margin
  *    - Optional extra space between menu items set by call to
  *      itemMargin(std::uint16_t).
@@ -150,7 +155,7 @@ public:
 	 * from the item label. If the value column width is zero or not provided,
 	 * this flag will have no effect.
 	 */
-	static constexpr Flags ValueRightJusified      = Flags::Bit(5);
+	static constexpr Flags ValueRightJustified     = Flags::Bit(5);
 	/**
 	 * Only show icons, not text, for the menu items. This will prevent values,
 	 * as well as text naming a menu item, from being shown.
@@ -496,6 +501,12 @@ public:
 	 * Removes the scroll bar from the menu.
 	 */
 	void removeScrollBar();
+	/**
+	 * Returns true if a scroll bar is in use.
+	 */
+	bool hasScrollBar() const {
+		return scrollWidth != 0;
+	}
 	/**
 	 * Renders a menu to the given image.
 	 * @param dest  The destination image. If its size is different than the

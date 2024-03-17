@@ -19,7 +19,7 @@ constexpr BppMenuRenderer::Flags BppMenuRenderer::ScrollBarMask;
 constexpr BppMenuRenderer::Flags BppMenuRenderer::ScrollBarNeverHides;
 constexpr BppMenuRenderer::Flags BppMenuRenderer::HorizontalList;
 constexpr BppMenuRenderer::Flags BppMenuRenderer::InvertSelected;
-constexpr BppMenuRenderer::Flags BppMenuRenderer::ValueRightJusified;
+constexpr BppMenuRenderer::Flags BppMenuRenderer::ValueRightJustified;
 constexpr BppMenuRenderer::Flags BppMenuRenderer::DoNotShowText;
 constexpr BppMenuRenderer::Flags BppMenuRenderer::ScrollBarShown;
 constexpr BppMenuRenderer::Flags BppMenuRenderer::Calculated;
@@ -48,8 +48,10 @@ void BppMenuRenderer::addScrollBar(
 	std::uint16_t minsize,
 	ScrollBarPlacement place
 ) {
-	scrollMg = margin;
+	// check for no change
+	if ((width == scrollWidth) && (margin == scrollMg)) return;
 	scrollWidth = width;
+	scrollMg = margin;
 	posInd = std::make_unique<duds::ui::graphics::BppPositionIndicator>(
 		minsize
 	);
@@ -191,6 +193,9 @@ void BppMenuRenderer::render(
 	if ((~flgs & DoNotShowText) && !cache) {
 		DUDS_THROW_EXCEPTION(BppMenuLacksStringCache());
 	}
+	if (!dest) {
+		DUDS_THROW_EXCEPTION(BppMenuDestinationMissing());
+	}
 	// destination image dimensions will be used in a number of places
 	const graphics::ImageDimensions &fitDim = dest->dimensions();
 	// ensure item dimensions have been computed
@@ -328,16 +333,33 @@ void BppMenuRenderer::render(
 			graphics::ConstBppImageSptr text;
 			// have label text?
 			if (!mitem->label().empty()) {
-				// put value text after label?
-
-				// ValueRightJusified is ignored --- fix !!!
-
-				if (!valWidth && !mitem->value().empty()) {
+				if (valWidth || mitem->value().empty() || (flgs & ValueRightJustified)) {
+					// get the rendered label text
+					text = cache->text(mitem->label());
+				}
+				if (!text && !(flgs & ValueRightJustified)) {
 					// get the rendered label and value text
 					text = cache->text(mitem->label() + " " + mitem->value());
 				} else {
-					// get the rendered label text
-					text = cache->text(mitem->label());
+					// render value text and label text separately
+					graphics::ConstBppImageSptr valtext;
+					valtext = cache->text(mitem->value());
+					// compute width of value
+					graphics::ImageDimensions vdim(
+						textDim.minExtent(text->dimensions())
+					);
+					vdim.w = textDim.w - valMg - vdim.w;
+					// any space to fit value?
+					if (vdim.w > 0) {
+						img->write(
+							valtext,
+							graphics::ImageLocation(
+								textDim.w - valtext->dimensions().w,
+								pos.y
+							),
+							vdim.minExtent(valtext->dimensions())
+						);
+					}
 				}
 				// put it in the destination image
 				img->write(
@@ -356,14 +378,14 @@ void BppMenuRenderer::render(
 					// render the value text
 					text = cache->text(
 						mitem->value(),
-						(flgs & ValueRightJusified) ?
+						(flgs & ValueRightJustified) ?
 						graphics::BppFont::AlignRight :
 						graphics::BppFont::AlignLeft
 					);
 					// remaining dimensions to fill
 					graphics::ImageDimensions valDim(itemDim.w - pos.x, itemDim.h);
 					// text left justified, exactly fits or is too long?
-					if (!(flgs & ValueRightJusified) || text->width() >= valDim.w) {
+					if (!(flgs & ValueRightJustified) || text->width() >= valDim.w) {
 						// write out the text; justification is irrelevant
 						img->write(text, pos, valDim);
 						// no need to blank out any area
