@@ -214,15 +214,6 @@ const GridLayoutConfig &PriorityGridLayout::panelConfig(unsigned int pri) const 
 }
 
 int PriorityGridLayout::layout() {
-	// re-initialize status data
-	for (auto &pstat : configs) {
-		// start all items at initial size-step
-		pstat.second.sizeStep = 0;
-		// hide if flagged as hidden or no size-steps
-		pstat.second.hidden = (pstat.second.sizeStep < 0) ||
-			(pstat.second.config.sizes.size() <= pstat.second.sizeStep) ||
-			((pstat.second.config.flags & GridLayoutConfig::PanelHidden) > 0);
-	}
 	// tabulated data on each row
 	RowVec rdat;
 	rdat.reserve(8);
@@ -233,14 +224,14 @@ int PriorityGridLayout::layout() {
 	int heightExpand = 0;
 	// place items into grid positions in priority order
 	for (auto &pstat : configs) {
+		// re-initialize to initial size-step
+		pstat.second.sizeStep = 0;
+		// hide if flagged as hidden or no size-steps
+		pstat.second.hidden = (pstat.second.sizeStep < 0) ||
+			pstat.second.config.sizes.empty() ||
+			((pstat.second.config.flags & GridLayoutConfig::PanelHidden) > 0);
 		// skip hidden panels
 		if (pstat.second.hidden) {
-			continue;
-		}
-		// not visible?
-		if (pstat.second.currentStep().flags & GridLayoutConfig::PanelHidden) {
-			// mark as hidden
-			pstat.second.hidden = true;
 			continue;
 		}
 		RowData *row = nullptr;
