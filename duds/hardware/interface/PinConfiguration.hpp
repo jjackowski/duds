@@ -693,6 +693,7 @@ public:
 	 * @pre  A configuration has been successfully parsed, and the DigitalPort
 	 *       object that handles the pin has been attached.
 	 * @param pinName  The name of the pin in the configuration.
+	 * @return         The new DigitalPin object.
 	 * @throw PinBadIdError          The configuration does not define a pin
 	 *                               with the given name.
 	 * @throw PortDoesNotExistError  The port that supplies the pin has not
@@ -701,6 +702,24 @@ public:
 	 *                               not have the pin.
 	 */
 	DigitalPin getPin(const std::string &pinName) const;
+	/**
+	 * Changes a DigitalPin object to represent the named pin in the
+	 * configuration.
+	 * @pre  A configuration has been successfully parsed, and the DigitalPort
+	 *       object that handles the pin has been attached.
+	 * @param dest     The DigitalPin to update. It will not represent any pin
+	 *                 if the pin is not found.
+	 * @param pinName  The name of the pin in the configuration.
+	 * @return         True if the nanmed pin was found, false otherwise.
+	 */
+	bool getPin(DigitalPin &dest, const std::string &pinName) const;
+	/**
+	 * Returns true if the named pin is in the configuration.
+	 * @pre  A configuration has been successfully parsed, and the DigitalPort
+	 *       object that handles the pin has been attached.
+	 * @param pinName  The name of the pin in the configuration.
+	 */
+	bool havePin(const std::string &pinName) const;
 	/**
 	 * True if the named chip select has been found in the already parsed
 	 * configuration. This is used inside the parsing code, but can be used

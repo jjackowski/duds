@@ -693,5 +693,30 @@ DigitalPin PinConfiguration::getPin(
 	return DigitalPin(niter->parent->dport, niter->gid);
 }
 
+bool PinConfiguration::getPin(
+	DigitalPin &dest,
+	const std::string &pinName
+) const {
+	const PinConfiguration::Pins::index<index_name>::type &nidx =
+		allpins.get<index_name>();
+	PinConfiguration::Pins::index<index_name>::type::iterator niter =
+		nidx.find(pinName);
+	if ((niter == nidx.end()) || !niter->parent || !niter->parent->dport) {
+		dest.reset();
+		return false;
+	}
+	dest = DigitalPin(niter->parent->dport, niter->gid);
+	return true;
+}
+
+bool PinConfiguration::havePin(
+	const std::string &pinName
+) const {
+	const PinConfiguration::Pins::index<index_name>::type &nidx =
+		allpins.get<index_name>();
+	PinConfiguration::Pins::index<index_name>::type::iterator niter =
+		nidx.find(pinName);
+	return (niter != nidx.end()) && niter->parent && !niter->parent->dport;
+}
 
 } } }
