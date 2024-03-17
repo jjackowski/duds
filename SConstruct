@@ -198,8 +198,6 @@ dbgenv.AppendUnique(
 # exist, so this doesn't work with header-only libraries.
 optionalLibs = {
 	# key is the macro, value is the library
-	'LIBBOOST_FILESYSTEM' :
-		'libboost_filesystem${BOOSTTOOLSET}${BOOSTTAG}${BOOSTABI}${BOOSTVER}',
 	'LIBBOOST_TEST' :
 		'libboost_unit_test_framework${BOOSTTOOLSET}${BOOSTTAG}${BOOSTABI}${BOOSTVER}',
 	#'LIBBOOST_PROGRAM_OPTIONS' :

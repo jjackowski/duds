@@ -7,6 +7,8 @@
  *
  * Copyright (C) 2023  Jeff Jackowski
  */
+#ifndef BPPFONTPOOL_HPP
+#define BPPFONTPOOL_HPP
 #include <duds/ui/graphics/BppStringCache.hpp>
 #include <duds/ui/graphics/BppImageErrors.hpp>
 
@@ -185,3 +187,5 @@ public:
 };
 
 } } }
+
+#endif        //  #ifndef BPPFONTPOOL_HPP

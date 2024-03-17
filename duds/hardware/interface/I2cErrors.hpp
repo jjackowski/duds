@@ -34,6 +34,11 @@ struct I2cErrorPartLength : I2cError { };
 struct I2cErrorConversationLength : I2cError { };
 
 /**
+ * An attempt was made to use a non-existent I2C bus.
+ */
+struct I2cErrorNoBus : I2cError { };
+
+/**
  * The device did not respond to its address (NACK). It could be a transient
  * error, or there may not be a device at the address. Devices that support a
  * reset by I2C command will normally result in this error after the reset

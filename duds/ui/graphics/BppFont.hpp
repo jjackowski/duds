@@ -7,6 +7,8 @@
  *
  * Copyright (C) 2019  Jeff Jackowski
  */
+#ifndef BPPFONT_HPP
+#define BPPFONT_HPP
 #include <duds/ui/graphics/BppImage.hpp>
 #include <duds/general/BitFlags.hpp>
 #include <duds/general/Spinlock.hpp>
@@ -261,3 +263,5 @@ public:
 typedef std::shared_ptr<BppFont>  BppFontSptr;
 
 } } }
+
+#endif        //  #ifndef BPPFONT_HPP

@@ -33,6 +33,11 @@ struct SmbusErrorPec : virtual SmbusError, virtual duds::general::ChecksumError 
 struct SmbusErrorMessageLength : SmbusError { };
 
 /**
+ * An attempt was made to use a non-existent SMBus bus.
+ */
+struct SmbusErrorNoBus : SmbusError { };
+
+/**
  * The device did not respond to its address. It could be a transient error,
  * or there may not be a device at the address.
  */

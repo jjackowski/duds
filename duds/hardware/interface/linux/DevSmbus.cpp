@@ -25,7 +25,7 @@ DevSmbus::DevSmbus(const std::string &devname, int devaddr, bool pec) :
 dev(devname), addr(devaddr) {
 	fd = open(dev.c_str(), O_RDWR);
 	if (fd < 0) {
-		DUDS_THROW_EXCEPTION(SmbusError() << boost::errinfo_errno(errno) <<
+		DUDS_THROW_EXCEPTION(SmbusErrorNoBus() << boost::errinfo_errno(errno) <<
 			boost::errinfo_file_name(dev) << SmbusDeviceAddr(addr)
 		);
 	}

@@ -51,6 +51,13 @@ public:
 	const std::shared_ptr<DigitalPort> &port() const {
 		return dp;
 	}
+	/**
+	 * Resets the shared pointer to the DigitalPort so that this object no
+	 * longer represents a pin.
+	 */
+	void reset() {
+		dp.reset();
+	}
 };
 
 } } }

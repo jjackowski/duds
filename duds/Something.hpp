@@ -12,6 +12,7 @@
 
 #include <boost/uuid/uuid.hpp>
 #include <duds/general/LanguageTaggedString.hpp>
+#include <boost/noncopyable.hpp>
 #include <memory>
 
 namespace duds {
@@ -22,7 +23,9 @@ namespace duds {
  *        std::shared_prt<Something> object.
  * @author  Jeff Jackowski
  */
-class Something : public std::enable_shared_from_this<Something> {
+class Something :
+public std::enable_shared_from_this<Something>, boost::noncopyable
+{
 	/**
 	 * A unique identifier that is valid across all peers.
 	 */

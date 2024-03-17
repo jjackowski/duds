@@ -7,7 +7,6 @@
  *
  * Copyright (C) 2020  Jeff Jackowski
  */
-#include <libevdev/libevdev.h>
 #include <duds/os/linux/Poller.hpp>
 #include <duds/os/linux/InputHandlers.hpp>
 

@@ -60,7 +60,7 @@ public:
 	 *                 communications.
 	 * @throw I2cErrorUnsupported   A 10-bit address was requested but is not
 	 *                              supported by the kernel's driver.
-	 * @throw I2cError              The device file could not be opened.
+	 * @throw I2cErrorNoBus         The device file could not be opened.
 	 */
 	DevI2c(const std::string &devname, int devaddr);
 	/**

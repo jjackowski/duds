@@ -68,7 +68,7 @@ public:
 	 * @throw SmbusErrorUnsupported   Either PEC requested but not supported, or
 	 *                                a 10-bit address was requested but is not
 	 *                                supported by the kernel's driver.
-	 * @throw SmbusError              The device file could not be opened or
+	 * @throw SmbusErrorNoBus         The device file could not be opened or
 	 *                                failed to accept the device address.
 	 */
 	DevSmbus(const std::string &devname, int devaddr, bool pec = true);

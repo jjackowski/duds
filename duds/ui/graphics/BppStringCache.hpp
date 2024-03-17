@@ -7,6 +7,8 @@
  *
  * Copyright (C) 2019  Jeff Jackowski
  */
+#ifndef BPPSTRINGCACHE_HPP
+#define BPPSTRINGCACHE_HPP
 #include <duds/ui/graphics/BppFont.hpp>
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/hashed_index.hpp>
@@ -326,3 +328,5 @@ public:
 typedef std::shared_ptr<BppStringCache>  BppStringCacheSptr;
 
 } } }
+
+#endif        //  #ifndef BPPSTRINGCACHE_HPP

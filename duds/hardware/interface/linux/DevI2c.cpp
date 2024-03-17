@@ -24,7 +24,7 @@ DevI2c::DevI2c(const std::string &devname, int devaddr) :
 dev(devname), addr(devaddr) {
 	fd = open(dev.c_str(), O_RDWR);
 	if (fd < 0) {
-		DUDS_THROW_EXCEPTION(I2cError() << boost::errinfo_errno(errno) <<
+		DUDS_THROW_EXCEPTION(I2cErrorNoBus() << boost::errinfo_errno(errno) <<
 			boost::errinfo_file_name(dev) << I2cDeviceAddr(addr)
 		);
 	}
