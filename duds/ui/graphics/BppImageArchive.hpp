@@ -34,6 +34,42 @@ private:
 	mutable duds::general::Spinlock block;
 public:
 	/**
+	 * Makes an empty image archive.
+	 */
+	BppImageArchive() = default;
+	/**
+	 * Returns a new empty BppImageArchive object in a shared pointer.
+	 */
+	static std::shared_ptr<BppImageArchive> make() {
+		return std::make_shared<BppImageArchive>();
+	}
+	/**
+	 * @copydoc load(const std::string &)
+	 */
+	BppImageArchive(const std::string &path) {
+		load(path);
+	}
+	/**
+	 * Returns a new BppImageArchive object in a shared pointer, and calls
+	 * load(const std::string &).
+	 */
+	static std::shared_ptr<BppImageArchive> make(const std::string &path) {
+		return std::make_shared<BppImageArchive>(path);
+	}
+	/**
+	 * @copydoc load(std::istream &)
+	 */
+	BppImageArchive(std::istream &is) {
+		load(is);
+	}
+	/**
+	 * Returns a new BppImageArchive object in a shared pointer, and calls
+	 * load(std::istream &).
+	 */
+	static std::shared_ptr<BppImageArchive> make(std::istream &is) {
+		return std::make_shared<BppImageArchive>(is);
+	}
+	/**
 	 * Loads images from an image archive in the specified file.
 	 * If the archive stream has an image with the same name as one already
 	 * inside this object, the already loaded image will be replaced by putting
@@ -120,5 +156,8 @@ public:
 		return arc.cend();
 	}
 };
+
+typedef std::shared_ptr<BppImageArchive>  BppImageArchiveSptr;
+typedef std::weak_ptr<BppImageArchive>  BppImageArchiveWptr;
 
 } } }
