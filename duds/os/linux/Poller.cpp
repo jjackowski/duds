@@ -127,12 +127,15 @@ struct ResponseRecord {
 };
 
 int Poller::wait(std::chrono::milliseconds timeout) {
-	epoll_event events[32];
-	int count = epoll_wait(epfd, events, 32, timeout.count());
+	epoll_event events[maxEvents];
+	int count = epoll_wait(epfd, events, maxEvents, timeout.count());
 	if (!count) {
 		// all done
 		return 0;
 	} else if (count < 0) {
+		if (errno == EINTR) {
+			return -1;
+		}
 		DUDS_THROW_EXCEPTION(PollerError() <<
 			boost::errinfo_errno(errno)
 		);
@@ -173,7 +176,7 @@ int Poller::wait(std::chrono::milliseconds timeout) {
 			}
 		}
 	);
-	return resprec.size();
+	return count; //resprec.size();
 }
 
 } } }

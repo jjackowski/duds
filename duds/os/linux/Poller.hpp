@@ -155,6 +155,11 @@ class Poller : boost::noncopyable {
 	int epfd;
 public:
 	/**
+	 * The maximum number of events that will be read by a single call to
+	 * wait(std::chrono::milliseconds).
+	 */
+	static constexpr int maxEvents = 32;
+	/**
 	 * Constructs a new Poller and obtains a file descriptor for use with epoll.
 	 * @param reserveSize  The size to reserve in the internal vectors. If the
 	 *                     maximum number of responders are known, passing in
@@ -222,8 +227,8 @@ public:
 	void remove(int fd);
 	/**
 	 * Waits up to the specified time for events, and processes events
-	 * immediately. Up to 32 events may be recorded in a single call; this
-	 * maximum was chosen arbitrarily. If more than 32 events are availble, the
+	 * immediately. Up to @a maxEvents events may be recorded in a single call;
+	 * this maximum was chosen arbitrarily. If more events are availble, the
 	 * additional events will be immediately handled on the next call to wait().
 	 *
 	 * Before the PollResponder::respond() functions can be invoked, they must
@@ -250,8 +255,9 @@ public:
 	 *
 	 * @return   The number of events handled. If zero, the function either
 	 *           waited the maximum amount of time, or a reported event lacked
-	 *           a corresponding PollResponder object.
-	 * @throw    PollerError   epoll_wait() reported an error.
+	 *           a corresponding PollResponder object. Returns -1 if
+	 *           epoll_wait() reports EINTR (interrupted system call).
+	 * @throw    PollerError   epoll_wait() reported an error other than EINTR.
 	 */
 	int wait(std::chrono::milliseconds timeout);
 	/**
