@@ -115,7 +115,18 @@ typedef std::shared_ptr<Panel>  PanelSptr;
  * @author  Jeff Jackowski
  */
 class EmptyPanel : public Panel {
+	struct Token { };
 public:
+	/**
+	 * @private
+	 */
+	EmptyPanel(Token) { }
+	/**
+	 * Returns a shared pointer to a new empty panel.
+	 */
+	static std::shared_ptr<EmptyPanel> make() {
+		return std::make_shared<EmptyPanel>(Token());
+	}
 	/**
 	 * Just returns nullptr.
 	 */
