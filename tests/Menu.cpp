@@ -76,7 +76,7 @@ BOOST_AUTO_TEST_CASE(MenuBasics) {
 	BOOST_CHECK_EQUAL(view->queuedInput(), true);
 	// chose function has not yet been called
 	BOOST_CHECK_EQUAL(val, 0);
-	view->update();
+	BOOST_REQUIRE_NO_THROW(view->update());
 	BOOST_CHECK_EQUAL(view->queuedInput(), false);
 	// visible list
 	{
@@ -121,12 +121,61 @@ BOOST_AUTO_TEST_CASE(MenuBasics) {
 		BOOST_CHECK_EQUAL(acc.changed(), false);
 	}
 	BOOST_CHECK_EQUAL(view->queuedInput(), true);
-	view->update();
+	BOOST_REQUIRE_NO_THROW(view->update());
 	BOOST_CHECK_EQUAL(view->queuedInput(), false);
 	{
 		DM::MenuOutputAccess acc(outv);
 		// view changed
 		BOOST_CHECK_EQUAL(acc.changed(), true);
+	}
+}
+
+BOOST_AUTO_TEST_CASE(MenuZeroSize) {
+	DM::MenuSptr menu(DM::Menu::make("Empty"));
+	BOOST_CHECK_EQUAL(menu->title(), "Empty");
+	BOOST_CHECK_EQUAL(menu->size(), 0);
+	BOOST_CHECK_EQUAL(menu->haveToggles(), false);
+	DM::MenuViewSptr view = DM::MenuView::make(menu);
+	BOOST_CHECK_EQUAL(view->selectedIndex(), 0);
+	DM::MenuOutputSptr outv = DM::MenuOutput::make(view, 4);
+	{
+		DM::MenuOutputAccess acc(outv);
+		// view never had any output
+		BOOST_CHECK_EQUAL(acc.changed(), false);
+	}
+	BOOST_CHECK_EQUAL(view->queuedInput(), false);
+	// move menu position
+	view->backward();
+	BOOST_CHECK_EQUAL(view->queuedInput(), true);
+	// attempt update
+	BOOST_REQUIRE_NO_THROW(view->update());
+	{
+		DM::MenuOutputAccess acc(outv);
+		// view not changed
+		BOOST_CHECK_EQUAL(acc.changed(), false);
+	}
+	BOOST_CHECK_EQUAL(view->queuedInput(), false);
+	// jump to an item
+	view->jump(2);
+	BOOST_CHECK_EQUAL(view->queuedInput(), true);
+	// attempt update
+	BOOST_REQUIRE_NO_THROW(view->update());
+	{
+		DM::MenuOutputAccess acc(outv);
+		// view not changed
+		BOOST_CHECK_EQUAL(acc.changed(), false);
+	}
+	BOOST_CHECK_EQUAL(view->selectedIndex(), 0);
+	BOOST_CHECK_EQUAL(view->queuedInput(), false);
+	// chose the menu item
+	view->chose();
+	BOOST_CHECK_EQUAL(view->queuedInput(), true);
+	// attempt update
+	BOOST_REQUIRE_NO_THROW(view->update());
+	{
+		DM::MenuOutputAccess acc(outv);
+		// view not changed
+		BOOST_CHECK_EQUAL(acc.changed(), false);
 	}
 }
 

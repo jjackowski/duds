@@ -96,6 +96,11 @@ bool MenuOutput::revr(Menu::ItemVec::const_iterator &iter) {
 }
 
 void MenuOutput::updateVisible() {
+	if (menu()->empty()) {
+		vchg = !items.empty();
+		items.clear();
+		return;
+	}
 	std::size_t sel = mview->selectedIndex();
 	int uidx = menu()->updateIndex();
 	if ((updateIdx != uidx) || (sel != selected)) {

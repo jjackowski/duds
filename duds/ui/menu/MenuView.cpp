@@ -86,9 +86,18 @@ int MenuView::retr(int pos) {
 
 bool MenuView::update() {
 	std::lock_guard<duds::general::Spinlock> lock(block);
-	// if there is no other thread using this menu view . . .
+	// only proceed if there is no other thread using this menu view
 	if (!outvUsers++) {
-		// . . . check for no need to update the current selection
+		// nothing on the menu?
+		if (parent->empty()) {
+			// cancel any selection change request
+			nextSel = currSel = nextSelOff = 0;
+			choseItem = false;
+			// all done
+			--outvUsers;
+			return true;
+		}
+		// check for no need to update the current selection
 		int uidx = parent->updateIndex();
 		if (
 			// menu change
