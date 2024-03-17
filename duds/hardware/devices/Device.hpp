@@ -36,7 +36,7 @@ class GenericDevice : public Something {
 	 * Used to assure the destructor function does not return before Sensor
 	 * objects quit using member functions on this object on other threads.
 	 */
-	std::atomic<unsigned int> destructWait;
+	std::atomic<unsigned int> destructWait = 0;
 	/**
 	 * Used to assure the destructor function does not return before Sensor
 	 * objects quit using member functions on this object on other threads.
