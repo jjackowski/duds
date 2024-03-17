@@ -262,6 +262,23 @@ public:
 		changeToggle(index, true);
 	}
 	/**
+	 * Returns a menu item's currently set label.
+	 * @param index  The index of the menu item to query.
+	 * @throw MenuBoundsError       The index is beyond the bounds of this menu.
+	 */
+	const std::string &label(std::size_t index) const {
+		return item(index)->label();
+	}
+	/**
+	 * Changes a menu item's label text.
+	 * @param index  The index of the menu item to modify.
+	 * @param label  The new label to use.
+	 * @throw MenuBoundsError       The index is beyond the bounds of this menu.
+	 */
+	void label(std::size_t index, const std::string &label) {
+		item(index)->label(label);
+	}
+	/**
 	 * Returns a menu item's currently set value. The value is optional, so
 	 * an empty string is a normal valid result.
 	 * @param index  The index of the menu item to query.
