@@ -12,6 +12,7 @@
 
 #include <vector>
 #include <cstdint>
+#include <type_traits>
 #include <boost/exception/info.hpp>
 
 namespace duds { namespace ui {
@@ -44,8 +45,20 @@ struct ImageLocation {
 	ImageLocation() = default;
 	/**
 	 * Construct with the given location.
+	 * The template avoids warnings when the integer type is not std::int16_t.
+	 * If the coordinate value is the result of a computation, it will likely
+	 * be an int unless explicitly made otherwise, which is annoying.
+	 * @param px  The X coord.
+	 * @param py  The Y coord.
 	 */
-	constexpr ImageLocation(std::int16_t px, std::int16_t py) : x(px), y(py) { }
+	template <
+		typename Int0,
+		typename Int1,
+		std::enable_if_t<std::is_integral<Int0>::value, bool> = true,
+		std::enable_if_t<std::is_integral<Int1>::value, bool> = true
+	>
+	constexpr ImageLocation(Int0 px, Int1 py) :
+	x((std::int16_t)px), y((std::int16_t)py) { }
 	/**
 	 * Obvious equality operator.
 	 */
@@ -124,8 +137,20 @@ struct ImageDimensions {
 	ImageDimensions() = default;
 	/**
 	 * Construct with the given dimensions.
+	 * The template avoids warnings when the integer type is not std::int16_t.
+	 * If a value is the result of a computation, it will likely be an int
+	 * unless explicitly made otherwise, which is annoying.
+	 * @param dw  The width.
+	 * @param dh  The height.
 	 */
-	constexpr ImageDimensions(std::int16_t dw, std::int16_t dh) : w(dw), h(dh) { }
+	template <
+		typename Int0,
+		typename Int1,
+		std::enable_if_t<std::is_integral<Int0>::value, bool> = true,
+		std::enable_if_t<std::is_integral<Int1>::value, bool> = true
+	>
+	constexpr ImageDimensions(Int0 dw, Int1 dh) :
+	w((std::int16_t)dw), h((std::int16_t)dh) { }
 	/**
 	 * Obvious equality operator.
 	 */
