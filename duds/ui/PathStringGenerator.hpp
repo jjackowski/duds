@@ -57,7 +57,7 @@ typedef boost::error_info<struct Info_PathMinTitleLength, unsigned int>
  * | Function               | Default value     | Short description
  * |------------------------|-------------------|---------------------------------
  * | separator()            | empty string      | put between page titles
- * | ellipsis()             | empty string      | addrd to end of shortened titles
+ * | ellipsis()             | empty string      | added to end of shortened titles
  * | currentHeader()        | empty string      | precedes current title
  * | currentFooter()        | empty string      | follows current title
  * | maxLength()            | -1 (huge maximum) | maximum output length

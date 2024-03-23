@@ -44,11 +44,12 @@ void Path::push(PageSptr &&page) {
 	}
 }
 
-void Path::move(int steps) {
+bool Path::move(int steps) {
 	// no change?
 	if (!steps) {
-		return;
+		return false;
 	}
+	int ospot = spot;
 	// calcuate the new current page spot
 	int nspot = spot + steps;
 	// limit it to the range of the stack
@@ -57,11 +58,17 @@ void Path::move(int steps) {
 	} else {
 		spot = std::max(nspot, 0);
 	}
+	// compare current just set spot with the old one
+	return spot != ospot;
 }
 
 void Path::clear() {
 	pages.clear();
 	spot = -1;
+}
+
+void Path::clearPastCurrent() {
+	pages.resize(spot + 1);
 }
 
 } }

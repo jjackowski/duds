@@ -67,28 +67,52 @@ public:
 	 * @param steps  The number of pages to move. A negative value moves
 	 *               backwards, towards the first page. Zero does not change
 	 *               the page.
+	 * @return       True if the page changed.
 	 */
-	void move(int steps);
+	bool move(int steps);
 	/**
 	 * Changes the current page to the page that was pushed before the current
 	 * page. If the current page is the first page in the stack, the current
 	 * page will remain unchanged.
+	 * @return       True if the page changed.
 	 */
-	void back() {
-		move(-1);
+	bool back() {
+		return move(-1);
 	}
 	/**
 	 * Changes the current page to the page that was pushed after the current
 	 * page. If the current page is the last page in the stack, the curent
 	 * page will remain unchanged.
+	 * @return       True if the page changed.
 	 */
-	void forward() {
-		move(1);
+	bool forward() {
+		return move(1);
+	}
+	/**
+	 * True if the current page is the start of the page sequence. If no pages
+	 * have been pushed since construction using Path(), or since the last call
+	 * to clear(), the result will be false.
+	 */
+	bool atStart() const {
+		return spot == 0;
+	}
+	/**
+	 * True if the current page is the end of the page sequence. If no pages
+	 * have been pushed since construction using Path(), or since the last call
+	 * to clear(), the result will be false.
+	 */
+	bool atEnd() const {
+		return !pages.empty() && (spot == pages.size() - 1);
 	}
 	/**
 	 * Clears out the stack of all pages.
 	 */
 	void clear();
+	/**
+	 * Clears all pages on the stack that are forward of the current page.
+	 * @post  If !empty(), then atEnd() is true.
+	 */
+	void clearPastCurrent();
 	/**
 	 * Returns true if the page stack is empty.
 	 */

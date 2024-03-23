@@ -24,62 +24,100 @@ BOOST_AUTO_TEST_SUITE(Path)
 BOOST_AUTO_TEST_CASE(PathTest) {
 	UI::Path path;
 	UI::PathStringGenerator pstrgen;
+	// empty path
 	BOOST_REQUIRE_NO_THROW(pstrgen.currentHeader("["));
 	BOOST_REQUIRE_NO_THROW(pstrgen.currentFooter("]"));
 	BOOST_CHECK_EQUAL(path.empty(), true);
 	BOOST_CHECK_THROW(path.currentPage(), std::out_of_range);
 	BOOST_CHECK(path.begin() == path.end());
+	BOOST_CHECK_EQUAL(path.atStart(), false);
+	BOOST_CHECK_EQUAL(path.atEnd(), false);
 	BOOST_CHECK(pstrgen.generate(path).empty());
+	// add a page
 	UI::PageSptr p0 = std::make_shared<UI::Page>("0");
 	path.push(p0);
 	BOOST_CHECK_EQUAL(path.empty(), false);
+	BOOST_CHECK_EQUAL(path.atStart(), true);
+	BOOST_CHECK_EQUAL(path.atEnd(), true);
 	BOOST_CHECK_NO_THROW(path.currentPage());
 	BOOST_CHECK(path.currentPage() == p0);
 	BOOST_CHECK(*path.begin() == p0);
 	BOOST_CHECK_EQUAL(pstrgen.generate(path), "[0]");
-	path.back();
+	// backup with only one page
+	BOOST_CHECK_EQUAL(path.back(), false);
 	BOOST_CHECK(path.currentPage() == p0);
-	path.forward();
+	// foward with only one page
+	BOOST_CHECK_EQUAL(path.forward(), false);
 	BOOST_CHECK(path.currentPage() == p0);
+	// add a second page
 	UI::PageSptr p1 = std::make_shared<UI::Page>("1");
 	path.push(p1);
 	BOOST_CHECK_EQUAL(path.size(), 2);
 	BOOST_CHECK(path.currentPage() == p1);
+	BOOST_CHECK_EQUAL(path.atStart(), false);
+	BOOST_CHECK_EQUAL(path.atEnd(), true);
 	BOOST_CHECK_EQUAL(pstrgen.generate(path), "0[1]");
-	path.forward();
+	// forward when already at end
+	BOOST_CHECK_EQUAL(path.forward(), false);
 	BOOST_CHECK(path.currentPage() == p1);
-	path.back();
+	// back; should move to first page
+	BOOST_CHECK_EQUAL(path.back(), true);
 	BOOST_CHECK(path.currentPage() == p0);
+	BOOST_CHECK_EQUAL(path.atStart(), true);
+	BOOST_CHECK_EQUAL(path.atEnd(), false);
 	BOOST_CHECK_EQUAL(pstrgen.generate(path), "[0]1");
-	path.back();
+	// back again, but already on first page
+	BOOST_CHECK_EQUAL(path.back(), false);
 	BOOST_CHECK(path.currentPage() == p0);
+	// add anothe page; should replace second page
 	UI::PageSptr p2 = std::make_shared<UI::Page>("2");
 	path.push(p2);
 	BOOST_CHECK_EQUAL(path.size(), 2);
 	BOOST_CHECK(path.currentPage() == p2);
+	BOOST_CHECK_EQUAL(path.atStart(), false);
+	BOOST_CHECK_EQUAL(path.atEnd(), true);
 	BOOST_CHECK_EQUAL(pstrgen.generate(path), "0[2]");
-	path.back();
+	// back to first page
+	BOOST_CHECK_EQUAL(path.back(), true);
 	BOOST_CHECK(path.currentPage() == p0);
+	BOOST_CHECK_EQUAL(path.atStart(), true);
+	BOOST_CHECK_EQUAL(path.atEnd(), false);
 	BOOST_CHECK_EQUAL(pstrgen.generate(path), "[0]2");
+	// push another page; should replace second page
 	path.push(p1);
 	BOOST_CHECK_EQUAL(path.size(), 2);
+	// push third page
 	path.push(p2);
 	BOOST_CHECK_EQUAL(path.size(), 3);
 	BOOST_CHECK(path.currentPage() == p2);
+	BOOST_CHECK_EQUAL(path.atStart(), false);
+	BOOST_CHECK_EQUAL(path.atEnd(), true);
 	BOOST_CHECK_EQUAL(path.currentPage()->title(),"2");
 	BOOST_CHECK_EQUAL(pstrgen.generate(path), "01[2]");
-	path.back();
+	// backup to middle page
+	BOOST_CHECK_EQUAL(path.back(), true);
 	BOOST_CHECK(path.currentPage() == p1);
+	BOOST_CHECK_EQUAL(path.atStart(), false);
+	BOOST_CHECK_EQUAL(path.atEnd(), false);
 	BOOST_CHECK_EQUAL(path.currentPage()->title(), "1");
 	BOOST_CHECK_EQUAL(pstrgen.generate(path), "0[1]2");
-	path.back();
+	// back to first page
+	BOOST_CHECK_EQUAL(path.back(), true);
 	BOOST_CHECK(path.currentPage() == p0);
+	BOOST_CHECK_EQUAL(path.atStart(), true);
+	BOOST_CHECK_EQUAL(path.atEnd(), false);
 	BOOST_CHECK_EQUAL(path.currentPage()->title(), "0");
 	BOOST_CHECK_EQUAL(pstrgen.generate(path), "[0]1");
-	path.move(2);
+	// advance to last page
+	BOOST_CHECK_EQUAL(path.move(2), true);
 	BOOST_CHECK(path.currentPage() == p2);
-	path.move(-4);
+	BOOST_CHECK_EQUAL(path.atStart(), false);
+	BOOST_CHECK_EQUAL(path.atEnd(), true);
+	// backup more pages than exist
+	BOOST_CHECK_EQUAL(path.move(-4), true);
 	BOOST_CHECK(path.currentPage() == p0);
+	BOOST_CHECK_EQUAL(path.atStart(), true);
+	BOOST_CHECK_EQUAL(path.atEnd(), false);
 	path.clear();
 	BOOST_CHECK_EQUAL(path.empty(), true);
 }
