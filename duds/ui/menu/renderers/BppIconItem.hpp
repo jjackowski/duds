@@ -82,11 +82,13 @@ public:
 	 * @param label        Short text presented to the user as the menu item.
 	 * @param flags        The option flags for the item. The default is zero:
 	 *                     enabled, visible, no value, and not a toggle.
+	 * @protected
 	 */
 	BppMenuIconItem(
+		MenuItemToken,
 		const std::string &label,
 		Flags flags = Flags::Zero()
-	) : MenuItem(label, flags) { }
+	) : MenuItem(MenuItemToken(), label, flags) { }
 	/**
 	 * Constructs a new BppMenuIconItem.
 	 * @note  All BppMenuIconItem objects must be managed by std::shared_ptr.
@@ -94,12 +96,14 @@ public:
 	 * @param label        Short text presented to the user as the menu item.
 	 * @param flags        The option flags for the item. The default is zero:
 	 *                     enabled, visible, no value, and not a toggle.
+	 * @protected
 	 */
 	BppMenuIconItem(
+		MenuItemToken,
 		const duds::ui::graphics::BppImageSptr &icon,
 		const std::string &label,
 		Flags flags = Flags::Zero()
-	) : MenuItem(label, flags), BppIconItem(icon) { }
+	) : MenuItem(MenuItemToken(), label, flags), BppIconItem(icon) { }
 	/**
 	 * Constructs a new BppMenuIconItem.
 	 * @note  All BppMenuIconItem objects must be managed by std::shared_ptr.
@@ -108,12 +112,14 @@ public:
 	 * @param label        Short text presented to the user as the menu item.
 	 * @param flags        The option flags for the item. The default is zero:
 	 *                     enabled, visible, no value, and not a toggle.
+	 * @protected
 	 */
 	BppMenuIconItem(
+		MenuItemToken,
 		duds::ui::graphics::BppImageSptr &&icon,
 		const std::string &label,
 		Flags flags = Flags::Zero()
-	) : MenuItem(label, flags), BppIconItem(std::move(icon)) { }
+	) : MenuItem(MenuItemToken(), label, flags), BppIconItem(std::move(icon)) { }
 	/**
 	 * Constructs a new BppMenuIconItem.
 	 * @note  All BppMenuIconItem objects must be managed by std::shared_ptr.
@@ -122,12 +128,14 @@ public:
 	 *                     provide a better idea of what the option does.
 	 * @param flags        The option flags for the item. The default is zero:
 	 *                     enabled, visible, no value, and not a toggle.
+	 * @protected
 	 */
 	BppMenuIconItem(
+		MenuItemToken,
 		const std::string &label,
 		const std::string &description,
 		Flags flags = Flags::Zero()
-	) : MenuItem(label, description, flags) { }
+	) : MenuItem(MenuItemToken(), label, description, flags) { }
 	/**
 	 * Constructs a new BppMenuIconItem.
 	 * @note  All BppMenuIconItem objects must be managed by std::shared_ptr.
@@ -137,13 +145,15 @@ public:
 	 *                     provide a better idea of what the option does.
 	 * @param flags        The option flags for the item. The default is zero:
 	 *                     enabled, visible, no value, and not a toggle.
+	 * @protected
 	 */
 	BppMenuIconItem(
+		MenuItemToken,
 		const duds::ui::graphics::BppImageSptr &icon,
 		const std::string &label,
 		const std::string &description,
 		Flags flags = Flags::Zero()
-	) : MenuItem(label, description, flags), BppIconItem(icon) { }
+	) : MenuItem(MenuItemToken(), label, description, flags), BppIconItem(icon) { }
 	/**
 	 * Constructs a new BppMenuIconItem.
 	 * @note  All BppMenuIconItem objects must be managed by std::shared_ptr.
@@ -154,13 +164,16 @@ public:
 	 *                     provide a better idea of what the option does.
 	 * @param flags        The option flags for the item. The default is zero:
 	 *                     enabled, visible, no value, and not a toggle.
+	 * @protected
 	 */
 	BppMenuIconItem(
+		MenuItemToken,
 		duds::ui::graphics::BppImageSptr &&icon,
 		const std::string &label,
 		const std::string &description,
 		Flags flags = Flags::Zero()
-	) : MenuItem(label, description, flags), BppIconItem(std::move(icon)) { }
+	) : MenuItem(MenuItemToken(), label, description, flags),
+	BppIconItem(std::move(icon)) { }
 	/**
 	 * Constructs a new BppMenuIconItem with an associated value.
 	 * @note  All BppMenuIconItem objects must be managed by std::shared_ptr.
@@ -171,13 +184,15 @@ public:
 	 * @param flags        The option flags for the item. While the default is
 	 *                     zero, the MenuItem::HasValue flag will be OR'd with
 	 *                     the given value by the constructor.
+	 * @protected
 	 */
 	BppMenuIconItem(
+		MenuItemToken,
 		const std::string &label,
 		const std::string &description,
 		const std::string &value,
 		Flags flags = Flags::Zero()
-	) : MenuItem(label, description, value, flags) { }
+	) : MenuItem(MenuItemToken(), label, description, value, flags) { }
 	/**
 	 * Constructs a new BppMenuIconItem with an associated value.
 	 * @note  All BppMenuIconItem objects must be managed by std::shared_ptr.
@@ -189,14 +204,17 @@ public:
 	 * @param flags        The option flags for the item. While the default is
 	 *                     zero, the MenuItem::HasValue flag will be OR'd with
 	 *                     the given value by the constructor.
+	 * @protected
 	 */
 	BppMenuIconItem(
+		MenuItemToken,
 		const duds::ui::graphics::BppImageSptr &icon,
 		const std::string &label,
 		const std::string &description,
 		const std::string &value,
 		Flags flags = Flags::Zero()
-	) : MenuItem(label, description, value, flags), BppIconItem(icon) { }
+	) : MenuItem(MenuItemToken(), label, description, value, flags),
+	BppIconItem(icon) { }
 	/**
 	 * Constructs a new BppMenuIconItem with an associated value.
 	 * @note  All BppMenuIconItem objects must be managed by std::shared_ptr.
@@ -209,14 +227,17 @@ public:
 	 * @param flags        The option flags for the item. While the default is
 	 *                     zero, the MenuItem::HasValue flag will be OR'd with
 	 *                     the given value by the constructor.
+	 * @protected
 	 */
 	BppMenuIconItem(
+		MenuItemToken,
 		duds::ui::graphics::BppImageSptr &&icon,
 		const std::string &label,
 		const std::string &description,
 		const std::string &value,
 		Flags flags = Flags::Zero()
-	) : MenuItem(label, description, value, flags), BppIconItem(std::move(icon)) { }
+	) : MenuItem(MenuItemToken(), label, description, value, flags),
+	BppIconItem(std::move(icon)) { }
 };
 
 /**
@@ -239,11 +260,13 @@ public:
 	 * @param label        Short text presented to the user as the menu item.
 	 * @param flags        The option flags for the item. The default is zero:
 	 *                     enabled, visible, no value, and not a toggle.
+	 * @protected
 	 */
 	GenericBppMenuIconItem(
+		MenuItemToken,
 		const std::string &label,
 		Flags flags = Flags::Zero()
-	) : GenericMenuItem(label, flags) { }
+	) : GenericMenuItem(MenuItemToken(), label, flags) { }
 	/**
 	 * Constructs a new GenericBppMenuIconItem.
 	 * @note  All GenericBppMenuIconItem objects must be managed by
@@ -252,12 +275,14 @@ public:
 	 * @param label        Short text presented to the user as the menu item.
 	 * @param flags        The option flags for the item. The default is zero:
 	 *                     enabled, visible, no value, and not a toggle.
+	 * @protected
 	 */
 	GenericBppMenuIconItem(
+		MenuItemToken,
 		const duds::ui::graphics::ConstBppImageSptr &icon,
 		const std::string &label,
 		Flags flags = Flags::Zero()
-	) : GenericMenuItem(label, flags), BppIconItem(icon) { }
+	) : GenericMenuItem(MenuItemToken(), label, flags), BppIconItem(icon) { }
 	/**
 	 * Constructs a new GenericBppMenuIconItem.
 	 * @note  All GenericBppMenuIconItem objects must be managed by
@@ -267,125 +292,142 @@ public:
 	 * @param label        Short text presented to the user as the menu item.
 	 * @param flags        The option flags for the item. The default is zero:
 	 *                     enabled, visible, no value, and not a toggle.
+	 * @protected
 	 */
 	GenericBppMenuIconItem(
+		MenuItemToken,
 		duds::ui::graphics::ConstBppImageSptr &&icon,
 		const std::string &label,
 		Flags flags = Flags::Zero()
-	) : GenericMenuItem(label, flags), BppIconItem(std::move(icon)) { }
-	/**
-	 * Constructs a new GenericBppMenuIconItem.
-	 * @note  All GenericBppMenuIconItem objects must be managed by
-	 *        std::shared_ptr.
-	 * @param label        Short text presented to the user as the menu item.
-	 * @param description  Longer text optionally presented to the user to
-	 *                     provide a better idea of what the option does.
-	 * @param flags        The option flags for the item. The default is zero:
-	 *                     enabled, visible, no value, and not a toggle.
-	 */
-	GenericBppMenuIconItem(
-		const std::string &label,
-		const std::string &description,
-		Flags flags = Flags::Zero()
-	) : GenericMenuItem(label, description, flags) { }
-	/**
-	 * Constructs a new GenericBppMenuIconItem.
-	 * @note  All GenericBppMenuIconItem objects must be managed by
-	 *        std::shared_ptr.
-	 * @param icon         The image for the item's icon.
-	 * @param label        Short text presented to the user as the menu item.
-	 * @param description  Longer text optionally presented to the user to
-	 *                     provide a better idea of what the option does.
-	 * @param flags        The option flags for the item. The default is zero:
-	 *                     enabled, visible, no value, and not a toggle.
-	 */
-	GenericBppMenuIconItem(
-		const duds::ui::graphics::ConstBppImageSptr &icon,
-		const std::string &label,
-		const std::string &description,
-		Flags flags = Flags::Zero()
-	) : GenericMenuItem(label, description, flags), BppIconItem(icon) { }
-	/**
-	 * Constructs a new GenericBppMenuIconItem.
-	 * @note  All GenericBppMenuIconItem objects must be managed by
-	 *        std::shared_ptr.
-	 * @param icon         The image for the item's icon. The shared pointer is
-	 *                     moved into this object.
-	 * @param label        Short text presented to the user as the menu item.
-	 * @param description  Longer text optionally presented to the user to
-	 *                     provide a better idea of what the option does.
-	 * @param flags        The option flags for the item. The default is zero:
-	 *                     enabled, visible, no value, and not a toggle.
-	 */
-	GenericBppMenuIconItem(
-		duds::ui::graphics::ConstBppImageSptr &&icon,
-		const std::string &label,
-		const std::string &description,
-		Flags flags = Flags::Zero()
-	) : GenericMenuItem(label, description, flags), BppIconItem(std::move(icon)) { }
-	/**
-	 * Constructs a new GenericBppMenuIconItem with an associated value.
-	 * @note  All GenericBppMenuIconItem objects must be managed by
-	 *        std::shared_ptr.
-	 * @param label        Short text presented to the user as the menu item.
-	 * @param description  Longer text optionally presented to the user to
-	 *                     provide a better idea of what the option does.
-	 * @param value        The current value associated with the menu item.
-	 * @param flags        The option flags for the item. While the default is
-	 *                     zero, the MenuItem::HasValue flag will be OR'd with
-	 *                     the given value by the constructor.
-	 */
-	GenericBppMenuIconItem(
-		const std::string &label,
-		const std::string &description,
-		const std::string &value,
-		Flags flags = Flags::Zero()
-	) : GenericMenuItem(label, description, value, flags) { }
-	/**
-	 * Constructs a new GenericBppMenuIconItem with an associated value.
-	 * @note  All GenericBppMenuIconItem objects must be managed by
-	 *        std::shared_ptr.
-	 * @param icon         The image for the item's icon.
-	 * @param label        Short text presented to the user as the menu item.
-	 * @param description  Longer text optionally presented to the user to
-	 *                     provide a better idea of what the option does.
-	 * @param value        The current value associated with the menu item.
-	 * @param flags        The option flags for the item. While the default is
-	 *                     zero, the MenuItem::HasValue flag will be OR'd with
-	 *                     the given value by the constructor.
-	 */
-	GenericBppMenuIconItem(
-		const duds::ui::graphics::ConstBppImageSptr &icon,
-		const std::string &label,
-		const std::string &description,
-		const std::string &value,
-		Flags flags = Flags::Zero()
-	) : GenericMenuItem(label, description, value, flags), BppIconItem(icon) { }
-	/**
-	 * Constructs a new GenericBppMenuIconItem with an associated value.
-	 * @note  All GenericBppMenuIconItem objects must be managed by
-	 *        std::shared_ptr.
-	 * @param icon         The image for the item's icon. The shared pointer is
-	 *                     moved into this object.
-	 * @param label        Short text presented to the user as the menu item.
-	 * @param description  Longer text optionally presented to the user to
-	 *                     provide a better idea of what the option does.
-	 * @param value        The current value associated with the menu item.
-	 * @param flags        The option flags for the item. While the default is
-	 *                     zero, the MenuItem::HasValue flag will be OR'd with
-	 *                     the given value by the constructor.
-	 */
-	GenericBppMenuIconItem(
-		duds::ui::graphics::ConstBppImageSptr &&icon,
-		const std::string &label,
-		const std::string &description,
-		const std::string &value,
-		Flags flags = Flags::Zero()
-	) : GenericMenuItem(label, description, value, flags),
+	) : GenericMenuItem(MenuItemToken(), label, flags),
 	BppIconItem(std::move(icon)) { }
 	/**
-	 * Convenience function to make a shared pointer holding a new
-	 * GenericBppMenuIconItem.
+	 * Constructs a new GenericBppMenuIconItem.
+	 * @note  All GenericBppMenuIconItem objects must be managed by
+	 *        std::shared_ptr.
+	 * @param label        Short text presented to the user as the menu item.
+	 * @param description  Longer text optionally presented to the user to
+	 *                     provide a better idea of what the option does.
+	 * @param flags        The option flags for the item. The default is zero:
+	 *                     enabled, visible, no value, and not a toggle.
+	 * @protected
+	 */
+	GenericBppMenuIconItem(
+		MenuItemToken,
+		const std::string &label,
+		const std::string &description,
+		Flags flags = Flags::Zero()
+	) : GenericMenuItem(MenuItemToken(), label, description, flags) { }
+	/**
+	 * Constructs a new GenericBppMenuIconItem.
+	 * @note  All GenericBppMenuIconItem objects must be managed by
+	 *        std::shared_ptr.
+	 * @param icon         The image for the item's icon.
+	 * @param label        Short text presented to the user as the menu item.
+	 * @param description  Longer text optionally presented to the user to
+	 *                     provide a better idea of what the option does.
+	 * @param flags        The option flags for the item. The default is zero:
+	 *                     enabled, visible, no value, and not a toggle.
+	 * @protected
+	 */
+	GenericBppMenuIconItem(
+		MenuItemToken,
+		const duds::ui::graphics::ConstBppImageSptr &icon,
+		const std::string &label,
+		const std::string &description,
+		Flags flags = Flags::Zero()
+	) : GenericMenuItem(MenuItemToken(), label, description, flags),
+	BppIconItem(icon) { }
+	/**
+	 * Constructs a new GenericBppMenuIconItem.
+	 * @note  All GenericBppMenuIconItem objects must be managed by
+	 *        std::shared_ptr.
+	 * @param icon         The image for the item's icon. The shared pointer is
+	 *                     moved into this object.
+	 * @param label        Short text presented to the user as the menu item.
+	 * @param description  Longer text optionally presented to the user to
+	 *                     provide a better idea of what the option does.
+	 * @param flags        The option flags for the item. The default is zero:
+	 *                     enabled, visible, no value, and not a toggle.
+	 * @protected
+	 */
+	GenericBppMenuIconItem(
+		MenuItemToken,
+		duds::ui::graphics::ConstBppImageSptr &&icon,
+		const std::string &label,
+		const std::string &description,
+		Flags flags = Flags::Zero()
+	) : GenericMenuItem(MenuItemToken(), label, description, flags),
+	BppIconItem(std::move(icon)) { }
+	/**
+	 * Constructs a new GenericBppMenuIconItem with an associated value.
+	 * @note  All GenericBppMenuIconItem objects must be managed by
+	 *        std::shared_ptr.
+	 * @param label        Short text presented to the user as the menu item.
+	 * @param description  Longer text optionally presented to the user to
+	 *                     provide a better idea of what the option does.
+	 * @param value        The current value associated with the menu item.
+	 * @param flags        The option flags for the item. While the default is
+	 *                     zero, the MenuItem::HasValue flag will be OR'd with
+	 *                     the given value by the constructor.
+	 * @protected
+	 */
+	GenericBppMenuIconItem(
+		MenuItemToken,
+		const std::string &label,
+		const std::string &description,
+		const std::string &value,
+		Flags flags = Flags::Zero()
+	) : GenericMenuItem(MenuItemToken(), label, description, value, flags) { }
+	/**
+	 * Constructs a new GenericBppMenuIconItem with an associated value.
+	 * @note  All GenericBppMenuIconItem objects must be managed by
+	 *        std::shared_ptr.
+	 * @param icon         The image for the item's icon.
+	 * @param label        Short text presented to the user as the menu item.
+	 * @param description  Longer text optionally presented to the user to
+	 *                     provide a better idea of what the option does.
+	 * @param value        The current value associated with the menu item.
+	 * @param flags        The option flags for the item. While the default is
+	 *                     zero, the MenuItem::HasValue flag will be OR'd with
+	 *                     the given value by the constructor.
+	 * @protected
+	 */
+	GenericBppMenuIconItem(
+		MenuItemToken,
+		const duds::ui::graphics::ConstBppImageSptr &icon,
+		const std::string &label,
+		const std::string &description,
+		const std::string &value,
+		Flags flags = Flags::Zero()
+	) : GenericMenuItem(MenuItemToken(), label, description, value, flags),
+	BppIconItem(icon) { }
+	/**
+	 * Constructs a new GenericBppMenuIconItem with an associated value.
+	 * @note  All GenericBppMenuIconItem objects must be managed by
+	 *        std::shared_ptr.
+	 * @param icon         The image for the item's icon. The shared pointer is
+	 *                     moved into this object.
+	 * @param label        Short text presented to the user as the menu item.
+	 * @param description  Longer text optionally presented to the user to
+	 *                     provide a better idea of what the option does.
+	 * @param value        The current value associated with the menu item.
+	 * @param flags        The option flags for the item. While the default is
+	 *                     zero, the MenuItem::HasValue flag will be OR'd with
+	 *                     the given value by the constructor.
+	 * @protected
+	 */
+	GenericBppMenuIconItem(
+		MenuItemToken,
+		duds::ui::graphics::ConstBppImageSptr &&icon,
+		const std::string &label,
+		const std::string &description,
+		const std::string &value,
+		Flags flags = Flags::Zero()
+	) : GenericMenuItem(MenuItemToken(), label, description, value, flags),
+	BppIconItem(std::move(icon)) { }
+	/**
+	 * Makes a shared pointer holding a new GenericBppMenuIconItem.
 	 * @param label        Short text presented to the user as the menu item.
 	 * @param flags        The option flags for the item. The default is zero:
 	 *                     enabled, visible, no value, and not a toggle.
@@ -394,11 +436,14 @@ public:
 		const std::string &label,
 		Flags flags = Flags::Zero()
 	) {
-		return std::make_shared<GenericBppMenuIconItem>(label, flags);
+		return std::make_shared<GenericBppMenuIconItem>(
+			MenuItemToken(),
+			label,
+			flags
+		);
 	}
 	/**
-	 * Convenience function to make a shared pointer holding a new
-	 * GenericBppMenuIconItem.
+	 * Makes a shared pointer holding a new GenericBppMenuIconItem.
 	 * @param icon         The image for the item's icon.
 	 * @param label        Short text presented to the user as the menu item.
 	 * @param flags        The option flags for the item. The default is zero:
@@ -409,11 +454,15 @@ public:
 		const std::string &label,
 		Flags flags = Flags::Zero()
 	) {
-		return std::make_shared<GenericBppMenuIconItem>(icon, label, flags);
+		return std::make_shared<GenericBppMenuIconItem>(
+			MenuItemToken(),
+			icon,
+			label,
+			flags
+		);
 	}
 	/**
-	 * Convenience function to make a shared pointer holding a new
-	 * GenericBppMenuIconItem.
+	 * Makes a shared pointer holding a new GenericBppMenuIconItem.
 	 * @param icon         The image for the item's icon. The shared pointer is
 	 *                     moved into this object.
 	 * @param label        Short text presented to the user as the menu item.
@@ -426,14 +475,14 @@ public:
 		Flags flags = Flags::Zero()
 	) {
 		return std::make_shared<GenericBppMenuIconItem>(
+			MenuItemToken(),
 			std::move(icon),
 			label,
 			flags
 		);
 	}
 	/**
-	 * Convenience function to make a shared pointer holding a new
-	 * GenericBppMenuIconItem.
+	 * Makes a shared pointer holding a new GenericBppMenuIconItem.
 	 * @param label        Short text presented to the user as the menu item.
 	 * @param description  Longer text optionally presented to the user to
 	 *                     provide a better idea of what the option does.
@@ -445,11 +494,15 @@ public:
 		const std::string &description,
 		Flags flags = Flags::Zero()
 	) {
-		return std::make_shared<GenericBppMenuIconItem>(label, description, flags);
+		return std::make_shared<GenericBppMenuIconItem>(
+			MenuItemToken(),
+			label,
+			description,
+			flags
+		);
 	}
 	/**
-	 * Convenience function to make a shared pointer holding a new
-	 * GenericBppMenuIconItem.
+	 * Makes a shared pointer holding a new GenericBppMenuIconItem.
 	 * @param icon         The image for the item's icon.
 	 * @param label        Short text presented to the user as the menu item.
 	 * @param description  Longer text optionally presented to the user to
@@ -464,6 +517,7 @@ public:
 		Flags flags = Flags::Zero()
 	) {
 		return std::make_shared<GenericBppMenuIconItem>(
+			MenuItemToken(),
 			icon,
 			label,
 			description,
@@ -471,8 +525,7 @@ public:
 		);
 	}
 	/**
-	 * Convenience function to make a shared pointer holding a new
-	 * GenericBppMenuIconItem.
+	 * Makes a shared pointer holding a new GenericBppMenuIconItem.
 	 * @param icon         The image for the item's icon. The shared pointer is
 	 *                     moved into this object.
 	 * @param label        Short text presented to the user as the menu item.
@@ -488,6 +541,7 @@ public:
 		Flags flags = Flags::Zero()
 	) {
 		return std::make_shared<GenericBppMenuIconItem>(
+			MenuItemToken(),
 			std::move(icon),
 			label,
 			description,
@@ -495,8 +549,7 @@ public:
 		);
 	}
 	/**
-	 * Convenience function to make a shared pointer holding a new
-	 * GenericBppMenuIconItem.
+	 * Makes a shared pointer holding a new GenericBppMenuIconItem.
 	 * @param label        Short text presented to the user as the menu item.
 	 * @param description  Longer text optionally presented to the user to
 	 *                     provide a better idea of what the option does.
@@ -511,6 +564,7 @@ public:
 		Flags flags = Flags::Zero()
 	) {
 		return std::make_shared<GenericBppMenuIconItem>(
+			MenuItemToken(),
 			label,
 			description,
 			value,
@@ -518,8 +572,7 @@ public:
 		);
 	}
 	/**
-	 * Convenience function to make a shared pointer holding a new
-	 * GenericBppMenuIconItem.
+	 * Makes a shared pointer holding a new GenericBppMenuIconItem.
 	 * @param icon         The image for the item's icon.
 	 * @param label        Short text presented to the user as the menu item.
 	 * @param description  Longer text optionally presented to the user to
@@ -536,6 +589,7 @@ public:
 		Flags flags = Flags::Zero()
 	) {
 		return std::make_shared<GenericBppMenuIconItem>(
+			MenuItemToken(),
 			icon,
 			label,
 			description,
@@ -544,8 +598,7 @@ public:
 		);
 	}
 	/**
-	 * Convenience function to make a shared pointer holding a new
-	 * GenericBppMenuIconItem.
+	 * Makes a shared pointer holding a new GenericBppMenuIconItem.
 	 * @param icon         The image for the item's icon. The shared pointer is
 	 *                     moved into this object.
 	 * @param label        Short text presented to the user as the menu item.
@@ -563,6 +616,7 @@ public:
 		Flags flags = Flags::Zero()
 	) {
 		return std::make_shared<GenericBppMenuIconItem>(
+			MenuItemToken(),
 			std::move(icon),
 			label,
 			description,

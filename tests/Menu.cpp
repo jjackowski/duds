@@ -188,9 +188,9 @@ class IndexedItem : public DM::GenericMenuItem {
 	int idx;
 public:
 	IndexedItem(const std::string &label, int i) :
-		DM::GenericMenuItem(label), idx(i) { }
+		DM::GenericMenuItem(DM::MenuItem::MenuItemToken(), label), idx(i) { }
 	IndexedItem(const std::string &label, Flags flags, int i) :
-		DM::GenericMenuItem(label, flags), idx(i) { }
+		DM::GenericMenuItem(DM::MenuItem::MenuItemToken(), label, flags), idx(i) { }
 	int index() const {
 		return idx;
 	}

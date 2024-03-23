@@ -57,11 +57,13 @@ public:
 	 * @param flags        The option flags for the item. The default is zero:
 	 *                     enabled, visible, no value, and not a toggle.
 	 * @sa make(const std::string &, Flags)
+	 * @protected
 	 */
 	GenericMenuItem(
+		MenuItemToken,
 		const std::string &label,
 		Flags flags = Flags::Zero()
-	) : MenuItem(label, flags) { }
+	) : MenuItem(MenuItemToken(), label, flags) { }
 	/**
 	 * Constructs a new GenericMenuItem.
 	 * @note  All MenuItem objects must be managed by std::shared_ptr.
@@ -71,12 +73,14 @@ public:
 	 * @param flags        The option flags for the item. The default is zero:
 	 *                     enabled, visible, no value, and not a toggle.
 	 * @sa make(const std::string &, const std::string &, Flags)
+	 * @protected
 	 */
 	GenericMenuItem(
+		MenuItemToken,
 		const std::string &label,
 		const std::string &description,
 		Flags flags = Flags::Zero()
-	) : MenuItem(label, description, flags) { }
+	) : MenuItem(MenuItemToken(), label, description, flags) { }
 	/**
 	 * Constructs a new GenericMenuItem with an associated value.
 	 * @note  All MenuItem objects must be managed by std::shared_ptr.
@@ -88,16 +92,17 @@ public:
 	 *                     zero, the MenuItem::HasValue flag will be OR'd with
 	 *                     the given value by the constructor.
 	 * @sa make(const std::string &, const std::string &, const std::string &, Flags)
+	 * @protected
 	 */
 	GenericMenuItem(
+		MenuItemToken,
 		const std::string &label,
 		const std::string &description,
 		const std::string &value,
 		Flags flags = Flags::Zero()
-	) : MenuItem(label, description, value, flags) { }
+	) : MenuItem(MenuItemToken(), label, description, value, flags) { }
 	/**
-	 * Convenience function to make a shared pointer holding a new
-	 * GenericMenuItem.
+	 * Makes a shared pointer holding a new GenericMenuItem.
 	 * @param label        Short text presented to the user as the menu item.
 	 * @param flags        The option flags for the item. The default is zero:
 	 *                     enabled, visible, no value, and not a toggle.
@@ -106,11 +111,10 @@ public:
 		const std::string &label,
 		Flags flags = Flags::Zero()
 	) {
-		return std::make_shared<GenericMenuItem>(label, flags);
+		return std::make_shared<GenericMenuItem>(MenuItemToken(), label, flags);
 	}
 	/**
-	 * Convenience function to make a shared pointer holding a new
-	 * GenericMenuItem.
+	 * Makes a shared pointer holding a new GenericMenuItem.
 	 * @param label        Short text presented to the user as the menu item.
 	 * @param description  Longer text optionally presented to the user to
 	 *                     provide a better idea of what the option does.
@@ -122,11 +126,16 @@ public:
 		const std::string &description,
 		Flags flags = Flags::Zero()
 	) {
-		return std::make_shared<GenericMenuItem>(label, description, flags);
+		return std::make_shared<GenericMenuItem>(
+			MenuItemToken(),
+			label,
+			description,
+			flags
+		);
 	}
 	/**
-	 * Convenience function to make a shared pointer holding a new
-	 * GenericMenuItem with an associated value.
+	 * Makes a shared pointer holding a new GenericMenuItem with an associated
+	 * value.
 	 * @param label        Short text presented to the user as the menu item.
 	 * @param description  Longer text optionally presented to the user to
 	 *                     provide a better idea of what the option does.
@@ -141,7 +150,13 @@ public:
 		const std::string &value,
 		Flags flags = Flags::Zero()
 	) {
-		return std::make_shared<GenericMenuItem>(label, description, value, flags);
+		return std::make_shared<GenericMenuItem>(
+			MenuItemToken(),
+			label,
+			description,
+			value,
+			flags
+		);
 	}
 	/**
 	 * Invokes the @a choseSig signal in response to the user chosing this

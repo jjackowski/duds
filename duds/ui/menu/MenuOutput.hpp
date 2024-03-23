@@ -7,6 +7,9 @@
  *
  * Copyright (C) 2019  Jeff Jackowski
  */
+#ifndef MENUOUTPUT_HPP
+#define MENUOUTPUT_HPP
+
 #include <duds/ui/menu/Menu.hpp>
 #include <duds/ui/menu/MenuView.hpp>
 
@@ -233,3 +236,5 @@ typedef std::shared_ptr<MenuOutput>  MenuOutputSptr;
 typedef std::weak_ptr<MenuOutput>  MenuOutputWptr;
 
 } } }
+
+#endif        //  #ifndef MENUOUTPUT_HPP

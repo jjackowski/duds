@@ -236,7 +236,7 @@ public:
 	 * True if the entire menu is currently visible.
 	 */
 	bool showingAll() const {
-		return outview->showFirst && outview->showLast;
+		return outview->items.empty() || (outview->showFirst && outview->showLast);
 	}
 };
 

@@ -193,6 +193,7 @@ void BppMenuRenderer::render(
 	if ((~flgs & DoNotShowText) && !cache) {
 		DUDS_THROW_EXCEPTION(BppMenuLacksStringCache());
 	}
+	// no destination image provided?
 	if (!dest) {
 		DUDS_THROW_EXCEPTION(BppMenuDestinationMissing());
 	}
@@ -340,7 +341,7 @@ void BppMenuRenderer::render(
 				if (!text && !(flgs & ValueRightJustified)) {
 					// get the rendered label and value text
 					text = cache->text(mitem->label() + " " + mitem->value());
-				} else {
+				} else if (!mitem->value().empty()) {
 					// render value text and label text separately
 					graphics::ConstBppImageSptr valtext;
 					valtext = cache->text(mitem->value());

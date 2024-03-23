@@ -111,6 +111,12 @@ private:
 	 */
 	Flags flgs;
 	friend Menu;
+protected:
+	/**
+	 * This token is needed to construct MenuItem objects; use to force all
+	 * objects to be managed by shared pointers.
+	 */
+	struct MenuItemToken { };
 public:
 	/**
 	 * Constructs a new MenuItem.
@@ -118,8 +124,10 @@ public:
 	 * @param label        Short text presented to the user as the menu item.
 	 * @param flags        The option flags for the item. The default is zero:
 	 *                     enabled, visible, no value, and not a toggle.
+	 * @protected
 	 */
 	MenuItem(
+		MenuItemToken,
 		const std::string &label,
 		Flags flags = Flags::Zero()
 	) : lbl(label), flgs(flags) { }
@@ -131,8 +139,10 @@ public:
 	 *                     provide a better idea of what the option does.
 	 * @param flags        The option flags for the item. The default is zero:
 	 *                     enabled, visible, no value, and not a toggle.
+	 * @protected
 	 */
 	MenuItem(
+		MenuItemToken,
 		const std::string &label,
 		const std::string &description,
 		Flags flags = Flags::Zero()
@@ -148,8 +158,10 @@ public:
 	 *                     zero, the MenuItem::HasValue flag will be OR'd with
 	 *                     the value given to this constructor so it is implicit
 	 *                     when an item's value string is provided.
+	 * @protected
 	 */
 	MenuItem(
+		MenuItemToken,
 		const std::string &label,
 		const std::string &description,
 		const std::string &value,
@@ -158,9 +170,10 @@ public:
 	/**
 	 * Copy constructs a new MenuItem. The new item will contain the same data
 	 * as the original, except that it is not yet part of any menu.
+	 * @protected
 	 */
-	MenuItem(const MenuItem &mi) : lbl(mi.lbl), descr(mi.descr), val(mi.val),
-	flgs(mi.flgs) { }
+	MenuItem(MenuItemToken, const MenuItem &mi) :
+	lbl(mi.lbl), descr(mi.descr), val(mi.val), flgs(mi.flgs) { }
 	/**
 	 * Returns the label text for this item.
 	 */
