@@ -427,6 +427,32 @@ public:
 	void render(const BppImageSptr &dest) {
 		render(dest.get());
 	}
+	/**
+	 * Returns the dimensions assigned to the panel at priority @a pri by
+	 * layout(), or { 0, 0 }.
+	 * @param pri    The unique priority for the panel.
+	 */
+	ImageDimensions layoutDimensions(unsigned int pri) const;
+	/**
+	 * Returns the location assigned to the panel at priority @a pri by
+	 * layout(), or { 0, 0 }.
+	 * @param pri    The unique priority for the panel.
+	 */
+	ImageLocation layoutLocation(unsigned int pri) const;
+	/**
+	 * Provides the dimensions and location assigned to the panel at priority
+	 * @a pri by layout()
+	 * @param dim    The destination for the assigned panel dimensions.
+	 * @param loc    The destination for the assigned panel location.
+	 * @param pri    The unique priority for the panel.
+	 * @return       True if the layout data was found and copied, or false
+	 *               and no data was changed.
+	 */
+	bool layoutPosition(
+		ImageDimensions &dim,
+		ImageLocation &loc,
+		unsigned int pri
+	) const;
 };
 
 } } }

@@ -500,4 +500,34 @@ void PriorityGridLayout::render(BppImage *dest) {
 	}
 }
 
+ImageDimensions PriorityGridLayout::layoutDimensions(unsigned int pri) const {
+	GridConfig::const_iterator iter = configs.find(pri);
+	if (iter == configs.end()) {
+		return ImageDimensions(0, 0);
+	}
+	return iter->second.dim;
+}
+
+ImageLocation PriorityGridLayout::layoutLocation(unsigned int pri) const {
+	GridConfig::const_iterator iter = configs.find(pri);
+	if (iter == configs.end()) {
+		return ImageLocation(0, 0);
+	}
+	return iter->second.loc;
+}
+
+bool PriorityGridLayout::layoutPosition(
+	ImageDimensions &dim,
+	ImageLocation &loc,
+	unsigned int pri
+) const {
+	GridConfig::const_iterator iter = configs.find(pri);
+	if (iter == configs.end()) {
+		return false;
+	}
+	dim = iter->second.dim;
+	loc = iter->second.loc;
+	return true;
+}
+
 } } }
